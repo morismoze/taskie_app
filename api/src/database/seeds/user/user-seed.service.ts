@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoleEnum } from 'src/modules/role/role.enum';
-import { StatusEnum } from 'src/modules/status/status.enum';
+import { RoleEnum } from 'src/modules/workspace/role-module/workspace-role.enum';
+import { StatusEnum } from 'src/modules/user/user-status-module/user-status.enum';
 import { User } from 'src/modules/user/persistence/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Role } from 'src/modules/role/persistence/role.entity';
-import { Status } from 'src/modules/status/persistence/status.entity';
+import { Role } from 'src/modules/workspace/role-module/persistence/workspace-role.entity';
+import { Status } from 'src/modules/user/user-status-module/persistence/user-status.entity';
 
 @Injectable()
 export class UserSeedService {

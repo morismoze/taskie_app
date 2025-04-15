@@ -8,12 +8,12 @@ import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import bcrypt from 'bcryptjs';
 import { JwtPayload } from './strategies/models/jwt-payload.model';
-import { UserService } from '../user/user.service';
+import { UserService } from '../user/user-module/user.service';
 import { UserDto } from '../user/dto/user.dto';
-import { StatusEnum } from '../status/status.enum';
+import { StatusEnum } from '../user/user-status-module/user-status.enum';
 import { plainToInstance } from 'class-transformer';
 import { RegisterRequestDto } from './dto/register-request.dto';
-import { RoleEnum } from '../role/role.enum';
+import { RoleEnum } from '../workspace/role-module/workspace-role.enum';
 import { ERROR_CODES } from 'src/exception/error-codes';
 import { ApiHttpException } from 'src/exception/ApiHttpException.model';
 

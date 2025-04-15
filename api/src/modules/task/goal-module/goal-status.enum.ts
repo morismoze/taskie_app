@@ -1,0 +1,6 @@
+export enum GoalStatus {
+  IN_PROGRESS,
+  COMPLETED,
+  CLOSED_AS_STALE,
+  CLOSED_AS_APPROVED,
+}
