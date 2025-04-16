@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { User } from './persistence/user.entity';
 import { RoleEnum } from '../../workspace/role-module/workspace-role.enum';
-import { StatusEnum } from '../user-status-module/user-status.enum';
+import { StatusEnum } from './user-status.enum';
 import { RoleService } from '../../workspace/role-module/workspace-role.service';
 import { StatusService } from '../user-status-module/user-status.service';
 import { UserRepository } from './persistence/user.repository';

@@ -1,4 +1,4 @@
-export enum GoalStatus {
+export enum ProgressStatus {
   IN_PROGRESS,
   COMPLETED,
   CLOSED_AS_STALE,

@@ -1,14 +1,17 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { UserStatus } from '../../user-status-module/persistence/user-status.entity';
+import { UserStatusEnum } from '../user-status.enum';
 
-@Entity({
-  name: 'user',
-})
+/**
+ * Represents a user in the system.
+ * A user can exist in two forms:
+ * 1. Registered via the app (Google Auth).
+ * 2. Virtual user created manually with just a name (e.g. children).
+ */
+@Entity({ name: 'user' })
 export class User extends RootBaseEntity {
-  @Index()
-  @Column({ unique: true, length: 255 })
-  email: string;
+  @Column({ unique: true, length: 255, nullable: true })
+  email: string | null; // will be null for virtual users
 
   @Column({ length: 100 })
   firstName: string;
@@ -16,15 +19,16 @@ export class User extends RootBaseEntity {
   @Column({ length: 100 })
   lastName: string;
 
-  @Column({ nullable: true, unique: true })
-  socialId: string | null;
-
   @Column({ nullable: true })
-  profileImageUrl: string | null;
+  profileImageUrl: string | null; // will be null for virtual users
 
-  @ManyToOne(() => UserStatus, (status) => status.users, {
-    eager: true,
+  @Column({ unique: true, nullable: true })
+  socialId: string | null; // will be null for virtual users
+
+  @Column({
+    type: 'enum',
+    enum: UserStatusEnum,
+    default: UserStatusEnum.ACTIVE,
   })
-  @JoinColumn({ name: 'status_id', referencedColumnName: 'id' })
-  status: UserStatus;
+  status: UserStatusEnum;
 }

@@ -10,7 +10,7 @@ import bcrypt from 'bcryptjs';
 import { JwtPayload } from './strategies/models/jwt-payload.model';
 import { UserService } from '../user/user-module/user.service';
 import { UserDto } from '../user/dto/user.dto';
-import { StatusEnum } from '../user/user-status-module/user-status.enum';
+import { StatusEnum } from '../user/user-module/user-status.enum';
 import { plainToInstance } from 'class-transformer';
 import { RegisterRequestDto } from './dto/register-request.dto';
 import { RoleEnum } from '../workspace/role-module/workspace-role.enum';

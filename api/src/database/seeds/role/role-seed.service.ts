@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from 'src/modules/workspace/role-module/persistence/workspace-role.entity';
+import { Role } from 'src/modules/workspace/workspace-role.entity';
 import { RoleEnum } from 'src/modules/workspace/role-module/workspace-role.enum';
 import { Repository } from 'typeorm';
 
