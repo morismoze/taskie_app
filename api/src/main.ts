@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { AggregatedConfig } from './config/config.model';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import validationOptions from './common/helper/validation-options';
+import getValidationOptions from './common/helper/validation-options';
 import { RootExceptionsFilter } from './exception/root-exceptions.filter';
 
 async function bootstrap() {
@@ -17,9 +17,8 @@ async function bootstrap() {
       exclude: ['/'],
     },
   );
-  // api can return either 1. validation error responses
+  const validationOptions = getValidationOptions(configService);
   app.useGlobalPipes(new ValidationPipe(validationOptions));
-  // or 2. error responses from thrown exceptions
   app.useGlobalFilters(new RootExceptionsFilter(app.get(HttpAdapterHost)));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 

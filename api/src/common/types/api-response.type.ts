@@ -1,6 +1,6 @@
 import { ApiErrorCode } from '../../exception/api-error-code.enum';
 
-interface ApiError {
+export interface ApiError {
   code: ApiErrorCode;
   context?: string;
 }

@@ -1,6 +1,6 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Task } from 'src/modules/task/task-module/persistence/task.entity';
-import { User } from 'src/modules/user/user-module/persistence/user.entity';
+import { User } from 'src/modules/user/persistence/user.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 /**

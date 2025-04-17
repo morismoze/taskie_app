@@ -1,40 +1,34 @@
 import {
-  HttpException,
   HttpStatus,
   ValidationError,
   ValidationPipeOptions,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Environment } from 'src/config/app.config';
+import { AggregatedConfig } from 'src/config/config.model';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.model';
 
-function generateErrors(errors: ValidationError[]) {
-  return errors.reduce(
-    (accumulator, currentValue) => [
-      ...accumulator,
-      {
-        field: currentValue.property,
-        message:
-          (currentValue.children?.length ?? 0) > 0
-            ? generateErrors(currentValue.children ?? [])
-            : Object.values(currentValue.constraints ?? {}).join('. '),
-      },
-    ],
-    [],
-  );
-}
-
-const validationOptions: ValidationPipeOptions = {
+const getValidationOptions = (
+  configService: ConfigService<AggregatedConfig>,
+): ValidationPipeOptions => ({
+  enableDebugMessages:
+    configService.getOrThrow('app.nodeEnv', { infer: true }) !==
+    Environment.PRODUCTION
+      ? true
+      : false,
   transform: true,
   whitelist: true,
-  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY, // Validation errors use UNPROCESSABLE_ENTITY status
   exceptionFactory: (errors: ValidationError[]) => {
-    return new HttpException(
+    return new ApiHttpException(
       {
-        isSuccess: false,
-        data: null,
-        errors: generateErrors(errors),
+        code: ApiErrorCode.INVALID_PAYLOAD,
+        context: JSON.stringify(errors, null, 2),
       },
       HttpStatus.UNPROCESSABLE_ENTITY,
     );
   },
-};
+});
 
-export default validationOptions;
+export default getValidationOptions;

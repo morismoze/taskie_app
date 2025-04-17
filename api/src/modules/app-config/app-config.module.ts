@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import appConfig from 'src/config/app.config';
 import databaseConfig from 'src/database/config/database.config';
-import authConfig from '../auth/config/auth.config';
+import authConfig from '../auth/core/config/auth.config';
 
 @Module({
   imports: [
@@ -21,4 +21,4 @@ import authConfig from '../auth/config/auth.config';
     }),
   ],
 })
-export class ApiConfigModule {}
+export class AppConfigModule {}

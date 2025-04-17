@@ -1,13 +1,12 @@
 import { HttpException } from '@nestjs/common';
-import { ApiResponse } from 'src/common/types/api-response.type';
-import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiError, ApiResponse } from 'src/common/types/api-response.type';
 
 export class ApiHttpException extends HttpException {
-  constructor(message: ApiErrorCode, status: number) {
+  constructor(error: ApiError, status: number) {
     super(
       {
         data: null,
-        error: message,
+        error,
       } as ApiResponse<null>,
       status,
     );

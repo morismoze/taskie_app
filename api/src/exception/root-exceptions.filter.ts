@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { ApiResponse } from 'src/common/types/api-response.type';
+import { ApiError, ApiResponse } from 'src/common/types/api-response.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from './ApiHttpException.model';
 
@@ -19,14 +19,14 @@ export class RootExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
 
     if (exception instanceof ApiHttpException) {
-      httpAdapter.reply(
-        ctx.getResponse(),
-        exception.getResponse(),
-        exception.getStatus(),
-      );
+      const response = exception.getResponse();
+      const responseBody: ApiResponse<null> = response as ApiResponse<null>;
+
+      httpAdapter.reply(ctx.getResponse(), responseBody, exception.getStatus());
       return;
     }
 
+    // For unhandled exceptions, return a generic server error response
     const responseBody: ApiResponse<null> = {
       data: null,
       error: {

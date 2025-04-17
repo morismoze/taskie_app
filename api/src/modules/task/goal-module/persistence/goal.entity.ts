@@ -1,7 +1,7 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Task } from 'src/modules/task/task-module/persistence/task.entity';
-import { WorkspaceMember } from 'src/modules/workspace/role-module/persistence/workspace-member.entity';
-import { Workspace } from 'src/modules/workspace/role-module/persistence/workspace.entity';
+import { WorkspaceUser } from 'src/modules/workspace/workspace-role-module/persistence/workspace-member.entity';
+import { Workspace } from 'src/modules/workspace/persistence/workspace.entity';
 import {
   Column,
   Entity,
@@ -16,17 +16,17 @@ import { GoalType } from '../goal-type.enum';
 /**
  * Represents a goal within a workspace. Goals can be:
  * 1. TASK_BASED — completed when all associated tasks are completed.
- * 2. POINTS_BASED — completed when requiredPoints are accumulated (sum of WorkspaceMember.totalRewardPoints = requiredPoints).
+ * 2. POINTS_BASED — completed when requiredPoints are accumulated (sum of WorkspaceUser.totalRewardPoints = requiredPoints).
  */
 @Entity()
 export class Goal extends RootBaseEntity {
-  @OneToMany(() => WorkspaceMember, (assignee) => assignee.workspace, {
+  @OneToMany(() => WorkspaceUser, (assignee) => assignee.workspace, {
     cascade: true,
   })
-  assignees: WorkspaceMember[];
+  assignees: WorkspaceUser[];
 
-  @ManyToOne(() => WorkspaceMember)
-  createdBy: WorkspaceMember; // The user who created this goal
+  @ManyToOne(() => WorkspaceUser)
+  createdBy: WorkspaceUser; // The user who created this goal
 
   @Column({ nullable: true })
   description: string | null; // Optional goal description

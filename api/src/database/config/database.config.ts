@@ -34,21 +34,21 @@ class EnvironmentVariablesValidator {
 
   @IsOptional()
   @IsNumber()
-  DATABASE_MAX_CONNECTIONS?: number;
+  DATABASE_MAX_CONNECTIONS: number;
 }
 
-export default registerAs<DatabaseConfig>('database', () => {
+export default registerAs<DatabaseConfig>('database', (): DatabaseConfig => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
-    type: process.env.DATABASE_TYPE!,
-    host: process.env.DATABASE_HOST!,
+    type: process.env.DATABASE_TYPE,
+    host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT
       ? parseInt(process.env.DATABASE_PORT, 10)
       : 5432,
-    name: process.env.DATABASE_NAME!,
-    username: process.env.DATABASE_USERNAME!,
-    password: process.env.DATABASE_PASSWORD!,
+    name: process.env.DATABASE_NAME,
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
     maxConnections: process.env.DATABASE_MAX_CONNECTIONS
       ? parseInt(process.env.DATABASE_MAX_CONNECTIONS, 10)
       : 100,

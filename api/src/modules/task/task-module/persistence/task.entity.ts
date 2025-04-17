@@ -1,32 +1,32 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Goal } from 'src/modules/task/goal-module/persistence/goal.entity';
-import { Workspace } from 'src/modules/workspace/role-module/persistence/workspace.entity';
+import { Workspace } from 'src/modules/workspace/persistence/workspace.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { ProgressStatus } from 'src/modules/task/task-module/progress-status.enum';
-import { User } from 'src/modules/user/user-module/persistence/user.entity';
-import { WorkspaceMember } from 'src/modules/workspace/role-module/persistence/workspace-member.entity';
+import { User } from 'src/modules/user/persistence/user.entity';
+import { WorkspaceUser } from 'src/modules/workspace/workspace-role-module/persistence/workspace-member.entity';
 
 /**
  * Represents a task that can either be part of a goal or act as a standalone goal.
  */
 @Entity()
 export class Task extends RootBaseEntity {
-  @OneToMany(() => WorkspaceMember, (assignee) => assignee.workspace, {
+  @OneToMany(() => WorkspaceUser, (assignee) => assignee.workspace, {
     cascade: true,
   })
-  assignees: WorkspaceMember[]; // single task can be assigned to multiple WorkspaceMembers
+  assignees: WorkspaceUser[]; // Single task can be assigned to multiple WorkspaceUsers
 
   @ManyToOne(() => User)
-  createdBy: WorkspaceMember;
+  createdBy: WorkspaceUser;
 
   @Column({ nullable: true })
   description: string | null; // Description of the task
 
   @Column({ nullable: true })
-  goalReward: string | null; // Reward description for standalone goals
+  reward: string | null; // Reward description for standalone tasks
 
   @ManyToOne(() => Goal, { nullable: true })
-  goal: Goal | null; // Links task to a goal (if any)
+  goal: Goal | null; // Links task to a goal if not a standalone task
 
   @Column({ default: 0 })
   rewardPoints: number; // Points assigned to this task when completed
