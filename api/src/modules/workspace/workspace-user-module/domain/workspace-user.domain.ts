@@ -1,4 +1,4 @@
-import { WorkspaceUserRole } from './workspace-role.enum';
+import { WorkspaceUserRole } from './workspace-user-role.enum';
 
 export interface WorkspaceUserDomain {
   id: string;

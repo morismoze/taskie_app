@@ -1,4 +1,4 @@
-import { UserDto } from 'src/modules/user/user-module/types/user.dto';
+import { UserDto } from 'src/modules/user/dto/user.dto';
 
 export type LoginResponse = {
   accessToken: string;

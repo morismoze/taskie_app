@@ -19,7 +19,7 @@ const getValidationOptions = (
       : false,
   transform: true,
   whitelist: true,
-  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY, // Validation errors use UNPROCESSABLE_ENTITY status
+  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {
     return new ApiHttpException(
       {

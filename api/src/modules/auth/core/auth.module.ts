@@ -5,19 +5,20 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
-import { AnonymousStrategy } from './strategies/anonymous.strategy';
 import { UserModule } from 'src/modules/user/user.module';
-import { WorkspaceModule } from 'src/modules/workspace/workspace.module';
+import { WorkspaceUserModule } from 'src/modules/workspace/workspace-user-module/workspace-user.module';
+import { SessionModule } from 'src/modules/session/session.module';
 
 @Module({
   imports: [
     UserModule,
-    WorkspaceModule,
+    WorkspaceUserModule,
+    SessionModule,
     PassportModule,
     JwtModule.register({}),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, AnonymousStrategy],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

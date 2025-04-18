@@ -1,8 +1,9 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { User } from 'src/modules/user/persistence/user.entity';
+import { UserStatus } from 'src/modules/user/user-status.enum';
 import { Column, Entity, Index, ManyToOne } from 'typeorm';
-import { WorkspaceUserRole } from '../domain/workspace-role.enum';
-import { Workspace } from './workspace.entity';
+import { Workspace } from '../../workspace-module/persistence/workspace.entity';
+import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 
 /**
  * Represents a user's membership in a specific workspace.
@@ -26,4 +27,11 @@ export class WorkspaceUser extends RootBaseEntity {
     enum: WorkspaceUserRole,
   })
   workspaceRole: WorkspaceUserRole;
+
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+  })
+  status: UserStatus;
 }

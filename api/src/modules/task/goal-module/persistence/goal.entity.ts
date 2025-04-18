@@ -1,7 +1,7 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Task } from 'src/modules/task/task-module/persistence/task.entity';
-import { WorkspaceUser } from 'src/modules/workspace/workspace-role-module/persistence/workspace-member.entity';
-import { Workspace } from 'src/modules/workspace/persistence/workspace.entity';
+import { Workspace } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
+import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
 import {
   Column,
   Entity,
@@ -10,7 +10,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { ProgressStatus } from '../../task-module/progress-status.enum';
+import { ProgressStatus } from '../../progress-status.enum';
 import { GoalType } from '../goal-type.enum';
 
 /**

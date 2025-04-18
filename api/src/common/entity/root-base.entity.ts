@@ -19,7 +19,7 @@ export abstract class RootBaseEntity extends BaseEntity {
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
     name: 'updated_at',
   })
   updatedAt: Date;
@@ -29,5 +29,5 @@ export abstract class RootBaseEntity extends BaseEntity {
     nullable: true,
     name: 'deleted_at',
   })
-  deletedAt: Date;
+  deletedAt: Date | null;
 }

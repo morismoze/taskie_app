@@ -4,51 +4,30 @@ import { JwtService } from '@nestjs/jwt';
 import { AggregatedConfig } from 'src/config/config.model';
 import ms from 'ms';
 import * as crypto from 'crypto';
-import { JwtPayload } from './strategies/models/jwt-payload.model';
-import { plainToInstance } from 'class-transformer';
-import { RegisterRequest } from './dto/register-request.dto';
+import { JwtPayload } from './strategies/domain/jwt-payload.domain';
 import { SocialLoginDomain } from './domain/social-response.domain';
 import { LoginResponse } from './dto/login-response.dto';
 import { Nullable } from 'src/common/types/nullable.type';
 import { UserDomain } from 'src/modules/user/domain/user.domain';
 import { UserService } from 'src/modules/user/user.service';
 import { AuthProvider } from './domain/auth-provider.enum';
-import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { UserStatus } from 'src/modules/user/user-status.enum';
-import { WorkspaceUserDomain } from 'src/modules/workspace/domain/workspace-user.domain';
-import { WorkspaceService } from 'src/modules/workspace/workspace-user.service';
+import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
+import { WorkspaceUserDomain } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
+import { WorkspaceUserMembershipDto } from 'src/modules/workspace/workspace-user-module/dto/workspace-user.dto';
+import { UserDto } from 'src/modules/user/dto/user.dto';
+import { SessionService } from 'src/modules/session/session.service';
+import { SessionDomain } from 'src/modules/session/domain/session.domain';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly workspaceUserService: WorkspaceUserService,
     private readonly configService: ConfigService<AggregatedConfig>,
+    private readonly sessionService: SessionService,
   ) {}
-
-  async register(registerDto: RegisterRequest): Promise<LoginResponseDto> {
-    const createdUser = await this.userService.create({
-      ...registerDto,
-      role: {
-        name: RoleEnum.user,
-      },
-      status: {
-        name: StatusEnum.active,
-      },
-    });
-    const { token, refreshToken, tokenExpires } = await this.getTokensData({
-      uid: createdUser.uid,
-      role: null, // new users don't have roles, since they are not yet in any workspace
-    });
-
-    return {
-      token,
-      refreshToken,
-      tokenExpires,
-      user: plainToInstance(UserDto, createdUser),
-    };
-  }
 
   async socialLogin(
     authProvider: AuthProvider,
@@ -108,82 +87,97 @@ export class AuthService {
       .update(crypto.randomBytes(length).toString('hex'))
       .digest('hex');
 
-    const session = await this.sessionService.create({
-      user,
-      hash,
-    });
+    const session = await this.sessionService.create(user, hash);
 
-    const roles = await this.workspaceService.getWorkspaceUserRoles(user.id);
+    const workspaceUserMemberships =
+      await this.workspaceUserService.getWorkspaceUserMemberships(user.id);
 
-    const {
-      token: jwtToken,
-      refreshToken,
-      tokenExpires,
-    } = await this.getTokensData({
+    const { accessToken, refreshToken, tokenExpires } =
+      await this.getTokensData(
+        {
+          userId: user.id,
+          roles: workspaceUserMemberships.map((wu) => ({
+            workspaceId: wu.workspaceId,
+            role: wu.role,
+          })),
+          sessionId: session.id,
+        },
+        hash,
+      );
+
+    const workspaceUserMembershipsDto: WorkspaceUserMembershipDto[] =
+      workspaceUserMemberships.map((wu) => ({
+        createdAt: wu.createdAt,
+        id: wu.id,
+        isOwner: wu.isOwner,
+        role: wu.role,
+        workspaceId: wu.workspaceId,
+      }));
+
+    const userDto: UserDto = {
+      createdAt: user.createdAt,
+      email: user.email,
+      firstName: user.firstName,
       id: user.id,
-      roles,
-      sessionId: session.id,
-      hash,
-    });
+      lastName: user.lastName,
+      memberships: workspaceUserMembershipsDto,
+      profileImageUrl: user.profileImageUrl,
+    };
 
     return {
       refreshToken,
-      token: jwtToken,
+      accessToken,
       tokenExpires,
-      user,
+      user: userDto,
     };
-  }
-
-  async me(userJwtPayload: JwtPayload): Promise<UserDto> {
-    const user = this.userService.findOne({
-      where: {
-        uid: userJwtPayload.sub,
-      },
-    });
-
-    return plainToInstance(UserDto, user);
   }
 
   async refreshToken(
     data: Omit<JwtPayload, 'role'>,
-  ): Promise<Omit<LoginResponseDto, 'user'>> {
+  ): Promise<Omit<LoginResponse, 'user'>> {
     const user = await this.userService.findOne({
       where: {
         uid: data.sub,
       },
     });
 
-    const { token, refreshToken, tokenExpires } = await this.getTokensData({
-      uid: user!.uid,
-      role: user!.role,
-    });
+    const workspaceUserMemberships =
+      await this.workspaceUserService.getWorkspaceUserMemberships(user.id);
+
+    const { accessToken, refreshToken, tokenExpires } =
+      await this.getTokensData(
+        {
+          userId: user.id,
+          roles: workspaceUserMemberships.map((wu) => ({
+            workspaceId: wu.workspaceId,
+            role: wu.role,
+          })),
+          sessionId: session.id,
+        },
+        hash,
+      );
 
     return {
-      token,
+      accessToken,
       refreshToken,
       tokenExpires,
     };
   }
 
-  private async getTokensData(data: {
-    id: UserDomain['id'];
-    roles: {
-      workspaceId: string;
-      role: WorkspaceUserDomain['role'];
-    }[];
-    sessionId: Session['id'];
-    hash: Session['hash'];
-  }) {
+  private async getTokensData(
+    data: Omit<JwtPayload, 'iat' | 'exp'>,
+    hash: SessionDomain['hash'],
+  ) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
     });
 
     const tokenExpires = Date.now() + ms(tokenExpiresIn);
 
-    const [token, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(
         {
-          id: data.id,
+          id: data.userId,
           roles: data.roles,
           sessionId: data.sessionId,
         },
@@ -195,7 +189,7 @@ export class AuthService {
       await this.jwtService.signAsync(
         {
           sessionId: data.sessionId,
-          hash: data.hash,
+          hash: hash,
         },
         {
           secret: this.configService.getOrThrow('auth.refreshSecret', {
@@ -209,7 +203,7 @@ export class AuthService {
     ]);
 
     return {
-      token,
+      accessToken,
       refreshToken,
       tokenExpires,
     };
