@@ -1,12 +1,10 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AggregatedConfig } from 'src/config/config.model';
 import { JwtPayload } from './domain/jwt-payload.domain';
 import { OrNever } from 'src/common/types/or-never.type';
-import { ApiHttpException } from 'src/exception/ApiHttpException.model';
-import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -19,10 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   public validate(payload: JwtPayload): OrNever<JwtPayload> {
     if (!payload.userId) {
-      throw new ApiHttpException(
-        { code: ApiErrorCode.UNAUTHORIZED },
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new UnauthorizedException();
     }
 
     return payload;

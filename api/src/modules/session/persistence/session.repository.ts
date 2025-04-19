@@ -1,32 +1,88 @@
 import { Injectable } from '@nestjs/common';
-import { Session } from './session.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Nullable } from 'src/common/types/nullable.type';
+import { User } from 'src/modules/user/domain/user.domain';
+import { UserEntity } from 'src/modules/user/persistence/user.entity';
+import { Repository } from 'typeorm';
+import { Session } from '../domain/session.domain';
+import { SessionEntity } from './session.entity';
 
 @Injectable()
 export class SessionRepository {
   constructor(
-    @InjectRepository(Session)
-    private readonly repo: Repository<User>,
+    @InjectRepository(SessionEntity)
+    private readonly repo: Repository<SessionEntity>,
   ) {}
 
-  findById(id: Session['id']): Promise<NullableType<Session>>;
+  async create(
+    userId: Session['user']['id'],
+    hash: Session['hash'],
+  ): Promise<Session> {
+    const entity = this.repo.create({
+      hash: hash,
+      user: { id: userId }, // TypeORM supports setting relations by reference
+    });
 
-  create(
-    data: Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
-  ): Promise<Session>;
+    const newSession = await this.repo.save(entity);
 
-  update(
-    id: Session['id'],
-    payload: Partial<
-      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
-    >,
-  ): Promise<Session | null>;
+    return this.toDomain(newSession);
+  }
 
-  deleteById(id: Session['id']): Promise<void>;
+  async findById(id: Session['id']): Promise<Nullable<Session>> {
+    const session = await this.repo.findOne({
+      where: { id },
+    });
 
-  deleteByUserId(conditions: { userId: User['id'] }): Promise<void>;
+    return session ? this.toDomain(session) : null;
+  }
 
-  deleteByUserIdWithExclude(conditions: {
-    userId: User['id'];
-    excludeSessionId: Session['id'];
-  }): Promise<void>;
+  async update(data: Session): Promise<Session> {
+    const updatedEntity = this.toPersistence(data);
+    await this.repo.save(updatedEntity);
+
+    return await this.findById(data.id);
+  }
+
+  async deleteById(id: Session['id']): Promise<void> {
+    await this.repo.delete(id);
+  }
+
+  private toDomain(data: SessionEntity): Session {
+    const user: User = {
+      id: data.user.id,
+      createdAt: data.user.createdAt,
+      updatedAt: data.user.updatedAt,
+      deletedAt: data.user.deletedAt,
+      email: data.user.email,
+      firstName: data.user.firstName,
+      lastName: data.user.lastName,
+      profileImageUrl: data.user.profileImageUrl,
+      provider: data.user.provider,
+      socialId: data.user.socialId,
+      status: data.user.status,
+    };
+
+    return {
+      id: data.id,
+      user: user,
+      hash: data.hash,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      deletedAt: data.deletedAt,
+    };
+  }
+
+  private toPersistence(data: Session): SessionEntity {
+    const session = new SessionEntity();
+    session.id = data.id;
+    session.hash = data.hash;
+    session.createdAt = data.createdAt;
+    session.updatedAt = data.updatedAt;
+    session.deletedAt = data.deletedAt;
+    const user = new UserEntity();
+    user.id = data.user.id;
+    session.user = user;
+
+    return session;
+  }
 }

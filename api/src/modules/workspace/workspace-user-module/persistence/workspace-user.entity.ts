@@ -1,5 +1,5 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { User } from 'src/modules/user/persistence/user.entity';
+import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { UserStatus } from 'src/modules/user/user-status.enum';
 import { Column, Entity, Index, ManyToOne } from 'typeorm';
 import { Workspace } from '../../workspace-module/persistence/workspace.entity';
@@ -16,8 +16,8 @@ export class WorkspaceUser extends RootBaseEntity {
   workspace: Workspace;
 
   @Index()
-  @ManyToOne(() => User)
-  user: User;
+  @ManyToOne(() => UserEntity)
+  user: UserEntity;
 
   // if a role ever gets more granular (permissions, descriptions, etc.) this can
   // be implemented as separete WorkspaceRole entity

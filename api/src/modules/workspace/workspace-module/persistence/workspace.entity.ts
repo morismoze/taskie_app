@@ -1,7 +1,7 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Goal } from 'src/modules/task/goal-module/persistence/goal.entity';
 import { Task } from 'src/modules/task/task-module/persistence/task.entity';
-import { User } from 'src/modules/user/persistence/user.entity';
+import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { WorkspaceUser } from '../../workspace-user-module/persistence/workspace-user.entity';
 
@@ -10,8 +10,8 @@ import { WorkspaceUser } from '../../workspace-user-module/persistence/workspace
  */
 @Entity()
 export class Workspace extends RootBaseEntity {
-  @ManyToOne(() => User, { nullable: false })
-  owner: User;
+  @ManyToOne(() => UserEntity, { nullable: false })
+  owner: UserEntity;
 
   @OneToMany(() => Goal, (goal) => goal.workspace)
   goals: Goal[];

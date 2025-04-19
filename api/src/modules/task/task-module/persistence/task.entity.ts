@@ -3,7 +3,7 @@ import { Goal } from 'src/modules/task/goal-module/persistence/goal.entity';
 import { Workspace } from 'src/modules/workspace/persistence/workspace.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { ProgressStatus } from 'src/modules/task/progress-status.enum';
-import { User } from 'src/modules/user/persistence/user.entity';
+import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-role-module/persistence/workspace-member.entity';
 
 /**
@@ -16,7 +16,7 @@ export class Task extends RootBaseEntity {
   })
   assignees: WorkspaceUser[]; // Single task can be assigned to multiple WorkspaceUsers
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => UserEntity)
   createdBy: WorkspaceUser;
 
   @Column({ nullable: true })

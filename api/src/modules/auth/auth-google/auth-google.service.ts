@@ -1,9 +1,7 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
 import { AggregatedConfig } from 'src/config/config.model';
-import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.model';
 import { SocialLoginDomain } from '../core/domain/social-response.domain';
 import { AuthGoogleRequest } from './dto/google-auth-request.dto';
 
@@ -31,10 +29,7 @@ export class AuthGoogleService {
     const data = ticket.getPayload();
 
     if (!data) {
-      throw new ApiHttpException(
-        { code: ApiErrorCode.UNAUTHORIZED },
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new UnauthorizedException();
     }
 
     return {

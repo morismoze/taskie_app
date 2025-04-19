@@ -2,72 +2,110 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { Repository } from 'typeorm';
-import { UserDomain } from '../domain/user.domain';
-import { UserUpdateRequest } from '../dto/user-update.dto';
-import { User } from './user.entity';
+import { User } from '../domain/user.domain';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UserRepository {
   constructor(
-    @InjectRepository(User)
-    private readonly repo: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly repo: Repository<UserEntity>,
   ) {}
 
-  async findById(id: UserDomain['id']): Promise<Nullable<User>> {
-    return await this.repo.findOne({ where: { id } });
+  async create(
+    data: Omit<User, 'id' | 'createdAt' | 'deletedAt' | 'updatedAt'>,
+  ): Promise<User> {
+    const entity = this.repo.create(data);
+    const newUser = await this.repo.save(entity);
+
+    return this.toDomain(newUser);
   }
 
-  async findByEmail(email: UserDomain['email']): Promise<Nullable<User>> {
-    return await this.repo.findOne({ where: { email } });
+  async createVirtualUser(
+    data: Pick<User, 'firstName' | 'lastName'>,
+  ): Promise<User> {
+    const entity = this.repo.create(data);
+    const newUser = await this.repo.save(entity);
+
+    return this.toDomain(newUser);
+  }
+
+  async findById(id: User['id']): Promise<Nullable<User>> {
+    const user = await this.repo.findOne({ where: { id } });
+
+    return user ? this.toDomain(user) : null;
+  }
+
+  async findByEmail(email: User['email']): Promise<Nullable<User>> {
+    const user = await this.repo.findOne({ where: { email } });
+
+    return user ? this.toDomain(user) : null;
   }
 
   async findBySocialIdAndProvider({
     socialId,
     provider,
   }: {
-    socialId: UserDomain['socialId'];
-    provider: UserDomain['provider'];
+    socialId: User['socialId'];
+    provider: User['provider'];
   }): Promise<Nullable<User>> {
     if (!socialId) return null;
 
-    return await this.repo.findOne({
+    const user = await this.repo.findOne({
       where: {
         socialId,
         provider,
       },
     });
-  }
-
-  async update(
-    id: UserDomain['id'],
-    updateUserDto: UserUpdateRequest,
-  ): Promise<Nullable<User>> {
-    const user = await this.repo.findOne({ where: { id } });
 
     if (!user) {
       return null;
     }
 
-    if (updateUserDto.email !== undefined) {
-      user.email = updateUserDto.email;
-    }
+    return user ? this.toDomain(user) : null;
+  }
 
-    if (updateUserDto.firstName !== undefined) {
-      user.firstName = updateUserDto.firstName;
-    }
+  async update(data: User): Promise<Nullable<User>> {
+    const updatedEntity = this.toPersistence(data);
+    await this.repo.save(updatedEntity);
 
-    if (updateUserDto.lastName !== undefined) {
-      user.lastName = updateUserDto.lastName;
-    }
+    return this.toDomain(updatedEntity);
+  }
 
-    if (updateUserDto.profileImageUrl !== undefined) {
-      user.profileImageUrl = updateUserDto.profileImageUrl;
-    }
+  async softDelete(id: User['id']): Promise<void> {
+    await this.repo.softDelete(id);
+  }
 
-    if (updateUserDto.status !== undefined) {
-      user.status = updateUserDto.status;
-    }
+  private toDomain(entity: UserEntity): User {
+    return {
+      id: entity.id,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+      deletedAt: entity.deletedAt,
+      email: entity.email,
+      firstName: entity.firstName,
+      lastName: entity.lastName,
+      profileImageUrl: entity.profileImageUrl,
+      provider: entity.provider,
+      socialId: entity.socialId,
+      status: entity.status,
+    };
+  }
 
-    return await this.repo.save(user);
+  private toPersistence(user: User): UserEntity {
+    const userEntity = new UserEntity();
+    userEntity.id = user.id;
+    userEntity.createdAt = user.createdAt;
+    userEntity.updatedAt = user.updatedAt;
+    userEntity.deletedAt = user.deletedAt;
+    userEntity.email = user.email;
+    userEntity.firstName = user.firstName;
+    userEntity.lastName = user.lastName;
+    userEntity.profileImageUrl = user.profileImageUrl;
+    userEntity.provider = user.provider;
+    userEntity.socialId = user.socialId;
+    userEntity.status = user.status;
+
+    return userEntity;
   }
 }

@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AggregatedConfig } from 'src/config/config.model';
 import { OrNever } from 'src/common/types/or-never.type';
-import { JwtPayload } from './domain/jwt-payload.domain';
+import { JwtRefreshPayload } from './domain/jwt-refresh-payload.domain';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -18,10 +18,8 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  public validate(
-    payload: Omit<JwtPayload, 'role'>,
-  ): OrNever<Omit<JwtPayload, 'role'>> {
-    if (!payload.sub) {
+  public validate(payload: JwtRefreshPayload): OrNever<JwtRefreshPayload> {
+    if (!payload.sessionId) {
       throw new UnauthorizedException();
     }
 

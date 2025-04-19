@@ -4,7 +4,7 @@ import { UserStatus } from '../user-status.enum';
 export class UserUpdateRequest {
   @IsOptional()
   @IsEmail()
-  email?: string | null;
+  email?: string;
 
   @IsOptional()
   @IsString()
@@ -16,7 +16,7 @@ export class UserUpdateRequest {
 
   @IsOptional()
   @IsString()
-  profileImageUrl?: string | null;
+  profileImageUrl?: string;
 
   @IsOptional()
   @IsEnum(UserStatus)

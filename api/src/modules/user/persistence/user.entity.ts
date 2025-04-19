@@ -6,11 +6,11 @@ import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
 /**
  * Represents a user in the system.
  * A user can exist in two forms:
- * 1. Registered via the app (Google Auth).
+ * 1. Registered via the app (either via auth provider or virtually by a Manager user).
  * 2. Virtual user created manually with just a name (e.g. children).
  */
 @Entity({ name: 'user' })
-export class User extends RootBaseEntity {
+export class UserEntity extends RootBaseEntity {
   @Column({ unique: true, length: 255, nullable: true })
   email: string | null; // Will be null for virtual users
 
