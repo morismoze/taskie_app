@@ -66,10 +66,10 @@ export class UserRepository {
   }
 
   async update(data: User): Promise<Nullable<User>> {
-    const updatedEntity = this.toPersistence(data);
-    await this.repo.save(updatedEntity);
+    const entity = this.repo.create(data);
+    await this.repo.save(entity);
 
-    return this.toDomain(updatedEntity);
+    return await this.findById(data.id);
   }
 
   async softDelete(id: User['id']): Promise<void> {

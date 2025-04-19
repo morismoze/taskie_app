@@ -1,6 +1,6 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Task } from 'src/modules/task/task-module/persistence/task.entity';
-import { Workspace } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
+import { WorkspaceEntity } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
 import {
   Column,
@@ -19,7 +19,7 @@ import { GoalType } from '../goal-type.enum';
  * 2. POINTS_BASED — completed when requiredPoints are accumulated (sum of WorkspaceUser.totalRewardPoints = requiredPoints).
  */
 @Entity()
-export class Goal extends RootBaseEntity {
+export class GoalEntity extends RootBaseEntity {
   @OneToMany(() => WorkspaceUser, (assignee) => assignee.workspace, {
     cascade: true,
   })
@@ -54,6 +54,6 @@ export class Goal extends RootBaseEntity {
   })
   type: GoalType; // Type of goal (TASK_BASED or POINTS_BASED)
 
-  @ManyToOne(() => Workspace, (ws) => ws.goals, { nullable: false })
-  workspace: Workspace; // Workspace this goal belongs to
+  @ManyToOne(() => WorkspaceEntity, (ws) => ws.goals, { nullable: false })
+  workspace: WorkspaceEntity; // Workspace this goal belongs to
 }

@@ -2,7 +2,7 @@ import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { UserStatus } from 'src/modules/user/user-status.enum';
 import { Column, Entity, Index, ManyToOne } from 'typeorm';
-import { Workspace } from '../../workspace-module/persistence/workspace.entity';
+import { WorkspaceEntity } from '../../workspace-module/persistence/workspace.entity';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 
 /**
@@ -12,8 +12,8 @@ import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 @Entity()
 export class WorkspaceUser extends RootBaseEntity {
   @Index()
-  @ManyToOne(() => Workspace)
-  workspace: Workspace;
+  @ManyToOne(() => WorkspaceEntity)
+  workspace: WorkspaceEntity;
 
   @Index()
   @ManyToOne(() => UserEntity)

@@ -1,5 +1,5 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { Goal } from 'src/modules/task/goal-module/persistence/goal.entity';
+import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
 import { Workspace } from 'src/modules/workspace/persistence/workspace.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { ProgressStatus } from 'src/modules/task/progress-status.enum';
@@ -25,8 +25,8 @@ export class Task extends RootBaseEntity {
   @Column({ nullable: true })
   reward: string | null; // Reward description for standalone tasks
 
-  @ManyToOne(() => Goal, { nullable: true })
-  goal: Goal | null; // Links task to a goal if not a standalone task
+  @ManyToOne(() => GoalEntity, { nullable: true })
+  goal: GoalEntity | null; // Links task to a goal if not a standalone task
 
   @Column({ default: 0 })
   rewardPoints: number; // Points assigned to this task when completed

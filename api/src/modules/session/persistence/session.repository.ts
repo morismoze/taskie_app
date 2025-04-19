@@ -37,8 +37,8 @@ export class SessionRepository {
   }
 
   async update(data: Session): Promise<Session> {
-    const updatedEntity = this.toPersistence(data);
-    await this.repo.save(updatedEntity);
+    const entity = this.repo.create(data);
+    await this.repo.save(entity);
 
     return await this.findById(data.id);
   }

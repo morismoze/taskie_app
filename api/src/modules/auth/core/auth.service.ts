@@ -17,11 +17,11 @@ import { UserService } from 'src/modules/user/user.service';
 import { AuthProvider } from './domain/auth-provider.enum';
 import { UserStatus } from 'src/modules/user/user-status.enum';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
-import { WorkspaceUserDomain } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserMembershipDto } from 'src/modules/workspace/workspace-user-module/dto/workspace-user.dto';
-import { UserDto } from 'src/modules/user/dto/user.dto';
+import { UserResponse } from 'src/modules/user/dto/user.dto';
 import { SessionService } from 'src/modules/session/session.service';
 import { Session } from 'src/modules/session/domain/session.domain';
+import { JwtRefreshPayload } from './strategies/domain/jwt-refresh-payload.domain';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +47,7 @@ export class AuthService {
     if (user) {
       // User has already "registered" via a social auth provider so
       // we check if there are any properties retrieved by the auth service
-      // that have changed
+      // that have changed.
       let email = undefined;
       let firstName = undefined;
       let lastName = undefined;
@@ -120,7 +120,7 @@ export class AuthService {
         workspaceId: wu.workspaceId,
       }));
 
-    const userDto: UserDto = {
+    const userDto: UserResponse = {
       createdAt: user.createdAt,
       email: user.email,
       firstName: user.firstName,
@@ -138,16 +138,46 @@ export class AuthService {
     };
   }
 
+  async me(jwtPayload: JwtPayload): Promise<UserResponse> {
+    const user = await this.userService.findById(jwtPayload.userId);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    const workspaceUserMemberships =
+      await this.workspaceUserService.getWorkspaceUserMemberships(
+        jwtPayload.userId,
+      );
+
+    const workspaceUserMembershipsDto: WorkspaceUserMembershipDto[] =
+      workspaceUserMemberships.map((wu) => ({
+        createdAt: wu.createdAt,
+        id: wu.id,
+        isOwner: wu.isOwner,
+        role: wu.role,
+        workspaceId: wu.workspaceId,
+      }));
+
+    return { ...user, memberships: workspaceUserMembershipsDto };
+  }
+
   async refreshToken(
-    data: Omit<JwtPayload, 'role'>,
+    data: JwtRefreshPayload,
   ): Promise<Omit<LoginResponse, 'user'>> {
     const session = await this.sessionService.findById(data.sessionId);
 
+    // Invalid session - does not exist
     if (!session) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.userService.findById(data.userId);
+    // Invalid session - hash is invalid
+    if (session.hash !== data.hash) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.userService.findById(session.user.id);
 
     if (!user) {
       throw new NotFoundException();
@@ -179,6 +209,10 @@ export class AuthService {
       refreshToken,
       tokenExpires,
     };
+  }
+
+  async logout(data: JwtPayload) {
+    return this.sessionService.deleteById(data.sessionId);
   }
 
   private async getTokensData(

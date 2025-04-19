@@ -3,8 +3,11 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  Param,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtPayload } from '../auth/core/strategies/domain/jwt-payload.domain';
 import { UserService } from './user.service';
 
 @Controller({
@@ -13,13 +16,12 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  /**
-   * This endpoint is invoked when a user wants to delete itself from the system
-   * or when a Manager wants to delete virtual user from the system
-   */
-  @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  softDelete(@Param('id') id: string): Promise<void> {
-    return this.userService.softDelete(id);
+  @Delete('me')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  softDelete(
+    @Request() request: Request & { user: JwtPayload },
+  ): Promise<void> {
+    return this.userService.softDelete(request.user.userId);
   }
 }
