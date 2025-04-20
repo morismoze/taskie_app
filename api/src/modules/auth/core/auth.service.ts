@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AggregatedConfig } from 'src/config/config.model';
+import { AggregatedConfig } from 'src/modules/app-config/config/config.model';
 import ms from 'ms';
 import * as crypto from 'crypto';
 import { JwtPayload } from './strategies/domain/jwt-payload.domain';
@@ -18,10 +18,11 @@ import { AuthProvider } from './domain/auth-provider.enum';
 import { UserStatus } from 'src/modules/user/user-status.enum';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
 import { WorkspaceUserMembershipDto } from 'src/modules/workspace/workspace-user-module/dto/workspace-user.dto';
-import { UserResponse } from 'src/modules/user/dto/user.dto';
+import { UserResponse } from 'src/modules/user/dto/user-response.dto';
 import { SessionService } from 'src/modules/session/session.service';
 import { Session } from 'src/modules/session/domain/session.domain';
 import { JwtRefreshPayload } from './strategies/domain/jwt-refresh-payload.domain';
+import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -162,9 +163,7 @@ export class AuthService {
     return { ...user, memberships: workspaceUserMembershipsDto };
   }
 
-  async refreshToken(
-    data: JwtRefreshPayload,
-  ): Promise<Omit<LoginResponse, 'user'>> {
+  async refreshToken(data: JwtRefreshPayload): Promise<TokenRefreshResponse> {
     const session = await this.sessionService.findById(data.sessionId);
 
     // Invalid session - does not exist

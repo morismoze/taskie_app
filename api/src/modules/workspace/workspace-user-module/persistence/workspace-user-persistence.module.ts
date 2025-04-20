@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WorkspaceUser } from './workspace-user.entity';
+import { WorkspaceUserService } from '../workspace-user.service';
+import { WorkspaceUserEntity } from './workspace-user.entity';
 import { WorkspaceUserRepository } from './workspace-user.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkspaceUser])],
+  imports: [TypeOrmModule.forFeature([WorkspaceUserEntity])],
   providers: [WorkspaceUserRepository],
-  exports: [WorkspaceUserRepository],
+  exports: [WorkspaceUserService],
 })
 export class WorkspaceUserPersistenceModule {}

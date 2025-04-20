@@ -1,23 +1,23 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
-import { Workspace } from 'src/modules/workspace/persistence/workspace.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { ProgressStatus } from 'src/modules/task/progress-status.enum';
+import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
-import { WorkspaceUser } from 'src/modules/workspace/workspace-role-module/persistence/workspace-member.entity';
+import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
+import { WorkspaceEntity } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
 
 /**
  * Represents a task that can either be part of a goal or act as a standalone goal.
  */
 @Entity()
-export class Task extends RootBaseEntity {
-  @OneToMany(() => WorkspaceUser, (assignee) => assignee.workspace, {
+export class TaskEntity extends RootBaseEntity {
+  @OneToMany(() => WorkspaceUserEntity, (assignee) => assignee.workspace, {
     cascade: true,
   })
-  assignees: WorkspaceUser[]; // Single task can be assigned to multiple WorkspaceUsers
+  assignees: WorkspaceUserEntity[]; // Single task can be assigned to multiple WorkspaceUsers
 
   @ManyToOne(() => UserEntity)
-  createdBy: WorkspaceUser;
+  createdBy: WorkspaceUserEntity;
 
   @Column({ nullable: true })
   description: string | null; // Description of the task
@@ -41,6 +41,6 @@ export class Task extends RootBaseEntity {
   @Column()
   title: string; // Title of the task
 
-  @ManyToOne(() => Workspace, { nullable: false })
-  workspace: Workspace; // Workspace the task belongs to
+  @ManyToOne(() => WorkspaceEntity, { nullable: false })
+  workspace: WorkspaceEntity; // Workspace the task belongs to
 }

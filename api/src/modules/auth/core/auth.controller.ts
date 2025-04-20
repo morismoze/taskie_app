@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { LoginResponse } from './dto/login-response.dto';
-import { UserResponse } from 'src/modules/user/dto/user.dto';
+import { UserResponse } from 'src/modules/user/dto/user-response.dto';
 import { JwtRefreshPayload } from './strategies/domain/jwt-refresh-payload.domain';
 import { JwtPayload } from './strategies/domain/jwt-payload.domain';
+import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
 
 @Controller({
   path: 'auth',
@@ -34,7 +34,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   refresh(
     @Request() request: Request & { user: JwtRefreshPayload },
-  ): Promise<Omit<LoginResponse, 'user'>> {
+  ): Promise<TokenRefreshResponse> {
     return this.authService.refreshToken(request.user);
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { AggregatedConfig } from 'src/config/config.model';
+import { AggregatedConfig } from 'src/modules/app-config/config/config.model';
 
 // 2nd way of configuring TypeORM
 // used inside NestJS context, typically for dynamic bootstrapping via DI

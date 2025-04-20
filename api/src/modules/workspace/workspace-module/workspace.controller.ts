@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -13,16 +14,37 @@ import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.
 import { RequireWorkspaceRole } from '../guards/workspace-role.decorator';
 import { WorkspaceRoleGuard } from '../guards/workspace-role.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { CreateVirtualWorkspaceUserRequest } from './dto/create-workspace-user.dto';
+import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
+import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
+import { WorkspacesPreviewsResponse } from './dto/workspaces-preview-response.dto';
 import { WorkspaceService } from './workspace.service';
 
 @Controller({
-  path: 'workspace',
+  path: 'workspaces',
 })
 export class AuthController {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
-  @Post('/workspace/:workspaceId/user')
+  @Post()
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.CREATED)
+  async createWorkspace(
+    @Request() request: Request & { user: JwtPayload },
+    @Body() payload: CreateWorkspaceRequest,
+  ): Promise<WorkspacesPreviewsResponse> {
+    return this.workspaceService.create(request.user.userId, payload);
+  }
+
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  getUserWorkspaces(
+    @Request() req: Request & { user: JwtPayload },
+  ): Promise<WorkspacesPreviewsResponse> {
+    return this.workspaceService.getUserWorkspaces(req.user.userId);
+  }
+
+  @Post('/:workspaceId/virutal-user')
   @RequireWorkspaceRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)

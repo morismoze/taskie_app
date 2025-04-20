@@ -1,10 +1,13 @@
+import { User } from 'src/modules/user/domain/user.domain';
+import { Workspace } from '../../workspace-module/domain/workspace.domain';
 import { WorkspaceUserRole } from './workspace-user-role.enum';
+import { WorkspaceUserStatus } from './workspace-user-status.enum';
 
-export interface WorkspaceUserDomain {
+export interface WorkspaceUser {
   id: string;
   createdAt: Date;
-  userId: string;
-  workspaceId: string;
+  user: User;
+  workspace: Workspace;
   role: WorkspaceUserRole;
-  isOwner: boolean;
+  status: WorkspaceUserStatus;
 }

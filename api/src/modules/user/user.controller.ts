@@ -11,7 +11,7 @@ import { JwtPayload } from '../auth/core/strategies/domain/jwt-payload.domain';
 import { UserService } from './user.service';
 
 @Controller({
-  path: 'user',
+  path: 'users',
 })
 export class UserController {
   constructor(private readonly userService: UserService) {}

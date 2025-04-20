@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
-import { AggregatedConfig } from 'src/config/config.model';
+import { AggregatedConfig } from 'src/modules/app-config/config/config.model';
 import { SocialLoginDomain } from '../core/domain/social-response.domain';
 import { AuthGoogleRequest } from './dto/google-auth-request.dto';
 

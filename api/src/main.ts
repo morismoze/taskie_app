@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
-import { AggregatedConfig } from './config/config.model';
+import { AggregatedConfig } from './modules/app-config/config/config.model';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import getValidationOptions from './common/helper/validation-options';
 import { RootExceptionsFilter } from './exception/root-exceptions.filter';

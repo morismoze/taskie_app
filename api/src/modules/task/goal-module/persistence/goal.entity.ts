@@ -1,7 +1,7 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { Task } from 'src/modules/task/task-module/persistence/task.entity';
+import { TaskEntity } from 'src/modules/task/task-module/persistence/task.entity';
 import { WorkspaceEntity } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
-import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
+import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
 import {
   Column,
   Entity,
@@ -10,7 +10,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { ProgressStatus } from '../../progress-status.enum';
+import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
 import { GoalType } from '../goal-type.enum';
 
 /**
@@ -20,13 +20,13 @@ import { GoalType } from '../goal-type.enum';
  */
 @Entity()
 export class GoalEntity extends RootBaseEntity {
-  @OneToMany(() => WorkspaceUser, (assignee) => assignee.workspace, {
+  @OneToMany(() => WorkspaceUserEntity, (assignee) => assignee.workspace, {
     cascade: true,
   })
-  assignees: WorkspaceUser[];
+  assignees: WorkspaceUserEntity[];
 
-  @ManyToOne(() => WorkspaceUser)
-  createdBy: WorkspaceUser; // The user who created this goal
+  @ManyToOne(() => WorkspaceUserEntity)
+  createdBy: WorkspaceUserEntity; // The user who created this goal
 
   @Column({ nullable: true })
   description: string | null; // Optional goal description
@@ -44,9 +44,9 @@ export class GoalEntity extends RootBaseEntity {
   })
   status: ProgressStatus; // Current status of the goal
 
-  @ManyToMany(() => Task, { nullable: true })
+  @ManyToMany(() => TaskEntity, { nullable: true })
   @JoinTable()
-  tasks: Task[] | null; // Tasks associated with this goal (only for TASK_BASED goals)
+  tasks: TaskEntity[] | null; // Tasks associated with this goal (only for TASK_BASED goals)
 
   @Column({
     type: 'enum',

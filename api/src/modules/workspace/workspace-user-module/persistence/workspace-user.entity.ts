@@ -1,16 +1,20 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
-import { UserStatus } from 'src/modules/user/user-status.enum';
-import { Column, Entity, Index, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, ManyToOne, Unique } from 'typeorm';
 import { WorkspaceEntity } from '../../workspace-module/persistence/workspace.entity';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
+import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
 
 /**
  * Represents a user's membership in a specific workspace.
  * Captures role and user-specific data within a workspace context.
+ * We have composite unique constraint on both user and workspace, because
+ * we don't want the same user to be defined multiple times as a workspace
+ * user within the same workspace.
  */
 @Entity()
-export class WorkspaceUser extends RootBaseEntity {
+@Unique('UQ_workspace_user', ['user', 'workspace'])
+export class WorkspaceUserEntity extends RootBaseEntity {
   @Index()
   @ManyToOne(() => WorkspaceEntity)
   workspace: WorkspaceEntity;
@@ -20,7 +24,7 @@ export class WorkspaceUser extends RootBaseEntity {
   user: UserEntity;
 
   // if a role ever gets more granular (permissions, descriptions, etc.) this can
-  // be implemented as separete WorkspaceRole entity
+  // be implemented as separate WorkspaceRole entity
   @Index({ unique: true })
   @Column({
     type: 'enum',
@@ -30,8 +34,7 @@ export class WorkspaceUser extends RootBaseEntity {
 
   @Column({
     type: 'enum',
-    enum: UserStatus,
-    default: UserStatus.ACTIVE,
+    enum: WorkspaceUserStatus,
   })
-  status: UserStatus;
+  status: WorkspaceUserStatus;
 }

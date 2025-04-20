@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { WorkspaceUser } from './workspace-user.entity';
+import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
+import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
+import { WorkspaceUser } from '../domain/workspace-user.domain';
+import { WorkspaceUserEntity } from './workspace-user.entity';
 
 @Injectable()
 export class WorkspaceUserRepository {
   constructor(
-    @InjectRepository(WorkspaceUser)
-    private readonly workspaceUserRepo: Repository<WorkspaceUser>,
+    @InjectRepository(WorkspaceUserEntity)
+    private readonly repo: Repository<WorkspaceUserEntity>,
   ) {}
 
-  async findByUserId(userId: string): Promise<WorkspaceUser[]> {
-    return await this.workspaceUserRepo
+  async findAllByUserId(
+    userId: WorkspaceUser['user']['id'],
+  ): Promise<WorkspaceUser[]> {
+    const entities = await this.repo
       .createQueryBuilder('workspaceUser')
       .select([
         'workspaceUser.id',
@@ -25,11 +30,39 @@ export class WorkspaceUserRepository {
       .innerJoin('workspaceUser.workspace', 'workspace')
       .innerJoin('workspace.owner', 'owner')
       .where('user.id = :userId', { userId })
-      .getMany();
-      should i also here load the workspacd entity for owner
-      this can maybe be a place for denormalization of the workspaceuser table and add isowner (
-        denormalization because we already have owner field
-      ), because we have to load the entire user for the userId (DO WE ACTUALLY NEED TO LAOD THE ENTIRE USER
-        OR IS IT JUST THAT WE ARE READING THE FOREIGH USERID KEY)
+      .getMany(); // always returns array
+
+    return entities.map((entity) => this.toDomain(entity));
+  }
+
+  async create(
+    userId: WorkspaceUser['user']['id'],
+    workspaceId: WorkspaceUser['workspace']['id'],
+    workspaceRole: WorkspaceUserRole,
+    status: WorkspaceUserStatus,
+  ): Promise<WorkspaceUser> {
+    const entity = this.repo.create({
+      user: { id: userId },
+      workspace: { id: workspaceId },
+      workspaceRole,
+      status,
+    });
+
+    const savedEntity = await this.repo.save(entity);
+
+    return this.toDomain(savedEntity);
+  }
+
+  toDomain(entity: WorkspaceUserEntity): WorkspaceUser {
+    return {
+      id: entity.id,
+      createdAt: entity.createdAt,
+      userId: entity.user.id,
+      workspaceId: entity.workspace.id,
+      workspaceName: entity.workspace.name,
+      role: entity.workspaceRole,
+      isOwner: entity.workspace.owner.id === entity.user.id,
+      status: entity.status,
+    };
   }
 }
