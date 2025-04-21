@@ -20,10 +20,14 @@ class EnvironmentVariablesValidator {
 export default registerAs<GoogleConfig>('app', (): GoogleConfig => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
+  // env vars will be defined after validateConfig is invoked
+  // and it asserted the needed env vars are set
+  const env = process.env as unknown as EnvironmentVariablesValidator;
+
   return {
     auth: {
-      clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+      clientId: env.AUTH_GOOGLE_CLIENT_ID,
+      clientSecret: env.AUTH_GOOGLE_CLIENT_SECRET,
     },
   };
 });

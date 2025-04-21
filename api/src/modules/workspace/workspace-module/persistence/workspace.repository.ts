@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
-import { User } from 'src/modules/user/domain/user.domain';
 import { Repository } from 'typeorm';
 import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user.domain';
+import { WorkspaceUserMapper } from '../../workspace-user-module/persistence/workspace-user.mapper';
 import { Workspace } from '../domain/workspace.domain';
 import { WorkspaceEntity } from './workspace.entity';
 
@@ -61,10 +61,20 @@ export class WorkspaceRepository {
       updatedAt: entity.updatedAt,
       deletedAt: entity.deletedAt,
       name: entity.name,
-      ownerId: entity.ownedBy.id,
-      goals: entity.goals,
-      members: entity.members,
-      standaloneTasks: entity.standaloneTasks,
+      ownedBy: {
+        id: entity.ownedBy.id,
+      },
+      goals: entity.goals.map((goal) => ({
+        id: goal.id,
+      })),
+      members: entity.members.map((member) =>
+        WorkspaceUserMapper.toDomain(member),
+      ),
+      standaloneTasks: entity.standaloneTasks.map((task) => ({
+        id: task.id,
+      })),
+      description: entity.description,
+      pictureUrl: entity.pictureUrl,
     };
   }
 }

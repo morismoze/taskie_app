@@ -1,10 +1,7 @@
-import { User } from 'src/modules/user/domain/user.domain';
-
 export interface Session {
   id: string;
-  user: User;
+  user: {
+    id: string;
+  };
   hash: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
 }

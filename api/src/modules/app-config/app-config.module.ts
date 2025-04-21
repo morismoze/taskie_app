@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from 'src/modules/app-config/config/app.config';
 import databaseConfig from 'src/database/config/database.config';
 import authConfig from '../auth/core/config/auth.config';
+import googleConfig from './config/google/google.config';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import authConfig from '../auth/core/config/auth.config';
       // the need to import it (using imports: [AppModule]) - it's auto injected
       isGlobal: true,
       // these are custom config factories — functions that take process.env and return structured config
-      load: [appConfig, databaseConfig, authConfig],
+      load: [appConfig, databaseConfig, authConfig, googleConfig],
       // loads and parses the .env file.
       // makes process.env.VARIABLE values available at runtime.
       envFilePath: ['.env'],

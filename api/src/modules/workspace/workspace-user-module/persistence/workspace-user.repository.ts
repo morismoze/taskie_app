@@ -5,6 +5,7 @@ import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
+import { WorkspaceUserMapper } from './workspace-user.mapper';
 
 @Injectable()
 export class WorkspaceUserRepository {
@@ -23,16 +24,16 @@ export class WorkspaceUserRepository {
         'workspaceUser.createdAt',
         'user.id',
         'workspace.id',
+        'workspace.name',
         'workspaceUser.workspaceRole',
         'owner.id',
       ])
       .innerJoin('workspaceUser.user', 'user')
       .innerJoin('workspaceUser.workspace', 'workspace')
-      .innerJoin('workspace.owner', 'owner')
       .where('user.id = :userId', { userId })
       .getMany(); // always returns array
 
-    return entities.map((entity) => this.toDomain(entity));
+    return entities.map((entity) => WorkspaceUserMapper.toDomain(entity));
   }
 
   async create(
@@ -50,19 +51,13 @@ export class WorkspaceUserRepository {
 
     const savedEntity = await this.repo.save(entity);
 
-    return this.toDomain(savedEntity);
-  }
+    // We need to fetch newly saved workspace user because TypeORM does not
+    // automatically populate relations like user and workspace on save() function
+    const newEntity = await this.repo.findOne({
+      where: { id: savedEntity.id },
+      relations: ['user', 'workspace'],
+    });
 
-  toDomain(entity: WorkspaceUserEntity): WorkspaceUser {
-    return {
-      id: entity.id,
-      createdAt: entity.createdAt,
-      userId: entity.user.id,
-      workspaceId: entity.workspace.id,
-      workspaceName: entity.workspace.name,
-      role: entity.workspaceRole,
-      isOwner: entity.workspace.owner.id === entity.user.id,
-      status: entity.status,
-    };
+    return WorkspaceUserMapper.toDomain(newEntity);
   }
 }

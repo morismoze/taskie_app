@@ -11,6 +11,15 @@ export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
   'jwt-refresh',
 ) {
+  // Calling parent constructor will:
+  // 1. Automatically verifies signature
+  // 2. Automatically validates standard claims:
+  //  exp (expiration)
+  //  nbf (not before)
+  //  iat (issued at) — not strictly for validity, but still parsed
+  // 3. Will reject expired tokens before validate() is even called
+  // Before the below validate function is called, an inner validate function
+  // is invoked, and if it fails for any reason, it will throw UnauthorizedException
   constructor(configService: ConfigService<AggregatedConfig>) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

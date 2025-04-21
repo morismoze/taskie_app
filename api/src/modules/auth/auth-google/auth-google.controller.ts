@@ -7,18 +7,17 @@ import { AuthGoogleRequest } from './dto/google-auth-request.dto';
 
 @Controller({
   path: 'auth/google',
-  version: '1',
 })
 export class AuthAppleController {
   constructor(
     private readonly authService: AuthService,
-    private readonly authAppleService: AuthGoogleService,
+    private readonly authGoogleService: AuthGoogleService,
   ) {}
 
-  @Post('login')
+  @Post()
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: AuthGoogleRequest): Promise<LoginResponse> {
-    const socialData = await this.authAppleService.getProfileByToken(loginDto);
+    const socialData = await this.authGoogleService.getProfileByToken(loginDto);
 
     return this.authService.socialLogin(AuthProvider.google, socialData);
   }

@@ -1,6 +1,6 @@
 export type AuthConfig = {
   secret: string;
-  expires: string;
+  expires: number;
   refreshSecret: string;
-  refreshExpires: string;
+  refreshExpires: number;
 };

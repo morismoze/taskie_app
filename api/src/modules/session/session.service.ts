@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
 import { Session } from './domain/session.domain';
 import { SessionRepository } from './persistence/session.repository';
@@ -7,33 +11,40 @@ import { SessionRepository } from './persistence/session.repository';
 export class SessionService {
   constructor(private readonly sessionRepository: SessionRepository) {}
 
-  create(
+  async create(
     userId: Session['user']['id'],
     hash: Session['hash'],
   ): Promise<Session> {
-    return this.sessionRepository.create(userId, hash);
+    const newSession = await this.sessionRepository.create(userId, hash);
+
+    if (!newSession) {
+      throw new InternalServerErrorException();
+    }
+
+    return newSession;
   }
 
   findById(id: Session['id']): Promise<Nullable<Session>> {
     return this.sessionRepository.findById(id);
   }
 
-  async update(
-    id: Session['id'],
-    hash: Session['hash'],
-  ): Promise<Session | null> {
+  async update(id: Session['id'], hash: Session['hash']): Promise<Session> {
     const session = await this.findById(id);
 
     if (!session) {
-      return null;
+      throw new NotFoundException();
     }
 
-    const updatedSession: Session = {
+    const updatedSession = await this.sessionRepository.update({
       ...session,
       hash,
-    };
+    });
 
-    return this.sessionRepository.update(updatedSession);
+    if (!updatedSession) {
+      throw new InternalServerErrorException();
+    }
+
+    return updatedSession;
   }
 
   deleteById(id: Session['id']): Promise<void> {

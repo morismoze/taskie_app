@@ -9,7 +9,7 @@ import { AggregatedConfig } from 'src/modules/app-config/config/config.model';
 import ms from 'ms';
 import * as crypto from 'crypto';
 import { JwtPayload } from './strategies/domain/jwt-payload.domain';
-import { SocialLoginDomain } from './domain/social-response.domain';
+import { SocialLogin } from './domain/social-login.domain';
 import { LoginResponse } from './dto/login-response.dto';
 import { Nullable } from 'src/common/types/nullable.type';
 import { User } from 'src/modules/user/domain/user.domain';
@@ -17,7 +17,6 @@ import { UserService } from 'src/modules/user/user.service';
 import { AuthProvider } from './domain/auth-provider.enum';
 import { UserStatus } from 'src/modules/user/user-status.enum';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
-import { WorkspaceUserMembershipDto } from 'src/modules/workspace/workspace-user-module/dto/workspace-user.dto';
 import { UserResponse } from 'src/modules/user/dto/user-response.dto';
 import { SessionService } from 'src/modules/session/session.service';
 import { Session } from 'src/modules/session/domain/session.domain';
@@ -36,7 +35,7 @@ export class AuthService {
 
   async socialLogin(
     authProvider: AuthProvider,
-    socialData: SocialLoginDomain,
+    socialData: SocialLogin,
   ): Promise<LoginResponse> {
     let user: Nullable<User> = await this.userService.findBySocialIdAndProvider(
       {
@@ -49,10 +48,11 @@ export class AuthService {
       // User has already "registered" via a social auth provider so
       // we check if there are any properties retrieved by the auth service
       // that have changed.
-      let email = undefined;
-      let firstName = undefined;
-      let lastName = undefined;
-      let profileImageUrl = undefined;
+      let email: SocialLogin['email'] | undefined = undefined;
+      let firstName: SocialLogin['firstName'] | undefined = undefined;
+      let lastName: SocialLogin['lastName'] | undefined = undefined;
+      let profileImageUrl: SocialLogin['profileImageUrl'] | undefined =
+        undefined;
 
       if (user.email !== socialData.email) {
         email = socialData.email;
@@ -96,6 +96,7 @@ export class AuthService {
 
     const session = await this.sessionService.create(user.id, hash);
 
+    // When user is first-time "registered", this will be empty array
     const workspaceUserMemberships =
       await this.workspaceUserService.getWorkspaceUserMemberships(user.id);
 
@@ -103,32 +104,22 @@ export class AuthService {
       await this.getTokensData(
         {
           userId: user.id,
-          roles: workspaceUserMemberships.map((wu) => ({
-            workspaceId: wu.workspaceId,
-            role: wu.role,
+          roles: workspaceUserMemberships.map((workspace) => ({
+            workspaceId: workspace.id,
+            role: workspace.role,
           })),
           sessionId: session.id,
         },
         hash,
       );
 
-    const workspaceUserMembershipsDto: WorkspaceUserMembershipDto[] =
-      workspaceUserMemberships.map((wu) => ({
-        createdAt: wu.createdAt,
-        id: wu.id,
-        isOwner: wu.isOwner,
-        role: wu.role,
-        workspaceId: wu.workspaceId,
-      }));
-
     const userDto: UserResponse = {
-      createdAt: user.createdAt,
       email: user.email,
       firstName: user.firstName,
       id: user.id,
       lastName: user.lastName,
-      memberships: workspaceUserMembershipsDto,
       profileImageUrl: user.profileImageUrl,
+      createdAt: user.createdAt,
     };
 
     return {
@@ -139,68 +130,62 @@ export class AuthService {
     };
   }
 
-  async me(jwtPayload: JwtPayload): Promise<UserResponse> {
-    const user = await this.userService.findById(jwtPayload.userId);
+  async me(data: JwtPayload): Promise<UserResponse> {
+    const user = await this.userService.findById(data.userId);
 
     if (!user) {
       throw new NotFoundException();
     }
 
-    const workspaceUserMemberships =
-      await this.workspaceUserService.getWorkspaceUserMemberships(
-        jwtPayload.userId,
-      );
+    const userDto: UserResponse = {
+      email: user.email,
+      firstName: user.firstName,
+      id: user.id,
+      lastName: user.lastName,
+      profileImageUrl: user.profileImageUrl,
+      createdAt: user.createdAt,
+    };
 
-    const workspaceUserMembershipsDto: WorkspaceUserMembershipDto[] =
-      workspaceUserMemberships.map((wu) => ({
-        createdAt: wu.createdAt,
-        id: wu.id,
-        isOwner: wu.isOwner,
-        role: wu.role,
-        workspaceId: wu.workspaceId,
-      }));
-
-    return { ...user, memberships: workspaceUserMembershipsDto };
+    return userDto;
   }
 
   async refreshToken(data: JwtRefreshPayload): Promise<TokenRefreshResponse> {
     const session = await this.sessionService.findById(data.sessionId);
 
-    // Invalid session - does not exist
-    if (!session) {
-      throw new UnauthorizedException();
-    }
-
-    // Invalid session - hash is invalid
-    if (session.hash !== data.hash) {
+    if (!session || session.hash !== data.hash) {
+      // Invalid session - does not exist or the provided hash is invalid
       throw new UnauthorizedException();
     }
 
     const user = await this.userService.findById(session.user.id);
 
     if (!user) {
-      throw new NotFoundException();
+      // Invalid session - user ID is corrupted
+      throw new UnauthorizedException();
     }
 
     const workspaceUserMemberships =
       await this.workspaceUserService.getWorkspaceUserMemberships(user.id);
 
-    const hash = crypto
+    const newHash = crypto
       .createHash('sha256')
       .update(crypto.randomBytes(length).toString('hex'))
       .digest('hex');
+
+    // Invalidate the existing session
+    await this.sessionService.update(session.id, newHash);
 
     const { accessToken, refreshToken, tokenExpires } =
       await this.getTokensData(
         {
           userId: user.id,
-          roles: workspaceUserMemberships.map((wu) => ({
-            workspaceId: wu.workspaceId,
-            role: wu.role,
+          roles: workspaceUserMemberships.map((workspaceUser) => ({
+            workspaceId: workspaceUser.workspace.id,
+            role: workspaceUser.role,
           })),
           sessionId: session.id,
         },
-        hash,
+        newHash,
       );
 
     return {
@@ -215,7 +200,7 @@ export class AuthService {
   }
 
   private async getTokensData(
-    data: Omit<JwtPayload, 'iat' | 'exp'>,
+    data: Omit<JwtPayload, 'iat' | 'exp' | 'nbf'>,
     hash: Session['hash'],
   ) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {

@@ -9,6 +9,7 @@ export type JwtPayload = {
     role: WorkspaceUserMembershipDto['role'];
   }[];
   sessionId: Session['id'];
-  iat: number; // The timestamp when the token was issued (in seconds since epoch)
-  exp: number; // The timestamp when the token expires (iat + expiresIn)
+  iat: number; // Issued at - it's used by the Passport strategy
+  exp: number; // Expiration - it's used by the Passport strategy)
+  nbf: number; // Not before - it's used by the Passport strategy)
 };

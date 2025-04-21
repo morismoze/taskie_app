@@ -1,5 +1,3 @@
-import { WorkspaceUserMembershipDto } from 'src/modules/workspace/workspace-user-module/dto/workspace-user.dto';
-
 export interface UserResponse {
   id: string;
   firstName: string;
@@ -7,5 +5,4 @@ export interface UserResponse {
   email: string | null;
   profileImageUrl: string | null;
   createdAt: Date;
-  memberships: WorkspaceUserMembershipDto[];
 }

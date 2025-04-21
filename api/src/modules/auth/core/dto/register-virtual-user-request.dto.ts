@@ -1,6 +1,6 @@
 import { IsString, Length } from 'class-validator';
 
-export class RegisterRequest {
+export class RegisterVirtualUserRequest {
   @IsString()
   @Length(1, 100)
   firstName: string;

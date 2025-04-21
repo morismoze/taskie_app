@@ -3,8 +3,7 @@ import {
   Catch,
   ArgumentsHost,
   HttpStatus,
-  NotFoundException,
-  UnauthorizedException,
+  HttpException,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ApiResponse } from 'src/common/types/api-response.type';
@@ -27,29 +26,16 @@ export class RootExceptionsFilter implements ExceptionFilter {
       return;
     }
 
-    if (exception instanceof NotFoundException) {
+    // For any other known thrown exceptions like: NotFoundException, InternalServerErrorException, UnauthorizedException
+    if (exception instanceof HttpException) {
       const response = ctx.getResponse();
-      httpAdapter.reply(response, undefined, HttpStatus.NOT_FOUND);
+      httpAdapter.reply(response, undefined, response.getStatus());
       return;
     }
-
-    if (exception instanceof UnauthorizedException) {
-      const response = ctx.getResponse();
-      httpAdapter.reply(response, undefined, HttpStatus.UNAUTHORIZED);
-      return;
-    }
-
-    // For unhandled exceptions, return a generic server error response
-    const responseBody: ApiResponse<null> = {
-      data: null,
-      error: {
-        code: ApiErrorCode.SERVER_ERROR,
-      },
-    };
 
     httpAdapter.reply(
       ctx.getResponse(),
-      responseBody,
+      undefined,
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }

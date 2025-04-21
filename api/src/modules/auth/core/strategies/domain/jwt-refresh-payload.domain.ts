@@ -3,6 +3,7 @@ import { Session } from 'src/modules/session/domain/session.domain';
 export type JwtRefreshPayload = {
   hash: Session['hash'];
   sessionId: Session['id'];
-  iat: number; // The timestamp when the token was issued (in seconds since epoch)
-  exp: number; // The timestamp when the token expires (iat + expiresIn)
+  iat: number; // Issued at - it's used by the Passport strategy
+  exp: number; // Expiration - it's used by the Passport strategy)
+  nbf: number; // Not before - it's used by the Passport strategy)
 };
