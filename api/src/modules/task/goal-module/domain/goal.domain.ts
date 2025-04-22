@@ -2,7 +2,7 @@ import { Workspace } from 'src/modules/workspace/workspace-module/domain/workspa
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
 import { Task } from '../../task-module/domain/task.domain';
-import { GoalType } from '../goal-type.enum';
+import { GoalType } from './goal-type.enum';
 
 export interface Goal {
   id: string;

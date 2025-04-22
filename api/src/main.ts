@@ -6,9 +6,14 @@ import { AggregatedConfig } from './modules/app-config/config/config.model';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import getValidationOptions from './common/helper/validation-options';
 import { RootExceptionsFilter } from './exception/root-exceptions.filter';
+import { ResponseTransformerInterceptor } from './common/interceptors/response-transformer.intereptor';
+import { RequestMetadataProcessingInterceptor } from './common/interceptors/request-metadata-processing.interceptor';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   const configService = app.get(ConfigService<AggregatedConfig>);
 
   app.setGlobalPrefix(
@@ -21,6 +26,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalFilters(new RootExceptionsFilter(app.get(HttpAdapterHost)));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalInterceptors(new ResponseTransformerInterceptor());
+  app.useGlobalInterceptors(new RequestMetadataProcessingInterceptor());
+
+  // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP
+  app.set('trust proxy', true);
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }

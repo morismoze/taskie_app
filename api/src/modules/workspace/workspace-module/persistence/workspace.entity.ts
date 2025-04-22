@@ -2,7 +2,7 @@ import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
 import { TaskEntity } from 'src/modules/task/task-module/persistence/task.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/workspace-user.entity';
 
 /**
@@ -11,6 +11,7 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
 @Entity()
 export class WorkspaceEntity extends RootBaseEntity {
   @ManyToOne(() => UserEntity, { nullable: false })
+  @JoinColumn({ name: 'owned_by' })
   ownedBy: UserEntity;
 
   @OneToMany(() => GoalEntity, (goal) => goal.workspace)
@@ -28,6 +29,6 @@ export class WorkspaceEntity extends RootBaseEntity {
   @OneToMany(() => TaskEntity, (t) => t.workspace)
   standaloneTasks: TaskEntity[];
 
-  @Column({ nullable: true })
+  @Column({ name: 'picture_url', nullable: true })
   pictureUrl: string | null;
 }

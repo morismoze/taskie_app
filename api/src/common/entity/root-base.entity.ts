@@ -23,7 +23,8 @@ export abstract class RootBaseEntity extends BaseEntity {
     default: () => 'CURRENT_TIMESTAMP',
     name: 'updated_at',
   })
-  updatedAt: Date; // It gets set automatically on INSERT and updated every time the entity is changed.
+  // It gets set automatically when save() method is invoked
+  updatedAt: Date;
 
   @DeleteDateColumn({
     type: 'timestamp',

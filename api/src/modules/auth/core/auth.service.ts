@@ -15,7 +15,7 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { User } from 'src/modules/user/domain/user.domain';
 import { UserService } from 'src/modules/user/user.service';
 import { AuthProvider } from './domain/auth-provider.enum';
-import { UserStatus } from 'src/modules/user/user-status.enum';
+import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
 import { UserResponse } from 'src/modules/user/dto/user-response.dto';
 import { SessionService } from 'src/modules/session/session.service';
@@ -36,6 +36,11 @@ export class AuthService {
   async socialLogin(
     authProvider: AuthProvider,
     socialData: SocialLogin,
+    ipAddress: Session['ipAddress'],
+    deviceId: Session['deviceId'],
+    deviceModel: Session['deviceModel'],
+    osVersion: Session['osVersion'],
+    appVersion: Session['appVersion'],
   ): Promise<LoginResponse> {
     let user: Nullable<User> = await this.userService.findBySocialIdAndProvider(
       {
@@ -94,7 +99,15 @@ export class AuthService {
       .update(crypto.randomBytes(length).toString('hex'))
       .digest('hex');
 
-    const session = await this.sessionService.create(user.id, hash);
+    const session = await this.sessionService.create({
+      user,
+      hash,
+      ipAddress,
+      deviceId,
+      deviceModel,
+      osVersion,
+      appVersion,
+    });
 
     // When user is first-time "registered", this will be empty array
     const workspaceUserMemberships =
@@ -172,7 +185,7 @@ export class AuthService {
       .update(crypto.randomBytes(length).toString('hex'))
       .digest('hex');
 
-    // Invalidate the existing session
+    // Invalidate the existing session with new hash
     await this.sessionService.update(session.id, newHash);
 
     const { accessToken, refreshToken, tokenExpires } =

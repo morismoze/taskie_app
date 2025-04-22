@@ -6,10 +6,11 @@ import {
   HttpStatus,
   Param,
   Post,
-  Request,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
 import { RequireWorkspaceRole } from '../guards/workspace-role.decorator';
 import { WorkspaceRoleGuard } from '../guards/workspace-role.guard';
@@ -22,14 +23,14 @@ import { WorkspaceService } from './workspace.service';
 @Controller({
   path: 'workspaces',
 })
-export class AuthController {
+export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
   async createWorkspace(
-    @Request() request: Request & { user: JwtPayload },
+    @Req() request: Request & { user: JwtPayload },
     @Body() payload: CreateWorkspaceRequest,
   ): Promise<WorkspacesPreviewsResponse> {
     return this.workspaceService.create(request.user.userId, payload);
@@ -39,7 +40,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   getUserWorkspaces(
-    @Request() req: Request & { user: JwtPayload },
+    @Req() req: Request & { user: JwtPayload },
   ): Promise<WorkspacesPreviewsResponse> {
     return this.workspaceService.getUserWorkspaces(req.user.userId);
   }
@@ -50,7 +51,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   createVirtualUser(
     @Param('workspaceId') workspaceId: string,
-    @Request() request: Request & { user: JwtPayload },
+    @Req() request: Request & { user: JwtPayload },
     @Body() newVirtualUser: CreateVirtualWorkspaceUserRequest,
   ): Promise<void> {
     return this.workspaceService.createVirtualUser(

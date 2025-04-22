@@ -5,13 +5,14 @@ import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
 import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
-import { GoalType } from '../goal-type.enum';
+import { GoalType } from '../domain/goal-type.enum';
 
 /**
  * Represents a goal within a workspace. Goals can be:
@@ -26,12 +27,13 @@ export class GoalEntity extends RootBaseEntity {
   assignees: WorkspaceUserEntity[];
 
   @ManyToOne(() => WorkspaceUserEntity)
+  @JoinColumn({ name: 'created_by' })
   createdBy: WorkspaceUserEntity; // The user who created this goal
 
   @Column({ nullable: true })
   description: string | null; // Optional goal description
 
-  @Column({ nullable: true })
+  @Column({ name: 'required_points', nullable: true })
   requiredPoints: number | null; // Points required for completion (only for POINTS_BASED goals)
 
   @Column()

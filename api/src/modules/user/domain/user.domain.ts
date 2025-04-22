@@ -1,7 +1,7 @@
 import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
-import { UserStatus } from '../user-status.enum';
+import { UserStatus } from './user-status.enum';
 
-export interface User {
+export class User {
   id: string;
   createdAt: Date;
   updatedAt: Date;

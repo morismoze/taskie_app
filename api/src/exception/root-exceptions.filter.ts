@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ApiResponse } from 'src/common/types/api-response.type';
-import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from './ApiHttpException.model';
 
 @Catch()

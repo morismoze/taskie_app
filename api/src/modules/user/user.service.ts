@@ -1,10 +1,15 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ApiHttpException } from 'src/exception/ApiHttpException.model';
 import { User } from './domain/user.domain';
-import { UserRepository } from './persistence/user.repository';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { Nullable } from 'src/common/types/nullable.type';
-import { UserStatus } from './user-status.enum';
+import { UserStatus } from './domain/user-status.enum';
+import { UserRepository } from './persistence/user.repository';
 
 @Injectable()
 export class UserService {
@@ -27,17 +32,29 @@ export class UserService {
       );
     }
 
-    return this.userRepository.create(data);
+    const newUser = await this.userRepository.create(data);
+
+    if (!newUser) {
+      throw new InternalServerErrorException();
+    }
+
+    return newUser;
   }
 
   /**
-   * This method creates a new user who was created by a Manager user
+   * This method creates a new virtual user who was created by a Manager user
    */
   async createVirtualUser(data: {
-    firstName: string;
-    lastName: string;
+    firstName: User['firstName'];
+    lastName: User['lastName'];
   }): Promise<User> {
-    return this.userRepository.createVirtualUser(data);
+    const newVirtalUser = await this.userRepository.createVirtualUser(data);
+
+    if (!newVirtalUser) {
+      throw new InternalServerErrorException();
+    }
+
+    return newVirtalUser;
   }
 
   async findById(id: User['id']): Promise<Nullable<User>> {
@@ -67,12 +84,7 @@ export class UserService {
    */
   async update(
     userId: User['id'],
-    data: Partial<
-      Pick<
-        User,
-        'email' | 'firstName' | 'lastName' | 'profileImageUrl' | 'status'
-      >
-    >,
+    data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>,
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
 
@@ -98,7 +110,14 @@ export class UserService {
       ...data,
     };
 
-    const savedUpdatedUser = await this.userRepository.update(updatedUser);
+    const savedUpdatedUser = await this.userRepository.update(
+      userId,
+      updatedUser,
+    );
+
+    if (!savedUpdatedUser) {
+      throw new InternalServerErrorException();
+    }
 
     return savedUpdatedUser;
   }

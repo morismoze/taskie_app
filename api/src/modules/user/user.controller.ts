@@ -3,10 +3,11 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  Request,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import { JwtPayload } from '../auth/core/strategies/domain/jwt-payload.domain';
 import { UserService } from './user.service';
 
@@ -19,9 +20,7 @@ export class UserController {
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
-  softDelete(
-    @Request() request: Request & { user: JwtPayload },
-  ): Promise<void> {
+  softDelete(@Req() request: Request & { user: JwtPayload }): Promise<void> {
     return this.userService.softDelete(request.user.userId);
   }
 }

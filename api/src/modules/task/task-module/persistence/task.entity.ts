@@ -1,6 +1,6 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
@@ -17,6 +17,7 @@ export class TaskEntity extends RootBaseEntity {
   assignees: WorkspaceUserEntity[]; // Single task can be assigned to multiple WorkspaceUsers
 
   @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'created_by' })
   createdBy: WorkspaceUserEntity;
 
   @Column({ nullable: true })
@@ -28,7 +29,7 @@ export class TaskEntity extends RootBaseEntity {
   @ManyToOne(() => GoalEntity, { nullable: true })
   goal: GoalEntity | null; // Links task to a goal if not a standalone task
 
-  @Column({ default: 0 })
+  @Column({ name: 'reward_points' })
   rewardPoints: number; // Points assigned to this task when completed
 
   @Column({

@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskEntity } from './task.entity';
+import { TaskRepository } from './task.repository';
+import { TaskRepositoryImpl } from './task.repository.impl';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TaskEntity])],
-  providers: [],
+  providers: [
+    {
+      provide: TaskRepository,
+      useClass: TaskRepositoryImpl,
+    },
+  ],
   exports: [],
 })
-export class GoalPersistenceModule {}
+export class TaskPersistenceModule {}

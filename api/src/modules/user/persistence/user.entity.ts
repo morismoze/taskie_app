@@ -1,6 +1,6 @@
 import { Column, Entity } from 'typeorm';
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { UserStatus } from '../user-status.enum';
+import { UserStatus } from '../domain/user-status.enum';
 import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
 
 /**
@@ -14,13 +14,13 @@ export class UserEntity extends RootBaseEntity {
   @Column({ unique: true, length: 255, nullable: true })
   email: string | null; // Will be null for virtual users
 
-  @Column({ length: 100 })
+  @Column({ name: 'first_name', length: 100 })
   firstName: string;
 
-  @Column({ length: 100 })
+  @Column({ name: 'last_name', length: 100 })
   lastName: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'profile_image_url', nullable: true })
   profileImageUrl: string | null; // Will be null for virtual users
 
   @Column({
@@ -29,7 +29,7 @@ export class UserEntity extends RootBaseEntity {
   })
   provider: AuthProvider;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ name: 'social_id', unique: true, nullable: true })
   socialId: string | null; // Will be null for virtual users
 
   @Column({

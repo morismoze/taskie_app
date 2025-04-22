@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
-import { UserRepository } from './user.repository';
+import { UserRepositoryImpl } from './user.repository.impl';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './user.entity';
+import { UserRepository } from './user.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
-  providers: [UserRepository],
+  providers: [
+    {
+      provide: UserRepository,
+      useClass: UserRepositoryImpl,
+    },
+  ],
   exports: [UserRepository],
 })
 export class UserPersistenceModule {}

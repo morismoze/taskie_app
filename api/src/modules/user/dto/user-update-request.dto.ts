@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
-import { UserStatus } from '../user-status.enum';
+import { UserStatus } from '../domain/user-status.enum';
 
 export class UserUpdateRequest {
   @IsOptional()
