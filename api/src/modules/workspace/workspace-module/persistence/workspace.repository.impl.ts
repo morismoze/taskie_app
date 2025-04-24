@@ -15,14 +15,15 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private readonly repo: Repository<WorkspaceEntity>,
   ) {}
 
-  async create(data: Workspace): Promise<Nullable<Workspace>> {
-    const persistenceModel = WorkspaceMapper.toPersistence(data);
-
-    const savedEntity = await this.repo.save(persistenceModel);
+  async create(
+    data: Pick<Workspace, 'name' | 'description' | 'pictureUrl' | 'ownedBy'>,
+  ): Promise<Nullable<Workspace>> {
+    // goals, standaloneTasks, members are reverse-side relations and not handled here
+    const savedEntity = await this.repo.save(data);
 
     const newEntity = await this.repo.findOne({
       where: { id: savedEntity.id },
-      relations: ['user', 'goals', 'members', 'standaloneTasks'],
+      relations: ['ownedBy', 'goals', 'members', 'standaloneTasks'],
     });
 
     return newEntity !== null ? WorkspaceMapper.toDomain(newEntity) : null;
@@ -31,7 +32,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   async findById(id: Workspace['id']): Promise<Nullable<Workspace>> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ['user', 'goals', 'members', 'standaloneTasks'],
+      relations: ['ownedBy', 'goals', 'members', 'standaloneTasks'],
     });
 
     return entity ? WorkspaceMapper.toDomain(entity) : null;
@@ -43,6 +44,10 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     const entities = await this.repo
       .createQueryBuilder('workspace')
       .innerJoin('workspace.members', 'workspaceUser')
+      .leftJoinAndSelect('workspace.ownedBy', 'ownedBy')
+      .leftJoinAndSelect('workspace.goals', 'goals')
+      .leftJoinAndSelect('workspace.members', 'members')
+      .leftJoinAndSelect('workspace.standaloneTasks', 'standaloneTasks')
       .where('workspaceUser.userId = :userId', { userId })
       .getMany(); // always returns array
 

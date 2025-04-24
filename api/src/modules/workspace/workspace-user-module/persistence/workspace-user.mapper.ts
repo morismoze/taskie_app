@@ -1,3 +1,5 @@
+import { UserMapper } from 'src/modules/user/persistence/user.mapper';
+import { WorkspaceMapper } from '../../workspace-module/persistence/workspace.mapper';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
 
@@ -6,15 +8,27 @@ export class WorkspaceUserMapper {
     return {
       id: entity.id,
       createdAt: entity.createdAt,
-      user: {
-        id: entity.user.id,
-      },
-      workspace: {
-        id: entity.workspace.id,
-        name: entity.workspace.name,
-      },
-      role: entity.workspaceRole,
+      updatedAt: entity.updatedAt,
+      deletedAt: entity.deletedAt,
+      user: UserMapper.toDomain(entity.user),
+      workspace: WorkspaceMapper.toDomain(entity.workspace),
+      workspaceRole: entity.workspaceRole,
       status: entity.status,
     };
+  }
+
+  static toPersistence(domain: WorkspaceUser): WorkspaceUserEntity {
+    const entity = new WorkspaceUserEntity();
+
+    entity.id = domain.id;
+    entity.createdAt = domain.createdAt;
+    entity.updatedAt = domain.updatedAt;
+    entity.deletedAt = domain.deletedAt;
+    entity.user = UserMapper.toPersistence(domain.user);
+    entity.workspace = WorkspaceMapper.toPersistence(domain.workspace);
+    entity.workspaceRole = domain.workspaceRole;
+    entity.status = domain.status;
+
+    return entity;
   }
 }

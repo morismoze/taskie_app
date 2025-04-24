@@ -14,16 +14,18 @@ export class WorkspaceUserService {
     workspaceId,
     userId,
     role,
+    status,
   }: {
     workspaceId: WorkspaceUser['workspace']['id'];
     userId: WorkspaceUser['user']['id'];
     role: WorkspaceUserRole;
+    status: WorkspaceUserStatus;
   }): Promise<WorkspaceUser> {
     return this.workspaceUserRepository.create(
       userId,
       workspaceId,
       role,
-      WorkspaceUserStatus.ACTIVE,
+      status,
     );
   }
 

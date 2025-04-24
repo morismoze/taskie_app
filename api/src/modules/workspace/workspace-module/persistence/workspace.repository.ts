@@ -4,7 +4,7 @@ import { Workspace } from '../domain/workspace.domain';
 
 export abstract class WorkspaceRepository {
   abstract create(
-    data: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+    data: Pick<Workspace, 'name' | 'description' | 'pictureUrl' | 'ownedBy'>,
   ): Promise<Nullable<Workspace>>;
 
   abstract findById(id: Workspace['id']): Promise<Nullable<Workspace>>;

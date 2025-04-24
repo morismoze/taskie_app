@@ -119,7 +119,7 @@ export class AuthService {
           userId: user.id,
           roles: workspaceUserMemberships.map((workspace) => ({
             workspaceId: workspace.id,
-            role: workspace.role,
+            role: workspace.workspaceRole,
           })),
           sessionId: session.id,
         },
@@ -194,7 +194,7 @@ export class AuthService {
           userId: user.id,
           roles: workspaceUserMemberships.map((workspaceUser) => ({
             workspaceId: workspaceUser.workspace.id,
-            role: workspaceUser.role,
+            role: workspaceUser.workspaceRole,
           })),
           sessionId: session.id,
         },

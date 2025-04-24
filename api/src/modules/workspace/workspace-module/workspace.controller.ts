@@ -12,7 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
-import { RequireWorkspaceRole } from '../guards/workspace-role.decorator';
+import { RequireWorkspaceUserRole } from '../guards/workspace-role.decorator';
 import { WorkspaceRoleGuard } from '../guards/workspace-role.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
@@ -45,8 +45,8 @@ export class WorkspaceController {
     return this.workspaceService.getUserWorkspaces(req.user.userId);
   }
 
-  @Post('/:workspaceId/virutal-user')
-  @RequireWorkspaceRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @Post(':workspaceId/virtual-users')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   createVirtualUser(

@@ -1,6 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { Nullable } from 'src/common/types/nullable.type';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
+import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { Workspace } from './domain/workspace.domain';
@@ -20,20 +27,36 @@ export class WorkspaceService {
 
   async create(
     ownerId: Workspace['ownedBy']['id'],
-    payload: CreateWorkspaceRequest,
+    data: CreateWorkspaceRequest,
   ): Promise<WorkspacesPreviewsResponse> {
-    const newWorkspace = await this.workspaceRepository.create(
-      payload,
-      ownerId,
-    );
+    const ownerUser = await this.userService.findById(ownerId);
 
-    // Add owner as the first workspace user of that newly created workspace
-    await this.workspaceUserService.create({
-      workspaceId: newWorkspace.id,
-      userId: ownerId,
-      role: WorkspaceUserRole.MANAGER,
+    if (!ownerUser) {
+      // Corrupted access token
+      throw new ForbiddenException();
+    }
+
+    // 1. create a new empty workspace
+    const newWorkspace = await this.workspaceRepository.create({
+      ownedBy: ownerUser,
+      description: data.description,
+      name: data.name,
+      pictureUrl: null,
     });
 
+    if (!newWorkspace) {
+      throw new InternalServerErrorException();
+    }
+
+    // 2. create a new workspace user for the owner
+    await this.workspaceUserService.create({
+      workspaceId: newWorkspace.id,
+      role: WorkspaceUserRole.MANAGER,
+      userId: ownerUser.id,
+      status: WorkspaceUserStatus.ACTIVE,
+    });
+
+    // 3. Refetch all owner user's workspaces
     const userWorkspaces =
       await this.workspaceRepository.findAllByUserId(ownerId);
 
@@ -70,6 +93,10 @@ export class WorkspaceService {
     return {
       ...workspaceUser,
     };
+  }
+
+  findById(id: Workspace['id']): Promise<Nullable<Workspace>> {
+    return this.workspaceRepository.findById(id);
   }
 
   async getUserWorkspaces(

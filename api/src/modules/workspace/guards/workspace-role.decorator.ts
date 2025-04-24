@@ -6,7 +6,7 @@ import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-use
  * More specifically, it attaches the key workspaceRole with the
  * value { workspaceIdParam, role }
  */
-export const RequireWorkspaceRole = (
+export const RequireWorkspaceUserRole = (
   workspaceIdParam: string,
   role: WorkspaceUserRole,
 ) => SetMetadata('workspaceRole', { workspaceIdParam, role });

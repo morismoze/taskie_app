@@ -1,4 +1,7 @@
+import { GoalMapper } from 'src/modules/task/goal-module/persistence/goal.mapper';
+import { TaskMapper } from 'src/modules/task/task-module/persistence/task.mapper';
 import { UserMapper } from 'src/modules/user/persistence/user.mapper';
+import { WorkspaceUserMapper } from '../../workspace-user-module/persistence/workspace-user.mapper';
 import { Workspace } from '../domain/workspace.domain';
 import { WorkspaceEntity } from './workspace.entity';
 
