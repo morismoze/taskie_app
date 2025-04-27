@@ -29,7 +29,7 @@ export class WorkspaceUserService {
     );
   }
 
-  async createVirtual(
+  async createVirtualUser(
     userId: WorkspaceUser['user']['id'],
     workspaceId: WorkspaceUser['workspace']['id'],
   ): Promise<WorkspaceUser> {

@@ -3,7 +3,8 @@ import { PassportModule } from '@nestjs/passport';
 import { GoalModule } from 'src/modules/task/goal-module/goal.module';
 import { TaskModule } from 'src/modules/task/task-module/task.module';
 import { UserModule } from 'src/modules/user/user.module';
-import { WorkspaceRoleGuard } from '../guards/workspace-role.guard';
+import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
+import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
 import { WorkspacePersistenceModule } from './persistence/workspace-persistence.module';
 import { WorkspaceController } from './workspace.controller';
 import { WorkspaceService } from './workspace.service';
@@ -17,6 +18,6 @@ import { WorkspaceService } from './workspace.service';
     TaskModule,
   ],
   controllers: [WorkspaceController],
-  providers: [WorkspaceService, WorkspaceRoleGuard],
+  providers: [WorkspaceService, WorkspaceRoleGuard, WorkspaceMembershipGuard],
 })
 export class WorkspaceModule {}

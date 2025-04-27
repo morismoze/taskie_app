@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
+import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
@@ -14,6 +15,7 @@ import { Workspace } from './domain/workspace.domain';
 import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
 import { CreateVirtualWorkspaceUserResponse } from './dto/create-virtual-workspace-user-response.dto copy';
 import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
+import { WorkspaceMembersResponse } from './dto/workspace-members-response.dto';
 import { WorkspacesPreviewsResponse } from './dto/workspaces-preview-response.dto';
 import { WorkspaceRepository } from './persistence/workspace.repository';
 
@@ -74,7 +76,7 @@ export class WorkspaceService {
 
   async createVirtualUser(
     workspaceId: Workspace['id'],
-    creatorId: Workspace['ownedBy']['id'],
+    creatorId: JwtPayload['userId'],
     payload: CreateVirtualWorkspaceUserRequest,
   ): Promise<CreateVirtualWorkspaceUserResponse> {
     const workspace = await this.workspaceRepository.findById(workspaceId);
@@ -83,16 +85,35 @@ export class WorkspaceService {
       throw new NotFoundException();
     }
 
-    const virtualUser =
-      await this.userService.createVirtualUser(newVirtualUser);
-    const workspaceUser = await this.workspaceUserService.createVirtual(
+    // 1. Create core user
+    const virtualUser = await this.userService.createVirtualUser(payload);
+
+    // 2. Create a workspace user relation linking the user to the workspace
+    await this.workspaceUserService.createVirtualUser(
       virtualUser.id,
       workspaceId,
     );
 
-    return {
-      ...workspaceUser,
-    };
+    const response: CreateVirtualWorkspaceUserResponse = workspace.members.map(
+      (member) => ({
+        id: member.id,
+        workspaceRole: member.workspaceRole,
+        user: {
+          id: member.user.id,
+          email: member.user.email,
+          firstName: member.user.firstName,
+          lastName: member.user.lastName,
+          profileImageUrl: member.user.profileImageUrl,
+          createdAt: member.user.createdAt,
+        },
+        isOwner: workspace.ownedBy.id === creatorId,
+        status: member.status,
+        createdAt: member.createdAt,
+        deletedAt: member.deletedAt,
+      }),
+    );
+
+    return response;
   }
 
   findById(id: Workspace['id']): Promise<Nullable<Workspace>> {
@@ -114,5 +135,33 @@ export class WorkspaceService {
     );
 
     return response;
+  }
+
+  async getWorkspaceMembers(
+    workspaceId: string,
+    requestUserId: string,
+  ): Promise<WorkspaceMembersResponse> {
+    const workspace = await this.findById(workspaceId);
+
+    if (!workspace) {
+      throw new NotFoundException();
+    }
+
+    return workspace.members.map((member) => ({
+      id: member.id,
+      workspaceRole: member.workspaceRole,
+      user: {
+        id: member.user.id,
+        email: member.user.email,
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+        profileImageUrl: member.user.profileImageUrl,
+        createdAt: member.user.createdAt,
+      },
+      isOwner: workspace.ownedBy.id === requestUserId,
+      status: member.status,
+      createdAt: member.createdAt,
+      deletedAt: member.deletedAt,
+    }));
   }
 }

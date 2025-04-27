@@ -1,13 +1,13 @@
+import { UserResponse } from 'src/modules/user/dto/user-response.dto';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
 
-export interface WorkspaceUserMembershipDto {
+export interface WorkspaceUserDto {
   id: string;
-  workspaceId: string;
-  role: WorkspaceUserRole;
+  workspaceRole: WorkspaceUserRole;
+  user: UserResponse;
   isOwner: boolean;
   status: WorkspaceUserStatus;
   createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
+  deletedAt: Date | null;
 }

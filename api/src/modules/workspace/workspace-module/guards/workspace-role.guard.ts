@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
-import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
+import { WorkspaceUserRole } from '../../workspace-user-module/domain/workspace-user-role.enum';
 
 @Injectable()
 export class WorkspaceRoleGuard implements CanActivate {
