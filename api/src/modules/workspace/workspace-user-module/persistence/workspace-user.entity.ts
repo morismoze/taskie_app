@@ -1,6 +1,16 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
+import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
+import { TaskAssignmentEntity } from 'src/modules/task/task-assignment/persistence/task-assignment.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
-import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm';
 import { WorkspaceEntity } from '../../workspace-module/persistence/workspace.entity';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
@@ -17,10 +27,12 @@ import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
 export class WorkspaceUserEntity extends RootBaseEntity {
   @Index()
   @ManyToOne(() => WorkspaceEntity)
+  @JoinColumn({ name: 'workspace_id' })
   workspace: WorkspaceEntity;
 
   @Index()
   @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   // if a role ever gets more granular (permissions, descriptions, etc.) this can
@@ -42,6 +54,15 @@ export class WorkspaceUserEntity extends RootBaseEntity {
   // The user who created this WorkspaceUser
   // Applicable in cases when virtual workspace users are created
   @ManyToOne(() => WorkspaceUserEntity, { nullable: true })
-  @JoinColumn({ name: 'created_by' })
+  @JoinColumn({ name: 'created_by_id' })
   createdBy: WorkspaceUserEntity | null;
+
+  @OneToMany(() => GoalEntity, (goal) => goal.assignee)
+  assignedGoals: GoalEntity[];
+
+  @OneToMany(
+    () => TaskAssignmentEntity,
+    (taskAssignment) => taskAssignment.assignee,
+  )
+  taskAssignments: TaskAssignmentEntity[];
 }

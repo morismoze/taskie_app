@@ -9,7 +9,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
 } from 'typeorm';
 import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
 import { GoalType } from '../domain/goal-type.enum';
@@ -21,26 +20,24 @@ import { GoalType } from '../domain/goal-type.enum';
  */
 @Entity()
 export class GoalEntity extends RootBaseEntity {
-  @OneToMany(() => WorkspaceUserEntity, (assignee) => assignee.workspace, {
-    cascade: true,
-  })
-  assignees: WorkspaceUserEntity[];
+  @ManyToOne(() => WorkspaceUserEntity)
+  @JoinColumn({ name: 'assignee_id' })
+  assignee: WorkspaceUserEntity;
 
   @ManyToOne(() => WorkspaceEntity)
+  @JoinColumn({ name: 'workspace_id' })
   workspace: WorkspaceEntity; // Workspace this goal belongs to
 
   @Column()
-  rewardTitle: string; // Title of the goal, basically represents string reward
+  reward: string; // Title of the goal, basically represents string reward
 
   @Column({ nullable: true })
   description: string | null; // Optional goal description
 
   @Column({ name: 'required_points', nullable: true })
-  // Points required for completion (only for POINTS_BASED goals)
-  // This is only for
-  requiredPoints: number | null;
+  requiredPoints: number | null; // Points required for completion (only for POINTS_BASED goals)
 
-  @ManyToMany(() => TaskEntity, { nullable: true })
+  @ManyToMany(() => TaskEntity, (task) => task.goals, { nullable: true })
   @JoinTable()
   tasks: TaskEntity[] | null; // Tasks associated with this goal (only for TASK_BASED goals)
 
@@ -58,6 +55,6 @@ export class GoalEntity extends RootBaseEntity {
   status: ProgressStatus; // Current status of the goal
 
   @ManyToOne(() => WorkspaceUserEntity)
-  @JoinColumn({ name: 'created_by' })
+  @JoinColumn({ name: 'created_by_id' })
   createdBy: WorkspaceUserEntity; // The user who created this goal
 }

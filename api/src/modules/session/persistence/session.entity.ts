@@ -1,12 +1,13 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
-import { Column, Entity, Index, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({
   name: 'session',
 })
 export class SessionEntity extends RootBaseEntity {
   @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
   @Index()
   user: UserEntity;
 

@@ -10,8 +10,8 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
  */
 @Entity()
 export class WorkspaceEntity extends RootBaseEntity {
-  @ManyToOne(() => UserEntity, { nullable: false })
-  @JoinColumn({ name: 'owned_by' })
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'owned_by_id' })
   ownedBy: UserEntity;
 
   @OneToMany(() => GoalEntity, (goal) => goal.workspace)
@@ -27,7 +27,7 @@ export class WorkspaceEntity extends RootBaseEntity {
   description: string | null;
 
   @OneToMany(() => TaskEntity, (t) => t.workspace)
-  standaloneTasks: TaskEntity[];
+  tasks: TaskEntity[];
 
   @Column({ name: 'picture_url', nullable: true })
   pictureUrl: string | null;

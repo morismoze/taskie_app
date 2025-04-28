@@ -11,9 +11,9 @@ export interface Task {
   assignees: WorkspaceUser[];
   createdBy: WorkspaceUser;
   description: string | null;
-  goal: Goal[] | null;
+  goals: Goal[] | null;
   rewardPoints: number;
   status: ProgressStatus;
-  rewardTitle: string;
+  title: string;
   workspace: Workspace;
 }
