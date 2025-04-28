@@ -26,25 +26,19 @@ export class GoalEntity extends RootBaseEntity {
   })
   assignees: WorkspaceUserEntity[];
 
-  @ManyToOne(() => WorkspaceUserEntity)
-  @JoinColumn({ name: 'created_by' })
-  createdBy: WorkspaceUserEntity; // The user who created this goal
+  @ManyToOne(() => WorkspaceEntity)
+  workspace: WorkspaceEntity; // Workspace this goal belongs to
+
+  @Column()
+  rewardTitle: string; // Title of the goal, basically represents string reward
 
   @Column({ nullable: true })
   description: string | null; // Optional goal description
 
   @Column({ name: 'required_points', nullable: true })
-  requiredPoints: number | null; // Points required for completion (only for POINTS_BASED goals)
-
-  @Column()
-  reward: string; // Reward description upon goal completion
-
-  @Column({
-    type: 'enum',
-    enum: ProgressStatus,
-    default: ProgressStatus.IN_PROGRESS,
-  })
-  status: ProgressStatus; // Current status of the goal
+  // Points required for completion (only for POINTS_BASED goals)
+  // This is only for
+  requiredPoints: number | null;
 
   @ManyToMany(() => TaskEntity, { nullable: true })
   @JoinTable()
@@ -56,6 +50,14 @@ export class GoalEntity extends RootBaseEntity {
   })
   type: GoalType; // Type of goal (TASK_BASED or POINTS_BASED)
 
-  @ManyToOne(() => WorkspaceEntity, (ws) => ws.goals, { nullable: false })
-  workspace: WorkspaceEntity; // Workspace this goal belongs to
+  @Column({
+    type: 'enum',
+    enum: ProgressStatus,
+    default: ProgressStatus.IN_PROGRESS,
+  })
+  status: ProgressStatus; // Current status of the goal
+
+  @ManyToOne(() => WorkspaceUserEntity)
+  @JoinColumn({ name: 'created_by' })
+  createdBy: WorkspaceUserEntity; // The user who created this goal
 }

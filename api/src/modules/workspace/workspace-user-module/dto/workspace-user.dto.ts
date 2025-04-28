@@ -6,8 +6,8 @@ export interface WorkspaceUserDto {
   id: string;
   workspaceRole: WorkspaceUserRole;
   user: UserResponse;
-  isOwner: boolean;
   status: WorkspaceUserStatus;
   createdAt: Date;
   deletedAt: Date | null;
+  createdBy: WorkspaceUserDto | null;
 }

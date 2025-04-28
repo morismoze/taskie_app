@@ -10,7 +10,7 @@ export class User {
   firstName: string;
   lastName: string;
   profileImageUrl: string | null;
-  provider: AuthProvider;
+  provider: AuthProvider | null;
   socialId: string | null;
   status: UserStatus;
 }

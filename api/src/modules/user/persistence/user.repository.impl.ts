@@ -54,7 +54,7 @@ export class UserRepositoryImpl implements UserRepository {
     socialId: User['socialId'];
     provider: User['provider'];
   }): Promise<Nullable<User>> {
-    if (!socialId) return null;
+    if (!socialId || !provider) return null;
 
     const user = await this.repo.findOne({
       where: {

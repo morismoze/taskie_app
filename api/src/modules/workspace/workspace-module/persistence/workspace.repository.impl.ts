@@ -21,12 +21,9 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     // goals, standaloneTasks, members are reverse-side relations and not handled here
     const savedEntity = await this.repo.save(data);
 
-    const newEntity = await this.repo.findOne({
-      where: { id: savedEntity.id },
-      relations: ['ownedBy', 'goals', 'members', 'standaloneTasks'],
-    });
+    const newEntity = await this.findById(savedEntity.id);
 
-    return newEntity !== null ? WorkspaceMapper.toDomain(newEntity) : null;
+    return newEntity;
   }
 
   async findById(id: Workspace['id']): Promise<Nullable<Workspace>> {

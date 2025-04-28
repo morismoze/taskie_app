@@ -26,8 +26,9 @@ export class UserEntity extends RootBaseEntity {
   @Column({
     type: 'enum',
     enum: AuthProvider,
+    nullable: true,
   })
-  provider: AuthProvider;
+  provider: AuthProvider | null;
 
   @Column({ name: 'social_id', unique: true, nullable: true })
   socialId: string | null; // Will be null for virtual users

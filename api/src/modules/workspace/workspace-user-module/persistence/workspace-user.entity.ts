@@ -1,6 +1,6 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
-import { Column, Entity, Index, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { WorkspaceEntity } from '../../workspace-module/persistence/workspace.entity';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
@@ -38,4 +38,10 @@ export class WorkspaceUserEntity extends RootBaseEntity {
     enum: WorkspaceUserStatus,
   })
   status: WorkspaceUserStatus;
+
+  // The user who created this WorkspaceUser
+  // Applicable in cases when virtual workspace users are created
+  @ManyToOne(() => WorkspaceUserEntity, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy: WorkspaceUserEntity | null;
 }

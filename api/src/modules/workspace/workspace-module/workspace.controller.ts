@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { WorkspacesPreviewsResponse } from './dto/workspaces-preview-response.dt
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
 import { WorkspaceMembersResponse } from './dto/workspace-members-response.dto';
+import { WorkspaceTasksResponse } from './dto/workspace-tasks-response.dto';
 
 @Controller({
   path: 'workspaces',
@@ -69,11 +71,20 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getWorkspaceMembers(
     @Param('workspaceId') workspaceId: string,
-    @Req() request: Request & { user: JwtPayload },
   ): Promise<WorkspaceMembersResponse> {
-    return this.workspaceService.getWorkspaceMembers(
+    return this.workspaceService.getWorkspaceMembers(workspaceId);
+  }
+
+  @Get(':workspaceId/tasks')
+  getTasks(
+    @Param('workspaceId') workspaceId: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
+  ): Promise<WorkspaceTasksResponse> {
+    return this.workspaceService.getWorkspaceTasks(
       workspaceId,
-      request.user.userId,
+      Number(page),
+      Number(limit),
     );
   }
 }

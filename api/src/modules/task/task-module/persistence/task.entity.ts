@@ -16,18 +16,17 @@ export class TaskEntity extends RootBaseEntity {
   })
   assignees: WorkspaceUserEntity[]; // Single task can be assigned to multiple WorkspaceUsers
 
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'created_by' })
-  createdBy: WorkspaceUserEntity;
+  @ManyToOne(() => WorkspaceEntity)
+  workspace: WorkspaceEntity; // Workspace the task belongs to
+
+  @Column()
+  rewardTitle: string; // Title of the task, basically represents string reward
 
   @Column({ nullable: true })
   description: string | null; // Description of the task
 
-  @Column({ nullable: true })
-  reward: string | null; // Reward description for standalone tasks
-
   @ManyToOne(() => GoalEntity, { nullable: true })
-  goal: GoalEntity | null; // Links task to a goal if not a standalone task
+  goal: GoalEntity[] | null; // Links task to a goal if not a standalone task (for TASK_BASED goals only)
 
   @Column({ name: 'reward_points' })
   rewardPoints: number; // Points assigned to this task when completed
@@ -39,9 +38,7 @@ export class TaskEntity extends RootBaseEntity {
   })
   status: ProgressStatus; // Current status of the task
 
-  @Column()
-  title: string; // Title of the task
-
-  @ManyToOne(() => WorkspaceEntity, { nullable: false })
-  workspace: WorkspaceEntity; // Workspace the task belongs to
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'created_by' })
+  createdBy: WorkspaceUserEntity;
 }

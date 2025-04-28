@@ -14,6 +14,7 @@ export class WorkspaceUserMapper {
       workspace: WorkspaceMapper.toDomain(entity.workspace),
       workspaceRole: entity.workspaceRole,
       status: entity.status,
+      createdBy: entity.createdBy,
     };
   }
 
@@ -28,6 +29,12 @@ export class WorkspaceUserMapper {
     entity.workspace = WorkspaceMapper.toPersistence(domain.workspace);
     entity.workspaceRole = domain.workspaceRole;
     entity.status = domain.status;
+
+    if (domain.createdBy) {
+      entity.createdBy = WorkspaceUserMapper.toPersistence(domain.createdBy);
+    } else {
+      entity.createdBy = null;
+    }
 
     return entity;
   }

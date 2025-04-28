@@ -27,12 +27,9 @@ export class SessionRepositoryImpl implements SessionRepository {
 
     const savedEntity = await this.repo.save(persistenceModel);
 
-    const newEntity = await this.repo.findOne({
-      where: { id: savedEntity.id },
-      relations: ['user'],
-    });
+    const newEntity = await this.findById(savedEntity.id);
 
-    return newEntity !== null ? SessionMapper.toDomain(newEntity) : null;
+    return newEntity;
   }
 
   async findById(id: Session['id']): Promise<Nullable<Session>> {

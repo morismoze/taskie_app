@@ -12,4 +12,5 @@ export interface WorkspaceUser {
   workspace: Workspace;
   workspaceRole: WorkspaceUserRole;
   status: WorkspaceUserStatus;
+  createdBy: WorkspaceUser | null;
 }

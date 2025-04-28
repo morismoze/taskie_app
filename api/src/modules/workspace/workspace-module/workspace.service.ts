@@ -16,6 +16,7 @@ import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspac
 import { CreateVirtualWorkspaceUserResponse } from './dto/create-virtual-workspace-user-response.dto copy';
 import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
 import { WorkspaceMembersResponse } from './dto/workspace-members-response.dto';
+import { WorkspaceTasksResponse } from './dto/workspace-tasks-response.dto';
 import { WorkspacesPreviewsResponse } from './dto/workspaces-preview-response.dto';
 import { WorkspaceRepository } from './persistence/workspace.repository';
 
@@ -52,9 +53,9 @@ export class WorkspaceService {
 
     // 2. create a new workspace user for the owner
     await this.workspaceUserService.create({
-      workspaceId: newWorkspace.id,
-      role: WorkspaceUserRole.MANAGER,
-      userId: ownerUser.id,
+      workspace: newWorkspace,
+      user: ownerUser,
+      workspaceRole: WorkspaceUserRole.MANAGER,
       status: WorkspaceUserStatus.ACTIVE,
     });
 
@@ -76,7 +77,7 @@ export class WorkspaceService {
 
   async createVirtualUser(
     workspaceId: Workspace['id'],
-    creatorId: JwtPayload['userId'],
+    createdById: JwtPayload['userId'],
     payload: CreateVirtualWorkspaceUserRequest,
   ): Promise<CreateVirtualWorkspaceUserResponse> {
     const workspace = await this.workspaceRepository.findById(workspaceId);
@@ -85,13 +86,21 @@ export class WorkspaceService {
       throw new NotFoundException();
     }
 
+    const creatorWorkspaceUser =
+      await this.workspaceUserService.findByUserId(createdById);
+
+    if (!creatorWorkspaceUser) {
+      throw new NotFoundException();
+    }
+
     // 1. Create core user
     const virtualUser = await this.userService.createVirtualUser(payload);
 
     // 2. Create a workspace user relation linking the user to the workspace
     await this.workspaceUserService.createVirtualUser(
-      virtualUser.id,
-      workspaceId,
+      workspace,
+      virtualUser,
+      creatorWorkspaceUser,
     );
 
     const response: CreateVirtualWorkspaceUserResponse = workspace.members.map(
@@ -106,7 +115,7 @@ export class WorkspaceService {
           profileImageUrl: member.user.profileImageUrl,
           createdAt: member.user.createdAt,
         },
-        isOwner: workspace.ownedBy.id === creatorId,
+        createdBy: member.createdBy,
         status: member.status,
         createdAt: member.createdAt,
         deletedAt: member.deletedAt,
@@ -116,7 +125,7 @@ export class WorkspaceService {
     return response;
   }
 
-  findById(id: Workspace['id']): Promise<Nullable<Workspace>> {
+  async findById(id: Workspace['id']): Promise<Nullable<Workspace>> {
     return this.workspaceRepository.findById(id);
   }
 
@@ -139,7 +148,6 @@ export class WorkspaceService {
 
   async getWorkspaceMembers(
     workspaceId: string,
-    requestUserId: string,
   ): Promise<WorkspaceMembersResponse> {
     const workspace = await this.findById(workspaceId);
 
@@ -158,7 +166,35 @@ export class WorkspaceService {
         profileImageUrl: member.user.profileImageUrl,
         createdAt: member.user.createdAt,
       },
-      isOwner: workspace.ownedBy.id === requestUserId,
+      createdBy: member.createdBy,
+      status: member.status,
+      createdAt: member.createdAt,
+      deletedAt: member.deletedAt,
+    }));
+  }
+
+  async getWorkspaceTasks(
+    workspaceId: string,
+    page: number,
+    limit: number,
+  ): Promise<WorkspaceTasksResponse> {
+    const workspace = await this.findById(workspaceId);
+
+    if (!workspace) {
+      throw new NotFoundException();
+    }
+
+    return workspace.standaloneTasks.map((member) => ({
+      id: member.id,
+      workspaceRole: member.workspaceRole,
+      user: {
+        id: member.user.id,
+        email: member.user.email,
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+        profileImageUrl: member.user.profileImageUrl,
+        createdAt: member.user.createdAt,
+      },
       status: member.status,
       createdAt: member.createdAt,
       deletedAt: member.deletedAt,

@@ -6,9 +6,7 @@ import { Column, Entity, Index, ManyToOne } from 'typeorm';
   name: 'session',
 })
 export class SessionEntity extends RootBaseEntity {
-  @ManyToOne(() => UserEntity, {
-    eager: true,
-  })
+  @ManyToOne(() => UserEntity)
   @Index()
   user: UserEntity;
 
