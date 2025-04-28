@@ -1,18 +1,10 @@
 import { RootDomain } from 'src/modules/database/domain/root.domain';
-import { Workspace } from 'src/modules/workspace/workspace-module/domain/workspace.domain';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
 import { Task } from '../../task-module/domain/task.domain';
-import { GoalType } from './goal-type.enum';
 
-export interface Goal extends RootDomain {
+export interface TaskAssignment extends RootDomain {
+  task: Task;
   assignee: WorkspaceUser;
-  workspace: Workspace;
-  reward: string;
-  description: string | null;
-  requiredPoints: number | null;
-  tasks: Task[] | null;
-  type: GoalType;
   status: ProgressStatus;
-  createdBy: WorkspaceUser;
 }

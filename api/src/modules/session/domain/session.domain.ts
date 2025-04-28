@@ -1,7 +1,7 @@
+import { RootDomain } from 'src/modules/database/domain/root.domain';
 import { User } from 'src/modules/user/domain/user.domain';
 
-export class Session {
-  id: string;
+export interface Session extends RootDomain {
   user: User;
   hash: string;
   ipAddress: string;
@@ -9,7 +9,4 @@ export class Session {
   deviceModel: string | null;
   osVersion: string | null;
   appVersion: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
 }
