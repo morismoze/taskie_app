@@ -1,11 +1,8 @@
 import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
+import { RootDomain } from 'src/modules/database/domain/root.domain';
 import { UserStatus } from './user-status.enum';
 
-export class User {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
+export interface User extends RootDomain {
   email: string | null;
   firstName: string;
   lastName: string;
