@@ -17,13 +17,13 @@ import { RequireWorkspaceUserRole } from './decorators/workspace-role.decorator'
 import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
-import { CreateVirtualWorkspaceUserResponse } from './dto/create-virtual-workspace-user-response.dto copy';
 import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
-import { WorkspacesPreviewsResponse } from './dto/workspaces-preview-response.dto';
+import { WorkspacesResponse } from './dto/workspaces-response.dto';
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
 import { WorkspaceMembersResponse } from './dto/workspace-members-response.dto';
 import { WorkspaceTasksResponse } from './dto/workspace-tasks-response.dto';
+import { WorkspaceTasksRequestQuery } from './dto/workspace-tasks-request.dto';
 
 @Controller({
   path: 'workspaces',
@@ -37,8 +37,11 @@ export class WorkspaceController {
   async createWorkspace(
     @Req() request: Request & { user: JwtPayload },
     @Body() payload: CreateWorkspaceRequest,
-  ): Promise<WorkspacesPreviewsResponse> {
-    return this.workspaceService.create(request.user.userId, payload);
+  ): Promise<WorkspacesResponse> {
+    return this.workspaceService.create({
+      createdById: request.user.userId,
+      data: payload,
+    });
   }
 
   @Get('me')
@@ -46,8 +49,8 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getUserWorkspaces(
     @Req() req: Request & { user: JwtPayload },
-  ): Promise<WorkspacesPreviewsResponse> {
-    return this.workspaceService.getUserWorkspaces(req.user.userId);
+  ): Promise<WorkspacesResponse> {
+    return this.workspaceService.getWorkspacesByUser(req.user.userId);
   }
 
   @Post(':workspaceId/virtual-users')
@@ -58,12 +61,12 @@ export class WorkspaceController {
     @Param('workspaceId') workspaceId: string,
     @Req() request: Request & { user: JwtPayload },
     @Body() newVirtualUser: CreateVirtualWorkspaceUserRequest,
-  ): Promise<CreateVirtualWorkspaceUserResponse> {
-    return this.workspaceService.createVirtualUser(
+  ): Promise<WorkspaceMembersResponse> {
+    return this.workspaceService.createVirtualUser({
       workspaceId,
-      request.user.userId,
-      newVirtualUser,
-    );
+      createdById: request.user.userId,
+      data: newVirtualUser,
+    });
   }
 
   @Get(':workspaceId/members')
@@ -76,15 +79,14 @@ export class WorkspaceController {
   }
 
   @Get(':workspaceId/tasks')
+  @UseGuards(AuthGuard('jwt'), WorkspaceMembershipGuard)
   getTasks(
     @Param('workspaceId') workspaceId: string,
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
+    @Query() query: WorkspaceTasksRequestQuery,
   ): Promise<WorkspaceTasksResponse> {
-    return this.workspaceService.getWorkspaceTasks(
+    return this.workspaceService.getWorkspaceTasks({
       workspaceId,
-      Number(page),
-      Number(limit),
-    );
+      query,
+    });
   }
 }

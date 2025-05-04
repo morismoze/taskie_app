@@ -1,5 +1,5 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
+import { GoalEntity } from 'src/modules/goal/persistence/goal.entity';
 import { TaskAssignmentEntity } from 'src/modules/task/task-assignment/persistence/task-assignment.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import {
@@ -58,7 +58,7 @@ export class WorkspaceUserEntity extends RootBaseEntity {
   createdBy: WorkspaceUserEntity | null;
 
   @OneToMany(() => GoalEntity, (goal) => goal.assignee)
-  assignedGoals: GoalEntity[];
+  goals: GoalEntity[];
 
   @OneToMany(
     () => TaskAssignmentEntity,

@@ -1,5 +1,5 @@
 import { RootDomain } from 'src/modules/database/domain/root.domain';
-import { Goal } from 'src/modules/task/goal-module/domain/goal.domain';
+import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { TaskAssignment } from 'src/modules/task/task-assignment/domain/task-assignment.domain';
 import { User } from 'src/modules/user/domain/user.domain';
 import { Workspace } from '../../workspace-module/domain/workspace.domain';
@@ -12,6 +12,6 @@ export interface WorkspaceUser extends RootDomain {
   workspaceRole: WorkspaceUserRole;
   status: WorkspaceUserStatus;
   createdBy: WorkspaceUser | null;
-  assignedGoals: Goal[];
+  goals: Goal[];
   taskAssignments: TaskAssignment[];
 }

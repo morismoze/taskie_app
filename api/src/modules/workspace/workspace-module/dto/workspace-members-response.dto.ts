@@ -1,3 +1,8 @@
-import { WorkspaceUserDto } from '../../workspace-user-module/dto/workspace-user.dto';
+interface WorkspaceUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profileImageUrl: string | null;
+}
 
-export type WorkspaceMembersResponse = WorkspaceUserDto[];
+export type WorkspaceMembersResponse = WorkspaceUser[];

@@ -10,7 +10,11 @@ export abstract class WorkspaceUserRepository {
     userId: WorkspaceUser['user']['id'],
   ): Promise<WorkspaceUser[]>;
 
-  abstract create(
-    data: Omit<WorkspaceUser, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
-  ): Promise<Nullable<WorkspaceUser>>;
+  abstract create(data: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    userId: WorkspaceUser['user']['id'];
+    workspaceRole: WorkspaceUser['workspaceRole'];
+    status: WorkspaceUser['status'];
+    createdById: WorkspaceUser['id'] | null;
+  }): Promise<Nullable<WorkspaceUser>>;
 }

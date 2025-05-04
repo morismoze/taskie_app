@@ -1,5 +1,5 @@
 export interface RootDomain {
-  id: number;
+  id: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

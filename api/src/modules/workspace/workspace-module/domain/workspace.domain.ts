@@ -1,11 +1,11 @@
 import { RootDomain } from 'src/modules/database/domain/root.domain';
-import { Goal } from 'src/modules/task/goal-module/domain/goal.domain';
+import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { Task } from 'src/modules/task/task-module/domain/task.domain';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user.domain';
 
 export interface Workspace extends RootDomain {
-  ownedBy: User;
+  createdBy: User;
   goals: Goal[];
   members: WorkspaceUser[];
   name: string;

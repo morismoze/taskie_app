@@ -12,22 +12,22 @@ export class WorkspaceUserService {
   ) {}
 
   async create({
-    workspace,
-    user,
+    workspaceId,
+    userId,
     workspaceRole,
     status,
   }: {
-    workspace: WorkspaceUser['workspace'];
-    user: WorkspaceUser['user'];
-    workspaceRole: WorkspaceUserRole;
-    status: WorkspaceUserStatus;
+    workspaceId: WorkspaceUser['workspace']['id'];
+    userId: WorkspaceUser['user']['id'];
+    workspaceRole: WorkspaceUser['workspaceRole'];
+    status: WorkspaceUser['status'];
   }): Promise<WorkspaceUser> {
     const workspaceUser = await this.workspaceUserRepository.create({
-      workspace,
-      user,
+      workspaceId,
+      userId,
       workspaceRole,
       status,
-      createdBy: null,
+      createdById: null,
     });
 
     if (!workspaceUser) {
@@ -37,17 +37,21 @@ export class WorkspaceUserService {
     return workspaceUser;
   }
 
-  async createVirtualUser(
-    workspace: WorkspaceUser['workspace'],
-    user: WorkspaceUser['user'],
-    createdBy: WorkspaceUser['createdBy'],
-  ): Promise<WorkspaceUser> {
+  async createVirtualUser({
+    workspaceId,
+    userId,
+    createdById,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    userId: WorkspaceUser['user']['id'];
+    createdById: WorkspaceUser['id'];
+  }): Promise<WorkspaceUser> {
     const workspaceUser = await this.workspaceUserRepository.create({
-      workspace,
-      user,
+      workspaceId,
+      userId,
       workspaceRole: WorkspaceUserRole.MEMBER,
       status: WorkspaceUserStatus.ACTIVE,
-      createdBy,
+      createdById,
     });
 
     if (!workspaceUser) {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { GoalModule } from 'src/modules/task/goal-module/goal.module';
+import { GoalModule } from 'src/modules/goal/goal.module';
 import { TaskModule } from 'src/modules/task/task-module/task.module';
 import { UserModule } from 'src/modules/user/user.module';
 import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';

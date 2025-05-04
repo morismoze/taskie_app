@@ -1,5 +1,5 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { GoalEntity } from 'src/modules/task/goal-module/persistence/goal.entity';
+import { GoalEntity } from 'src/modules/goal/persistence/goal.entity';
 import { TaskEntity } from 'src/modules/task/task-module/persistence/task.entity';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
@@ -12,7 +12,7 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
 export class WorkspaceEntity extends RootBaseEntity {
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'owned_by_id' })
-  ownedBy: UserEntity;
+  createdBy: UserEntity;
 
   @OneToMany(() => GoalEntity, (goal) => goal.workspace)
   goals: GoalEntity[];

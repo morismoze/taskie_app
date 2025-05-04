@@ -47,8 +47,26 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     return entities.map((entity) => WorkspaceUserMapper.toDomain(entity));
   }
 
-  async create(data: WorkspaceUser): Promise<Nullable<WorkspaceUser>> {
-    const persistenceModel = WorkspaceUserMapper.toPersistence(data);
+  async create({
+    workspaceId,
+    userId,
+    workspaceRole,
+    status,
+    createdById,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    userId: WorkspaceUser['user']['id'];
+    workspaceRole: WorkspaceUser['workspaceRole'];
+    status: WorkspaceUser['status'];
+    createdById: WorkspaceUser['id'] | null;
+  }): Promise<Nullable<WorkspaceUser>> {
+    const persistenceModel = this.repo.create({
+      workspace: { id: workspaceId },
+      user: { id: userId },
+      workspaceRole,
+      status,
+      createdBy: createdById ? { id: createdById } : null,
+    });
 
     const savedEntity = await this.repo.save(persistenceModel);
 

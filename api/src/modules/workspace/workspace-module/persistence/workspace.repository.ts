@@ -1,15 +1,30 @@
 import { Nullable } from 'src/common/types/nullable.type';
+import { FindOptionsRelations } from 'typeorm';
 import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user.domain';
 import { Workspace } from '../domain/workspace.domain';
+import { WorkspaceEntity } from './workspace.entity';
 
 export abstract class WorkspaceRepository {
-  abstract create(
-    data: Pick<Workspace, 'name' | 'description' | 'pictureUrl' | 'ownedBy'>,
-  ): Promise<Nullable<Workspace>>;
+  abstract create(data: {
+    name: Workspace['name'];
+    description: Workspace['description'];
+    pictureUrl: Workspace['pictureUrl'];
+    createdById: Workspace['createdBy']['id'];
+  }): Promise<Nullable<WorkspaceEntity>>;
 
-  abstract findById(id: Workspace['id']): Promise<Nullable<Workspace>>;
+  abstract findById({
+    id,
+    relations,
+  }: {
+    id: Workspace['id'];
+    relations?: FindOptionsRelations<WorkspaceEntity>;
+  }): Promise<Nullable<WorkspaceEntity>>;
 
-  abstract findAllByUserId(
-    userId: WorkspaceUser['user']['id'],
-  ): Promise<Workspace[]>;
+  abstract findAllByUserId({
+    userId,
+    relations = {},
+  }: {
+    userId: WorkspaceUser['user']['id'];
+    relations?: FindOptionsRelations<WorkspaceEntity>;
+  }): Promise<WorkspaceEntity[]>;
 }
