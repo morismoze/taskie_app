@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
-import { WorkspaceUserMapper } from './workspace-user.mapper';
 import { WorkspaceUserRepository } from './workspace-user.repository';
 
 @Injectable()
@@ -14,52 +13,49 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     private readonly repo: Repository<WorkspaceUserEntity>,
   ) {}
 
-  async findByUserId(
-    userId: WorkspaceUser['user']['id'],
-  ): Promise<Nullable<WorkspaceUser>> {
-    const user = await this.repo.findOne({
+  async findByUserId({
+    userId,
+    relations,
+  }: {
+    userId: WorkspaceUser['user']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Nullable<WorkspaceUserEntity>> {
+    return await this.repo.findOne({
       where: { user: { id: userId } },
-      relations: ['workspace', 'user', 'createdBy'],
+      relations,
     });
-
-    return user ? WorkspaceUserMapper.toDomain(user) : null;
   }
 
-  async findAllByUserId(
-    userId: WorkspaceUser['user']['id'],
-  ): Promise<WorkspaceUser[]> {
-    const entities = await this.repo
-      .createQueryBuilder('workspaceUser')
-      .select([
-        'workspaceUser.id',
-        'workspaceUser.createdAt',
-        'user.id',
-        'workspace.id',
-        'workspace.name',
-        'workspaceUser.workspaceRole',
-        'owner.id',
-      ])
-      .innerJoin('workspaceUser.user', 'user')
-      .innerJoin('workspaceUser.workspace', 'workspace')
-      .where('user.id = :userId', { userId })
-      .getMany(); // always returns array
-
-    return entities.map((entity) => WorkspaceUserMapper.toDomain(entity));
+  async findAllByUserId({
+    userId,
+    relations,
+  }: {
+    userId: WorkspaceUser['user']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<WorkspaceUserEntity[]> {
+    return await this.repo.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations,
+    });
   }
 
   async create({
-    workspaceId,
-    userId,
-    workspaceRole,
-    status,
-    createdById,
+    data: { workspaceId, userId, workspaceRole, status, createdById },
+    relations,
   }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    userId: WorkspaceUser['user']['id'];
-    workspaceRole: WorkspaceUser['workspaceRole'];
-    status: WorkspaceUser['status'];
-    createdById: WorkspaceUser['id'] | null;
-  }): Promise<Nullable<WorkspaceUser>> {
+    data: {
+      workspaceId: WorkspaceUser['workspace']['id'];
+      userId: WorkspaceUser['user']['id'];
+      workspaceRole: WorkspaceUser['workspaceRole'];
+      status: WorkspaceUser['status'];
+      createdById: WorkspaceUser['id'] | null;
+    };
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Nullable<WorkspaceUserEntity>> {
     const persistenceModel = this.repo.create({
       workspace: { id: workspaceId },
       user: { id: userId },
@@ -70,7 +66,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
 
     const savedEntity = await this.repo.save(persistenceModel);
 
-    const newEntity = await this.findByUserId(savedEntity.user.id);
+    const newEntity = await this.findByUserId({ userId: savedEntity.user.id });
 
     return newEntity;
   }

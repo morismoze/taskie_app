@@ -111,15 +111,15 @@ export class AuthService {
 
     // When user is first-time "registered", this will be empty array
     const workspaceUserMemberships =
-      await this.workspaceUserService.getWorkspaceUserMemberships(user.id);
+      await this.workspaceUserService.findByUserIdWithWorkspace(user.id);
 
     const { accessToken, refreshToken, tokenExpires } =
       await this.getTokensData(
         {
           userId: user.id,
-          roles: workspaceUserMemberships.map((workspace) => ({
-            workspaceId: workspace.id,
-            role: workspace.workspaceRole,
+          roles: workspaceUserMemberships.map((workspaceUser) => ({
+            workspaceId: workspaceUser.workspace.id,
+            role: workspaceUser.workspaceRole,
           })),
           sessionId: session.id,
         },
@@ -178,7 +178,7 @@ export class AuthService {
     }
 
     const workspaceUserMemberships =
-      await this.workspaceUserService.getWorkspaceUserMemberships(user.id);
+      await this.workspaceUserService.findByUserIdWithWorkspace(user.id);
 
     const newHash = crypto
       .createHash('sha256')

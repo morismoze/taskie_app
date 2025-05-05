@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
+import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
 import { WorkspaceUserRole } from './domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from './domain/workspace-user-status.enum';
 import { WorkspaceUser } from './domain/workspace-user.domain';
@@ -21,13 +22,15 @@ export class WorkspaceUserService {
     userId: WorkspaceUser['user']['id'];
     workspaceRole: WorkspaceUser['workspaceRole'];
     status: WorkspaceUser['status'];
-  }): Promise<WorkspaceUser> {
+  }): Promise<WorkspaceUserCore> {
     const workspaceUser = await this.workspaceUserRepository.create({
-      workspaceId,
-      userId,
-      workspaceRole,
-      status,
-      createdById: null,
+      data: {
+        workspaceId,
+        userId,
+        workspaceRole,
+        status,
+        createdById: null,
+      },
     });
 
     if (!workspaceUser) {
@@ -45,13 +48,15 @@ export class WorkspaceUserService {
     workspaceId: WorkspaceUser['workspace']['id'];
     userId: WorkspaceUser['user']['id'];
     createdById: WorkspaceUser['id'];
-  }): Promise<WorkspaceUser> {
+  }): Promise<WorkspaceUserCore> {
     const workspaceUser = await this.workspaceUserRepository.create({
-      workspaceId,
-      userId,
-      workspaceRole: WorkspaceUserRole.MEMBER,
-      status: WorkspaceUserStatus.ACTIVE,
-      createdById,
+      data: {
+        workspaceId,
+        userId,
+        workspaceRole: WorkspaceUserRole.MEMBER,
+        status: WorkspaceUserStatus.ACTIVE,
+        createdById,
+      },
     });
 
     if (!workspaceUser) {
@@ -61,13 +66,22 @@ export class WorkspaceUserService {
     return workspaceUser;
   }
 
+  /**
+   * This function returns workspace user membership a user has in a specific workspace
+   */
   async findByUserId(
     userId: WorkspaceUser['user']['id'],
-  ): Promise<Nullable<WorkspaceUser>> {
-    return this.workspaceUserRepository.findByUserId(userId);
+  ): Promise<Nullable<WorkspaceUserCore>> {
+    return this.workspaceUserRepository.findByUserId({ userId });
   }
 
-  async getWorkspaceUserMemberships(userId: string): Promise<WorkspaceUser[]> {
-    return this.workspaceUserRepository.findAllByUserId(userId);
+  /**
+   * This function returns workspace user memberships a user has in different workspaces
+   */
+  async findByUserIdWithWorkspace(userId: string): Promise<WorkspaceUser[]> {
+    return this.workspaceUserRepository.findAllByUserId({
+      userId,
+      relations: { workspace: true },
+    });
   }
 }
