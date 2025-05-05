@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsRelations,
+  ILike,
+  Repository,
+} from 'typeorm';
 import { ProgressStatus } from '../domain/progress-status.enum';
 import { TaskEntity } from './task.entity';
 import { TaskRepository } from './task.repository';
@@ -12,42 +17,51 @@ export class TaskRepositoryImpl implements TaskRepository {
     private readonly repo: Repository<TaskEntity>,
   ) {}
 
-  async findTasksWithAssigneesForWorkspace(
-    workspaceId: string,
-    {
-      page,
-      limit,
-      status,
-      search,
-    }: {
+  async findAllByWorkspaceId({
+    workspaceId,
+    query: { page, limit, status, search },
+    relations,
+  }: {
+    workspaceId: string;
+    query: {
       page: number;
       limit: number;
       status?: ProgressStatus;
       search?: string;
-    },
-  ): Promise<{ data: TaskEntity[]; total: number }> {
+    };
+    relations?: FindOptionsRelations<TaskEntity>;
+  }): Promise<{
+    data: TaskEntity[];
+    total: number;
+  }> {
     const offset = (page - 1) * limit;
 
-    const qb = this.repo
-      .createQueryBuilder('task')
-      .leftJoinAndSelect('task.taskAssignments', 'assignment')
-      .leftJoinAndSelect('assignment.assignee', 'assignee')
-      .leftJoinAndSelect('assignee.user', 'user')
-      .where('task.workspace.id = :workspaceId', { workspaceId });
+    const findOptions: FindManyOptions<TaskEntity> = {
+      where: { workspace: { id: workspaceId } },
+      skip: offset,
+      take: limit,
+      relations: {
+        taskAssignments: true, // This is used for fetching status of the task
+        ...relations,
+      },
+    };
 
     if (status) {
-      qb.andWhere('assignment.status = :status', { status });
+      findOptions.where = {
+        ...findOptions.where,
+        taskAssignments: { status },
+      };
     }
 
     if (search) {
-      qb.andWhere('LOWER(task.title) LIKE :search', {
-        search: `%${search.toLowerCase()}%`,
-      });
+      findOptions.where = {
+        ...findOptions.where,
+        title: ILike(`%${search}%`),
+      };
     }
 
-    qb.skip(offset).take(limit);
-
-    const [taskEntities, totalCount] = await qb.getManyAndCount();
+    const [taskEntities, totalCount] =
+      await this.repo.findAndCount(findOptions);
 
     return {
       data: taskEntities,

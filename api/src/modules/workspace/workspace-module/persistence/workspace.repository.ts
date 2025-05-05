@@ -5,11 +5,17 @@ import { Workspace } from '../domain/workspace.domain';
 import { WorkspaceEntity } from './workspace.entity';
 
 export abstract class WorkspaceRepository {
-  abstract create(data: {
-    name: Workspace['name'];
-    description: Workspace['description'];
-    pictureUrl: Workspace['pictureUrl'];
-    createdById: Workspace['createdBy']['id'];
+  abstract create({
+    data,
+    relations,
+  }: {
+    data: {
+      name: Workspace['name'];
+      description: Workspace['description'];
+      pictureUrl: Workspace['pictureUrl'];
+      createdById: Workspace['createdBy']['id'];
+    };
+    relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>>;
 
   abstract findById({
@@ -22,7 +28,7 @@ export abstract class WorkspaceRepository {
 
   abstract findAllByUserId({
     userId,
-    relations = {},
+    relations,
   }: {
     userId: WorkspaceUser['user']['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;

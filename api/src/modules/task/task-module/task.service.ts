@@ -1,42 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { WorkspaceTasksRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-tasks-request.dto';
-import { TaskAssignment } from '../task-assignment/domain/task-assignment.domain';
-import { ProgressStatus } from './domain/progress-status.enum';
-import { Task } from './domain/task.domain';
+import { TaskWithAssignees } from './domain/task-with-assignees.domain';
 import { TaskRepository } from './persistence/task.repository';
 
 @Injectable()
 export class TaskService {
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  async getWorkspaceTasks({
+  async getTasksByWorkspaceWithAssignees({
     workspaceId,
     query,
   }: {
     workspaceId: string;
     query: WorkspaceTasksRequestQuery;
   }): Promise<{
-    data: {
-      id: Task['id'];
-      title: Task['title'];
-      rewardPoints: Task['rewardPoints'];
-      assignees: {
-        id: TaskAssignment['assignee']['user']['id'];
-        firstName: TaskAssignment['assignee']['user']['firstName'];
-        lastName: TaskAssignment['assignee']['user']['lastName'];
-        profileImageUrl: TaskAssignment['assignee']['user']['profileImageUrl'];
-        status: ProgressStatus;
-      }[];
-    }[];
+    data: TaskWithAssignees[];
     total: number;
   }> {
     const { data: taskEntities, total } =
-      await this.taskRepository.findTasksWithAssigneesForWorkspace(
+      await this.taskRepository.findAllByWorkspaceId({
         workspaceId,
         query,
-      );
+        relations: {
+          taskAssignments: {
+            assignee: true,
+          },
+        },
+      });
 
-    const workspaceTasks = taskEntities.map((task) => ({
+    const tasks: TaskWithAssignees[] = taskEntities.map((task) => ({
       id: task.id,
       title: task.title,
       rewardPoints: task.rewardPoints,
@@ -47,10 +39,14 @@ export class TaskService {
         profileImageUrl: assignment.assignee.user.profileImageUrl,
         status: assignment.status,
       })),
+      createdAt: task.createdAt,
+      deletedAt: task.deletedAt,
+      description: task.description,
+      dueDate: task.dueDate,
     }));
 
     return {
-      data: workspaceTasks,
+      data: tasks,
       total: total,
     };
   }

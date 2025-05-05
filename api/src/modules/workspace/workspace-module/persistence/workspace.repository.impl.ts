@@ -15,15 +15,16 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   ) {}
 
   async create({
-    name,
-    description,
-    pictureUrl,
-    createdById,
+    data: { name, description, pictureUrl, createdById },
+    relations,
   }: {
-    name: Workspace['name'];
-    description: Workspace['description'];
-    pictureUrl: Workspace['pictureUrl'];
-    createdById: Workspace['createdBy']['id'];
+    data: {
+      name: Workspace['name'];
+      description: Workspace['description'];
+      pictureUrl: Workspace['pictureUrl'];
+      createdById: Workspace['createdBy']['id'];
+    };
+    relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>> {
     const persistenceModel = this.repo.create({
       name,
@@ -36,9 +37,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     const newEntity = await this.findById({
       id: savedEntity.id,
-      relations: {
-        members: { user: true },
-      },
+      relations,
     });
 
     return newEntity;
@@ -46,7 +45,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   async findById({
     id,
-    relations = {},
+    relations,
   }: {
     id: Workspace['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
@@ -59,7 +58,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   async findAllByUserId({
     userId,
-    relations = {},
+    relations,
   }: {
     userId: WorkspaceUser['user']['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;

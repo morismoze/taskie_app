@@ -66,7 +66,10 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
 
     const savedEntity = await this.repo.save(persistenceModel);
 
-    const newEntity = await this.findByUserId({ userId: savedEntity.user.id });
+    const newEntity = await this.findByUserId({
+      userId: savedEntity.user.id,
+      relations,
+    });
 
     return newEntity;
   }

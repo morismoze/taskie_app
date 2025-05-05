@@ -45,10 +45,12 @@ export class WorkspaceService {
 
     // 1. create a new empty workspace
     const newWorkspace = await this.workspaceRepository.create({
-      createdById: ownerUser.id,
-      description: data.description,
-      name: data.name,
-      pictureUrl: null,
+      data: {
+        createdById: ownerUser.id,
+        description: data.description,
+        name: data.name,
+        pictureUrl: null,
+      },
     });
 
     if (!newWorkspace) {
@@ -89,6 +91,11 @@ export class WorkspaceService {
   }): Promise<WorkspaceMembersResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
+      relations: {
+        members: {
+          user: true,
+        },
+      },
     });
 
     if (!workspace) {
@@ -182,7 +189,7 @@ export class WorkspaceService {
     }
 
     const { data: taskAssignments, total } =
-      await this.taskService.getWorkspaceTasks({
+      await this.taskService.getTasksByWorkspaceWithAssignees({
         workspaceId,
         query,
       });
