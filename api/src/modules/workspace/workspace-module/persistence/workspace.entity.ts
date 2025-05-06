@@ -12,23 +12,23 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
 export class WorkspaceEntity extends RootBaseEntity {
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'owned_by_id' })
-  createdBy: UserEntity;
+  createdBy!: UserEntity;
 
   @OneToMany(() => GoalEntity, (goal) => goal.workspace)
-  goals: GoalEntity[];
+  goals!: GoalEntity[];
 
   @OneToMany(() => WorkspaceUserEntity, (wm) => wm.workspace)
-  members: WorkspaceUserEntity[];
+  members!: WorkspaceUserEntity[];
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
-  description: string | null;
+  description!: string | null;
 
   @OneToMany(() => TaskEntity, (t) => t.workspace)
-  tasks: TaskEntity[];
+  tasks!: TaskEntity[];
 
   @Column({ name: 'picture_url', nullable: true })
-  pictureUrl: string | null;
+  pictureUrl!: string | null;
 }

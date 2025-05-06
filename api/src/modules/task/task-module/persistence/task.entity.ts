@@ -12,24 +12,24 @@ import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-ass
 export class TaskEntity extends RootBaseEntity {
   @ManyToOne(() => WorkspaceEntity)
   @JoinColumn({ name: 'workspace_id' })
-  workspace: WorkspaceEntity; // Workspace the task belongs to
+  workspace!: WorkspaceEntity; // Workspace the task belongs to
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column({ name: 'reward_points' })
-  rewardPoints: number;
+  rewardPoints!: number;
 
   @Column({ nullable: true })
-  description: string | null;
+  description!: string | null;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'created_by_id' })
-  createdBy: WorkspaceUserEntity;
+  createdBy!: WorkspaceUserEntity;
 
   @Column({ type: 'timestamp', nullable: true, name: 'due_date' })
-  dueDate: Date | null;
+  dueDate!: Date | null;
 
   @OneToMany(() => TaskAssignmentEntity, (ta) => ta.task)
-  taskAssignments: TaskAssignmentEntity[];
+  taskAssignments!: TaskAssignmentEntity[];
 }

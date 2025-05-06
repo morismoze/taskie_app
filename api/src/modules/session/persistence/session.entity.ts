@@ -9,16 +9,16 @@ export class SessionEntity extends RootBaseEntity {
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
   @Index()
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column()
-  hash: string;
+  hash!: string;
 
   @Column({ name: 'ip_address', type: 'varchar', length: 255 })
-  ipAddress: string;
+  ipAddress!: string;
 
   @Column({ name: 'device_id', type: 'varchar', length: 255, nullable: true })
-  deviceId: string | null;
+  deviceId!: string | null;
 
   @Column({
     name: 'device_model',
@@ -26,11 +26,11 @@ export class SessionEntity extends RootBaseEntity {
     length: 255,
     nullable: true,
   })
-  deviceModel: string | null;
+  deviceModel!: string | null;
 
   @Column({ name: 'os_version', type: 'varchar', length: 255, nullable: true })
-  osVersion: string | null;
+  osVersion!: string | null;
 
   @Column({ name: 'app_version', type: 'varchar', length: 255, nullable: true })
-  appVersion: string | null;
+  appVersion!: string | null;
 }

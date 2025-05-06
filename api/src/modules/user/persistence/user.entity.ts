@@ -12,31 +12,31 @@ import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
 @Entity({ name: 'user' })
 export class UserEntity extends RootBaseEntity {
   @Column({ unique: true, length: 255, nullable: true })
-  email: string | null; // Will be null for virtual users
+  email!: string | null; // Will be null for virtual users
 
   @Column({ name: 'first_name', length: 100 })
-  firstName: string;
+  firstName!: string;
 
   @Column({ name: 'last_name', length: 100 })
-  lastName: string;
+  lastName!: string;
 
   @Column({ name: 'profile_image_url', nullable: true })
-  profileImageUrl: string | null; // Will be null for virtual users
+  profileImageUrl!: string | null; // Will be null for virtual users
 
   @Column({
     type: 'enum',
     enum: AuthProvider,
     nullable: true,
   })
-  provider: AuthProvider | null;
+  provider!: AuthProvider | null;
 
   @Column({ name: 'social_id', unique: true, nullable: true })
-  socialId: string | null; // Will be null for virtual users
+  socialId!: string | null; // Will be null for virtual users
 
   @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.ACTIVE,
   })
-  status: UserStatus;
+  status!: UserStatus;
 }

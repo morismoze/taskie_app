@@ -12,8 +12,8 @@ export abstract class TaskRepository {
     query: {
       page: number;
       limit: number;
-      status?: ProgressStatus;
-      search?: string;
+      status: ProgressStatus;
+      search: string | null;
     };
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<{

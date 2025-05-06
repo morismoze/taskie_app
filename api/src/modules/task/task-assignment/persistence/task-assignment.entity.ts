@@ -17,16 +17,16 @@ import { TaskEntity } from '../../task-module/persistence/task.entity';
 export class TaskAssignmentEntity extends RootBaseEntity {
   @ManyToOne(() => TaskEntity)
   @JoinColumn({ name: 'task_id' })
-  task: TaskEntity;
+  task!: TaskEntity;
 
   @ManyToOne(() => WorkspaceUserEntity)
   @JoinColumn({ name: 'assignee_id' })
-  assignee: WorkspaceUserEntity;
+  assignee!: WorkspaceUserEntity;
 
   @Column({
     type: 'enum',
     enum: ProgressStatus,
     default: ProgressStatus.IN_PROGRESS,
   })
-  status: ProgressStatus;
+  status!: ProgressStatus;
 }

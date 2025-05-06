@@ -16,7 +16,7 @@ import { AuthGoogleRequest } from './dto/google-auth-request.dto';
 @Controller({
   path: 'auth/google',
 })
-export class AuthAppleController {
+export class AuthGoogleController {
   constructor(
     private readonly authService: AuthService,
     private readonly authGoogleService: AuthGoogleService,
@@ -30,14 +30,14 @@ export class AuthAppleController {
   ): Promise<LoginResponse> {
     const socialData = await this.authGoogleService.getProfileByToken(loginDto);
 
-    return this.authService.socialLogin(
-      AuthProvider.google,
+    return this.authService.socialLogin({
+      authProvider: AuthProvider.google,
       socialData,
-      request.ip as string,
-      request.metadata.deviceId,
-      request.metadata.deviceModel,
-      request.metadata.osVersion,
-      request.metadata.appVersion,
-    );
+      ipAddress: request.ip as string,
+      deviceId: request.metadata.deviceId,
+      deviceModel: request.metadata.deviceModel,
+      osVersion: request.metadata.osVersion,
+      appVersion: request.metadata.appVersion,
+    });
   }
 }

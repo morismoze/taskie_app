@@ -9,12 +9,16 @@ import { RootExceptionsFilter } from './exception/root-exceptions.filter';
 import { ResponseTransformerInterceptor } from './common/interceptors/response-transformer.intereptor';
 import { RequestMetadataProcessingInterceptor } from './common/interceptors/request-metadata-processing.interceptor';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { Environment } from './modules/app-config/config/app.config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
   const configService = app.get(ConfigService<AggregatedConfig>);
+  const isDevelopment =
+    configService.getOrThrow('app.nodeEnv', { infer: true }) ===
+    Environment.DEVELOPMENT;
 
   app.setGlobalPrefix(
     configService.getOrThrow('app.apiPrefix', { infer: true }),
@@ -29,8 +33,12 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseTransformerInterceptor());
   app.useGlobalInterceptors(new RequestMetadataProcessingInterceptor());
 
-  // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP
-  app.set('trust proxy', true);
+  if (!isDevelopment) {
+    // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP
+    app.set('trust proxy', true);
+  }
+
+  app.enableShutdownHooks();
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }

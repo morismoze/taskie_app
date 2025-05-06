@@ -1,11 +1,25 @@
-import { IsIn, IsString, Length, MaxLength } from 'class-validator';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateWorkspaceRequest {
+  @IsNotEmpty()
   @IsString()
   @Length(3, 50)
   name: string;
 
-  @IsIn([null, String])
+  @IsOptional()
+  @IsString()
   @MaxLength(80)
   description: string | null;
+
+  constructor(name: string, description?: string) {
+    this.name = name;
+    this.description = description !== undefined ? description : null;
+  }
 }

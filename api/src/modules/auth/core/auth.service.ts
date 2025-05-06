@@ -33,15 +33,23 @@ export class AuthService {
     private readonly sessionService: SessionService,
   ) {}
 
-  async socialLogin(
-    authProvider: AuthProvider,
-    socialData: SocialLogin,
-    ipAddress: Session['ipAddress'],
-    deviceId: Session['deviceId'],
-    deviceModel: Session['deviceModel'],
-    osVersion: Session['osVersion'],
-    appVersion: Session['appVersion'],
-  ): Promise<LoginResponse> {
+  async socialLogin({
+    authProvider,
+    socialData,
+    ipAddress,
+    deviceId,
+    deviceModel,
+    osVersion,
+    appVersion,
+  }: {
+    authProvider: AuthProvider;
+    socialData: SocialLogin;
+    ipAddress: Session['ipAddress'];
+    deviceId: Session['deviceId'];
+    deviceModel: Session['deviceModel'];
+    osVersion: Session['osVersion'];
+    appVersion: Session['appVersion'];
+  }): Promise<LoginResponse> {
     let user: Nullable<User> = await this.userService.findBySocialIdAndProvider(
       {
         socialId: socialData.id,

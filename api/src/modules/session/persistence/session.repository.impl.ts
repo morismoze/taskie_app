@@ -13,14 +13,6 @@ export class SessionRepositoryImpl implements SessionRepository {
     private readonly repo: Repository<SessionEntity>,
   ) {}
 
-  /**
-   * This method implements the create method in a smart way.
-   * The contract omits id, createdAt, updatedAt, deletedAt because these properties
-   * are auto generated/updated by Typeorm. But in this implementation we type the data
-   * as the entire Session domain (Session domain = Session entity), and this works
-   * because Typeorm supports partial updating meaning all undefined properties are skipped
-   * on save() method.
-   */
   async create({
     data: {
       userId,

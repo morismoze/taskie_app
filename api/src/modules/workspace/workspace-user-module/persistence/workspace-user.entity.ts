@@ -28,12 +28,12 @@ export class WorkspaceUserEntity extends RootBaseEntity {
   @Index()
   @ManyToOne(() => WorkspaceEntity)
   @JoinColumn({ name: 'workspace_id' })
-  workspace: WorkspaceEntity;
+  workspace!: WorkspaceEntity;
 
   @Index()
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user!: UserEntity;
 
   // if a role ever gets more granular (permissions, descriptions, etc.) this can
   // be implemented as separate WorkspaceRole entity
@@ -43,26 +43,26 @@ export class WorkspaceUserEntity extends RootBaseEntity {
     type: 'enum',
     enum: WorkspaceUserRole,
   })
-  workspaceRole: WorkspaceUserRole;
+  workspaceRole!: WorkspaceUserRole;
 
   @Column({
     type: 'enum',
     enum: WorkspaceUserStatus,
   })
-  status: WorkspaceUserStatus;
+  status!: WorkspaceUserStatus;
 
   // The user who created this WorkspaceUser
   // Applicable in cases when virtual workspace users are created
   @ManyToOne(() => WorkspaceUserEntity, { nullable: true })
   @JoinColumn({ name: 'created_by_id' })
-  createdBy: WorkspaceUserEntity | null;
+  createdBy!: WorkspaceUserEntity | null;
 
   @OneToMany(() => GoalEntity, (goal) => goal.assignee)
-  goals: GoalEntity[];
+  goals!: GoalEntity[];
 
   @OneToMany(
     () => TaskAssignmentEntity,
     (taskAssignment) => taskAssignment.assignee,
   )
-  taskAssignments: TaskAssignmentEntity[];
+  taskAssignments!: TaskAssignmentEntity[];
 }

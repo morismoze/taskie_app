@@ -26,8 +26,8 @@ export class TaskRepositoryImpl implements TaskRepository {
     query: {
       page: number;
       limit: number;
-      status?: ProgressStatus;
-      search?: string;
+      status: ProgressStatus;
+      search: string | null;
     };
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<{
@@ -37,7 +37,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     const offset = (page - 1) * limit;
 
     const findOptions: FindManyOptions<TaskEntity> = {
-      where: { workspace: { id: workspaceId } },
+      where: { workspace: { id: workspaceId }, taskAssignments: { status } },
       skip: offset,
       take: limit,
       relations: {
@@ -45,13 +45,6 @@ export class TaskRepositoryImpl implements TaskRepository {
         ...relations,
       },
     };
-
-    if (status) {
-      findOptions.where = {
-        ...findOptions.where,
-        taskAssignments: { status },
-      };
-    }
 
     if (search) {
       findOptions.where = {

@@ -12,29 +12,29 @@ import { ProgressStatus } from '../../task/task-module/domain/progress-status.en
 export class GoalEntity extends RootBaseEntity {
   @ManyToOne(() => WorkspaceUserEntity)
   @JoinColumn({ name: 'assignee_id' })
-  assignee: WorkspaceUserEntity;
+  assignee!: WorkspaceUserEntity;
 
   @ManyToOne(() => WorkspaceEntity)
   @JoinColumn({ name: 'workspace_id' })
-  workspace: WorkspaceEntity; // Workspace this goal belongs to
+  workspace!: WorkspaceEntity; // Workspace this goal belongs to
 
   @Column()
-  title: string; // Title of the goal, basically represents string reward
+  title!: string; // Title of the goal, basically represents string reward
 
   @Column({ nullable: true })
-  description: string | null; // Optional goal description
+  description!: string | null; // Optional goal description
 
   @Column({ name: 'required_points' })
-  requiredPoints: number;
+  requiredPoints!: number;
 
   @Column({
     type: 'enum',
     enum: ProgressStatus,
     default: ProgressStatus.IN_PROGRESS,
   })
-  status: ProgressStatus; // Current status of the goal
+  status!: ProgressStatus; // Current status of the goal
 
   @ManyToOne(() => WorkspaceUserEntity)
   @JoinColumn({ name: 'created_by_id' })
-  createdBy: WorkspaceUserEntity; // The user who created this goal
+  createdBy!: WorkspaceUserEntity; // The user who created this goal
 }
