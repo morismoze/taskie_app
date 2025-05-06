@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
+import { SessionCore } from './domain/session-core.domain';
 import { Session } from './domain/session.domain';
 import { SessionRepository } from './persistence/session.repository';
 
@@ -20,10 +21,16 @@ import { SessionRepository } from './persistence/session.repository';
 export class SessionService {
   constructor(private readonly sessionRepository: SessionRepository) {}
 
-  async create(
-    data: Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
-  ): Promise<Session> {
-    const newSession = await this.sessionRepository.create(data);
+  async create(data: {
+    userId: Session['user']['id'];
+    hash: Session['hash'];
+    ipAddress: Session['ipAddress'];
+    deviceId: Session['deviceId'];
+    deviceModel: Session['deviceModel'];
+    osVersion: Session['osVersion'];
+    appVersion: Session['appVersion'];
+  }): Promise<SessionCore> {
+    const newSession = await this.sessionRepository.create({ data });
 
     if (!newSession) {
       throw new InternalServerErrorException();
@@ -32,20 +39,53 @@ export class SessionService {
     return newSession;
   }
 
-  findById(id: Session['id']): Promise<Nullable<Session>> {
-    return this.sessionRepository.findById(id);
+  async findById(id: Session['id']): Promise<Nullable<SessionCore>> {
+    const session = await this.sessionRepository.findById({
+      id,
+    });
+
+    if (!session) {
+      throw new NotFoundException();
+    }
+
+    return {
+      ...session,
+    };
   }
 
-  async update(id: Session['id'], hash: Session['hash']): Promise<Session> {
+  async findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {
+    const session = await this.sessionRepository.findById({
+      id,
+      relations: { user: true },
+    });
+
+    if (!session) {
+      throw new NotFoundException();
+    }
+
+    return {
+      ...session,
+    };
+  }
+
+  async update({
+    id,
+    data,
+  }: {
+    id: Session['id'];
+    data: Partial<
+      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>
+    >;
+  }): Promise<SessionCore> {
     const session = await this.findById(id);
 
     if (!session) {
       throw new NotFoundException();
     }
 
-    const updatedSession = await this.sessionRepository.update(id, {
-      ...session,
-      hash,
+    const updatedSession = await this.sessionRepository.update({
+      id,
+      data,
     });
 
     if (!updatedSession) {

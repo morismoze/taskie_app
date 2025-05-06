@@ -100,7 +100,7 @@ export class AuthService {
       .digest('hex');
 
     const session = await this.sessionService.create({
-      user,
+      userId: user.id,
       hash,
       ipAddress,
       deviceId,
@@ -163,7 +163,7 @@ export class AuthService {
   }
 
   async refreshToken(data: JwtRefreshPayload): Promise<TokenRefreshResponse> {
-    const session = await this.sessionService.findById(data.sessionId);
+    const session = await this.sessionService.findByIdWithUser(data.sessionId);
 
     if (!session || session.hash !== data.hash) {
       // Invalid session - does not exist or the provided hash is invalid
@@ -186,7 +186,10 @@ export class AuthService {
       .digest('hex');
 
     // Invalidate the existing session with new hash
-    await this.sessionService.update(session.id, newHash);
+    await this.sessionService.update({
+      id: session.id,
+      data: { hash: newHash },
+    });
 
     const { accessToken, refreshToken, tokenExpires } =
       await this.getTokensData(

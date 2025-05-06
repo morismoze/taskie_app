@@ -1,19 +1,42 @@
 import { Nullable } from 'src/common/types/nullable.type';
+import { FindOptionsRelations } from 'typeorm';
 import { Session } from '../domain/session.domain';
+import { SessionEntity } from './session.entity';
 
 export abstract class SessionRepository {
-  abstract create(
-    data: Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
-  ): Promise<Nullable<Session>>;
+  abstract create({
+    data,
+    relations,
+  }: {
+    data: {
+      userId: Session['user']['id'];
+      hash: Session['hash'];
+      ipAddress: Session['ipAddress'];
+      deviceId: Session['deviceId'];
+      deviceModel: Session['deviceModel'];
+      osVersion: Session['osVersion'];
+      appVersion: Session['appVersion'];
+    };
+    relations?: FindOptionsRelations<SessionEntity>;
+  }): Promise<Nullable<SessionEntity>>;
 
-  abstract findById(id: Session['id']): Promise<Nullable<Session>>;
+  abstract findById({
+    id,
+    relations,
+  }: {
+    id: Session['id'];
+    relations?: FindOptionsRelations<SessionEntity>;
+  }): Promise<Nullable<Session>>;
 
-  abstract update(
-    id: Session['id'],
+  abstract update({
+    id,
+    data,
+  }: {
+    id: Session['id'];
     data: Partial<
-      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
-    >,
-  ): Promise<Nullable<Session>>;
+      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>
+    >;
+  }): Promise<Nullable<SessionEntity>>;
 
   abstract deleteById(id: Session['id']): Promise<void>;
 }

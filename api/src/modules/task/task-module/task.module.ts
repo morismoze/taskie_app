@@ -4,7 +4,7 @@ import { TaskService } from './task.service';
 
 @Module({
   imports: [TaskPersistenceModule],
-  providers: [],
+  providers: [TaskService],
   exports: [TaskService],
 })
 export class TaskModule {}
