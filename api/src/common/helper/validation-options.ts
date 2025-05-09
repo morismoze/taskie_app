@@ -4,8 +4,8 @@ import {
   ValidationPipeOptions,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Environment } from 'src/modules/app-config/config/app.config';
-import { AggregatedConfig } from 'src/modules/app-config/config/config.model';
+import { Environment } from 'src/config/app.config';
+import { AggregatedConfig } from 'src/config/config.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.model';
 

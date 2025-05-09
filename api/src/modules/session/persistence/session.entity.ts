@@ -17,9 +17,6 @@ export class SessionEntity extends RootBaseEntity {
   @Column({ name: 'ip_address', type: 'varchar', length: 255 })
   ipAddress!: string;
 
-  @Column({ name: 'device_id', type: 'varchar', length: 255, nullable: true })
-  deviceId!: string | null;
-
   @Column({
     name: 'device_model',
     type: 'varchar',

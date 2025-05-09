@@ -5,13 +5,13 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 @Module({
   imports: [
-    // bootstraps a TypeORM database connection dynamically, using config that's loaded via ConfigService
     TypeOrmModule.forRootAsync({
-      // uses TypeOrmConfigLoadService service to load DB config
       useClass: TypeOrmConfigLoadService,
-      // initializes and returns a TypeORM DataSource
-      dataSourceFactory: async (options: DataSourceOptions) => {
-        return new DataSource(options).initialize();
+      dataSourceFactory: async (options?: DataSourceOptions) => {
+        if (!options) {
+          throw new Error();
+        }
+        return await new DataSource(options).initialize();
       },
     }),
   ],

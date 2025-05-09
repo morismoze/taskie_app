@@ -25,7 +25,6 @@ export class SessionService {
     userId: Session['user']['id'];
     hash: Session['hash'];
     ipAddress: Session['ipAddress'];
-    deviceId: Session['deviceId'];
     deviceModel: Session['deviceModel'];
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];

@@ -1,0 +1,68 @@
+import { Injectable } from '@nestjs/common';
+import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
+import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
+import { GoalWithAssignee } from './domain/goal-with-assignee.domain';
+import { GoalRepository } from './persistence/goal.repository';
+
+@Injectable()
+export class GoalService {
+  constructor(
+    private readonly goalRepository: GoalRepository,
+    private readonly taskAssignmentService: TaskAssignmentService,
+  ) {}
+
+  async getGoalsByWorkspace({
+    workspaceId,
+    query,
+  }: {
+    workspaceId: string;
+    query: WorkspaceItemRequestQuery;
+  }): Promise<{
+    data: GoalWithAssignee[];
+    total: number;
+  }> {
+    const { data: goalEntities, total } =
+      await this.goalRepository.findAllByWorkspaceId({
+        workspaceId,
+        query,
+        relations: {
+          assignee: {
+            user: true,
+          },
+        },
+      });
+
+    const goals: GoalWithAssignee[] = [];
+
+    for (const goal of goalEntities) {
+      const accumulatedPoints =
+        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser(
+          goal.assignee.id, // WorkspaceUser ID
+          workspaceId,
+        );
+
+      goals.push({
+        id: goal.id,
+        title: goal.title,
+        description: goal.description,
+        requiredPoints: goal.requiredPoints,
+        accumulatedPoints,
+        status: goal.status,
+        assignee: {
+          id: goal.assignee.user.id,
+          firstName: goal.assignee.user.firstName,
+          lastName: goal.assignee.user.lastName,
+          profileImageUrl: goal.assignee.user.profileImageUrl,
+        },
+        createdAt: goal.createdAt,
+        deletedAt: goal.deletedAt,
+        updatedAt: goal.updatedAt,
+      });
+    }
+
+    return {
+      data: goals,
+      total: total,
+    };
+  }
+}

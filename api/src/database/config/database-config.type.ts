@@ -5,5 +5,5 @@ export type DatabaseConfig = {
   name: string;
   username: string;
   password: string;
-  maxConnections: number;
+  poolSize: number;
 };

@@ -5,7 +5,6 @@ export interface Session extends RootDomain {
   user: User;
   hash: string;
   ipAddress: string;
-  deviceId: string | null;
   deviceModel: string | null;
   osVersion: string | null;
   appVersion: string | null;

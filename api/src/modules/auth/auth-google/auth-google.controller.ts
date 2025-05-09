@@ -34,7 +34,6 @@ export class AuthGoogleController {
       authProvider: AuthProvider.google,
       socialData,
       ipAddress: request.ip as string,
-      deviceId: request.metadata.deviceId,
       deviceModel: request.metadata.deviceModel,
       osVersion: request.metadata.osVersion,
       appVersion: request.metadata.appVersion,

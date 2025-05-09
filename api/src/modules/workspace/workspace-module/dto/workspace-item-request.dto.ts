@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
-export class WorkspaceTasksRequestQuery {
+export class WorkspaceItemRequestQuery {
   @IsOptional()
   @Type(() => Number)
   @IsInt()

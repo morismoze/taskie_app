@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { GoalModule } from 'src/modules/goal/goal.module';
+import { TaskAssignmentModule } from 'src/modules/task/task-assignment/task-assignment.module';
 import { TaskModule } from 'src/modules/task/task-module/task.module';
 import { UserModule } from 'src/modules/user/user.module';
 import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
@@ -16,6 +17,7 @@ import { WorkspaceService } from './workspace.service';
     UserModule,
     GoalModule,
     TaskModule,
+    TaskAssignmentModule,
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService, WorkspaceRoleGuard, WorkspaceMembershipGuard],

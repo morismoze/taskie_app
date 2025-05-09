@@ -1,8 +1,7 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-// 1st way of configuring TypeORM
-// used outside of NestJS context, e.g. in migration CLI scripts
+// TypeORM config used outside of NestJS context, e.g. in migration CLI scripts
 
 export const AppDataSource = new DataSource({
   type: process.env.DATABASE_TYPE,
@@ -10,22 +9,11 @@ export const AppDataSource = new DataSource({
   port: process.env.DATABASE_PORT
     ? parseInt(process.env.DATABASE_PORT, 10)
     : 5432,
+  database: process.env.DATABASE_NAME,
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
   dropSchema: false,
-  keepConnectionAlive: true,
-  logging: process.env.NODE_ENV !== 'production',
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-  cli: {
-    entitiesDir: 'src',
-    migrationsDir: 'src/database/migrations',
-    subscribersDir: 'subscriber',
-  },
-  extra: {
-    max: process.env.DATABASE_MAX_CONNECTIONS
-      ? parseInt(process.env.DATABASE_MAX_CONNECTIONS, 10)
-      : 100,
-  },
+  poolSize: process.env.DATABASE_POOL_SIZE,
 } as DataSourceOptions);

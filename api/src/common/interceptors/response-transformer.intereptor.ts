@@ -9,12 +9,20 @@ import { ApiResponse } from '../types/api-response.type';
 
 @Injectable()
 export class ResponseTransformerInterceptor<T>
-  implements NestInterceptor<T, ApiResponse<T>>
+  implements NestInterceptor<T, ApiResponse<T> | null>
 {
   intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler,
-  ): Observable<ApiResponse<T>> {
-    return next.handle().pipe(map((data) => ({ data, error: null })));
+  ): Observable<ApiResponse<T> | null> {
+    return next.handle().pipe(
+      map((data) => {
+        if (data === undefined) {
+          return null;
+        }
+
+        return { data, error: null };
+      }),
+    );
   }
 }

@@ -1,8 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
@@ -30,7 +30,7 @@ export class WorkspaceRoleGuard implements CanActivate {
     );
 
     if (!hasRole) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
 
     return true;

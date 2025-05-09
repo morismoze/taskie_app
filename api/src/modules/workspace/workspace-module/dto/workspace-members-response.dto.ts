@@ -1,8 +1,8 @@
-interface WorkspaceUser {
+export interface WorkspaceUserResponse {
   id: string;
   firstName: string;
   lastName: string;
   profileImageUrl: string | null;
 }
 
-export type WorkspaceMembersResponse = WorkspaceUser[];
+export type WorkspaceUsersResponse = WorkspaceUserResponse[];

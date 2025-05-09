@@ -32,6 +32,7 @@ export class RootExceptionsFilter implements ExceptionFilter {
       return;
     }
 
+    // For any other unknown errors (e.g. bare Error class)
     httpAdapter.reply(
       ctx.getResponse(),
       undefined,

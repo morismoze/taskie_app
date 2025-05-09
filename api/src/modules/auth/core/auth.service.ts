@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AggregatedConfig } from 'src/modules/app-config/config/config.model';
+import { AggregatedConfig } from 'src/config/config.type';
 import ms from 'ms';
 import * as crypto from 'crypto';
 import { JwtPayload } from './strategies/domain/jwt-payload.domain';
@@ -37,7 +37,6 @@ export class AuthService {
     authProvider,
     socialData,
     ipAddress,
-    deviceId,
     deviceModel,
     osVersion,
     appVersion,
@@ -45,7 +44,6 @@ export class AuthService {
     authProvider: AuthProvider;
     socialData: SocialLogin;
     ipAddress: Session['ipAddress'];
-    deviceId: Session['deviceId'];
     deviceModel: Session['deviceModel'];
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
@@ -111,7 +109,6 @@ export class AuthService {
       userId: user.id,
       hash,
       ipAddress,
-      deviceId,
       deviceModel,
       osVersion,
       appVersion,
@@ -134,7 +131,7 @@ export class AuthService {
         hash,
       );
 
-    const userDto: UserResponse = {
+    const userDto: LoginResponse['user'] = {
       email: user.email,
       firstName: user.firstName,
       id: user.id,
@@ -158,7 +155,7 @@ export class AuthService {
       throw new NotFoundException();
     }
 
-    const userDto: UserResponse = {
+    const userDto: LoginResponse['user'] = {
       email: user.email,
       firstName: user.firstName,
       id: user.id,

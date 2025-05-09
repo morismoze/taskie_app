@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { WorkspaceTasksRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-tasks-request.dto';
+import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/create-task-request.dto';
+import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
+import { TaskCore } from './domain/task-core.domain';
 import { TaskWithAssignees } from './domain/task-with-assignees.domain';
+import { Task } from './domain/task.domain';
 import { TaskRepository } from './persistence/task.repository';
 
 @Injectable()
@@ -12,7 +15,7 @@ export class TaskService {
     query,
   }: {
     workspaceId: string;
-    query: WorkspaceTasksRequestQuery;
+    query: WorkspaceItemRequestQuery;
   }): Promise<{
     data: TaskWithAssignees[];
     total: number;
@@ -32,6 +35,8 @@ export class TaskService {
       id: task.id,
       title: task.title,
       rewardPoints: task.rewardPoints,
+      description: task.description,
+      dueDate: task.dueDate,
       assignees: task.taskAssignments.map((assignment) => ({
         id: assignment.assignee.user.id,
         firstName: assignment.assignee.user.firstName,
@@ -40,9 +45,8 @@ export class TaskService {
         status: assignment.status,
       })),
       createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
       deletedAt: task.deletedAt,
-      description: task.description,
-      dueDate: task.dueDate,
     }));
 
     return {
@@ -50,4 +54,12 @@ export class TaskService {
       total: total,
     };
   }
+
+  async createTask({
+    workspaceId,
+    data,
+  }: {
+    workspaceId: Task['workspace']['id'];
+    data: CreateTaskRequest;
+  }): Promise<TaskCore> {}
 }

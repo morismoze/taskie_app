@@ -18,12 +18,23 @@ import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
-import { WorkspacesResponse } from './dto/workspaces-response.dto';
+import {
+  WorkspaceResponse,
+  WorkspacesResponse,
+} from './dto/workspaces-response.dto';
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
-import { WorkspaceMembersResponse } from './dto/workspace-members-response.dto';
-import { WorkspaceTasksResponse } from './dto/workspace-tasks-response.dto';
-import { WorkspaceTasksRequestQuery } from './dto/workspace-tasks-request.dto';
+import {
+  WorkspaceUserResponse,
+  WorkspaceUsersResponse,
+} from './dto/workspace-members-response.dto';
+import {
+  WorkspaceTaskResponse,
+  WorkspaceTasksResponse,
+} from './dto/workspace-tasks-response.dto';
+import { WorkspaceItemRequestQuery } from './dto/workspace-item-request.dto';
+import { WorkspaceGoalsResponse } from './dto/workspace-goals-response.dto';
+import { CreateTaskRequest } from './dto/create-task-request.dto';
 
 @Controller({
   path: 'workspaces',
@@ -37,7 +48,9 @@ export class WorkspaceController {
   async createWorkspace(
     @Req() request: Request & { user: JwtPayload },
     @Body() payload: CreateWorkspaceRequest,
-  ): Promise<WorkspacesResponse> {
+  ): Promise<WorkspaceResponse> {
+    // Complete RESTful endpoint would just return Location header
+    // with the path to the newly created resource
     return this.workspaceService.create({
       createdById: request.user.userId,
       data: payload,
@@ -61,7 +74,7 @@ export class WorkspaceController {
     @Param('workspaceId') workspaceId: string,
     @Req() request: Request & { user: JwtPayload },
     @Body() newVirtualUser: CreateVirtualWorkspaceUserRequest,
-  ): Promise<WorkspaceMembersResponse> {
+  ): Promise<WorkspaceUserResponse> {
     return this.workspaceService.createVirtualUser({
       workspaceId,
       createdById: request.user.userId,
@@ -74,19 +87,50 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getWorkspaceMembers(
     @Param('workspaceId') workspaceId: string,
-  ): Promise<WorkspaceMembersResponse> {
+  ): Promise<WorkspaceUsersResponse> {
     return this.workspaceService.getWorkspaceMembers(workspaceId);
   }
 
   @Get(':workspaceId/tasks')
   @UseGuards(AuthGuard('jwt'), WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
   getTasks(
     @Param('workspaceId') workspaceId: string,
-    @Query() query: WorkspaceTasksRequestQuery,
+    @Query() query: WorkspaceItemRequestQuery,
   ): Promise<WorkspaceTasksResponse> {
     return this.workspaceService.getWorkspaceTasks({
       workspaceId,
       query,
+    });
+  }
+
+  @Get(':workspaceId/goals')
+  @UseGuards(AuthGuard('jwt'), WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  getGoals(
+    @Param('workspaceId') workspaceId: string,
+    @Query() query: WorkspaceItemRequestQuery,
+  ): Promise<WorkspaceGoalsResponse> {
+    return this.workspaceService.getWorkspaceGoals({
+      workspaceId,
+      query,
+    });
+  }
+
+  @Post(':workspaceId/tasks')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  createTask(
+    @Param('workspaceId') workspaceId: string,
+    @Body() data: CreateTaskRequest,
+  ): Promise<void> {
+    // Returning nothing in the response because tasks are paginable and sortable by
+    // different query params, so it doesn't make sense to return a newly created task
+    // in the response if it won't be usable for task list state update in the app
+    return this.workspaceService.createTask({
+      workspaceId,
+      data,
     });
   }
 }

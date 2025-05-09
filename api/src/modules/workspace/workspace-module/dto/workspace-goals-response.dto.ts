@@ -1,19 +1,19 @@
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
-export interface WorkspaceTaskResponse {
+interface WorkspaceGoal {
   id: string;
-  title: string;
-  rewardPoints: number;
-  assignees: {
+  assignee: {
     id: string;
     firstName: string;
     lastName: string;
     profileImageUrl: string | null;
-    status: ProgressStatus;
-  }[];
+  };
+  title: string;
+  requiredPoints: number;
+  status: ProgressStatus;
 }
 
-export interface WorkspaceTasksResponse {
-  data: WorkspaceTaskResponse[];
+export interface WorkspaceGoalsResponse {
+  data: WorkspaceGoal[];
   total: number;
 }

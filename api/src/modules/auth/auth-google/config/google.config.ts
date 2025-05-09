@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { IsString } from 'class-validator';
 import validateConfig from 'src/common/helper/validate-config';
-import { GoogleConfig } from './google-config.model';
+import { GoogleConfig } from './google-config.type';
 
 export enum Environment {
   DEVELOPMENT = 'development',
@@ -15,6 +15,14 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   AUTH_GOOGLE_CLIENT_SECRET: string;
+
+  constructor(
+    AUTH_GOOGLE_CLIENT_ID: string,
+    AUTH_GOOGLE_CLIENT_SECRET: string,
+  ) {
+    this.AUTH_GOOGLE_CLIENT_ID = AUTH_GOOGLE_CLIENT_ID;
+    this.AUTH_GOOGLE_CLIENT_SECRET = AUTH_GOOGLE_CLIENT_SECRET;
+  }
 }
 
 export default registerAs<GoogleConfig>('app', (): GoogleConfig => {

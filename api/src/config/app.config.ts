@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
-import { AppConfig } from './app-config.model';
-import validateConfig from '../../../common/helper/validate-config';
+import { AppConfig } from './app-config.type';
+import validateConfig from '../common/helper/validate-config';
 import { IsEnum, IsInt, IsString, Max, Min } from 'class-validator';
 
 export enum Environment {
@@ -23,6 +23,18 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   API_PREFIX: string;
+
+  constructor(
+    NODE_ENV: Environment,
+    APP_NAME: string,
+    APP_PORT: number,
+    API_PREFIX: string,
+  ) {
+    this.NODE_ENV = NODE_ENV;
+    this.APP_NAME = APP_NAME;
+    this.APP_PORT = APP_PORT;
+    this.API_PREFIX = API_PREFIX;
+  }
 }
 
 export default registerAs<AppConfig>('app', (): AppConfig => {

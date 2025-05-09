@@ -14,7 +14,6 @@ export class RequestMetadataProcessingInterceptor implements NestInterceptor {
     const headers = request.headers;
 
     const metadata: RequestMetadata = {
-      deviceId: headers['x-device-id'] || null,
       deviceModel: headers['x-device-model'] || null,
       osVersion: headers['x-os-version'] || null,
       appVersion: headers['x-app-version'] || null,

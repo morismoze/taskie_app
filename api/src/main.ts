@@ -2,19 +2,17 @@ import 'dotenv/config';
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
-import { AggregatedConfig } from './modules/app-config/config/config.model';
+import { AggregatedConfig } from './config/config.type';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import getValidationOptions from './common/helper/validation-options';
 import { RootExceptionsFilter } from './exception/root-exceptions.filter';
 import { ResponseTransformerInterceptor } from './common/interceptors/response-transformer.intereptor';
 import { RequestMetadataProcessingInterceptor } from './common/interceptors/request-metadata-processing.interceptor';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { Environment } from './modules/app-config/config/app.config';
+import { Environment } from './config/app.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
-  });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService<AggregatedConfig>);
   const isDevelopment =
     configService.getOrThrow('app.nodeEnv', { infer: true }) ===
@@ -30,8 +28,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalFilters(new RootExceptionsFilter(app.get(HttpAdapterHost)));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useGlobalInterceptors(new ResponseTransformerInterceptor());
   app.useGlobalInterceptors(new RequestMetadataProcessingInterceptor());
+  app.useGlobalInterceptors(new ResponseTransformerInterceptor());
 
   if (!isDevelopment) {
     // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP

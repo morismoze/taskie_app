@@ -14,22 +14,13 @@ export class SessionRepositoryImpl implements SessionRepository {
   ) {}
 
   async create({
-    data: {
-      userId,
-      hash,
-      ipAddress,
-      deviceId,
-      deviceModel,
-      osVersion,
-      appVersion,
-    },
+    data: { userId, hash, ipAddress, deviceModel, osVersion, appVersion },
     relations,
   }: {
     data: {
       userId: Session['user']['id'];
       hash: Session['hash'];
       ipAddress: Session['ipAddress'];
-      deviceId: Session['deviceId'];
       deviceModel: Session['deviceModel'];
       osVersion: Session['osVersion'];
       appVersion: Session['appVersion'];
@@ -39,7 +30,6 @@ export class SessionRepositoryImpl implements SessionRepository {
     const persistenceModel = this.repo.create({
       appVersion,
       osVersion,
-      deviceId,
       deviceModel,
       ipAddress,
       hash,

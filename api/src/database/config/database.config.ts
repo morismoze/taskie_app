@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
-import { DatabaseConfig } from './database-config.model';
 import { IsInt, Min, Max, IsString, IsNumber } from 'class-validator';
 import validateConfig from '../../common/helper/validate-config';
+import { DatabaseConfig } from './database-config.type';
 
 class EnvironmentVariablesValidator {
   @IsString()
@@ -25,7 +25,25 @@ class EnvironmentVariablesValidator {
   DATABASE_PASSWORD: string;
 
   @IsNumber()
-  DATABASE_MAX_CONNECTIONS: number;
+  DATABASE_POOL_SIZE: number;
+
+  constructor(
+    DATABASE_TYPE: string,
+    DATABASE_HOST: string,
+    DATABASE_PORT: number,
+    DATABASE_NAME: string,
+    DATABASE_USERNAME: string,
+    DATABASE_PASSWORD: string,
+    DATABASE_POOL_SIZE: number,
+  ) {
+    this.DATABASE_TYPE = DATABASE_TYPE;
+    this.DATABASE_HOST = DATABASE_HOST;
+    this.DATABASE_PORT = DATABASE_PORT;
+    this.DATABASE_NAME = DATABASE_NAME;
+    this.DATABASE_USERNAME = DATABASE_USERNAME;
+    this.DATABASE_PASSWORD = DATABASE_PASSWORD;
+    this.DATABASE_POOL_SIZE = DATABASE_POOL_SIZE;
+  }
 }
 
 export default registerAs<DatabaseConfig>('database', (): DatabaseConfig => {
@@ -42,6 +60,6 @@ export default registerAs<DatabaseConfig>('database', (): DatabaseConfig => {
     name: env.DATABASE_NAME,
     username: env.DATABASE_USERNAME,
     password: env.DATABASE_PASSWORD,
-    maxConnections: env.DATABASE_MAX_CONNECTIONS,
+    poolSize: env.DATABASE_POOL_SIZE,
   };
 });
