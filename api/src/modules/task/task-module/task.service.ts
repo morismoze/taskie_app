@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/create-task-request.dto';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
@@ -10,11 +10,11 @@ import { TaskRepository } from './persistence/task.repository';
 export class TaskService {
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  async getTasksByWorkspaceWithAssignees({
+  async findPaginatedByWorkspaceWithAssignees({
     workspaceId,
     query,
   }: {
-    workspaceId: string;
+    workspaceId: Task['workspace']['id'];
     query: WorkspaceItemRequestQuery;
   }): Promise<{
     data: TaskWithAssignees[];
@@ -57,9 +57,28 @@ export class TaskService {
 
   async createTask({
     workspaceId,
+    createdById,
     data,
   }: {
     workspaceId: Task['workspace']['id'];
-    data: CreateTaskRequest;
-  }): Promise<TaskCore> {}
+    createdById: Task['createdBy']['id'];
+    data: Omit<CreateTaskRequest, 'assignees'>;
+  }): Promise<TaskCore> {
+    const newTask = await this.taskRepository.create({
+      workspaceId,
+      data: {
+        title: data.title,
+        description: data.description,
+        rewardPoints: data.rewardPoints,
+        dueDate: data.dueDate,
+      },
+      createdById,
+    });
+
+    if (!newTask) {
+      throw new InternalServerErrorException();
+    }
+
+    return newTask;
+  }
 }

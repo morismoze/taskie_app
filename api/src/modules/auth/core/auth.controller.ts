@@ -6,6 +6,7 @@ import {
   Post,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -37,12 +38,12 @@ export class AuthController {
     return this.authService.refreshToken(request.user);
   }
 
-  @Post('logout')
+  @Delete('logout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(
     @Req() request: Request & { user: JwtPayload },
   ): Promise<void> {
-    await this.authService.logout(request.user);
+    return this.authService.logout(request.user);
   }
 }

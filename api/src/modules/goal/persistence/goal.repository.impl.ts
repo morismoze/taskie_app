@@ -7,6 +7,7 @@ import {
   ILike,
   Repository,
 } from 'typeorm';
+import { Goal } from '../domain/goal.domain';
 import { GoalEntity } from './goal.entity';
 import { GoalRepository } from './goal.repository';
 
@@ -22,7 +23,7 @@ export class GoalRepositoryImpl implements GoalRepository {
     query: { page, limit, status, search },
     relations,
   }: {
-    workspaceId: string;
+    workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
       limit: number;

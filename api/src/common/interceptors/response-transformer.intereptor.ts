@@ -1,6 +1,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpStatus,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -12,12 +13,16 @@ export class ResponseTransformerInterceptor<T>
   implements NestInterceptor<T, ApiResponse<T> | null>
 {
   intercept(
-    _context: ExecutionContext,
+    context: ExecutionContext,
     next: CallHandler,
   ): Observable<ApiResponse<T> | null> {
     return next.handle().pipe(
       map((data) => {
-        if (data === undefined) {
+        const httpContext = context.switchToHttp();
+        const response = httpContext.getResponse();
+        const statusCode = response.statusCode;
+
+        if (statusCode === HttpStatus.NO_CONTENT) {
           return null;
         }
 

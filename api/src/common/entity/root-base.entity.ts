@@ -8,14 +8,14 @@ import {
 
 export abstract class RootBaseEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
     name: 'created_at',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
@@ -24,7 +24,7 @@ export abstract class RootBaseEntity extends BaseEntity {
     name: 'updated_at',
   })
   // It gets set automatically when save() method is invoked
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn({
     type: 'timestamp',
@@ -33,5 +33,5 @@ export abstract class RootBaseEntity extends BaseEntity {
   })
   // Column decorated with DeleteDateColumn is automatically updated when
   // Typeorm's softDelete repository function is invoked
-  deletedAt: Date | null;
+  deletedAt!: Date | null;
 }

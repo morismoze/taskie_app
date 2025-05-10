@@ -10,6 +10,7 @@ import databaseConfig from './database/config/database.config';
 import authConfig from './modules/auth/core/config/auth.config';
 import googleConfig from './modules/auth/auth-google/config/google.config';
 import { DatabaseModule } from './modules/database/database.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DatabaseModule } from './modules/database/database.module';
     AuthGoogleModule,
     UserModule,
     WorkspaceModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

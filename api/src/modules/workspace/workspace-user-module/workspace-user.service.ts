@@ -29,8 +29,8 @@ export class WorkspaceUserService {
         userId,
         workspaceRole,
         status,
-        createdById: null,
       },
+      createdById: null,
     });
 
     if (!workspaceUser) {
@@ -55,8 +55,8 @@ export class WorkspaceUserService {
         userId,
         workspaceRole: WorkspaceUserRole.MEMBER,
         status: WorkspaceUserStatus.ACTIVE,
-        createdById,
       },
+      createdById,
     });
 
     if (!workspaceUser) {
@@ -78,7 +78,9 @@ export class WorkspaceUserService {
   /**
    * This function returns workspace user memberships a user has in different workspaces
    */
-  async findByUserIdWithWorkspace(userId: string): Promise<WorkspaceUser[]> {
+  async findAllByUserIdWithWorkspace(
+    userId: WorkspaceUser['user']['id'],
+  ): Promise<WorkspaceUser[]> {
     return this.workspaceUserRepository.findAllByUserId({
       userId,
       relations: { workspace: true },

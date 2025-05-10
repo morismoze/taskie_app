@@ -4,7 +4,6 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { Repository } from 'typeorm';
 import { User } from '../domain/user.domain';
 import { UserEntity } from './user.entity';
-import { UserMapper } from './user.mapper';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -14,64 +13,89 @@ export class UserRepositoryImpl implements UserRepository {
     private readonly repo: Repository<UserEntity>,
   ) {}
 
-  async create(data: User): Promise<Nullable<User>> {
-    const persistenceModel = UserMapper.toPersistence(data);
+  async create(data: {
+    email: NonNullable<User['email']>;
+    firstName: User['firstName'];
+    lastName: User['lastName'];
+    socialId: NonNullable<User['socialId']>;
+    provider: NonNullable<User['provider']>;
+    profileImageUrl: User['profileImageUrl'];
+    status: User['status'];
+  }): Promise<Nullable<UserEntity>> {
+    const persistenceModel = this.repo.create({
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      profileImageUrl: data.profileImageUrl,
+      provider: data.provider,
+      socialId: data.socialId,
+      status: data.status,
+    });
 
-    // No need to re-query the saved entity since UserEntity
-    // doesn't have any foreign entity relations, so no need to
-    // load any foreign entities
-    const newEntity = await this.repo.save(persistenceModel);
+    const savedEntity = await this.repo.save(persistenceModel);
 
-    return newEntity !== null ? UserMapper.toDomain(newEntity) : null;
+    const newEntity = await this.findById(savedEntity.id);
+
+    return newEntity;
   }
 
-  async createVirtualUser(data: User): Promise<Nullable<User>> {
-    const persistenceModel = UserMapper.toPersistence(data);
+  async createVirtualUser(
+    data: Pick<User, 'firstName' | 'lastName' | 'status'>,
+  ): Promise<Nullable<UserEntity>> {
+    const persistenceModel = this.repo.create({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      status: data.status,
+    });
 
-    const newEntity = await this.repo.save(persistenceModel);
+    const savedEntity = await this.repo.save(persistenceModel);
 
-    return newEntity !== null ? UserMapper.toDomain(newEntity) : null;
+    const newEntity = await this.findById(savedEntity.id);
+
+    return newEntity;
   }
 
-  async findById(id: User['id']): Promise<Nullable<User>> {
-    const user = await this.repo.findOne({ where: { id } });
-
-    return user ? UserMapper.toDomain(user) : null;
+  async findById(id: User['id']): Promise<Nullable<UserEntity>> {
+    return await this.repo.findOne({
+      where: { id },
+    });
   }
 
   async findByEmail(
     email: NonNullable<User['email']>,
-  ): Promise<Nullable<User>> {
-    const user = await this.repo.findOne({ where: { email } });
-
-    return user ? UserMapper.toDomain(user) : null;
+  ): Promise<Nullable<UserEntity>> {
+    return await this.repo.findOne({
+      where: { email },
+    });
   }
 
   async findBySocialIdAndProvider({
     socialId,
     provider,
   }: {
-    socialId: User['socialId'];
-    provider: User['provider'];
-  }): Promise<Nullable<User>> {
-    if (!socialId || !provider) return null;
-
-    const user = await this.repo.findOne({
+    socialId: NonNullable<User['socialId']>;
+    provider: NonNullable<User['provider']>;
+  }): Promise<Nullable<UserEntity>> {
+    return await this.repo.findOne({
       where: {
         socialId,
         provider,
       },
     });
-
-    return user ? UserMapper.toDomain(user) : null;
   }
 
-  async update(id: User['id'], data: User): Promise<Nullable<User>> {
-    const persistenceModel = UserMapper.toPersistence(data);
+  async update({
+    id,
+    data,
+  }: {
+    id: User['id'];
+    data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+  }): Promise<Nullable<UserEntity>> {
+    this.repo.update(id, data);
 
-    await this.repo.save(persistenceModel);
+    const newEntity = await this.findById(id);
 
-    return this.findById(id);
+    return newEntity;
   }
 
   async softDelete(id: User['id']): Promise<void> {

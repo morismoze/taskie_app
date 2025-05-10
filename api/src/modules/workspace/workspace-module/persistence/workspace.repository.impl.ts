@@ -15,15 +15,16 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
   ) {}
 
   async create({
-    data: { name, description, pictureUrl, createdById },
+    data: { name, description, pictureUrl },
+    createdById,
     relations,
   }: {
     data: {
       name: Workspace['name'];
       description: Workspace['description'];
       pictureUrl: Workspace['pictureUrl'];
-      createdById: Workspace['createdBy']['id'];
     };
+    createdById: Workspace['createdBy']['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>> {
     const persistenceModel = this.repo.create({

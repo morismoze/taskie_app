@@ -13,8 +13,8 @@ export abstract class WorkspaceRepository {
       name: Workspace['name'];
       description: Workspace['description'];
       pictureUrl: Workspace['pictureUrl'];
-      createdById: Workspace['createdBy']['id'];
     };
+    createdById: Workspace['createdBy']['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>>;
 

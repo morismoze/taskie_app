@@ -38,4 +38,9 @@ export abstract class SessionRepository {
   }): Promise<Nullable<SessionEntity>>;
 
   abstract deleteById(id: Session['id']): Promise<void>;
+
+  /**
+   * This is used as part of the session deletion CRON job
+   */
+  abstract deleteInactiveSessionsBefore(cutoffDate: Date): Promise<void>;
 }

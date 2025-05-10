@@ -29,8 +29,8 @@ export abstract class WorkspaceUserRepository {
       userId: WorkspaceUser['user']['id'];
       workspaceRole: WorkspaceUser['workspaceRole'];
       status: WorkspaceUser['status'];
-      createdById: WorkspaceUser['id'] | null;
     };
+    createdById: WorkspaceUser['id'] | null;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 }

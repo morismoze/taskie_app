@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
 import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
 import { GoalWithAssignee } from './domain/goal-with-assignee.domain';
+import { Goal } from './domain/goal.domain';
 import { GoalRepository } from './persistence/goal.repository';
 
 @Injectable()
@@ -11,11 +12,11 @@ export class GoalService {
     private readonly taskAssignmentService: TaskAssignmentService,
   ) {}
 
-  async getGoalsByWorkspace({
+  async findPaginatedByWorkspaceWithAssignee({
     workspaceId,
     query,
   }: {
-    workspaceId: string;
+    workspaceId: Goal['workspace']['id'];
     query: WorkspaceItemRequestQuery;
   }): Promise<{
     data: GoalWithAssignee[];

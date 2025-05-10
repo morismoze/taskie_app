@@ -116,7 +116,7 @@ export class AuthService {
 
     // When user is first-time "registered", this will be empty array
     const workspaceUserMemberships =
-      await this.workspaceUserService.findByUserIdWithWorkspace(user.id);
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id);
 
     const { accessToken, refreshToken, tokenExpires } =
       await this.getTokensData(
@@ -183,7 +183,7 @@ export class AuthService {
     }
 
     const workspaceUserMemberships =
-      await this.workspaceUserService.findByUserIdWithWorkspace(user.id);
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id);
 
     const newHash = crypto
       .createHash('sha256')

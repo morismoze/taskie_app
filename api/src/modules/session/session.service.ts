@@ -47,9 +47,7 @@ export class SessionService {
       throw new NotFoundException();
     }
 
-    return {
-      ...session,
-    };
+    return session;
   }
 
   async findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {

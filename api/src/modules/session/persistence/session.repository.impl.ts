@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { FindOptionsRelations, LessThan, Repository } from 'typeorm';
 import { Session } from '../domain/session.domain';
 import { SessionEntity } from './session.entity';
 import { SessionRepository } from './session.repository';
@@ -78,5 +78,11 @@ export class SessionRepositoryImpl implements SessionRepository {
 
   async deleteById(id: Session['id']): Promise<void> {
     await this.repo.delete(id);
+  }
+
+  async deleteInactiveSessionsBefore(cutoffDate: Date): Promise<void> {
+    await this.repo.delete({
+      updatedAt: LessThan(cutoffDate),
+    });
   }
 }

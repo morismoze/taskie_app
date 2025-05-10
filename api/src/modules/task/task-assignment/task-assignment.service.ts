@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
 import { TaskAssignment } from './domain/task-assignment.domain';
@@ -33,8 +33,22 @@ export class TaskAssignmentService {
   async createTaskAssignment({
     workspaceUserId,
     taskId,
+    status,
   }: {
     workspaceUserId: TaskAssignment['assignee']['id'];
     taskId: TaskAssignment['task']['id'];
-  }): Promise<TaskAssignmentCore> {}
+    status: TaskAssignment['status'];
+  }): Promise<TaskAssignmentCore> {
+    const newTaskAssignment = await this.taskAssignmentRepository.create({
+      workspaceUserId,
+      taskId,
+      status,
+    });
+
+    if (!newTaskAssignment) {
+      throw new InternalServerErrorException();
+    }
+
+    return newTaskAssignment;
+  }
 }

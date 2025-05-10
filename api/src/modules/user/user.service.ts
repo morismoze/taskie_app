@@ -18,10 +18,16 @@ export class UserService {
   /**
    * This method creates a new user who "registered" via auth provider
    */
-  async create(
-    data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
-  ): Promise<User> {
-    const existingUser = await this.userRepository.findByEmail(data.email);
+  async create(data: {
+    email: NonNullable<User['email']>;
+    firstName: User['firstName'];
+    lastName: User['lastName'];
+    socialId: NonNullable<User['socialId']>;
+    provider: NonNullable<User['provider']>;
+    profileImageUrl: User['profileImageUrl'];
+    status: User['status'];
+  }): Promise<User> {
+    const existingUser = await this.userRepository.findByEmail(data.email!);
 
     if (existingUser) {
       throw new ApiHttpException(
@@ -44,10 +50,9 @@ export class UserService {
   /**
    * This method creates a new virtual user who was created by a Manager user
    */
-  async createVirtualUser(data: {
-    firstName: User['firstName'];
-    lastName: User['lastName'];
-  }): Promise<User> {
+  async createVirtualUser(
+    data: Pick<User, 'firstName' | 'lastName' | 'status'>,
+  ): Promise<User> {
     const newVirtalUser = await this.userRepository.createVirtualUser(data);
 
     if (!newVirtalUser) {
@@ -61,7 +66,9 @@ export class UserService {
     return this.userRepository.findById(id);
   }
 
-  async findByEmail(email: User['email']): Promise<Nullable<User>> {
+  async findByEmail(
+    email: NonNullable<User['email']>,
+  ): Promise<Nullable<User>> {
     return this.userRepository.findByEmail(email);
   }
 
@@ -69,8 +76,8 @@ export class UserService {
     socialId,
     provider,
   }: {
-    socialId: User['socialId'];
-    provider: User['provider'];
+    socialId: NonNullable<User['socialId']>;
+    provider: NonNullable<User['provider']>;
   }): Promise<Nullable<User>> {
     return this.userRepository.findBySocialIdAndProvider({
       socialId,
@@ -95,6 +102,7 @@ export class UserService {
     // If email is present, check for email uniqueness
     if (data.email) {
       const existingUser = await this.userRepository.findByEmail(data.email);
+
       if (existingUser && existingUser.id !== userId) {
         throw new ApiHttpException(
           {
@@ -105,21 +113,16 @@ export class UserService {
       }
     }
 
-    const updatedUser: User = {
-      ...user,
-      ...data,
-    };
+    const updatedUser = await this.userRepository.update({
+      id: userId,
+      data,
+    });
 
-    const savedUpdatedUser = await this.userRepository.update(
-      userId,
-      updatedUser,
-    );
-
-    if (!savedUpdatedUser) {
+    if (!updatedUser) {
       throw new InternalServerErrorException();
     }
 
-    return savedUpdatedUser;
+    return updatedUser;
   }
 
   async softDelete(userId: User['id']): Promise<void> {

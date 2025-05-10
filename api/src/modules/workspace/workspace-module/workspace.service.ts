@@ -29,6 +29,9 @@ import { WorkspaceRepository } from './persistence/workspace.repository';
 import { WorkspaceGoalsResponse } from './dto/workspace-goals-response.dto';
 import { CreateTaskRequest } from './dto/create-task-request.dto';
 import { TaskAssignmentService } from 'src/modules/task/task-assignment/task-assignment.service';
+import { UserStatus } from 'src/modules/user/domain/user-status.enum';
+import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { LeaderboardResponse } from './dto/workspace-leaderboard-response.dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -58,11 +61,11 @@ export class WorkspaceService {
     // 1. create a new empty workspace
     const newWorkspace = await this.workspaceRepository.create({
       data: {
-        createdById: ownerUser.id,
         description: data.description,
         name: data.name,
         pictureUrl: null,
       },
+      createdById: ownerUser.id,
     });
 
     if (!newWorkspace) {
@@ -117,7 +120,11 @@ export class WorkspaceService {
     }
 
     // 1. Create core user
-    const newUser = await this.userService.createVirtualUser(data);
+    const newUser = await this.userService.createVirtualUser({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      status: UserStatus.ACTIVE,
+    });
 
     // 2. Create a workspace user relation linking the user to the workspace
     const newWorkspaceUser = await this.workspaceUserService.createVirtualUser({
@@ -195,7 +202,7 @@ export class WorkspaceService {
     }
 
     const { data: tasks, total } =
-      await this.taskService.getTasksByWorkspaceWithAssignees({
+      await this.taskService.findPaginatedByWorkspaceWithAssignees({
         workspaceId,
         query,
       });
@@ -234,10 +241,11 @@ export class WorkspaceService {
       throw new NotFoundException();
     }
 
-    const { data: goals, total } = await this.goalService.getGoalsByWorkspace({
-      workspaceId,
-      query,
-    });
+    const { data: goals, total } =
+      await this.goalService.findPaginatedByWorkspaceWithAssignee({
+        workspaceId,
+        query,
+      });
 
     const response: WorkspaceGoalsResponse = {
       data: goals.map((goal) => ({
@@ -260,9 +268,11 @@ export class WorkspaceService {
 
   async createTask({
     workspaceId,
+    createdById,
     data,
   }: {
     workspaceId: Workspace['id'];
+    createdById: JwtPayload['userId'];
     data: CreateTaskRequest;
   }): Promise<void> {
     const workspace = await this.workspaceRepository.findById({
@@ -274,16 +284,32 @@ export class WorkspaceService {
     }
 
     // Create new concrete task
-    const newTask = await this.taskService.createTask({ workspaceId, data });
+    const newTask = await this.taskService.createTask({
+      workspaceId,
+      createdById,
+      data,
+    });
 
-    // Create/init new task assignments for each given assignee
+    // Create new task assignments for each given assignee
     for (const assigneeId of data.assignees) {
       this.taskAssignmentService.createTaskAssignment({
         workspaceUserId: assigneeId,
         taskId: newTask.id,
+        status: ProgressStatus.IN_PROGRESS,
       });
     }
 
     return;
   }
+
+  async getWorkspaceLeaderboard(workspaceId: Workspace['id'],): Promise<LeaderboardResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new NotFoundException();
+    }
+
+    
 }

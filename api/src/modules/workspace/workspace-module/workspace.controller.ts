@@ -28,13 +28,11 @@ import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
 } from './dto/workspace-members-response.dto';
-import {
-  WorkspaceTaskResponse,
-  WorkspaceTasksResponse,
-} from './dto/workspace-tasks-response.dto';
+import { WorkspaceTasksResponse } from './dto/workspace-tasks-response.dto';
 import { WorkspaceItemRequestQuery } from './dto/workspace-item-request.dto';
 import { WorkspaceGoalsResponse } from './dto/workspace-goals-response.dto';
 import { CreateTaskRequest } from './dto/create-task-request.dto';
+import { LeaderboardResponse } from './dto/workspace-leaderboard-response.dto';
 
 @Controller({
   path: 'workspaces',
@@ -120,9 +118,10 @@ export class WorkspaceController {
   @Post(':workspaceId/tasks')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   createTask(
     @Param('workspaceId') workspaceId: string,
+    @Req() request: Request & { user: JwtPayload },
     @Body() data: CreateTaskRequest,
   ): Promise<void> {
     // Returning nothing in the response because tasks are paginable and sortable by
@@ -130,7 +129,17 @@ export class WorkspaceController {
     // in the response if it won't be usable for task list state update in the app
     return this.workspaceService.createTask({
       workspaceId,
+      createdById: request.user.userId,
       data,
     });
+  }
+
+  @Get(':workspaceId/leaderboard')
+  @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  getLeaderboard(
+    @Param('workspaceId') workspaceId: string,
+  ): Promise<LeaderboardResponse> {
+    return this.workspaceService.getWorkspaceLeaderboard(workspaceId);
   }
 }
