@@ -8,7 +8,7 @@ import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-ass
 /**
  * Represents a concrete task that is abstracted via task assignments
  */
-@Entity()
+@Entity({ name: 'tasks' })
 export class TaskEntity extends RootBaseEntity {
   @ManyToOne(() => WorkspaceEntity)
   @JoinColumn({ name: 'workspace_id' })

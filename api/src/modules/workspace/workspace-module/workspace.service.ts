@@ -31,7 +31,10 @@ import { CreateTaskRequest } from './dto/create-task-request.dto';
 import { TaskAssignmentService } from 'src/modules/task/task-assignment/task-assignment.service';
 import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-import { LeaderboardResponse } from './dto/workspace-leaderboard-response.dto';
+import {
+  LeaderboardResponse,
+  LeaderboardUserResponse,
+} from './dto/workspace-leaderboard-response.dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -302,14 +305,38 @@ export class WorkspaceService {
     return;
   }
 
-  async getWorkspaceLeaderboard(workspaceId: Workspace['id'],): Promise<LeaderboardResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
-    });
+  async getWorkspaceLeaderboard(
+    workspaceId: Workspace['id'],
+  ): Promise<LeaderboardResponse> {
+    /**
+     * This service can probably be made better regarding performance
+     * by doin a single query on WorkspaceUser entity
+     */
 
-    if (!workspace) {
-      throw new NotFoundException();
-    }
+    // 1. Get all workspace members
+    const workspaceUsers = await this.getWorkspaceMembers(workspaceId);
+    const leaderboard: LeaderboardUserResponse[] = await Promise.all(
+      workspaceUsers.map(async (workspaceUser) => {
+        const accumulatedPoints =
+          await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser(
+            {
+              workspaceUserId: workspaceUser.id,
+              workspaceId,
+            },
+          );
 
-    
+        return {
+          id: workspaceUser.id,
+          firstName: workspaceUser.firstName,
+          lastName: workspaceUser.lastName,
+          profileImageUrl: workspaceUser.profileImageUrl,
+          accumulatedPoints: accumulatedPoints,
+        };
+      }),
+    );
+
+    leaderboard.sort((a, b) => b.accumulatedPoints - a.accumulatedPoints);
+
+    return leaderboard;
+  }
 }

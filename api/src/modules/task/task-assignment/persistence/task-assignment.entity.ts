@@ -13,7 +13,7 @@ import { TaskEntity } from '../../task-module/persistence/task.entity';
  * The TaskAssignmentEntity is the personalized copy of the task, tied to a user and possibly to a goal.
  */
 
-@Entity()
+@Entity({ name: 'task_assignments' })
 export class TaskAssignmentEntity extends RootBaseEntity {
   @ManyToOne(() => TaskEntity)
   @JoinColumn({ name: 'task_id' })

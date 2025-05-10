@@ -8,7 +8,7 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
 /**
  * Represents a workspace that contains members, goals, and standalone tasks.
  */
-@Entity()
+@Entity({ name: 'workspace' })
 export class WorkspaceEntity extends RootBaseEntity {
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'owned_by_id' })

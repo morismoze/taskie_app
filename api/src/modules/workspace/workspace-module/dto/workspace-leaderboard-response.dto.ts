@@ -1,4 +1,4 @@
-export interface Leaderboard {
+export interface LeaderboardUserResponse {
   id: string;
   firstName: string;
   lastName: string;
@@ -6,4 +6,4 @@ export interface Leaderboard {
   accumulatedPoints: number;
 }
 
-export type LeaderboardResponse = Leaderboard[];
+export type LeaderboardResponse = LeaderboardUserResponse[];

@@ -22,7 +22,7 @@ import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
  * we don't want the same user to be defined multiple times as a workspace
  * user within the same workspace.
  */
-@Entity()
+@Entity({ name: 'workspace_user' })
 @Unique('UQ_workspace_user', ['user', 'workspace'])
 export class WorkspaceUserEntity extends RootBaseEntity {
   @Index()

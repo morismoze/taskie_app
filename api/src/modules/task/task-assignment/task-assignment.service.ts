@@ -10,10 +10,13 @@ export class TaskAssignmentService {
     private readonly taskAssignmentRepository: TaskAssignmentRepository,
   ) {}
 
-  async getAccumulatedPointsForWorkspaceUser(
-    workspaceUserId: string,
-    workspaceId: string,
-  ): Promise<number> {
+  async getAccumulatedPointsForWorkspaceUser({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: string;
+    workspaceUserId: string;
+  }): Promise<number> {
     const completedAssignments =
       await this.taskAssignmentRepository.findyAllByAssigneeIdAndWorkspaceIdAndStatus(
         {

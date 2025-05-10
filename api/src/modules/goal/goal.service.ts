@@ -37,10 +37,10 @@ export class GoalService {
 
     for (const goal of goalEntities) {
       const accumulatedPoints =
-        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser(
-          goal.assignee.id, // WorkspaceUser ID
+        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
+          workspaceUserId: goal.assignee.id,
           workspaceId,
-        );
+        });
 
       goals.push({
         id: goal.id,

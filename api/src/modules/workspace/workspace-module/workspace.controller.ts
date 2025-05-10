@@ -33,6 +33,7 @@ import { WorkspaceItemRequestQuery } from './dto/workspace-item-request.dto';
 import { WorkspaceGoalsResponse } from './dto/workspace-goals-response.dto';
 import { CreateTaskRequest } from './dto/create-task-request.dto';
 import { LeaderboardResponse } from './dto/workspace-leaderboard-response.dto';
+import { CreateWorkspaceInviteLinkResponse } from './dto/create-workspace-invite-link-response.dto';
 
 @Controller({
   path: 'workspaces',
@@ -54,6 +55,24 @@ export class WorkspaceController {
       data: payload,
     });
   }
+
+  @Post(':workspaceId/invites')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async createWorkspaceInviteLink(
+    @Param('workspaceId') workspaceId: string,
+    @Req() request: Request & { user: JwtPayload },
+  ): Promise<CreateWorkspaceInviteLinkResponse> {}
+
+  @Post(':workspaceId/invites/:inviteToken/join')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.CREATED)
+  async joinWorkspace(
+    @Param('workspaceId') workspaceId: string,
+    @Param('inviteToken') inviteToken: string,
+    @Req() request: Request & { user: JwtPayload },
+  ): Promise<WorkspaceResponse> {}
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))

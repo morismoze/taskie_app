@@ -8,7 +8,7 @@ import { ProgressStatus } from '../../task/task-module/domain/progress-status.en
  * Represents a goal within a workspace. Goals are POINTS_BASED, meaning
  * completed when requiredPoints are accumulated (sum of WorkspaceUser.totalRewardPoints = requiredPoints).
  */
-@Entity()
+@Entity({ name: 'goal' })
 export class GoalEntity extends RootBaseEntity {
   @ManyToOne(() => WorkspaceUserEntity)
   @JoinColumn({ name: 'assignee_id' })
