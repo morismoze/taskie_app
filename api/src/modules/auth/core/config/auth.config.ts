@@ -3,7 +3,7 @@ import { AuthConfig } from 'src/modules/auth/core/config/auth-config.type';
 import { IsInt, IsString } from 'class-validator';
 import validateConfig from '../../../../common/helper/validate-config';
 
-class EnvironmentVariablesValidator {
+class AuthEnvironmentVariablesValidator {
   @IsString()
   AUTH_JWT_SECRET: string;
 
@@ -40,11 +40,11 @@ class EnvironmentVariablesValidator {
 }
 
 export default registerAs<AuthConfig>('auth', (): AuthConfig => {
-  validateConfig(process.env, EnvironmentVariablesValidator);
+  validateConfig(process.env, AuthEnvironmentVariablesValidator);
 
   // env vars will be defined after validateConfig is invoked
   // and it asserted the needed env vars are set
-  const env = process.env as unknown as EnvironmentVariablesValidator;
+  const env = process.env as unknown as AuthEnvironmentVariablesValidator;
 
   return {
     secret: env.AUTH_JWT_SECRET,

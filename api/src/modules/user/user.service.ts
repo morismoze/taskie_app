@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { ApiHttpException } from 'src/exception/ApiHttpException.model';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { User } from './domain/user.domain';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { Nullable } from 'src/common/types/nullable.type';

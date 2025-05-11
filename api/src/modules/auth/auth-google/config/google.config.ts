@@ -3,13 +3,7 @@ import { IsString } from 'class-validator';
 import validateConfig from 'src/common/helper/validate-config';
 import { GoogleConfig } from './google-config.type';
 
-export enum Environment {
-  DEVELOPMENT = 'development',
-  STAGING = 'staging',
-  PRODUCTION = 'production',
-}
-
-class EnvironmentVariablesValidator {
+class GoogleEnvironmentVariablesValidator {
   @IsString()
   AUTH_GOOGLE_CLIENT_ID: string;
 
@@ -25,12 +19,12 @@ class EnvironmentVariablesValidator {
   }
 }
 
-export default registerAs<GoogleConfig>('app', (): GoogleConfig => {
-  validateConfig(process.env, EnvironmentVariablesValidator);
+export default registerAs<GoogleConfig>('google', (): GoogleConfig => {
+  validateConfig(process.env, GoogleEnvironmentVariablesValidator);
 
   // env vars will be defined after validateConfig is invoked
   // and it asserted the needed env vars are set
-  const env = process.env as unknown as EnvironmentVariablesValidator;
+  const env = process.env as unknown as GoogleEnvironmentVariablesValidator;
 
   return {
     auth: {

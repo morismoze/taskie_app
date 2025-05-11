@@ -1,5 +1,6 @@
 import {
   HttpStatus,
+  Logger,
   ValidationError,
   ValidationPipeOptions,
 } from '@nestjs/common';
@@ -7,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { Environment } from 'src/config/app.config';
 import { AggregatedConfig } from 'src/config/config.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.model';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 
 const getValidationOptions = (
   configService: ConfigService<AggregatedConfig>,
@@ -21,10 +22,11 @@ const getValidationOptions = (
   whitelist: true,
   errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {
+    const logger = new Logger('ValidationPipe');
+    logger.error(`${errors}`);
     return new ApiHttpException(
       {
         code: ApiErrorCode.INVALID_PAYLOAD,
-        context: JSON.stringify(errors, null, 2),
       },
       HttpStatus.UNPROCESSABLE_ENTITY,
     );

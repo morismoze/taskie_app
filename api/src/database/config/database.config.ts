@@ -3,7 +3,7 @@ import { IsInt, Min, Max, IsString, IsNumber } from 'class-validator';
 import validateConfig from '../../common/helper/validate-config';
 import { DatabaseConfig } from './database-config.type';
 
-class EnvironmentVariablesValidator {
+class DatabaseEnvironmentVariablesValidator {
   @IsString()
   DATABASE_TYPE: string;
 
@@ -47,11 +47,11 @@ class EnvironmentVariablesValidator {
 }
 
 export default registerAs<DatabaseConfig>('database', (): DatabaseConfig => {
-  validateConfig(process.env, EnvironmentVariablesValidator);
+  validateConfig(process.env, DatabaseEnvironmentVariablesValidator);
 
   // env vars will be defined after validateConfig is invoked
   // and it asserted the needed env vars are set
-  const env = process.env as unknown as EnvironmentVariablesValidator;
+  const env = process.env as unknown as DatabaseEnvironmentVariablesValidator;
 
   return {
     type: env.DATABASE_TYPE,

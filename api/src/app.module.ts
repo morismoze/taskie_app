@@ -15,13 +15,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      // enables this AppConfigModule module to be usable everywhere inside app context without
-      // the need to import it (using imports: [AppModule]) - it's auto injected
       isGlobal: true,
-      // these are custom config factories — functions that take process.env and return structured config
       load: [appConfig, databaseConfig, authConfig, googleConfig],
-      // loads and parses the .env file.
-      // makes process.env.VARIABLE values available at runtime.
       envFilePath: ['.env'],
     }),
     DatabaseModule,
