@@ -57,17 +57,16 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
   }
 
   async create({
-    data: { workspaceId, userId, workspaceRole, status },
-    createdById,
+    data: { workspaceId, createdById, userId, workspaceRole, status },
     relations,
   }: {
     data: {
       workspaceId: WorkspaceUser['workspace']['id'];
+      createdById: WorkspaceUser['id'] | null;
       userId: WorkspaceUser['user']['id'];
       workspaceRole: WorkspaceUser['workspaceRole'];
       status: WorkspaceUser['status'];
     };
-    createdById: WorkspaceUser['id'] | null;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
     const persistenceModel = this.repo.create({

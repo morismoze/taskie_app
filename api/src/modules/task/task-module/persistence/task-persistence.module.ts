@@ -12,6 +12,6 @@ import { TaskRepositoryImpl } from './task.repository.impl';
       useClass: TaskRepositoryImpl,
     },
   ],
-  exports: [],
+  exports: [TaskRepository],
 })
 export class TaskPersistenceModule {}

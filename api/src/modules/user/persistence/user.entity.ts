@@ -11,16 +11,16 @@ import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
  */
 @Entity({ name: 'user' })
 export class UserEntity extends RootBaseEntity {
-  @Column({ unique: true, length: 255, nullable: true })
+  @Column({ unique: true, type: 'varchar', nullable: true })
   email!: string | null; // Will be null for virtual users
 
-  @Column({ name: 'first_name', length: 100 })
+  @Column({ name: 'first_name', type: 'varchar' })
   firstName!: string;
 
-  @Column({ name: 'last_name', length: 100 })
+  @Column({ name: 'last_name', type: 'varchar' })
   lastName!: string;
 
-  @Column({ name: 'profile_image_url', nullable: true })
+  @Column({ name: 'profile_image_url', type: 'varchar', nullable: true })
   profileImageUrl!: string | null; // Will be null for virtual users
 
   @Column({
@@ -30,7 +30,7 @@ export class UserEntity extends RootBaseEntity {
   })
   provider!: AuthProvider | null;
 
-  @Column({ name: 'social_id', unique: true, nullable: true })
+  @Column({ name: 'social_id', unique: true, type: 'varchar', nullable: true })
   socialId!: string | null; // Will be null for virtual users
 
   @Column({

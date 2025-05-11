@@ -52,7 +52,11 @@ export class WorkspaceUserEntity extends RootBaseEntity {
   status!: WorkspaceUserStatus;
 
   // The user who created this WorkspaceUser
-  // Applicable in cases when virtual workspace users are created
+  // Applicable in cases:
+  // 1. when virtual workspace users are created
+  // 2. when concrete workspace users are created when a user joins a workspace by invite link
+  // It is null in the case when user creates a workspace, and is automatically defined
+  // as the first workspace user of that workspace
   @ManyToOne(() => WorkspaceUserEntity, { nullable: true })
   @JoinColumn({ name: 'created_by_id' })
   createdBy!: WorkspaceUserEntity | null;

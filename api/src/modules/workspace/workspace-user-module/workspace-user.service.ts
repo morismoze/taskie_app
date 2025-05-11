@@ -14,11 +14,13 @@ export class WorkspaceUserService {
 
   async create({
     workspaceId,
+    createdById,
     userId,
     workspaceRole,
     status,
   }: {
     workspaceId: WorkspaceUser['workspace']['id'];
+    createdById: WorkspaceUser['id'] | null;
     userId: WorkspaceUser['user']['id'];
     workspaceRole: WorkspaceUser['workspaceRole'];
     status: WorkspaceUser['status'];
@@ -26,37 +28,11 @@ export class WorkspaceUserService {
     const workspaceUser = await this.workspaceUserRepository.create({
       data: {
         workspaceId,
+        createdById,
         userId,
         workspaceRole,
         status,
       },
-      createdById: null,
-    });
-
-    if (!workspaceUser) {
-      throw new InternalServerErrorException();
-    }
-
-    return workspaceUser;
-  }
-
-  async createVirtualUser({
-    workspaceId,
-    userId,
-    createdById,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    userId: WorkspaceUser['user']['id'];
-    createdById: WorkspaceUser['id'];
-  }): Promise<WorkspaceUserCore> {
-    const workspaceUser = await this.workspaceUserRepository.create({
-      data: {
-        workspaceId,
-        userId,
-        workspaceRole: WorkspaceUserRole.MEMBER,
-        status: WorkspaceUserStatus.ACTIVE,
-      },
-      createdById,
     });
 
     if (!workspaceUser) {

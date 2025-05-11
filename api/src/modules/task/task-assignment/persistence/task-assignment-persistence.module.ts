@@ -12,6 +12,6 @@ import { TaskAssignmentRepositoryImpl } from './task-assignment.repository.impl'
       useClass: TaskAssignmentRepositoryImpl,
     },
   ],
-  exports: [],
+  exports: [TaskAssignmentRepository],
 })
 export class TaskAssignmentPersistenceModule {}

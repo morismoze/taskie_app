@@ -12,6 +12,6 @@ import { GoalRepositoryImpl } from './goal.repository.impl';
       useClass: GoalRepositoryImpl,
     },
   ],
-  exports: [],
+  exports: [GoalRepository],
 })
 export class GoalPersistenceModule {}

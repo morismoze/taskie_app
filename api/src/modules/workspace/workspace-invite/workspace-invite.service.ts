@@ -9,6 +9,7 @@ import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
 import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
 import { WorkspaceInviteStatus } from './domain/workspace-invite-status.enum';
+import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCore } from './domain/workspace-invite-with-workspace-core-and-user-core.domain';
 import { WorkspaceInviteWithWorkspaceCore } from './domain/workspace-invite-with-workspace-core.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
 import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
@@ -52,7 +53,7 @@ export class WorkspaceInviteService {
     return newInvite;
   }
 
-  async findByToken(
+  async findByTokenWith(
     token: WorkspaceInvite['token'],
   ): Promise<Nullable<WorkspaceInviteCore>> {
     return await this.workspaceInviteRepository.findByToken({
@@ -71,12 +72,24 @@ export class WorkspaceInviteService {
     });
   }
 
+  async findByTokenWithWorkspaceAndUser(
+    token: WorkspaceInvite['token'],
+  ): Promise<Nullable<WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCore>> {
+    return await this.workspaceInviteRepository.findByToken({
+      token,
+      relations: {
+        workspace: true,
+        createdBy: true,
+      },
+    });
+  }
+
   async claimInvite({
     token,
-    usedBy,
+    usedById,
   }: {
     token: WorkspaceInvite['token'];
-    usedBy: WorkspaceInvite['usedBy'];
+    usedById: WorkspaceInvite['usedBy']['id'];
   }): Promise<Nullable<WorkspaceInviteCore>> {
     const workspaceInvite = await this.workspaceInviteRepository.findByToken({
       token,
@@ -95,12 +108,9 @@ export class WorkspaceInviteService {
       throw new BadRequestException();
     }
 
-    return await this.workspaceInviteRepository.update({
+    return await this.workspaceInviteRepository.markUsedBy({
       id: workspaceInvite.id,
-      data: {
-        usedBy,
-        status: WorkspaceInviteStatus.USED,
-      },
+      usedById,
     });
   }
 }

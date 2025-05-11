@@ -14,13 +14,13 @@ export class TaskEntity extends RootBaseEntity {
   @JoinColumn({ name: 'workspace_id' })
   workspace!: WorkspaceEntity; // Workspace the task belongs to
 
-  @Column()
+  @Column({ type: 'varchar' })
   title!: string;
 
-  @Column({ name: 'reward_points' })
+  @Column({ name: 'reward_points', type: 'smallint' })
   rewardPoints!: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   description!: string | null;
 
   @ManyToOne(() => UserEntity)

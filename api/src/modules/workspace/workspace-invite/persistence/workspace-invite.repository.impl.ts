@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { FindOptionsRelations, LessThan, Repository } from 'typeorm';
 import { WorkspaceInviteStatus } from '../domain/workspace-invite-status.enum';
 import { WorkspaceInvite } from '../domain/workspace-invite.domain';
 import { WorkspaceInviteEntity } from './workspace-invite.entity';
@@ -73,21 +73,30 @@ export class WorkspaceInviteRepositoryImpl
     });
   }
 
-  async update({
+  async markUsedBy({
     id,
-    data,
+    usedById,
     relations,
   }: {
     id: WorkspaceInvite['id'];
-    data: Partial<
-      Omit<WorkspaceInvite, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
-    >;
+    usedById: WorkspaceInvite['usedBy']['id'];
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>> {
-    this.repo.update(id, data);
+    this.repo.update(id, {
+      usedBy: { id: usedById },
+      status: WorkspaceInviteStatus.USED,
+    });
 
     const newEntity = await this.findById({ id, relations });
 
     return newEntity;
+  }
+
+  async deleteInactiveInvitesBefore(
+    cutoffDate: WorkspaceInvite['expiresAt'],
+  ): Promise<void> {
+    await this.repo.delete({
+      updatedAt: LessThan(cutoffDate),
+    });
   }
 }

@@ -34,11 +34,11 @@ export abstract class WorkspaceUserRepository {
   }: {
     data: {
       workspaceId: WorkspaceUser['workspace']['id'];
+      createdById: WorkspaceUser['id'] | null;
       userId: WorkspaceUser['user']['id'];
       workspaceRole: WorkspaceUser['workspaceRole'];
       status: WorkspaceUser['status'];
     };
-    createdById: WorkspaceUser['id'] | null;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 }

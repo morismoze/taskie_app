@@ -16,7 +16,7 @@ export class WorkspaceInviteEntity extends RootBaseEntity {
   @JoinColumn({ name: 'workspace_id' })
   workspace!: WorkspaceEntity;
 
-  @Column()
+  @Column({ type: 'varchar' })
   token!: string;
 
   @Column({ type: 'timestamp', name: 'expires_at' })
@@ -26,9 +26,9 @@ export class WorkspaceInviteEntity extends RootBaseEntity {
   @JoinColumn({ name: 'invited_by_id' })
   createdBy!: WorkspaceUserEntity;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
+  @ManyToOne(() => WorkspaceUserEntity, { nullable: true })
   @JoinColumn({ name: 'used_by_id' })
-  usedBy!: UserEntity | null;
+  usedBy!: WorkspaceUserEntity | null;
 
   @Column({
     type: 'enum',

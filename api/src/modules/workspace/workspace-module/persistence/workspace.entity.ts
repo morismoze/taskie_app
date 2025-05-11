@@ -20,15 +20,15 @@ export class WorkspaceEntity extends RootBaseEntity {
   @OneToMany(() => WorkspaceUserEntity, (wm) => wm.workspace)
   members!: WorkspaceUserEntity[];
 
-  @Column()
+  @Column({ type: 'varchar' })
   name!: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   description!: string | null;
 
   @OneToMany(() => TaskEntity, (t) => t.workspace)
   tasks!: TaskEntity[];
 
-  @Column({ name: 'picture_url', nullable: true })
+  @Column({ name: 'picture_url', type: 'varchar', nullable: true })
   pictureUrl!: string | null;
 }

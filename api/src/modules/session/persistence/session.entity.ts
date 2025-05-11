@@ -11,7 +11,7 @@ export class SessionEntity extends RootBaseEntity {
   @Index()
   user!: UserEntity;
 
-  @Column()
+  @Column({ type: 'varchar' })
   hash!: string;
 
   @Column({ name: 'ip_address', type: 'varchar', length: 255 })

@@ -42,5 +42,7 @@ export abstract class SessionRepository {
   /**
    * This is used as part of the session deletion CRON job
    */
-  abstract deleteInactiveSessionsBefore(cutoffDate: Date): Promise<void>;
+  abstract deleteInactiveSessionsBefore(
+    cutoffDate: Session['updatedAt'],
+  ): Promise<void>;
 }

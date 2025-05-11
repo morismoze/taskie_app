@@ -125,15 +125,34 @@ export class WorkspaceService {
     usedById: User['id'];
   }): Promise<void> {
     // Check if user by ID exists
-    const usedBy = await this.userService.findById(usedById);
+    const usedByWorkspaceUser =
+      await this.workspaceUserService.findByUserId(usedById);
 
-    if (!usedBy) {
+    if (!usedByWorkspaceUser) {
       throw new ForbiddenException();
     }
 
+    const workspaceInvite =
+      await this.workspaceInviteService.findByTokenWithWorkspaceAndUser(
+        inviteToken,
+      );
+
+    if (!workspaceInvite) {
+      throw new BadRequestException();
+    }
+
+    // Create a workspace user relation linking the user to the workspace
+    const newWorkspaceUser = await this.workspaceUserService.create({
+      workspaceId: workspaceInvite.workspace.id,
+      userId: usedById,
+      createdById: workspaceInvite.createdBy.id,
+      workspaceRole: WorkspaceUserRole.MEMBER,
+      status: WorkspaceUserStatus.ACTIVE,
+    });
+
     await this.workspaceInviteService.claimInvite({
       token: inviteToken,
-      usedBy,
+      usedById: newWorkspaceUser.id,
     });
 
     return;
@@ -171,6 +190,7 @@ export class WorkspaceService {
     await this.workspaceUserService.create({
       workspaceId: newWorkspace.id,
       userId: ownerUser.id,
+      createdById: null,
       workspaceRole: WorkspaceUserRole.MANAGER,
       status: WorkspaceUserStatus.ACTIVE,
     });
@@ -222,10 +242,12 @@ export class WorkspaceService {
     });
 
     // 2. Create a workspace user relation linking the user to the workspace
-    const newWorkspaceUser = await this.workspaceUserService.createVirtualUser({
+    const newWorkspaceUser = await this.workspaceUserService.create({
       workspaceId: workspace.id,
       userId: newUser.id,
       createdById: creatorWorkspaceUser.id,
+      workspaceRole: WorkspaceUserRole.MEMBER,
+      status: WorkspaceUserStatus.ACTIVE,
     });
 
     const response: WorkspaceUserResponse = {

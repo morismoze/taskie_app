@@ -18,13 +18,13 @@ export class GoalEntity extends RootBaseEntity {
   @JoinColumn({ name: 'workspace_id' })
   workspace!: WorkspaceEntity; // Workspace this goal belongs to
 
-  @Column()
+  @Column({ type: 'varchar' })
   title!: string; // Title of the goal, basically represents string reward
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   description!: string | null; // Optional goal description
 
-  @Column({ name: 'required_points' })
+  @Column({ type: 'integer', name: 'required_points' })
   requiredPoints!: number;
 
   @Column({

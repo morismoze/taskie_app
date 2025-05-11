@@ -80,7 +80,9 @@ export class SessionRepositoryImpl implements SessionRepository {
     await this.repo.delete(id);
   }
 
-  async deleteInactiveSessionsBefore(cutoffDate: Date): Promise<void> {
+  async deleteInactiveSessionsBefore(
+    cutoffDate: Session['updatedAt'],
+  ): Promise<void> {
     await this.repo.delete({
       updatedAt: LessThan(cutoffDate),
     });

@@ -6,14 +6,12 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 export const AppDataSource = new DataSource({
   type: process.env.DATABASE_TYPE,
   host: process.env.DATABASE_HOST,
-  port: process.env.DATABASE_PORT
-    ? parseInt(process.env.DATABASE_PORT, 10)
-    : 5432,
+  port: Number(process.env.DATABASE_PORT),
   database: process.env.DATABASE_NAME,
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   dropSchema: false,
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-  poolSize: process.env.DATABASE_POOL_SIZE,
+  poolSize: Number(process.env.DATABASE_POOL_SIZE),
 } as DataSourceOptions);

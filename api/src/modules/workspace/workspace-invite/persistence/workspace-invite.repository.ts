@@ -27,15 +27,17 @@ export abstract class WorkspaceInviteRepository {
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>>;
 
-  abstract update({
+  abstract markUsedBy({
     id,
-    data,
+    usedById,
     relations,
   }: {
     id: WorkspaceInvite['id'];
-    data: Partial<
-      Omit<WorkspaceInvite, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
-    >;
+    usedById: WorkspaceInvite['usedBy']['id'];
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>>;
+
+  abstract deleteInactiveInvitesBefore(
+    cutoffDate: WorkspaceInvite['expiresAt'],
+  ): Promise<void>;
 }
