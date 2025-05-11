@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -34,6 +35,8 @@ import { WorkspaceGoalsResponse } from './dto/workspace-goals-response.dto';
 import { CreateTaskRequest } from './dto/create-task-request.dto';
 import { LeaderboardResponse } from './dto/workspace-leaderboard-response.dto';
 import { CreateWorkspaceInviteLinkResponse } from './dto/create-workspace-invite-link-response.dto';
+import { WorkspaceIdRequestParam } from './dto/workspace-id-path-param-request.dto';
+import { WorkspaceInviteTokenRequestPathParam } from './dto/workspace-invite-token-path-param-request.dto';
 
 @Controller({
   path: 'workspaces',
@@ -61,18 +64,37 @@ export class WorkspaceController {
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
   async createWorkspaceInviteLink(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
     @Req() request: Request & { user: JwtPayload },
-  ): Promise<CreateWorkspaceInviteLinkResponse> {}
+  ): Promise<CreateWorkspaceInviteLinkResponse> {
+    return this.workspaceService.createInviteLink({
+      workspaceId: params.workspaceId,
+      createdById: request.user.userId,
+    });
+  }
 
-  @Post(':workspaceId/invites/:inviteToken/join')
+  @Get('invites/:inviteToken')
+  @HttpCode(HttpStatus.OK)
+  getWorkspaceInfoByInviteToken(
+    @Param() params: WorkspaceInviteTokenRequestPathParam,
+  ): Promise<WorkspaceResponse> {
+    return this.workspaceService.getWorkspaceByInviteLinkToken(
+      params.inviteToken,
+    );
+  }
+
+  @Put('invites/:inviteToken/join')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
   async joinWorkspace(
-    @Param('workspaceId') workspaceId: string,
-    @Param('inviteToken') inviteToken: string,
+    @Param() params: WorkspaceInviteTokenRequestPathParam,
     @Req() request: Request & { user: JwtPayload },
-  ): Promise<WorkspaceResponse> {}
+  ): Promise<void> {
+    return this.workspaceService.joinWorkspace({
+      inviteToken: params.inviteToken,
+      usedById: request.user.userId,
+    });
+  }
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
@@ -88,12 +110,12 @@ export class WorkspaceController {
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
   createVirtualUser(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
     @Req() request: Request & { user: JwtPayload },
     @Body() newVirtualUser: CreateVirtualWorkspaceUserRequest,
   ): Promise<WorkspaceUserResponse> {
     return this.workspaceService.createVirtualUser({
-      workspaceId,
+      workspaceId: params.workspaceId,
       createdById: request.user.userId,
       data: newVirtualUser,
     });
@@ -103,20 +125,20 @@ export class WorkspaceController {
   @UseGuards(AuthGuard('jwt'), WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getWorkspaceMembers(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
   ): Promise<WorkspaceUsersResponse> {
-    return this.workspaceService.getWorkspaceMembers(workspaceId);
+    return this.workspaceService.getWorkspaceMembers(params.workspaceId);
   }
 
   @Get(':workspaceId/tasks')
   @UseGuards(AuthGuard('jwt'), WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getTasks(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
     @Query() query: WorkspaceItemRequestQuery,
   ): Promise<WorkspaceTasksResponse> {
     return this.workspaceService.getWorkspaceTasks({
-      workspaceId,
+      workspaceId: params.workspaceId,
       query,
     });
   }
@@ -125,11 +147,11 @@ export class WorkspaceController {
   @UseGuards(AuthGuard('jwt'), WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getGoals(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
     @Query() query: WorkspaceItemRequestQuery,
   ): Promise<WorkspaceGoalsResponse> {
     return this.workspaceService.getWorkspaceGoals({
-      workspaceId,
+      workspaceId: params.workspaceId,
       query,
     });
   }
@@ -139,7 +161,7 @@ export class WorkspaceController {
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   createTask(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
     @Req() request: Request & { user: JwtPayload },
     @Body() data: CreateTaskRequest,
   ): Promise<void> {
@@ -147,7 +169,7 @@ export class WorkspaceController {
     // different query params, so it doesn't make sense to return a newly created task
     // in the response if it won't be usable for task list state update in the app
     return this.workspaceService.createTask({
-      workspaceId,
+      workspaceId: params.workspaceId,
       createdById: request.user.userId,
       data,
     });
@@ -157,8 +179,8 @@ export class WorkspaceController {
   @UseGuards(AuthGuard('jwt'), WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   getLeaderboard(
-    @Param('workspaceId') workspaceId: string,
+    @Param() params: WorkspaceIdRequestParam,
   ): Promise<LeaderboardResponse> {
-    return this.workspaceService.getWorkspaceLeaderboard(workspaceId);
+    return this.workspaceService.getWorkspaceLeaderboard(params.workspaceId);
   }
 }

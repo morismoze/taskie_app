@@ -1,4 +1,3 @@
 export interface CreateWorkspaceInviteLinkResponse {
-  id: string;
-  link: string;
+  inviteLink: string;
 }

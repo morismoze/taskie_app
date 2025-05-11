@@ -10,6 +10,9 @@ export enum Environment {
 }
 
 class EnvironmentVariablesValidator {
+  @IsString()
+  BASE_URL: string;
+
   @IsEnum(Environment)
   NODE_ENV: Environment;
 
@@ -25,11 +28,13 @@ class EnvironmentVariablesValidator {
   API_PREFIX: string;
 
   constructor(
+    BASE_URL: string,
     NODE_ENV: Environment,
     APP_NAME: string,
     APP_PORT: number,
     API_PREFIX: string,
   ) {
+    this.BASE_URL = BASE_URL;
     this.NODE_ENV = NODE_ENV;
     this.APP_NAME = APP_NAME;
     this.APP_PORT = APP_PORT;
@@ -45,6 +50,7 @@ export default registerAs<AppConfig>('app', (): AppConfig => {
   const env = process.env as unknown as EnvironmentVariablesValidator;
 
   return {
+    baseUrl: env.BASE_URL,
     nodeEnv: env.NODE_ENV,
     name: env.APP_NAME,
     port: env.APP_PORT,

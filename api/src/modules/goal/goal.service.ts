@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
 import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
-import { GoalWithAssignee } from './domain/goal-with-assignee.domain';
+import { GoalWithAssigneeCore } from './domain/goal-with-assignee-core.domain';
 import { Goal } from './domain/goal.domain';
 import { GoalRepository } from './persistence/goal.repository';
 
@@ -19,7 +19,7 @@ export class GoalService {
     workspaceId: Goal['workspace']['id'];
     query: WorkspaceItemRequestQuery;
   }): Promise<{
-    data: GoalWithAssignee[];
+    data: GoalWithAssigneeCore[];
     total: number;
   }> {
     const { data: goalEntities, total } =
@@ -33,7 +33,7 @@ export class GoalService {
         },
       });
 
-    const goals: GoalWithAssignee[] = [];
+    const goals: GoalWithAssigneeCore[] = [];
 
     for (const goal of goalEntities) {
       const accumulatedPoints =

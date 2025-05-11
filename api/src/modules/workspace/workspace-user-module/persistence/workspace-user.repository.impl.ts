@@ -13,6 +13,19 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     private readonly repo: Repository<WorkspaceUserEntity>,
   ) {}
 
+  async findById({
+    id,
+    relations,
+  }: {
+    id: WorkspaceUser['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Nullable<WorkspaceUserEntity>> {
+    return await this.repo.findOne({
+      where: { id },
+      relations,
+    });
+  }
+
   async findByUserId({
     userId,
     relations,

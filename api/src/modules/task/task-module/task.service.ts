@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/create-task-request.dto';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
-import { TaskWithAssignees } from './domain/task-with-assignees.domain';
+import { TaskWithAssigneesCore } from './domain/task-with-assignees-core.domain';
 import { Task } from './domain/task.domain';
 import { TaskRepository } from './persistence/task.repository';
 
@@ -17,7 +17,7 @@ export class TaskService {
     workspaceId: Task['workspace']['id'];
     query: WorkspaceItemRequestQuery;
   }): Promise<{
-    data: TaskWithAssignees[];
+    data: TaskWithAssigneesCore[];
     total: number;
   }> {
     const { data: taskEntities, total } =
@@ -31,7 +31,7 @@ export class TaskService {
         },
       });
 
-    const tasks: TaskWithAssignees[] = taskEntities.map((task) => ({
+    const tasks: TaskWithAssigneesCore[] = taskEntities.map((task) => ({
       id: task.id,
       title: task.title,
       rewardPoints: task.rewardPoints,

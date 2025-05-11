@@ -1,4 +1,4 @@
 export enum WorkspaceInviteStatus {
   ACTIVE,
-  EXPIRED,
+  USED,
 }

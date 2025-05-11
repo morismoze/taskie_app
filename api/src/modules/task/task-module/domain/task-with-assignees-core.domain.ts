@@ -1,7 +1,7 @@
 import { ProgressStatus } from './progress-status.enum';
 import { TaskCore } from './task-core.domain';
 
-export interface TaskWithAssignees extends TaskCore {
+export interface TaskWithAssigneesCore extends TaskCore {
   assignees: {
     id: string; // user ID
     firstName: string;

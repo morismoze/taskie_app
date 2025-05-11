@@ -1,0 +1,1 @@
+export const WORKSPACE_INVITE_LINK_LENGTH = 24;

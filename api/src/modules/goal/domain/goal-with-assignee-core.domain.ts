@@ -1,6 +1,6 @@
 import { GoalCore } from './goal-core.domain';
 
-export interface GoalWithAssignee extends GoalCore {
+export interface GoalWithAssigneeCore extends GoalCore {
   accumulatedPoints: number;
   assignee: {
     id: string;

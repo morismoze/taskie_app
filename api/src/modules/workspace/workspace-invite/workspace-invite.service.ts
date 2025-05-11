@@ -1,4 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { WORKSPACE_INVITE_LINK_LENGTH } from 'src/common/helper/constants';
+import { generateUniqueToken } from 'src/common/helper/util';
+import { Nullable } from 'src/common/types/nullable.type';
+import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
+import { WorkspaceInviteStatus } from './domain/workspace-invite-status.enum';
+import { WorkspaceInviteWithWorkspaceCore } from './domain/workspace-invite-with-workspace-core.domain';
+import { WorkspaceInvite } from './domain/workspace-invite.domain';
 import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
@@ -7,32 +19,88 @@ export class WorkspaceInviteService {
     private readonly workspaceInviteRepository: WorkspaceInviteRepository,
   ) {}
 
-  async createInviteLink(
-    workspaceId: string,
-    invitedByUserId: string | null,
-  ): Promise<WorkspaceInviteEntity> {
-    // Check if an active invite link already exists for this workspace
-    const existingActiveInvite = await this.workspaceInviteRepository.findOne({
-      where: { workspace: { id: workspaceId }, status: 'ACTIVE' },
+  /**
+   * Invite links will last up to 1 day and be one-time only
+   */
+
+  async createInviteLink({
+    workspaceId,
+    createdById,
+  }: {
+    workspaceId: WorkspaceInvite['workspace']['id'];
+    createdById: WorkspaceInvite['createdBy']['id'];
+  }): Promise<WorkspaceInviteCore> {
+    const token = generateUniqueToken(WORKSPACE_INVITE_LINK_LENGTH);
+    const now = new Date();
+    const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
+    const expiresAt = new Date(now.getTime() + twentyFourHoursInMillis);
+
+    const newInvite = await this.workspaceInviteRepository.create({
+      data: {
+        token,
+        workspaceId,
+        createdById,
+        expiresAt,
+        status: WorkspaceInviteStatus.ACTIVE,
+      },
     });
 
-    if (existingActiveInvite) {
-      return existingActiveInvite;
+    if (!newInvite) {
+      throw new InternalServerErrorException();
     }
 
-    // If no active link exists, create a new one
-    const workspace = await this.workspaceService.findById(workspaceId);
-    if (!workspace) {
-      throw new NotFoundException(`Workspace with ID ${workspaceId} not found`);
-    }
+    return newInvite;
+  }
 
-    const newInvite = this.workspaceInviteRepository.create({
-      workspace: { id: workspaceId },
-      invitedBy: invitedByUserId ? { id: invitedByUserId } : null,
-      id: uuidv4(), // Generate a unique invite token
-      status: 'ACTIVE',
+  async findByToken(
+    token: WorkspaceInvite['token'],
+  ): Promise<Nullable<WorkspaceInviteCore>> {
+    return await this.workspaceInviteRepository.findByToken({
+      token,
+    });
+  }
+
+  async findByTokenWithWorkspace(
+    token: WorkspaceInvite['token'],
+  ): Promise<Nullable<WorkspaceInviteWithWorkspaceCore>> {
+    return await this.workspaceInviteRepository.findByToken({
+      token,
+      relations: {
+        workspace: true,
+      },
+    });
+  }
+
+  async claimInvite({
+    token,
+    usedBy,
+  }: {
+    token: WorkspaceInvite['token'];
+    usedBy: WorkspaceInvite['usedBy'];
+  }): Promise<Nullable<WorkspaceInviteCore>> {
+    const workspaceInvite = await this.workspaceInviteRepository.findByToken({
+      token,
     });
 
-    return this.workspaceInviteRepository.save(newInvite);
+    // Check if workspace invite with that token exists
+    if (!workspaceInvite) {
+      throw new NotFoundException();
+    }
+
+    // Check if that woekspace invite was already used or expired
+    if (
+      workspaceInvite.status === WorkspaceInviteStatus.USED ||
+      workspaceInvite.expiresAt < new Date()
+    ) {
+      throw new BadRequestException();
+    }
+
+    return await this.workspaceInviteRepository.update({
+      id: workspaceInvite.id,
+      data: {
+        usedBy,
+        status: WorkspaceInviteStatus.USED,
+      },
+    });
   }
 }

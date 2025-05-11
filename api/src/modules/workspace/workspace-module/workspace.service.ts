@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -35,6 +36,12 @@ import {
   LeaderboardResponse,
   LeaderboardUserResponse,
 } from './dto/workspace-leaderboard-response.dto';
+import { User } from 'src/modules/user/domain/user.domain';
+import { CreateWorkspaceInviteLinkResponse } from './dto/create-workspace-invite-link-response.dto';
+import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
+import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
+import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
+import { WorkspaceInviteStatus } from '../workspace-invite/domain/workspace-invite-status.enum';
 
 @Injectable()
 export class WorkspaceService {
@@ -45,7 +52,92 @@ export class WorkspaceService {
     private readonly taskService: TaskService,
     private readonly goalService: GoalService,
     private readonly taskAssignmentService: TaskAssignmentService,
+    private readonly workspaceInviteService: WorkspaceInviteService,
   ) {}
+
+  async createInviteLink({
+    workspaceId,
+    createdById,
+  }: {
+    workspaceId: Workspace['id'];
+    createdById: User['id'];
+  }): Promise<CreateWorkspaceInviteLinkResponse> {
+    // Check if workspace exists
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+      relations: {
+        members: {
+          user: true,
+        },
+      },
+    });
+
+    if (!workspace) {
+      throw new NotFoundException();
+    }
+
+    // Check if workspace user by user ID exists
+    const createdByWorkspaceUser =
+      await this.workspaceUserService.findByUserId(createdById);
+
+    if (!createdByWorkspaceUser) {
+      throw new NotFoundException();
+    }
+
+    const invite = await this.workspaceInviteService.createInviteLink({
+      workspaceId,
+      createdById,
+    });
+
+    const response: CreateWorkspaceInviteLinkResponse = {
+      inviteLink: getAppWorkspaceJoinDeepLink(invite.token),
+    };
+
+    return response;
+  }
+
+  async getWorkspaceByInviteLinkToken(
+    inviteToken: WorkspaceInvite['token'],
+  ): Promise<WorkspaceResponse> {
+    // Check if user by ID exists
+    const workspaceInvite =
+      await this.workspaceInviteService.findByTokenWithWorkspace(inviteToken);
+
+    if (!workspaceInvite) {
+      throw new NotFoundException();
+    }
+
+    const response: WorkspaceResponse = {
+      id: workspaceInvite.workspace.id,
+      name: workspaceInvite.workspace.name,
+      description: workspaceInvite.workspace.description,
+      pictureUrl: workspaceInvite.workspace.pictureUrl,
+    };
+
+    return response;
+  }
+
+  async joinWorkspace({
+    inviteToken,
+    usedById,
+  }: {
+    inviteToken: WorkspaceInvite['token'];
+    usedById: User['id'];
+  }): Promise<void> {
+    // Check if user by ID exists
+    const usedBy = await this.userService.findById(usedById);
+
+    if (!usedBy) {
+      throw new ForbiddenException();
+    }
+
+    await this.workspaceInviteService.claimInvite({
+      token: inviteToken,
+      usedBy,
+    });
+
+    return;
+  }
 
   async create({
     data,
