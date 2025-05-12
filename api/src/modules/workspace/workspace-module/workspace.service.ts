@@ -35,6 +35,7 @@ import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
 import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { CreateGoalRequest } from './dto/create-goal-request.dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -395,7 +396,7 @@ export class WorkspaceService {
     }
 
     // Create new concrete task
-    const newTask = await this.taskService.createTask({
+    const newTask = await this.taskService.create({
       workspaceId,
       createdById,
       data,
@@ -409,6 +410,38 @@ export class WorkspaceService {
         status: ProgressStatus.IN_PROGRESS,
       });
     }
+
+    return;
+  }
+
+  async createGoal({
+    workspaceId,
+    createdById,
+    data,
+  }: {
+    workspaceId: Workspace['id'];
+    createdById: JwtPayload['sub'];
+    data: CreateGoalRequest;
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Create new goal
+    const newTask = await this.goalService.create({
+      workspaceId,
+      createdById,
+      data,
+    });
 
     return;
   }

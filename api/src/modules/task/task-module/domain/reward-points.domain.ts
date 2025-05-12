@@ -1,0 +1,2 @@
+export const TASK_REWARD_POINTS_MINIMAL = 5;
+export const TASK_REWARD_POINTS_MAXIMAL = 5;

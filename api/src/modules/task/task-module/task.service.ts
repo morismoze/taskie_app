@@ -57,7 +57,7 @@ export class TaskService {
     };
   }
 
-  async createTask({
+  async create({
     workspaceId,
     createdById,
     data,

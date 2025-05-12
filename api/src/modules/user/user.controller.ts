@@ -6,9 +6,8 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { RequestWithUser } from '../auth/core/domain/request-with-user.domain';
 import { JwtAuthGuard } from '../auth/core/guards/jwt-auth.guard';
-import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
 import { UserService } from './user.service';
 
 @Controller({
@@ -20,7 +19,7 @@ export class UserController {
   @Delete('me')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  softDelete(@Req() request: Request & { user: JwtPayload }): Promise<void> {
+  softDelete(@Req() request: RequestWithUser): Promise<void> {
     return this.userService.softDelete(request.user.sub);
   }
 }

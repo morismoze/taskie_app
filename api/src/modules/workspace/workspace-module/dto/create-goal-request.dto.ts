@@ -1,8 +1,5 @@
 import { Type } from 'class-transformer';
 import {
-  ArrayMinSize,
-  IsArray,
-  IsDate,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -12,12 +9,9 @@ import {
   Validate,
 } from 'class-validator';
 import { IsMultipleOfConstraint } from 'src/common/validators/is-multiple-of.validator';
-import {
-  TASK_REWARD_POINTS_MAXIMAL,
-  TASK_REWARD_POINTS_MINIMAL,
-} from 'src/modules/task/task-module/domain/reward-points.domain';
+import { TASK_REWARD_POINTS_MINIMAL } from 'src/modules/task/task-module/domain/reward-points.domain';
 
-export class CreateTaskRequest {
+export class CreateGoalRequest {
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -30,31 +24,23 @@ export class CreateTaskRequest {
   @Type(() => Number)
   @IsInt()
   @Min(TASK_REWARD_POINTS_MINIMAL)
-  @Max(TASK_REWARD_POINTS_MAXIMAL)
+  @Max(1000000) // This is trying to define a reasonable upper limit
   @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_MINIMAL])
-  rewardPoints: number;
+  requiredPoints: number;
 
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  dueDate: Date | null;
-
-  @IsArray()
+  @IsNotEmpty()
   @IsString({ each: true })
-  @ArrayMinSize(1)
-  assignees: string[]; // Array of WorkspaceUser IDs
+  assignee: string; // WorkspaceUser ID
 
   constructor(
     title: string,
-    rewardPoints: number,
-    assignees: string[],
+    requiredPoints: number,
+    assignee: string,
     description?: string | null,
-    dueDate?: Date | null,
   ) {
     this.title = title;
-    this.rewardPoints = rewardPoints;
-    this.assignees = assignees;
+    this.requiredPoints = requiredPoints;
+    this.assignee = assignee;
     this.description = description ?? null;
-    this.dueDate = dueDate ?? null;
   }
 }

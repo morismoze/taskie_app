@@ -11,8 +11,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
-import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { RequireWorkspaceUserRole } from './decorators/workspace-role.decorator';
 import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
@@ -37,6 +35,8 @@ import { CreateWorkspaceInviteLinkResponse } from './dto/create-workspace-invite
 import { WorkspaceIdRequestParam } from './dto/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/workspace-invite-token-path-param-request.dto';
 import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
+import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
+import { CreateGoalRequest } from './dto/create-goal-request.dto';
 
 @Controller({
   path: 'workspaces',
@@ -48,7 +48,7 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   createWorkspace(
-    @Req() request: Request & { user: JwtPayload },
+    @Req() request: RequestWithUser,
     @Body() payload: CreateWorkspaceRequest,
   ): Promise<WorkspaceResponse> {
     // Complete RESTful endpoint would just return Location header
@@ -65,7 +65,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.CREATED)
   createWorkspaceInviteLink(
     @Param() params: WorkspaceIdRequestParam,
-    @Req() request: Request & { user: JwtPayload },
+    @Req() request: RequestWithUser,
   ): Promise<CreateWorkspaceInviteLinkResponse> {
     return this.workspaceService.createInviteLink({
       workspaceId: params.workspaceId,
@@ -88,7 +88,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.CREATED)
   joinWorkspace(
     @Param() params: WorkspaceInviteTokenRequestPathParam,
-    @Req() request: Request & { user: JwtPayload },
+    @Req() request: RequestWithUser,
   ): Promise<void> {
     return this.workspaceService.joinWorkspace({
       inviteToken: params.inviteToken,
@@ -99,9 +99,7 @@ export class WorkspaceController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  getUserWorkspaces(
-    @Req() req: Request & { user: JwtPayload },
-  ): Promise<WorkspacesResponse> {
+  getUserWorkspaces(@Req() req: RequestWithUser): Promise<WorkspacesResponse> {
     return this.workspaceService.getWorkspacesByUser(req.user.sub);
   }
 
@@ -111,7 +109,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.CREATED)
   createVirtualUser(
     @Param() params: WorkspaceIdRequestParam,
-    @Req() request: Request & { user: JwtPayload },
+    @Req() request: RequestWithUser,
     @Body() newVirtualUser: CreateVirtualWorkspaceUserRequest,
   ): Promise<WorkspaceUserResponse> {
     return this.workspaceService.createVirtualUser({
@@ -162,13 +160,32 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.NO_CONTENT)
   createTask(
     @Param() params: WorkspaceIdRequestParam,
-    @Req() request: Request & { user: JwtPayload },
+    @Req() request: RequestWithUser,
     @Body() data: CreateTaskRequest,
   ): Promise<void> {
     // Returning nothing in the response because tasks are paginable and sortable by
     // different query params, so it doesn't make sense to return a newly created task
     // in the response if it won't be usable for task list state update in the app
     return this.workspaceService.createTask({
+      workspaceId: params.workspaceId,
+      createdById: request.user.sub,
+      data,
+    });
+  }
+
+  @Post(':workspaceId/goals')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  createGoal(
+    @Param() params: WorkspaceIdRequestParam,
+    @Req() request: RequestWithUser,
+    @Body() data: CreateGoalRequest,
+  ): Promise<void> {
+    // Returning nothing in the response because goals are paginable and sortable by
+    // different query params, so it doesn't make sense to return a newly created goal
+    // in the response if it won't be usable for goal list state update in the app
+    return this.workspaceService.createGoal({
       workspaceId: params.workspaceId,
       createdById: request.user.sub,
       data,
