@@ -1,12 +1,14 @@
 import { registerAs } from '@nestjs/config';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import validateConfig from 'src/common/helper/validate-config';
 import { GoogleConfig } from './google-config.type';
 
 class GoogleEnvironmentVariablesValidator {
+  @IsNotEmpty()
   @IsString()
   AUTH_GOOGLE_CLIENT_ID: string;
 
+  @IsNotEmpty()
   @IsString()
   AUTH_GOOGLE_CLIENT_SECRET: string;
 

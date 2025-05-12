@@ -1,6 +1,6 @@
 import {
+  ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AggregatedConfig } from 'src/config/config.type';
 import ms from 'ms';
 import * as crypto from 'crypto';
-import { JwtPayload } from './strategies/domain/jwt-payload.domain';
+import { JwtPayload } from './strategies/jwt-payload.type';
 import { SocialLogin } from './domain/social-login.domain';
 import { LoginResponse } from './dto/login-response.dto';
 import { Nullable } from 'src/common/types/nullable.type';
@@ -20,8 +20,8 @@ import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-modul
 import { UserResponse } from 'src/modules/user/dto/user-response.dto';
 import { SessionService } from 'src/modules/session/session.service';
 import { Session } from 'src/modules/session/domain/session.domain';
-import { JwtRefreshPayload } from './strategies/domain/jwt-refresh-payload.domain';
 import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
+import { JwtRefreshPayload } from './strategies/jwt-refresh-payload.type';
 
 @Injectable()
 export class AuthService {
@@ -121,7 +121,7 @@ export class AuthService {
     const { accessToken, refreshToken, tokenExpires } =
       await this.getTokensData(
         {
-          userId: user.id,
+          sub: user.id,
           roles: workspaceUserMemberships.map((workspaceUser) => ({
             workspaceId: workspaceUser.workspace.id,
             role: workspaceUser.workspaceRole,
@@ -149,10 +149,11 @@ export class AuthService {
   }
 
   async me(data: JwtPayload): Promise<UserResponse> {
-    const user = await this.userService.findById(data.userId);
+    const user = await this.userService.findById(data.sub);
 
     if (!user) {
-      throw new NotFoundException();
+      // Corrupted JWT token which passed authentication
+      throw new ForbiddenException();
     }
 
     const userDto: LoginResponse['user'] = {
@@ -199,7 +200,7 @@ export class AuthService {
     const { accessToken, refreshToken, tokenExpires } =
       await this.getTokensData(
         {
-          userId: user.id,
+          sub: user.id,
           roles: workspaceUserMemberships.map((workspaceUser) => ({
             workspaceId: workspaceUser.workspace.id,
             role: workspaceUser.workspaceRole,
@@ -220,10 +221,7 @@ export class AuthService {
     return this.sessionService.deleteById(data.sessionId);
   }
 
-  private async getTokensData(
-    data: Omit<JwtPayload, 'iat' | 'exp' | 'nbf'>,
-    hash: Session['hash'],
-  ) {
+  private async getTokensData(data: JwtPayload, hash: Session['hash']) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
     });
@@ -233,7 +231,7 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(
         {
-          id: data.userId,
+          sub: data.sub,
           roles: data.roles,
           sessionId: data.sessionId,
         },

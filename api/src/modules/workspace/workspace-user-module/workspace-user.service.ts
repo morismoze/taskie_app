@@ -1,8 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
-import { WorkspaceUserRole } from './domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from './domain/workspace-user-status.enum';
 import { WorkspaceUser } from './domain/workspace-user.domain';
 import { WorkspaceUserRepository } from './persistence/workspace-user.repository';
 
@@ -36,7 +36,12 @@ export class WorkspaceUserService {
     });
 
     if (!workspaceUser) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return workspaceUser;

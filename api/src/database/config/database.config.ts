@@ -1,29 +1,43 @@
 import { registerAs } from '@nestjs/config';
-import { IsInt, Min, Max, IsString, IsNumber } from 'class-validator';
+import {
+  IsInt,
+  Min,
+  Max,
+  IsString,
+  IsNumber,
+  IsNotEmpty,
+} from 'class-validator';
 import validateConfig from '../../common/helper/validate-config';
 import { DatabaseConfig } from './database-config.type';
 
 class DatabaseEnvironmentVariablesValidator {
+  @IsNotEmpty()
   @IsString()
   DATABASE_TYPE: string;
 
+  @IsNotEmpty()
   @IsString()
   DATABASE_HOST: string;
 
+  @IsNotEmpty()
   @IsInt()
   @Min(0)
   @Max(65535)
   DATABASE_PORT: number;
 
+  @IsNotEmpty()
   @IsString()
   DATABASE_NAME: string;
 
+  @IsNotEmpty()
   @IsString()
   DATABASE_USERNAME: string;
 
+  @IsNotEmpty()
   @IsString()
   DATABASE_PASSWORD: string;
 
+  @IsNotEmpty()
   @IsNumber()
   DATABASE_POOL_SIZE: number;
 

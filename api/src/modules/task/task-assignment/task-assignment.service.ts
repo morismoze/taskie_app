@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
 import { TaskAssignment } from './domain/task-assignment.domain';
@@ -49,7 +51,12 @@ export class TaskAssignmentService {
     });
 
     if (!newTaskAssignment) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return newTaskAssignment;

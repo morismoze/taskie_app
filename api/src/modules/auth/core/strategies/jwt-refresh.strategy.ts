@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AggregatedConfig } from 'src/config/config.type';
 import { OrNever } from 'src/common/types/or-never.type';
-import { JwtRefreshPayload } from './domain/jwt-refresh-payload.domain';
+import { JwtRefreshPayload } from './jwt-refresh-payload.type';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -23,6 +23,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
   constructor(configService: ConfigService<AggregatedConfig>) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false, // To be explicit
       secretOrKey: configService.get('auth.refreshSecret', { infer: true }),
     });
   }
@@ -32,6 +33,11 @@ export class JwtRefreshStrategy extends PassportStrategy(
       throw new UnauthorizedException();
     }
 
+    // Based on the way JWT signing works, we're guaranteed that we're receiving a valid token that
+    // we have previously signed and issued to a valid user.
+
+    // Passport will build a user object based on the return value of our validate()
+    // method, and attach it as a property on the Request object.
     return payload;
   }
 }

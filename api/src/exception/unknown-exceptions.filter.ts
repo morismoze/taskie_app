@@ -2,12 +2,16 @@ import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
-  HttpException,
   Logger,
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
+
+/**
+ * Global-scoped filters are used across the whole application, for every controller and every route handler.
+ * So this won't catch errors outside of those contexts (e.g. validateConfig function, or forRoot initializations).
+ */
 
 @Catch(Error)
 export class UnknownExceptionsFilter implements ExceptionFilter {
@@ -21,11 +25,12 @@ export class UnknownExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
     const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-    const message = 'Internal server error';
+    const message = exception.message;
+    console.log(exception);
 
     this.logger.error(
       `[${request.method}] ${httpAdapter.getRequestUrl(request)} - ${statusCode} - ${message}`,
-      exception,
+      exception.stack,
     );
     httpAdapter.reply(response, undefined, statusCode);
   }

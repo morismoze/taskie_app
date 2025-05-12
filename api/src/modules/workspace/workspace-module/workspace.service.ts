@@ -1,17 +1,10 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
+import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { GoalService } from 'src/modules/goal/goal.service';
 import { TaskService } from 'src/modules/task/task-module/task.service';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
-import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { Workspace } from './domain/workspace.domain';
 import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
@@ -36,12 +29,12 @@ import {
   LeaderboardResponse,
   LeaderboardUserResponse,
 } from './dto/workspace-leaderboard-response.dto';
-import { User } from 'src/modules/user/domain/user.domain';
 import { CreateWorkspaceInviteLinkResponse } from './dto/create-workspace-invite-link-response.dto';
 import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
 import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
 import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
-import { WorkspaceInviteStatus } from '../workspace-invite/domain/workspace-invite-status.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 
 @Injectable()
 export class WorkspaceService {
@@ -55,12 +48,57 @@ export class WorkspaceService {
     private readonly workspaceInviteService: WorkspaceInviteService,
   ) {}
 
+  async create({
+    data,
+    createdById,
+  }: {
+    createdById: JwtPayload['sub'];
+    data: CreateWorkspaceRequest;
+  }): Promise<WorkspaceResponse> {
+    // 1. create a new empty workspace
+    const newWorkspace = await this.workspaceRepository.create({
+      data: {
+        description: data.description,
+        name: data.name,
+        pictureUrl: null,
+      },
+      createdById,
+    });
+
+    if (!newWorkspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // 2. create a new workspace user for the owner
+    await this.workspaceUserService.create({
+      workspaceId: newWorkspace.id,
+      userId: createdById,
+      createdById: null,
+      workspaceRole: WorkspaceUserRole.MANAGER,
+      status: WorkspaceUserStatus.ACTIVE,
+    });
+
+    const response: WorkspaceResponse = {
+      id: newWorkspace.id,
+      name: newWorkspace.name,
+      description: newWorkspace.description,
+      pictureUrl: newWorkspace.pictureUrl,
+    };
+
+    return response;
+  }
+
   async createInviteLink({
     workspaceId,
     createdById,
   }: {
     workspaceId: Workspace['id'];
-    createdById: User['id'];
+    createdById: JwtPayload['sub'];
   }): Promise<CreateWorkspaceInviteLinkResponse> {
     // Check if workspace exists
     const workspace = await this.workspaceRepository.findById({
@@ -73,15 +111,12 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
-      throw new NotFoundException();
-    }
-
-    // Check if workspace user by user ID exists
-    const createdByWorkspaceUser =
-      await this.workspaceUserService.findByUserId(createdById);
-
-    if (!createdByWorkspaceUser) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const invite = await this.workspaceInviteService.createInviteLink({
@@ -104,7 +139,12 @@ export class WorkspaceService {
       await this.workspaceInviteService.findByTokenWithWorkspace(inviteToken);
 
     if (!workspaceInvite) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const response: WorkspaceResponse = {
@@ -122,87 +162,14 @@ export class WorkspaceService {
     usedById,
   }: {
     inviteToken: WorkspaceInvite['token'];
-    usedById: User['id'];
+    usedById: JwtPayload['sub'];
   }): Promise<void> {
-    // Check if user by ID exists
-    const usedByWorkspaceUser =
-      await this.workspaceUserService.findByUserId(usedById);
-
-    if (!usedByWorkspaceUser) {
-      throw new ForbiddenException();
-    }
-
-    const workspaceInvite =
-      await this.workspaceInviteService.findByTokenWithWorkspaceAndUser(
-        inviteToken,
-      );
-
-    if (!workspaceInvite) {
-      throw new BadRequestException();
-    }
-
-    // Create a workspace user relation linking the user to the workspace
-    const newWorkspaceUser = await this.workspaceUserService.create({
-      workspaceId: workspaceInvite.workspace.id,
-      userId: usedById,
-      createdById: workspaceInvite.createdBy.id,
-      workspaceRole: WorkspaceUserRole.MEMBER,
-      status: WorkspaceUserStatus.ACTIVE,
-    });
-
     await this.workspaceInviteService.claimInvite({
       token: inviteToken,
-      usedById: newWorkspaceUser.id,
+      usedById,
     });
 
     return;
-  }
-
-  async create({
-    data,
-    createdById,
-  }: {
-    createdById: Workspace['createdBy']['id'];
-    data: CreateWorkspaceRequest;
-  }): Promise<WorkspaceResponse> {
-    const ownerUser = await this.userService.findById(createdById);
-
-    if (!ownerUser) {
-      // Corrupted access token
-      throw new ForbiddenException();
-    }
-
-    // 1. create a new empty workspace
-    const newWorkspace = await this.workspaceRepository.create({
-      data: {
-        description: data.description,
-        name: data.name,
-        pictureUrl: null,
-      },
-      createdById: ownerUser.id,
-    });
-
-    if (!newWorkspace) {
-      throw new InternalServerErrorException();
-    }
-
-    // 2. create a new workspace user for the owner
-    await this.workspaceUserService.create({
-      workspaceId: newWorkspace.id,
-      userId: ownerUser.id,
-      createdById: null,
-      workspaceRole: WorkspaceUserRole.MANAGER,
-      status: WorkspaceUserStatus.ACTIVE,
-    });
-
-    const response: WorkspaceResponse = {
-      id: newWorkspace.id,
-      name: newWorkspace.name,
-      description: newWorkspace.description,
-      pictureUrl: newWorkspace.pictureUrl,
-    };
-
-    return response;
   }
 
   async createVirtualUser({
@@ -211,7 +178,7 @@ export class WorkspaceService {
     data,
   }: {
     workspaceId: Workspace['id'];
-    createdById: JwtPayload['userId'];
+    createdById: JwtPayload['sub'];
     data: CreateVirtualWorkspaceUserRequest;
   }): Promise<WorkspaceUserResponse> {
     const workspace = await this.workspaceRepository.findById({
@@ -224,14 +191,20 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const creatorWorkspaceUser =
       await this.workspaceUserService.findByUserId(createdById);
 
     if (!creatorWorkspaceUser) {
-      throw new NotFoundException();
+      // Corrupted JWT token which passed authentication
+      throw new ForbiddenException();
     }
 
     // 1. Create core user
@@ -262,11 +235,12 @@ export class WorkspaceService {
   }
 
   async getWorkspacesByUser(
-    userId: WorkspaceUser['user']['id'],
+    userId: JwtPayload['sub'],
   ): Promise<WorkspacesResponse> {
     const userWorkspaces = await this.workspaceRepository.findAllByUserId({
       userId,
     });
+
     const response: WorkspacesResponse = userWorkspaces.map((workspace) => ({
       id: workspace.id,
       name: workspace.name,
@@ -288,7 +262,12 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const response: WorkspaceUsersResponse = workspace.members.map(
@@ -315,7 +294,12 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const { data: tasks, total } =
@@ -355,7 +339,12 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const { data: goals, total } =
@@ -389,7 +378,7 @@ export class WorkspaceService {
     data,
   }: {
     workspaceId: Workspace['id'];
-    createdById: JwtPayload['userId'];
+    createdById: JwtPayload['sub'];
     data: CreateTaskRequest;
   }): Promise<void> {
     const workspace = await this.workspaceRepository.findById({
@@ -397,7 +386,12 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     // Create new concrete task

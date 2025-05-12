@@ -9,7 +9,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
       useClass: TypeOrmConfigLoadService,
       dataSourceFactory: async (options?: DataSourceOptions) => {
         if (!options) {
-          throw new Error();
+          throw new Error(`Data source options is undefined`);
         }
         return await new DataSource(options).initialize();
       },

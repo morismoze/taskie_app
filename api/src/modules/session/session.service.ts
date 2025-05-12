@@ -1,9 +1,7 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { SessionCore } from './domain/session-core.domain';
 import { Session } from './domain/session.domain';
 import { SessionRepository } from './persistence/session.repository';
@@ -32,37 +30,28 @@ export class SessionService {
     const newSession = await this.sessionRepository.create({ data });
 
     if (!newSession) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return newSession;
   }
 
   async findById(id: Session['id']): Promise<Nullable<SessionCore>> {
-    const session = await this.sessionRepository.findById({
+    return await this.sessionRepository.findById({
       id,
     });
-
-    if (!session) {
-      throw new NotFoundException();
-    }
-
-    return session;
   }
 
   async findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {
-    const session = await this.sessionRepository.findById({
+    return await this.sessionRepository.findById({
       id,
       relations: { user: true },
     });
-
-    if (!session) {
-      throw new NotFoundException();
-    }
-
-    return {
-      ...session,
-    };
   }
 
   async update({
@@ -74,19 +63,18 @@ export class SessionService {
       Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>
     >;
   }): Promise<SessionCore> {
-    const session = await this.findById(id);
-
-    if (!session) {
-      throw new NotFoundException();
-    }
-
     const updatedSession = await this.sessionRepository.update({
       id,
       data,
     });
 
     if (!updatedSession) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return updatedSession;

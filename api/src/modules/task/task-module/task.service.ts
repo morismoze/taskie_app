@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/create-task-request.dto';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
@@ -76,7 +78,12 @@ export class TaskService {
     });
 
     if (!newTask) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return newTask;

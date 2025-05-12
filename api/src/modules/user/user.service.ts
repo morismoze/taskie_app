@@ -1,9 +1,4 @@
-import {
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { User } from './domain/user.domain';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
@@ -41,7 +36,12 @@ export class UserService {
     const newUser = await this.userRepository.create(data);
 
     if (!newUser) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return newUser;
@@ -56,7 +56,12 @@ export class UserService {
     const newVirtalUser = await this.userRepository.createVirtualUser(data);
 
     if (!newVirtalUser) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return newVirtalUser;
@@ -96,7 +101,12 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new NotFoundException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     // If email is present, check for email uniqueness
@@ -108,7 +118,7 @@ export class UserService {
           {
             code: ApiErrorCode.EMAIL_ALREADY_EXISTS,
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.CONFLICT,
         );
       }
     }
@@ -119,19 +129,18 @@ export class UserService {
     });
 
     if (!updatedUser) {
-      throw new InternalServerErrorException();
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return updatedUser;
   }
 
   async softDelete(userId: User['id']): Promise<void> {
-    const user = await this.userRepository.findById(userId);
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
     await this.userRepository.softDelete(userId);
 
     await this.update(userId, { status: UserStatus.INACTIVE });

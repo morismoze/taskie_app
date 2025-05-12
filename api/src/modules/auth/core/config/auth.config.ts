@@ -1,24 +1,30 @@
 import { registerAs } from '@nestjs/config';
 import { AuthConfig } from 'src/modules/auth/core/config/auth-config.type';
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import validateConfig from '../../../../common/helper/validate-config';
 
 class AuthEnvironmentVariablesValidator {
+  @IsNotEmpty()
   @IsString()
   AUTH_JWT_SECRET: string;
 
+  @IsNotEmpty()
   @IsInt()
   AUTH_JWT_TOKEN_EXPIRES_IN: number;
 
+  @IsNotEmpty()
   @IsString()
   AUTH_REFRESH_SECRET: string;
 
+  @IsNotEmpty()
   @IsInt()
   AUTH_REFRESH_TOKEN_EXPIRES_IN: number;
 
+  @IsNotEmpty()
   @IsString()
   AUTH_GOOGLE_CLIENT_ID: string;
 
+  @IsNotEmpty()
   @IsString()
   AUTH_GOOGLE_CLIENT_SECRET: string;
 

@@ -23,7 +23,8 @@ const getValidationOptions = (
   errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {
     const logger = new Logger('ValidationPipe');
-    logger.error(`${errors}`);
+    logger.error(errors.toString());
+
     return new ApiHttpException(
       {
         code: ApiErrorCode.INVALID_PAYLOAD,

@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtPayload } from 'src/modules/auth/core/strategies/domain/jwt-payload.domain';
+import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { WorkspaceUserRole } from '../../workspace-user-module/domain/workspace-user-role.enum';
 
 @Injectable()
