@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import {
   FindManyOptions,
@@ -17,6 +18,56 @@ export class GoalRepositoryImpl implements GoalRepository {
     @InjectRepository(GoalEntity)
     private readonly repo: Repository<GoalEntity>,
   ) {}
+
+  async create({
+    data,
+    workspaceId,
+    createdById,
+    relations,
+  }: {
+    data: {
+      title: Goal['title'];
+      description: Goal['description'];
+      requiredPoints: Goal['requiredPoints'];
+      assigneeId: Goal['assignee']['id'];
+    };
+    workspaceId: Goal['workspace']['id'];
+    createdById: Goal['createdBy']['id'];
+    relations?: FindOptionsRelations<GoalEntity>;
+  }): Promise<Nullable<GoalEntity>> {
+    const persistenceModel = this.repo.create({
+      workspace: {
+        id: workspaceId,
+      },
+      title: data.title,
+      description: data.description,
+      requiredPoints: data.requiredPoints,
+      assignee: { id: data.assigneeId },
+      createdBy: { id: createdById },
+    });
+
+    const savedEntity = await this.repo.save(persistenceModel);
+
+    const newEntity = await this.findById({
+      id: savedEntity.id,
+      relations,
+    });
+
+    return newEntity;
+  }
+
+  async findById({
+    id,
+    relations,
+  }: {
+    id: Goal['id'];
+    relations?: FindOptionsRelations<GoalEntity>;
+  }): Promise<Nullable<GoalEntity>> {
+    return await this.repo.findOne({
+      where: { id },
+      relations,
+    });
+  }
 
   async findAllByWorkspaceId({
     workspaceId,

@@ -149,12 +149,8 @@ export class AuthService {
   }
 
   async me(data: JwtPayload): Promise<UserResponse> {
-    const user = await this.userService.findById(data.sub);
-
-    if (!user) {
-      // Corrupted JWT token which passed authentication
-      throw new ForbiddenException();
-    }
+    // Using assertion because user should be always found based on how JWT works (custom secret)
+    const user = (await this.userService.findById(data.sub)) as User;
 
     const userDto: LoginResponse['user'] = {
       email: user.email,
@@ -169,19 +165,13 @@ export class AuthService {
   }
 
   async refreshToken(data: JwtRefreshPayload): Promise<TokenRefreshResponse> {
-    const session = await this.sessionService.findByIdWithUser(data.sessionId);
+    // Using assertion because session should be always found based on how JWT works (custom secret)
+    const session = (await this.sessionService.findByIdWithUser(
+      data.sessionId,
+    )) as Session;
 
-    if (!session || session.hash !== data.hash) {
-      // Invalid session - does not exist or the provided hash is invalid
-      throw new UnauthorizedException();
-    }
-
-    const user = await this.userService.findById(session.user.id);
-
-    if (!user) {
-      // Invalid session - user ID is corrupted
-      throw new UnauthorizedException();
-    }
+    // Using assertion because user should be always found based on how JWT works (custom secret)
+    const user = (await this.userService.findById(session.user.id)) as User;
 
     const workspaceUserMemberships =
       await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id);

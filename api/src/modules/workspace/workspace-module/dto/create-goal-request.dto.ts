@@ -9,7 +9,10 @@ import {
   Validate,
 } from 'class-validator';
 import { IsMultipleOfConstraint } from 'src/common/validators/is-multiple-of.validator';
-import { TASK_REWARD_POINTS_MINIMAL } from 'src/modules/task/task-module/domain/reward-points.domain';
+import {
+  TASK_REWARD_POINTS_MINIMAL,
+  TASK_REWARD_POINTS_STEP,
+} from 'src/modules/task/task-module/domain/reward-points.domain';
 
 export class CreateGoalRequest {
   @IsNotEmpty()
@@ -25,7 +28,7 @@ export class CreateGoalRequest {
   @IsInt()
   @Min(TASK_REWARD_POINTS_MINIMAL)
   @Max(1000000) // This is trying to define a reasonable upper limit
-  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_MINIMAL])
+  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_STEP])
   requiredPoints: number;
 
   @IsNotEmpty()

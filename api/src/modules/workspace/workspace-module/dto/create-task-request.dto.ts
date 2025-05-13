@@ -15,6 +15,7 @@ import { IsMultipleOfConstraint } from 'src/common/validators/is-multiple-of.val
 import {
   TASK_REWARD_POINTS_MAXIMAL,
   TASK_REWARD_POINTS_MINIMAL,
+  TASK_REWARD_POINTS_STEP,
 } from 'src/modules/task/task-module/domain/reward-points.domain';
 
 export class CreateTaskRequest {
@@ -31,7 +32,7 @@ export class CreateTaskRequest {
   @IsInt()
   @Min(TASK_REWARD_POINTS_MINIMAL)
   @Max(TASK_REWARD_POINTS_MAXIMAL)
-  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_MINIMAL])
+  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_STEP])
   rewardPoints: number;
 
   @IsOptional()

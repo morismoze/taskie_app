@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
 import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
+import { CreateGoalRequest } from '../workspace/workspace-module/dto/create-goal-request.dto';
+import { GoalCore } from './domain/goal-core.domain';
 import { GoalWithAssigneeCore } from './domain/goal-with-assignee-core.domain';
 import { Goal } from './domain/goal.domain';
 import { GoalRepository } from './persistence/goal.repository';
@@ -65,5 +69,37 @@ export class GoalService {
       data: goals,
       total: total,
     };
+  }
+
+  async create({
+    workspaceId,
+    createdById,
+    data,
+  }: {
+    workspaceId: Goal['workspace']['id'];
+    createdById: Goal['createdBy']['id'];
+    data: CreateGoalRequest;
+  }): Promise<GoalCore> {
+    const newGoal = await this.goalRepository.create({
+      workspaceId,
+      data: {
+        title: data.title,
+        description: data.description,
+        requiredPoints: data.requiredPoints,
+        assigneeId: data.assignee,
+      },
+      createdById,
+    });
+
+    if (!newGoal) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return newGoal;
   }
 }

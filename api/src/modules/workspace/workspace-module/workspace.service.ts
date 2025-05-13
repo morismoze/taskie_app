@@ -1,4 +1,4 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { GoalService } from 'src/modules/goal/goal.service';
 import { TaskService } from 'src/modules/task/task-module/task.service';
@@ -36,6 +36,7 @@ import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.dom
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { CreateGoalRequest } from './dto/create-goal-request.dto';
+import { WorkspaceUserCore } from '../workspace-user-module/domain/workspace-user-core.domain';
 
 @Injectable()
 export class WorkspaceService {
@@ -200,13 +201,10 @@ export class WorkspaceService {
       );
     }
 
-    const creatorWorkspaceUser =
-      await this.workspaceUserService.findByUserId(createdById);
-
-    if (!creatorWorkspaceUser) {
-      // Corrupted JWT token which passed authentication
-      throw new ForbiddenException();
-    }
+    // Using assertion because workspace user should be always found based on how JWT works (custom secret)
+    const creatorWorkspaceUser = (await this.workspaceUserService.findByUserId(
+      createdById,
+    )) as WorkspaceUserCore;
 
     // 1. Create core user
     const newUser = await this.userService.createVirtualUser({

@@ -22,6 +22,14 @@ export abstract class TaskRepository {
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>>;
 
+  abstract findById({
+    id,
+    relations,
+  }: {
+    id: Task['id'];
+    relations?: FindOptionsRelations<TaskEntity>;
+  }): Promise<Nullable<TaskEntity>>;
+
   abstract findAllByWorkspaceId({
     workspaceId,
     query: { page, limit, status, search },
