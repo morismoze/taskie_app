@@ -35,7 +35,7 @@ export class TaskAssignmentService {
     return totalPoints;
   }
 
-  async createTaskAssignment({
+  async create({
     workspaceUserId,
     taskId,
     status,

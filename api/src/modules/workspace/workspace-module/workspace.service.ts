@@ -37,6 +37,7 @@ import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { CreateGoalRequest } from './dto/create-goal-request.dto';
 import { WorkspaceUserCore } from '../workspace-user-module/domain/workspace-user-core.domain';
+import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 
 @Injectable()
 export class WorkspaceService {
@@ -48,6 +49,7 @@ export class WorkspaceService {
     private readonly goalService: GoalService,
     private readonly taskAssignmentService: TaskAssignmentService,
     private readonly workspaceInviteService: WorkspaceInviteService,
+    private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
 
   async create({
@@ -393,21 +395,23 @@ export class WorkspaceService {
       );
     }
 
-    // Create new concrete task
-    const newTask = await this.taskService.create({
-      workspaceId,
-      createdById,
-      data,
-    });
-
-    // Create new task assignments for each given assignee
-    for (const assigneeId of data.assignees) {
-      this.taskAssignmentService.createTaskAssignment({
-        workspaceUserId: assigneeId,
-        taskId: newTask.id,
-        status: ProgressStatus.IN_PROGRESS,
+    this.unitOfWorkService.withTransaction(async () => {
+      // Create new concrete task
+      const newTask = await this.taskService.create({
+        workspaceId,
+        createdById,
+        data,
       });
-    }
+
+      // Create new task assignments for each given assignee
+      for (const assigneeId of data.assignees) {
+        this.taskAssignmentService.create({
+          workspaceUserId: assigneeId,
+          taskId: newTask.id,
+          status: ProgressStatus.IN_PROGRESS,
+        });
+      }
+    });
 
     return;
   }

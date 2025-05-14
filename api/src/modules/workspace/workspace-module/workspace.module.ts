@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GoalModule } from 'src/modules/goal/goal.module';
 import { TaskAssignmentModule } from 'src/modules/task/task-assignment/task-assignment.module';
 import { TaskModule } from 'src/modules/task/task-module/task.module';
+import { UnitOfWorkModule } from 'src/modules/unit-of-work/unit-of-work.module';
 import { UserModule } from 'src/modules/user/user.module';
 import { WorkspaceInviteModule } from '../workspace-invite/workspace-invite.module';
 import { WorkspaceUserModule } from '../workspace-user-module/workspace-user.module';
@@ -20,6 +21,7 @@ import { WorkspaceService } from './workspace.service';
     TaskModule,
     TaskAssignmentModule,
     WorkspaceInviteModule,
+    UnitOfWorkModule,
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService, WorkspaceRoleGuard, WorkspaceMembershipGuard],

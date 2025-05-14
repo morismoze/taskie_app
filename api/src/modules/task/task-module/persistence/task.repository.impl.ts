@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
+import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import {
   FindManyOptions,
   FindOptionsRelations,
@@ -17,6 +18,7 @@ export class TaskRepositoryImpl implements TaskRepository {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly repo: Repository<TaskEntity>,
+    private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
   async create({
@@ -35,7 +37,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     createdById: Task['createdBy']['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.transactionalTaskRepo.create({
       workspace: {
         id: workspaceId,
       },
@@ -112,5 +114,9 @@ export class TaskRepositoryImpl implements TaskRepository {
       data: taskEntities,
       total: totalCount,
     };
+  }
+
+  private get transactionalTaskRepo(): Repository<TaskEntity> {
+    return this.transactionalRepository.getRepository(TaskEntity);
   }
 }

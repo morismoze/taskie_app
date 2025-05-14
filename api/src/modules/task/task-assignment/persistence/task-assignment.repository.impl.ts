@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
+import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
@@ -11,6 +12,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
   constructor(
     @InjectRepository(TaskAssignmentEntity)
     private readonly repo: Repository<TaskAssignmentEntity>,
+    private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
   async create({
@@ -24,7 +26,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.transactionalTaskAssignmentRepo.create({
       assignee: {
         id: workspaceUserId,
       },
@@ -34,7 +36,8 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
       status,
     });
 
-    const savedEntity = await this.repo.save(persistenceModel);
+    const savedEntity =
+      await this.transactionalTaskAssignmentRepo.save(persistenceModel);
 
     const newEntity = await this.findById({
       id: savedEntity.id,
@@ -85,5 +88,9 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
         },
       },
     });
+  }
+
+  private get transactionalTaskAssignmentRepo(): Repository<TaskAssignmentEntity> {
+    return this.transactionalRepository.getRepository(TaskAssignmentEntity);
   }
 }

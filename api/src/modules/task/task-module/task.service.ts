@@ -64,7 +64,7 @@ export class TaskService {
   }: {
     workspaceId: Task['workspace']['id'];
     createdById: Task['createdBy']['id'];
-    // Assignees are used for task assignment records.
+    // Assignees are used for task assignment records
     // This is just creation of a concrete task
     data: Omit<CreateTaskRequest, 'assignees'>;
   }): Promise<TaskCore> {
