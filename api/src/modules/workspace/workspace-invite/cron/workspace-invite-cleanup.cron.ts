@@ -9,18 +9,11 @@ export class WorkspaceInviteCleanupService {
   ) {}
 
   /**
-   * We'll initally delete invites every week on Sunday midnight at midnight.
-   * We'll initally delete invites which are expired for more than
-   * 4 days.
+   * We'll initally delete expired invites every week on Sunday midnight at midnight.
    */
 
   @Cron(CronExpression.EVERY_WEEK)
-  async cleanupInactiveSessions() {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - 4);
-
-    await this.workspaceInviteRepository.deleteInactiveInvitesBefore(
-      cutoffDate,
-    );
+  async cleanupExpiredInvites() {
+    await this.workspaceInviteRepository.deleteExpiredInvites();
   }
 }

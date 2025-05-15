@@ -4,6 +4,7 @@ import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
@@ -12,13 +13,16 @@ import { WorkspaceInviteStatus } from './domain/workspace-invite-status.enum';
 import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCore } from './domain/workspace-invite-with-workspace-core-and-user-core.domain';
 import { WorkspaceInviteWithWorkspaceCore } from './domain/workspace-invite-with-workspace-core.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
+import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
 import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteService {
   constructor(
     private readonly workspaceInviteRepository: WorkspaceInviteRepository,
+    private readonly transactionalWorkspaceInviteRepository: TransactionalWorkspaceInviteRepository,
     private readonly workspaceUserService: WorkspaceUserService,
+    private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
 
   /**
@@ -50,7 +54,7 @@ export class WorkspaceInviteService {
     const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
     const expiresAt = new Date(now.getTime() + twentyFourHoursInMillis);
 
-    const newInvite = await this.workspaceInviteRepository.create({
+    const newInvite = await this.transactionalWorkspaceInviteRepository.create({
       data: {
         token,
         workspaceId,
@@ -135,18 +139,21 @@ export class WorkspaceInviteService {
       );
     }
 
-    // Create a new workspace user
-    const newWorkspaceUser = await this.workspaceUserService.create({
-      workspaceId: workspaceInvite.workspace.id,
-      userId: usedById,
-      createdById: workspaceInvite.createdBy.id,
-      workspaceRole: WorkspaceUserRole.MEMBER,
-      status: WorkspaceUserStatus.ACTIVE,
-    });
+    return this.unitOfWorkService.withTransaction(async () => {
+      // Create a new workspace user
+      const newWorkspaceUser = await this.workspaceUserService.create({
+        workspaceId: workspaceInvite.workspace.id,
+        userId: usedById,
+        createdById: workspaceInvite.createdBy.id,
+        workspaceRole: WorkspaceUserRole.MEMBER,
+        status: WorkspaceUserStatus.ACTIVE,
+      });
 
-    return await this.workspaceInviteRepository.markUsedBy({
-      id: workspaceInvite.id,
-      usedById: newWorkspaceUser.id,
+      // Mark the invite as used
+      return await this.transactionalWorkspaceInviteRepository.markUsedBy({
+        id: workspaceInvite.id,
+        usedById: newWorkspaceUser.id,
+      });
     });
   }
 }

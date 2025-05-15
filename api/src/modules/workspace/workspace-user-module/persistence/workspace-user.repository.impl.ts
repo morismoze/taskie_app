@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
+import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
@@ -11,6 +12,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
   constructor(
     @InjectRepository(WorkspaceUserEntity)
     private readonly repo: Repository<WorkspaceUserEntity>,
+    private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
   async findById({
@@ -77,7 +79,8 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
       createdBy: createdById ? { id: createdById } : null,
     });
 
-    const savedEntity = await this.repo.save(persistenceModel);
+    const savedEntity =
+      await this.transactionalWorkspaceUserRepo.save(persistenceModel);
 
     const newEntity = await this.findByUserId({
       userId: savedEntity.user.id,
@@ -85,5 +88,9 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
 
     return newEntity;
+  }
+
+  private get transactionalWorkspaceUserRepo(): Repository<WorkspaceUserEntity> {
+    return this.transactionalRepository.getRepository(WorkspaceUserEntity);
   }
 }

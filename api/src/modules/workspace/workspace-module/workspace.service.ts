@@ -59,42 +59,44 @@ export class WorkspaceService {
     createdById: JwtPayload['sub'];
     data: CreateWorkspaceRequest;
   }): Promise<WorkspaceResponse> {
-    // 1. create a new empty workspace
-    const newWorkspace = await this.workspaceRepository.create({
-      data: {
-        description: data.description,
-        name: data.name,
-        pictureUrl: null,
-      },
-      createdById,
-    });
-
-    if (!newWorkspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.SERVER_ERROR,
+    return this.unitOfWorkService.withTransaction(async () => {
+      // 1. create a new empty workspace
+      const newWorkspace = await this.workspaceRepository.create({
+        data: {
+          description: data.description,
+          name: data.name,
+          pictureUrl: null,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+        createdById,
+      });
 
-    // 2. create a new workspace user for the owner
-    await this.workspaceUserService.create({
-      workspaceId: newWorkspace.id,
-      userId: createdById,
-      createdById: null,
-      workspaceRole: WorkspaceUserRole.MANAGER,
-      status: WorkspaceUserStatus.ACTIVE,
+      if (!newWorkspace) {
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.SERVER_ERROR,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // 2. create a new workspace user for the owner
+      await this.workspaceUserService.create({
+        workspaceId: newWorkspace.id,
+        userId: createdById,
+        createdById: null,
+        workspaceRole: WorkspaceUserRole.MANAGER,
+        status: WorkspaceUserStatus.ACTIVE,
+      });
+
+      const response: WorkspaceResponse = {
+        id: newWorkspace.id,
+        name: newWorkspace.name,
+        description: newWorkspace.description,
+        pictureUrl: newWorkspace.pictureUrl,
+      };
+
+      return response;
     });
-
-    const response: WorkspaceResponse = {
-      id: newWorkspace.id,
-      name: newWorkspace.name,
-      description: newWorkspace.description,
-      pictureUrl: newWorkspace.pictureUrl,
-    };
-
-    return response;
   }
 
   async createInviteLink({
@@ -208,31 +210,33 @@ export class WorkspaceService {
       createdById,
     )) as WorkspaceUserCore;
 
-    // 1. Create core user
-    const newUser = await this.userService.createVirtualUser({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      status: UserStatus.ACTIVE,
+    return this.unitOfWorkService.withTransaction(async () => {
+      // 1. Create core user
+      const newUser = await this.userService.createVirtualUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        status: UserStatus.ACTIVE,
+      });
+
+      // 2. Create a workspace user relation linking the user to the workspace
+      const newWorkspaceUser = await this.workspaceUserService.create({
+        workspaceId: workspace.id,
+        userId: newUser.id,
+        createdById: creatorWorkspaceUser.id,
+        workspaceRole: WorkspaceUserRole.MEMBER,
+        status: WorkspaceUserStatus.ACTIVE,
+      });
+
+      const response: WorkspaceUserResponse = {
+        id: newWorkspaceUser.id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        // Currently uploading images while creating virtual users is not supported
+        profileImageUrl: null,
+      };
+
+      return response;
     });
-
-    // 2. Create a workspace user relation linking the user to the workspace
-    const newWorkspaceUser = await this.workspaceUserService.create({
-      workspaceId: workspace.id,
-      userId: newUser.id,
-      createdById: creatorWorkspaceUser.id,
-      workspaceRole: WorkspaceUserRole.MEMBER,
-      status: WorkspaceUserStatus.ACTIVE,
-    });
-
-    const response: WorkspaceUserResponse = {
-      id: newWorkspaceUser.id,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      // Currently uploading images while creating virtual users is not supported
-      profileImageUrl: null,
-    };
-
-    return response;
   }
 
   async getWorkspacesByUser(
@@ -403,7 +407,7 @@ export class WorkspaceService {
         data,
       });
 
-      // Create new task assignments for each given assignee
+      // Create new task assignment for each given assignee
       for (const assigneeId of data.assignees) {
         this.taskAssignmentService.create({
           workspaceUserId: assigneeId,
@@ -439,7 +443,7 @@ export class WorkspaceService {
     }
 
     // Create new goal
-    const newTask = await this.goalService.create({
+    await this.goalService.create({
       workspaceId,
       createdById,
       data,

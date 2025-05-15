@@ -37,7 +37,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     createdById: Task['createdBy']['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    const persistenceModel = this.transactionalTaskRepo.create({
+    const persistenceModel = this.repo.create({
       workspace: {
         id: workspaceId,
       },
@@ -48,7 +48,7 @@ export class TaskRepositoryImpl implements TaskRepository {
       createdBy: { id: createdById },
     });
 
-    const savedEntity = await this.repo.save(persistenceModel);
+    const savedEntity = await this.transactionalTaskRepo.save(persistenceModel);
 
     const newEntity = await this.findById({
       id: savedEntity.id,

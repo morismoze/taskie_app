@@ -5,6 +5,7 @@ import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { SessionCore } from './domain/session-core.domain';
 import { Session } from './domain/session.domain';
 import { SessionRepository } from './persistence/session.repository';
+import { TransactionalSessionRepository } from './persistence/transactional/transactional-session.repository';
 
 /**
  * We create sessions on user login because:
@@ -17,7 +18,10 @@ import { SessionRepository } from './persistence/session.repository';
  */
 @Injectable()
 export class SessionService {
-  constructor(private readonly sessionRepository: SessionRepository) {}
+  constructor(
+    private readonly sessionRepository: SessionRepository,
+    private readonly transactionalSessionRepository: TransactionalSessionRepository,
+  ) {}
 
   async create(data: {
     userId: Session['user']['id'];
@@ -27,7 +31,9 @@ export class SessionService {
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
   }): Promise<SessionCore> {
-    const newSession = await this.sessionRepository.create({ data });
+    const newSession = await this.transactionalSessionRepository.create({
+      data,
+    });
 
     if (!newSession) {
       throw new ApiHttpException(

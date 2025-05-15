@@ -5,20 +5,6 @@ import { WorkspaceInvite } from '../domain/workspace-invite.domain';
 import { WorkspaceInviteEntity } from './workspace-invite.entity';
 
 export abstract class WorkspaceInviteRepository {
-  abstract create({
-    data: { token, workspaceId, createdById, expiresAt, status },
-    relations,
-  }: {
-    data: {
-      token: WorkspaceInvite['token'];
-      workspaceId: WorkspaceInvite['workspace']['id'];
-      createdById: WorkspaceInvite['createdBy']['id'];
-      expiresAt: Date;
-      status: WorkspaceInviteStatus;
-    };
-    relations?: FindOptionsRelations<WorkspaceInviteEntity>;
-  }): Promise<Nullable<WorkspaceInviteEntity>>;
-
   abstract findByToken({
     token,
     relations,
@@ -27,17 +13,13 @@ export abstract class WorkspaceInviteRepository {
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>>;
 
-  abstract markUsedBy({
+  abstract findById({
     id,
-    usedById,
     relations,
   }: {
     id: WorkspaceInvite['id'];
-    usedById: WorkspaceInvite['usedBy']['id'];
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>>;
 
-  abstract deleteInactiveInvitesBefore(
-    cutoffDate: WorkspaceInvite['expiresAt'],
-  ): Promise<void>;
+  abstract deleteExpiredInvites(): Promise<void>;
 }

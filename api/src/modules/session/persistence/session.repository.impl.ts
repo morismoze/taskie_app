@@ -13,38 +13,6 @@ export class SessionRepositoryImpl implements SessionRepository {
     private readonly repo: Repository<SessionEntity>,
   ) {}
 
-  async create({
-    data: { userId, hash, ipAddress, deviceModel, osVersion, appVersion },
-    relations,
-  }: {
-    data: {
-      userId: Session['user']['id'];
-      hash: Session['hash'];
-      ipAddress: Session['ipAddress'];
-      deviceModel: Session['deviceModel'];
-      osVersion: Session['osVersion'];
-      appVersion: Session['appVersion'];
-    };
-    relations?: FindOptionsRelations<SessionEntity>;
-  }): Promise<Nullable<SessionEntity>> {
-    const persistenceModel = this.repo.create({
-      appVersion,
-      osVersion,
-      deviceModel,
-      ipAddress,
-      hash,
-      user: {
-        id: userId,
-      },
-    });
-
-    const savedEntity = await this.repo.save(persistenceModel);
-
-    const newEntity = await this.findById({ id: savedEntity.id, relations });
-
-    return newEntity;
-  }
-
   async findById({
     id,
     relations,

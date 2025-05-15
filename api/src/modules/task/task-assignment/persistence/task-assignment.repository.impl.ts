@@ -26,7 +26,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    const persistenceModel = this.transactionalTaskAssignmentRepo.create({
+    const persistenceModel = this.repo.create({
       assignee: {
         id: workspaceUserId,
       },

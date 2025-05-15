@@ -9,12 +9,14 @@ import { DataSource, EntityManager } from 'typeorm';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UnitOfWorkService {
-  private transactionManager: EntityManager | null = null;
+  private entityManager: EntityManager | null;
 
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(private readonly dataSource: DataSource) {
+    this.entityManager = null;
+  }
 
   getEntityManager(): EntityManager | null {
-    return this.transactionManager;
+    return this.entityManager;
   }
 
   getDataSource(): DataSource {
@@ -23,9 +25,8 @@ export class UnitOfWorkService {
 
   async withTransaction<T>(work: () => T): Promise<T> {
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.startTransaction();
-    this.transactionManager = queryRunner.manager;
+    this.entityManager = queryRunner.manager;
 
     try {
       const result = await work();
@@ -36,7 +37,7 @@ export class UnitOfWorkService {
       throw error;
     } finally {
       await queryRunner.release();
-      this.transactionManager = null;
+      this.entityManager = null;
     }
   }
 }

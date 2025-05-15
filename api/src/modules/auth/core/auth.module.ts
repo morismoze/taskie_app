@@ -8,6 +8,7 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { UserModule } from 'src/modules/user/user.module';
 import { WorkspaceUserModule } from 'src/modules/workspace/workspace-user-module/workspace-user.module';
 import { SessionModule } from 'src/modules/session/session.module';
+import { UnitOfWorkModule } from 'src/modules/unit-of-work/unit-of-work.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SessionModule } from 'src/modules/session/session.module';
     SessionModule,
     PassportModule,
     JwtModule.register({}),
+    UnitOfWorkModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy],

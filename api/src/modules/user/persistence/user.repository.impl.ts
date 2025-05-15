@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
+import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { Repository } from 'typeorm';
 import { User } from '../domain/user.domain';
 import { UserEntity } from './user.entity';
@@ -11,6 +12,7 @@ export class UserRepositoryImpl implements UserRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repo: Repository<UserEntity>,
+    private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
   async create(data: {
@@ -32,7 +34,7 @@ export class UserRepositoryImpl implements UserRepository {
       status: data.status,
     });
 
-    const savedEntity = await this.repo.save(persistenceModel);
+    const savedEntity = await this.transactionalUserRepo.save(persistenceModel);
 
     const newEntity = await this.findById(savedEntity.id);
 
@@ -48,7 +50,7 @@ export class UserRepositoryImpl implements UserRepository {
       status: data.status,
     });
 
-    const savedEntity = await this.repo.save(persistenceModel);
+    const savedEntity = await this.transactionalUserRepo.save(persistenceModel);
 
     const newEntity = await this.findById(savedEntity.id);
 
@@ -91,7 +93,7 @@ export class UserRepositoryImpl implements UserRepository {
     id: User['id'];
     data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
   }): Promise<Nullable<UserEntity>> {
-    this.repo.update(id, data);
+    this.transactionalUserRepo.update(id, data);
 
     const newEntity = await this.findById(id);
 
@@ -100,5 +102,9 @@ export class UserRepositoryImpl implements UserRepository {
 
   async softDelete(id: User['id']): Promise<void> {
     await this.repo.softDelete(id);
+  }
+
+  private get transactionalUserRepo(): Repository<UserEntity> {
+    return this.transactionalRepository.getRepository(UserEntity);
   }
 }
