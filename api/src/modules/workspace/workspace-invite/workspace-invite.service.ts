@@ -113,7 +113,7 @@ export class WorkspaceInviteService {
   }: {
     token: WorkspaceInvite['token'];
     usedById: WorkspaceInvite['usedBy']['user']['id'];
-  }): Promise<Nullable<WorkspaceInviteCore>> {
+  }): Promise<WorkspaceInviteWithWorkspaceCore> {
     const workspaceInvite = await this.findByTokenWithWorkspaceAndUser(token);
 
     // Check if the invite exists
@@ -150,10 +150,25 @@ export class WorkspaceInviteService {
       });
 
       // Mark the invite as used
-      return await this.transactionalWorkspaceInviteRepository.markUsedBy({
-        id: workspaceInvite.id,
-        usedById: newWorkspaceUser.id,
-      });
+      const updatedInvite =
+        await this.transactionalWorkspaceInviteRepository.markUsedBy({
+          id: workspaceInvite.id,
+          usedById: newWorkspaceUser.id,
+          relations: {
+            workspace: true,
+          },
+        });
+
+      if (!updatedInvite) {
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.SERVER_ERROR,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      return updatedInvite;
     });
   }
 }

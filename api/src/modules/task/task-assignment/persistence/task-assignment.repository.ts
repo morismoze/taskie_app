@@ -1,5 +1,6 @@
 import { Nullable } from 'src/common/types/nullable.type';
 import { FindOptionsRelations } from 'typeorm';
+import { TaskAssignmentCore } from '../domain/task-assignment-core.domain';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
 
@@ -16,6 +17,32 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
+  abstract findById({
+    id,
+    relations,
+  }: {
+    id: TaskAssignment['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>>;
+
+  abstract findAllByTaskId({
+    taskId,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<TaskAssignmentEntity[]>;
+
+  abstract findByTaskIdAndAssigneeId({
+    taskId,
+    assigneeId,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeId: TaskAssignment['task']['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>>;
+
   abstract findyAllByAssigneeIdAndWorkspaceIdAndStatus({
     workspaceUserId,
     workspaceId,
@@ -25,4 +52,14 @@ export abstract class TaskAssignmentRepository {
     workspaceId: TaskAssignment['task']['workspace']['id'];
     status: TaskAssignment['status'];
   }): Promise<TaskAssignmentEntity[]>;
+
+  abstract update({
+    id,
+    data,
+    relations,
+  }: {
+    id: TaskAssignment['id'];
+    data: Partial<TaskAssignmentCore>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>>;
 }

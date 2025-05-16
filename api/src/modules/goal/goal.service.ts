@@ -1,9 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
-import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
+import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
-import { CreateGoalRequest } from '../workspace/workspace-module/dto/create-goal-request.dto';
+import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
 import { GoalCore } from './domain/goal-core.domain';
 import { GoalWithAssigneeCore } from './domain/goal-with-assignee-core.domain';
 import { Goal } from './domain/goal.domain';

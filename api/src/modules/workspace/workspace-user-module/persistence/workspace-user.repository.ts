@@ -1,5 +1,6 @@
 import { Nullable } from 'src/common/types/nullable.type';
 import { FindOptionsRelations } from 'typeorm';
+import { WorkspaceUserCore } from '../domain/workspace-user-core.domain';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
 
@@ -39,6 +40,16 @@ export abstract class WorkspaceUserRepository {
       workspaceRole: WorkspaceUser['workspaceRole'];
       status: WorkspaceUser['status'];
     };
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Nullable<WorkspaceUserEntity>>;
+
+  abstract update({
+    id,
+    data,
+    relations,
+  }: {
+    id: WorkspaceUser['id'];
+    data: Partial<WorkspaceUserCore>;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 }

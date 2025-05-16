@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -14,29 +15,37 @@ import {
 import { RequireWorkspaceUserRole } from './decorators/workspace-role.decorator';
 import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { CreateVirtualWorkspaceUserRequest } from './dto/create-virtual-workspace-user-request.dto';
-import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
+import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
+import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
+import { WorkspaceService } from './workspace.service';
+import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
+import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { CreateTaskRequest } from './dto/request/create-task-request.dto';
+import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
+import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
+import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
+import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
+import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
+import { MemberIdRequestPathParam } from './dto/request/member-id-path-param-request.dto';
+import { SetWorkspaceUserRoleRequest } from './dto/request/set-workspace-user-role-request.dto';
+import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
+import { TaskAssigneeIdRequestPathParam } from './dto/request/task-assignee-id-path-param-request.dto';
+import { SetTaskAssignmentStatusRequest } from './dto/request/update-task-assignment-status-request.dto';
 import {
   WorkspaceResponse,
   WorkspacesResponse,
-} from './dto/workspaces-response.dto';
-import { WorkspaceService } from './workspace.service';
-import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
+} from './dto/response/workspaces-response.dto';
 import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
-} from './dto/workspace-members-response.dto';
-import { WorkspaceTasksResponse } from './dto/workspace-tasks-response.dto';
-import { WorkspaceItemRequestQuery } from './dto/workspace-item-request.dto';
-import { WorkspaceGoalsResponse } from './dto/workspace-goals-response.dto';
-import { CreateTaskRequest } from './dto/create-task-request.dto';
-import { LeaderboardResponse } from './dto/workspace-leaderboard-response.dto';
-import { CreateWorkspaceInviteLinkResponse } from './dto/create-workspace-invite-link-response.dto';
-import { WorkspaceIdRequestParam } from './dto/workspace-id-path-param-request.dto';
-import { WorkspaceInviteTokenRequestPathParam } from './dto/workspace-invite-token-path-param-request.dto';
-import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
-import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
-import { CreateGoalRequest } from './dto/create-goal-request.dto';
+} from './dto/response/workspace-members-response.dto';
+import { WorkspaceGoalsResponse } from './dto/response/workspace-goals-response.dto';
+import { LeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
+import {
+  WorkspaceTaskResponse,
+  WorkspaceTasksResponse,
+} from './dto/response/workspace-tasks-response.dto';
 
 @Controller({
   path: 'workspaces',
@@ -64,7 +73,7 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
   createWorkspaceInviteLink(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
   ): Promise<CreateWorkspaceInviteLinkResponse> {
     return this.workspaceService.createInviteLink({
@@ -89,7 +98,7 @@ export class WorkspaceController {
   joinWorkspace(
     @Param() params: WorkspaceInviteTokenRequestPathParam,
     @Req() request: RequestWithUser,
-  ): Promise<void> {
+  ): Promise<WorkspaceResponse> {
     return this.workspaceService.joinWorkspace({
       inviteToken: params.inviteToken,
       usedById: request.user.sub,
@@ -108,7 +117,7 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
   createVirtualUser(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
     @Body() newVirtualUser: CreateVirtualWorkspaceUserRequest,
   ): Promise<WorkspaceUserResponse> {
@@ -123,16 +132,32 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getWorkspaceMembers(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
   ): Promise<WorkspaceUsersResponse> {
     return this.workspaceService.getWorkspaceMembers(params.workspaceId);
+  }
+
+  @Put(':workspaceId/members/:memberId')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  setWorkspaceUserRole(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { memberId }: MemberIdRequestPathParam,
+    @Body() { role }: SetWorkspaceUserRoleRequest,
+  ): Promise<WorkspaceUserResponse> {
+    return this.workspaceService.setWorkspaceUserRole({
+      workspaceId,
+      memberId,
+      role,
+    });
   }
 
   @Get(':workspaceId/tasks')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getTasks(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
     @Query() query: WorkspaceItemRequestQuery,
   ): Promise<WorkspaceTasksResponse> {
     return this.workspaceService.getWorkspaceTasks({
@@ -141,11 +166,28 @@ export class WorkspaceController {
     });
   }
 
+  @Patch(':workspaceId/tasks/:taskId/assignments/:assigneeId/status')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  updateTaskAssignmentStatus(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+    @Param() { assigneeId }: TaskAssigneeIdRequestPathParam,
+    @Body() { status }: SetTaskAssignmentStatusRequest,
+  ): Promise<WorkspaceTaskResponse> {
+    return this.workspaceService.updateTaskAssignmentStatus({
+      workspaceId,
+      taskId,
+      assigneeId,
+      status,
+    });
+  }
+
   @Get(':workspaceId/goals')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getGoals(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
     @Query() query: WorkspaceItemRequestQuery,
   ): Promise<WorkspaceGoalsResponse> {
     return this.workspaceService.getWorkspaceGoals({
@@ -159,7 +201,7 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   createTask(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
     @Body() data: CreateTaskRequest,
   ): Promise<void> {
@@ -178,7 +220,7 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   createGoal(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
     @Body() data: CreateGoalRequest,
   ): Promise<void> {
@@ -196,7 +238,7 @@ export class WorkspaceController {
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   getLeaderboard(
-    @Param() params: WorkspaceIdRequestParam,
+    @Param() params: WorkspaceIdRequestPathParam,
   ): Promise<LeaderboardResponse> {
     return this.workspaceService.getWorkspaceLeaderboard(params.workspaceId);
   }

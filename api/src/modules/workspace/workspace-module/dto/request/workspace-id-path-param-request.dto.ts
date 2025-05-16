@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class WorkspaceIdRequestParam {
+export class WorkspaceIdRequestPathParam {
   @IsNotEmpty()
   @IsUUID()
   workspaceId: string;

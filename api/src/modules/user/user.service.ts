@@ -90,10 +90,6 @@ export class UserService {
     });
   }
 
-  /**
-   * This method is used when a user updates itself
-   * or when we update the user via the social login
-   */
   async update(
     userId: User['id'],
     data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>,

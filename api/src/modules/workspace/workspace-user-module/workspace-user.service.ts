@@ -3,6 +3,8 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
+import { WorkspaceUserWithUser } from './domain/workspace-user-with-user.domain';
+import { WorkspaceUserWithWorkspaceCore } from './domain/workspace-user-with-workspace.domain';
 import { WorkspaceUser } from './domain/workspace-user.domain';
 import { WorkspaceUserRepository } from './persistence/workspace-user.repository';
 
@@ -67,10 +69,42 @@ export class WorkspaceUserService {
    */
   async findAllByUserIdWithWorkspace(
     userId: WorkspaceUser['user']['id'],
-  ): Promise<WorkspaceUser[]> {
+  ): Promise<WorkspaceUserWithWorkspaceCore[]> {
     return this.workspaceUserRepository.findAllByUserId({
       userId,
       relations: { workspace: true },
     });
+  }
+
+  async update(
+    id: WorkspaceUser['id'],
+    data: Partial<WorkspaceUserCore>,
+  ): Promise<WorkspaceUserWithUser> {
+    const workspaceUser = await this.findById(id);
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const updatedWorkspaceUserUser = await this.workspaceUserRepository.update({
+      id,
+      data,
+    });
+
+    if (!updatedWorkspaceUserUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return updatedWorkspaceUserUser;
   }
 }

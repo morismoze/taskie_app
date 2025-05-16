@@ -1,8 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
-import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/create-task-request.dto';
-import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/workspace-item-request.dto';
+import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
+import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
 import { TaskWithAssigneesCore } from './domain/task-with-assignees-core.domain';
 import { Task } from './domain/task.domain';

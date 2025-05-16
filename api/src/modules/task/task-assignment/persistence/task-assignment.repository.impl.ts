@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { FindOptionsRelations, Repository } from 'typeorm';
+import { TaskAssignmentCore } from '../domain/task-assignment-core.domain';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
 import { TaskAssignmentRepository } from './task-assignment.repository';
@@ -60,6 +61,34 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     });
   }
 
+  async findAllByTaskId({
+    taskId,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<TaskAssignmentEntity[]> {
+    return await this.repo.find({
+      where: { task: { id: taskId } },
+      relations,
+    });
+  }
+
+  async findByTaskIdAndAssigneeId({
+    taskId,
+    assigneeId,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeId: TaskAssignment['task']['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>> {
+    return await this.repo.findOne({
+      where: { task: { id: taskId }, assignee: { id: assigneeId } },
+      relations,
+    });
+  }
+
   async findyAllByAssigneeIdAndWorkspaceIdAndStatus({
     workspaceUserId,
     workspaceId,
@@ -88,6 +117,22 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
         },
       },
     });
+  }
+
+  async update({
+    id,
+    data,
+    relations,
+  }: {
+    id: TaskAssignment['id'];
+    data: Partial<TaskAssignmentCore>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>> {
+    this.repo.update(id, data);
+
+    const newEntity = await this.findById({ id, relations });
+
+    return newEntity;
   }
 
   private get transactionalTaskAssignmentRepo(): Repository<TaskAssignmentEntity> {

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { FindOptionsRelations, Repository } from 'typeorm';
+import { WorkspaceUserCore } from '../domain/workspace-user-core.domain';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
 import { WorkspaceUserRepository } from './workspace-user.repository';
@@ -86,6 +87,22 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
       userId: savedEntity.user.id,
       relations,
     });
+
+    return newEntity;
+  }
+
+  async update({
+    id,
+    data,
+    relations,
+  }: {
+    id: WorkspaceUser['id'];
+    data: Partial<WorkspaceUserCore>;
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Nullable<WorkspaceUserEntity>> {
+    this.repo.update(id, data);
+
+    const newEntity = await this.findById({ id, relations });
 
     return newEntity;
   }
