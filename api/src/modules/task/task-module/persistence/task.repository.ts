@@ -33,7 +33,6 @@ export abstract class TaskRepository {
   abstract findAllByWorkspaceId({
     workspaceId,
     query: { page, limit, status, search },
-    relations,
   }: {
     workspaceId: Task['workspace']['id'];
     query: {
@@ -42,9 +41,16 @@ export abstract class TaskRepository {
       status: ProgressStatus;
       search: string | null;
     };
-    relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<{
     data: TaskEntity[];
     total: number;
   }>;
+
+  abstract update({
+    id,
+    data,
+  }: {
+    id: Task['id'];
+    data: Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+  }): Promise<Nullable<TaskEntity>>;
 }

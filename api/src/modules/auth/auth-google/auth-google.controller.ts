@@ -31,7 +31,7 @@ export class AuthGoogleController {
     const socialData = await this.authGoogleService.getProfileByToken(loginDto);
 
     return this.authService.socialLogin({
-      authProvider: AuthProvider.google,
+      authProvider: AuthProvider.GOOGLE,
       socialData,
       ipAddress: request.ip as string,
       deviceModel: request.metadata.deviceModel,

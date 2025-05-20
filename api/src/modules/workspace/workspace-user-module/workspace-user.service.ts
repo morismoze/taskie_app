@@ -76,6 +76,19 @@ export class WorkspaceUserService {
     });
   }
 
+  async findAllByIds({
+    workspaceId,
+    ids,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    ids: WorkspaceUser['id'][];
+  }): Promise<WorkspaceUserCore[]> {
+    return this.workspaceUserRepository.findAllByIds({
+      workspaceId,
+      ids,
+    });
+  }
+
   async update(
     id: WorkspaceUser['id'],
     data: Partial<WorkspaceUserCore>,

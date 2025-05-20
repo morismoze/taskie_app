@@ -33,13 +33,11 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 
-  abstract findByTaskIdAndAssigneeId({
-    taskId,
-    assigneeId,
+  abstract findByTaskId({
+    id,
     relations,
   }: {
-    taskId: TaskAssignment['task']['id'];
-    assigneeId: TaskAssignment['task']['id'];
+    id: TaskAssignment['task']['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
@@ -62,4 +60,12 @@ export abstract class TaskAssignmentRepository {
     data: Partial<TaskAssignmentCore>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
+
+  abstract deleteByTaskIdAndAssigneeIds({
+    taskId,
+    assigneeIds,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+  }): Promise<void>;
 }

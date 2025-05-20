@@ -47,4 +47,18 @@ export abstract class GoalRepository {
     data: GoalEntity[];
     total: number;
   }>;
+
+  abstract update({
+    id,
+    data,
+  }: {
+    id: Goal['id'];
+    data: Partial<
+      Omit<
+        Goal,
+        'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'assignee'
+      > & { assigneeId: Goal['assignee']['id'] }
+    >;
+    relations?: FindOptionsRelations<GoalEntity>;
+  }): Promise<Nullable<GoalEntity>>;
 }

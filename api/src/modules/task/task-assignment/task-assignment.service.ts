@@ -2,9 +2,10 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
+import { UpdateTaskAssignmentsStatusesRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignments-statuses-request.dto';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
-import { TaskAssignmentWithAssigneeCoreAndTaskCore } from './domain/task-assignment-with-assignee-core-and-task-core.domain';
 import { TaskAssignmentWithAssigneeUser } from './domain/task-assignment-with-assignee-user.domain';
 import { TaskAssignment } from './domain/task-assignment.domain';
 import { TaskAssignmentRepository } from './persistence/task-assignment.repository';
@@ -13,6 +14,7 @@ import { TaskAssignmentRepository } from './persistence/task-assignment.reposito
 export class TaskAssignmentService {
   constructor(
     private readonly taskAssignmentRepository: TaskAssignmentRepository,
+    private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
 
   async getAccumulatedPointsForWorkspaceUser({
@@ -65,16 +67,11 @@ export class TaskAssignmentService {
     return newTaskAssignment;
   }
 
-  async findByTaskIdAndAssigneeId({
-    taskId,
-    assigneeId,
-  }: {
-    taskId: TaskAssignment['task']['id'];
-    assigneeId: TaskAssignment['assignee']['id'];
-  }): Promise<Nullable<TaskAssignmentCore>> {
-    return await this.taskAssignmentRepository.findByTaskIdAndAssigneeId({
-      taskId,
-      assigneeId,
+  async findByTaskId(
+    taskId: TaskAssignment['task']['id'],
+  ): Promise<Nullable<TaskAssignmentCore>> {
+    return await this.taskAssignmentRepository.findByTaskId({
+      id: taskId,
     });
   }
 
@@ -91,49 +88,43 @@ export class TaskAssignmentService {
     });
   }
 
-  async updateByTaskIdAndAssigneeId({
-    assigneeId,
+  async updateAssignessByTaskId({
     taskId,
-    status,
+    data,
   }: {
-    assigneeId: TaskAssignment['assignee']['id'];
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<TaskAssignmentWithAssigneeCoreAndTaskCore> {
-    const taskAssignment = await this.findByTaskIdAndAssigneeId({
-      taskId,
-      assigneeId,
+    data: UpdateTaskAssignmentsStatusesRequest;
+  }): Promise<TaskAssignmentWithAssigneeUser[]> {
+    const taskAssignments = await this.findAllByTaskIdWithAssigneeUser(taskId);
+
+    const existingAssigneeIds = taskAssignments.map(
+      (taskAssignment) => taskAssignment.assignee.id,
+    );
+    const updatedAssigneeIds = data.map((data) => data.assigneeId);
+    const assigneeIdsToRemove = existingAssigneeIds.filter(
+      (existingAssigneeId) => !updatedAssigneeIds.includes(existingAssigneeId),
+    );
+    const assigneeIdsToAdd = updatedAssigneeIds.filter(
+      (existingAssigneeId) => !existingAssigneeIds.includes(existingAssigneeId),
+    );
+
+    return this.unitOfWorkService.withTransaction(() => {
+      // 1. Delete task assignments if some assignees were removed from the task
+      this.taskAssignmentRepository.deleteByTaskIdAndAssigneeIds({
+        taskId,
+        assigneeIds: assigneeIdsToRemove,
+      });
+
+      // 2. Create new task assignments if there are new assignees
+      for (const assigneeId of assigneeIdsToAdd) {
+        this.create({
+          workspaceUserId: assigneeId,
+          taskId,
+          status: ProgressStatus.IN_PROGRESS,
+        });
+      }
+
+      return this.findAllByTaskIdWithAssigneeUser(taskId);
     });
-
-    if (!taskAssignment) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    const updatedTaskAssignment = await this.taskAssignmentRepository.update({
-      id: taskAssignment.id,
-      data: {
-        status,
-      },
-      relations: {
-        assignee: true,
-        task: true,
-      },
-    });
-
-    if (!updatedTaskAssignment) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.SERVER_ERROR,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return updatedTaskAssignment;
   }
 }

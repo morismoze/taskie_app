@@ -1,7 +1,7 @@
 import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
 
 export interface WorkspaceUserResponse {
-  id: string;
+  id: string; // WorkspaceUser ID
   firstName: string;
   lastName: string;
   profileImageUrl: string | null;

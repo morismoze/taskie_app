@@ -9,15 +9,12 @@ import { WorkspaceUserService } from '../workspace-user-module/workspace-user.se
 import { Workspace } from './domain/workspace.domain';
 import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
-
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
-
 import { WorkspaceRepository } from './persistence/workspace.repository';
 import { CreateTaskRequest } from './dto/request/create-task-request.dto';
 import { TaskAssignmentService } from 'src/modules/task/task-assignment/task-assignment.service';
 import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-
 import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
 import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
 import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
@@ -36,17 +33,22 @@ import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
 } from './dto/response/workspace-members-response.dto';
+import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
 import {
-  WorkspaceTaskResponse,
-  WorkspaceTasksResponse,
-} from './dto/response/workspace-tasks-response.dto';
-import { WorkspaceGoalsResponse } from './dto/response/workspace-goals-response.dto';
+  WorkspaceGoalResponse,
+  WorkspaceGoalsResponse,
+} from './dto/response/workspace-goals-response.dto';
 import {
   LeaderboardResponse,
   LeaderboardUserResponse,
 } from './dto/response/workspace-leaderboard-response.dto';
 import { Task } from 'src/modules/task/task-module/domain/task.domain';
-import { TaskAssignment } from 'src/modules/task/task-assignment/domain/task-assignment.domain';
+import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
+import { UpdateTaskAssignmentsStatusesRequest } from './dto/request/update-task-assignments-statuses-request.dto';
+import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { Goal } from 'src/modules/goal/domain/goal.domain';
+import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
+import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -326,9 +328,12 @@ export class WorkspaceService {
       );
     }
 
-    // We go on the Task entity side because this way we ge unique
-    // results, since going on the side of TaskAssignment entity
-    // we could get more than one assignment per task
+    // This is open to change - we could firstly fetch just plain concrete tasks
+    // by given workspaceId via the task service function and then for each task fetch its
+    // task assignments via the task assignment service function (this would actually be done
+    // with only one DB query - where: { task: { id: In(taskIds) } }) - this is something I'm not
+    // sure about, because I'm weighing *one more complex query, meaning less DB queries* vs *two
+    // simple queries, from different service functions for SRP (single responsiblity principle)
     const { data: tasks, total } =
       await this.taskService.findPaginatedByWorkspaceWithAssignees({
         workspaceId,
@@ -380,8 +385,15 @@ export class WorkspaceService {
         query,
       });
 
-    const response: WorkspaceGoalsResponse = {
-      data: goals.map((goal) => ({
+    const responseData: WorkspaceGoalsResponse['data'] = [];
+
+    for (const goal of goals) {
+      const accumulatedPoints =
+        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
+          workspaceUserId: goal.assignee.id,
+          workspaceId,
+        });
+      responseData.push({
         id: goal.id,
         assignee: {
           id: goal.assignee.id,
@@ -392,7 +404,12 @@ export class WorkspaceService {
         title: goal.title,
         requiredPoints: goal.requiredPoints,
         status: goal.status,
-      })),
+        accumulatedPoints,
+      });
+    }
+
+    const response: WorkspaceGoalsResponse = {
+      data: responseData,
       total,
     };
 
@@ -549,17 +566,15 @@ export class WorkspaceService {
     return response;
   }
 
-  async updateTaskAssignmentStatus({
+  async updateTask({
     workspaceId,
     taskId,
-    assigneeId,
-    status,
+    payload,
   }: {
     workspaceId: Workspace['id'];
-    taskId: TaskAssignment['task']['id'];
-    assigneeId: TaskAssignment['assignee']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<WorkspaceTaskResponse> {
+    taskId: Task['id'];
+    payload: UpdateTaskRequest;
+  }): Promise<UpdateTaskResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -573,30 +588,128 @@ export class WorkspaceService {
       );
     }
 
-    const updatedTaskAssignment =
-      await this.taskAssignmentService.updateByTaskIdAndAssigneeId({
+    const updatedTask = await this.taskService.updateById({
+      id: taskId,
+      data: {
+        title: payload.title,
+        description: payload.description,
+        rewardPoints: payload.rewardPoints,
+        dueDate: payload.dueDate,
+      },
+    });
+
+    const response: UpdateTaskResponse = {
+      id: updatedTask.id,
+      title: updatedTask.title,
+      rewardPoints: updatedTask.rewardPoints,
+      description: updatedTask.description,
+      dueDate: updatedTask.dueDate,
+    };
+
+    return response;
+  }
+
+  async updateTaskAssigments({
+    workspaceId,
+    taskId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+    payload: UpdateTaskAssignmentsStatusesRequest;
+  }): Promise<UpdateTaskAssignmentsStatusesResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // We need to check if provided assignee IDs exist as workspace users
+    const providedAssigneeIds = payload.map((item) => item.assigneeId);
+    const existingWorkspaceUsers = await this.workspaceUserService.findAllByIds(
+      {
+        workspaceId,
+        ids: providedAssigneeIds,
+      },
+    );
+
+    if (existingWorkspaceUsers.length !== providedAssigneeIds.length) {
+      // One or more provided assignee IDs don't exist as workspace users for provided workspace
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const updatedTaskAssignments =
+      await this.taskAssignmentService.updateAssignessByTaskId({
         taskId,
-        assigneeId,
-        status,
+        data: payload,
       });
 
-    // Search for all the task assignments by task ID again after
-    // the update so we can build the response (we do it here because of
-    // the single responsibilty rule)
-    const taskAssignments =
-      await this.taskAssignmentService.findAllByTaskIdWithAssigneeUser(taskId);
-
-    const response: WorkspaceTaskResponse = {
-      id: updatedTaskAssignment.task.id,
-      title: updatedTaskAssignment.task.title,
-      rewardPoints: updatedTaskAssignment.task.rewardPoints,
-      assignees: taskAssignments.map((taskAssignment) => ({
-        id: taskAssignment.assignee.id,
-        firstName: taskAssignment.assignee.user.firstName,
-        lastName: taskAssignment.assignee.user.lastName,
-        profileImageUrl: taskAssignment.assignee.user.profileImageUrl,
+    const response: UpdateTaskAssignmentsStatusesResponse =
+      updatedTaskAssignments.map((taskAssignment) => ({
+        assigneeId: taskAssignment.assignee.id,
         status: taskAssignment.status,
-      })),
+      }));
+
+    return response;
+  }
+
+  async updateGoal({
+    workspaceId,
+    goalId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    goalId: Goal['id'];
+    payload: UpdateGoalRequest;
+  }): Promise<WorkspaceGoalResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const updatedGoal = await this.goalService.updateById({
+      id: goalId,
+      data: payload,
+    });
+
+    const accumulatedPoints =
+      await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
+        workspaceUserId: updatedGoal.assignee.id,
+        workspaceId,
+      });
+
+    const response: WorkspaceGoalResponse = {
+      id: updatedGoal.id,
+      title: updatedGoal.title,
+      requiredPoints: updatedGoal.requiredPoints,
+      assignee: {
+        id: updatedGoal.assignee.id,
+        firstName: updatedGoal.assignee.firstName,
+        lastName: updatedGoal.assignee.lastName,
+        profileImageUrl: updatedGoal.assignee.profileImageUrl,
+      },
+      status: updatedGoal.status,
+      accumulatedPoints,
     };
 
     return response;

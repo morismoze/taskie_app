@@ -74,7 +74,6 @@ export class TaskRepositoryImpl implements TaskRepository {
   async findAllByWorkspaceId({
     workspaceId,
     query: { page, limit, status, search },
-    relations,
   }: {
     workspaceId: string;
     query: {
@@ -83,37 +82,51 @@ export class TaskRepositoryImpl implements TaskRepository {
       status: ProgressStatus;
       search: string | null;
     };
-    relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<{
     data: TaskEntity[];
     total: number;
   }> {
     const offset = (page - 1) * limit;
 
-    const findOptions: FindManyOptions<TaskEntity> = {
-      where: { workspace: { id: workspaceId }, taskAssignments: { status } },
-      skip: offset,
-      take: limit,
-      relations: {
-        taskAssignments: true, // This is used for fetching status of the task
-        ...relations,
-      },
-    };
+    const qb = this.repo
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.taskAssignments', 'assignment')
+      .leftJoinAndSelect('assignment.assignee', 'assignee')
+      .leftJoinAndSelect('assignee.user', 'user')
+      .where('task.workspace.id = :workspaceId', { workspaceId });
 
-    if (search) {
-      findOptions.where = {
-        ...findOptions.where,
-        title: ILike(`%${search}%`),
-      };
+    if (status) {
+      qb.andWhere('assignment.status = :status', { status });
     }
 
-    const [taskEntities, totalCount] =
-      await this.repo.findAndCount(findOptions);
+    if (search) {
+      qb.andWhere('LOWER(task.title) LIKE :search', {
+        search: `%${search.toLowerCase()}%`,
+      });
+    }
+
+    qb.skip(offset).take(limit);
+
+    const [taskEntities, totalCount] = await qb.getManyAndCount();
 
     return {
       data: taskEntities,
       total: totalCount,
     };
+  }
+
+  async update({
+    id,
+    data,
+  }: {
+    id: Task['id'];
+    data: Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+  }): Promise<Nullable<TaskEntity>> {
+    this.transactionalTaskRepo.update(id, data);
+
+    const newEntity = await this.findById({ id });
+
+    return newEntity;
   }
 
   private get transactionalTaskRepo(): Repository<TaskEntity> {

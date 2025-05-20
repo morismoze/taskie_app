@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { FindOptionsRelations, In, Repository } from 'typeorm';
 import { TaskAssignmentCore } from '../domain/task-assignment-core.domain';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
@@ -74,17 +74,15 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     });
   }
 
-  async findByTaskIdAndAssigneeId({
-    taskId,
-    assigneeId,
+  async findByTaskId({
+    id,
     relations,
   }: {
-    taskId: TaskAssignment['task']['id'];
-    assigneeId: TaskAssignment['task']['id'];
+    id: TaskAssignment['task']['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
     return await this.repo.findOne({
-      where: { task: { id: taskId }, assignee: { id: assigneeId } },
+      where: { task: { id } },
       relations,
     });
   }
@@ -133,6 +131,19 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     const newEntity = await this.findById({ id, relations });
 
     return newEntity;
+  }
+
+  async deleteByTaskIdAndAssigneeIds({
+    taskId,
+    assigneeIds,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+  }): Promise<void> {
+    this.transactionalTaskAssignmentRepo.delete({
+      task: { id: taskId },
+      assignee: { id: In(assigneeIds) },
+    });
   }
 
   private get transactionalTaskAssignmentRepo(): Repository<TaskAssignmentEntity> {

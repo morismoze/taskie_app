@@ -1,7 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
+import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
 import { TaskWithAssigneesCore } from './domain/task-with-assignees-core.domain';
@@ -26,11 +28,6 @@ export class TaskService {
       await this.taskRepository.findAllByWorkspaceId({
         workspaceId,
         query,
-        relations: {
-          taskAssignments: {
-            assignee: true,
-          },
-        },
       });
 
     const tasks: TaskWithAssigneesCore[] = taskEntities.map((task) => ({
@@ -77,6 +74,47 @@ export class TaskService {
         dueDate: data.dueDate,
       },
       createdById,
+    });
+
+    if (!newTask) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return newTask;
+  }
+
+  async findById(id: Task['id']): Promise<Nullable<TaskCore>> {
+    return await this.taskRepository.findById({
+      id,
+    });
+  }
+
+  async updateById({
+    id,
+    data,
+  }: {
+    id: Task['id'];
+    data: UpdateTaskRequest;
+  }): Promise<TaskCore> {
+    const task = this.findById(id);
+
+    if (!task) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const newTask = await this.taskRepository.update({
+      id,
+      data,
     });
 
     if (!newTask) {

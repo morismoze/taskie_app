@@ -110,4 +110,25 @@ export class GoalRepositoryImpl implements GoalRepository {
       total: totalCount,
     };
   }
+
+  async update({
+    id,
+    data,
+    relations,
+  }: {
+    id: Goal['id'];
+    data: Partial<
+      Omit<
+        Goal,
+        'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'assignee'
+      > & { assigneeId: Goal['assignee']['id'] }
+    >;
+    relations?: FindOptionsRelations<GoalEntity>;
+  }): Promise<Nullable<GoalEntity>> {
+    this.repo.update(id, data);
+
+    const newEntity = await this.findById({ id, relations });
+
+    return newEntity;
+  }
 }

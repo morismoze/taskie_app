@@ -1,11 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
+import { UpdateGoalRequest } from '../workspace/workspace-module/dto/request/update-goal-request.dto';
 import { GoalCore } from './domain/goal-core.domain';
-import { GoalWithAssigneeCore } from './domain/goal-with-assignee-core.domain';
+import { GoalWithAssigneeUserCore } from './domain/goal-with-assignee-user-core.domain';
 import { Goal } from './domain/goal.domain';
 import { GoalRepository } from './persistence/goal.repository';
 
@@ -23,7 +25,7 @@ export class GoalService {
     workspaceId: Goal['workspace']['id'];
     query: WorkspaceItemRequestQuery;
   }): Promise<{
-    data: GoalWithAssigneeCore[];
+    data: GoalWithAssigneeUserCore[];
     total: number;
   }> {
     const { data: goalEntities, total } =
@@ -37,21 +39,14 @@ export class GoalService {
         },
       });
 
-    const goals: GoalWithAssigneeCore[] = [];
+    const goals: GoalWithAssigneeUserCore[] = [];
 
     for (const goal of goalEntities) {
-      const accumulatedPoints =
-        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
-          workspaceUserId: goal.assignee.id,
-          workspaceId,
-        });
-
       goals.push({
         id: goal.id,
         title: goal.title,
         description: goal.description,
         requiredPoints: goal.requiredPoints,
-        accumulatedPoints,
         status: goal.status,
         assignee: {
           id: goal.assignee.user.id,
@@ -101,5 +96,72 @@ export class GoalService {
     }
 
     return newGoal;
+  }
+
+  async findById(id: Goal['id']): Promise<Nullable<GoalCore>> {
+    return await this.goalRepository.findById({
+      id,
+    });
+  }
+
+  async updateById({
+    id,
+    data,
+  }: {
+    id: Goal['id'];
+    data: UpdateGoalRequest;
+  }): Promise<GoalWithAssigneeUserCore> {
+    const goal = await this.findById(id);
+
+    if (!goal) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const newGoal = await this.goalRepository.update({
+      id,
+      data: {
+        title: data.title,
+        description: data.description,
+        requiredPoints: data.requiredPoints,
+        status: data.status,
+        assigneeId: data.assigneeId,
+      },
+      relations: {
+        assignee: {
+          user: true,
+        },
+      },
+    });
+
+    if (!newGoal) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return {
+      id: newGoal.id,
+      title: newGoal.title,
+      description: newGoal.description,
+      requiredPoints: newGoal.requiredPoints,
+      status: newGoal.status,
+      assignee: {
+        id: newGoal.assignee.user.id,
+        firstName: newGoal.assignee.user.firstName,
+        lastName: newGoal.assignee.user.lastName,
+        profileImageUrl: newGoal.assignee.user.profileImageUrl,
+      },
+      createdAt: newGoal.createdAt,
+      deletedAt: newGoal.deletedAt,
+      updatedAt: newGoal.updatedAt,
+    };
   }
 }

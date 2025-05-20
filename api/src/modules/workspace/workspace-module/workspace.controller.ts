@@ -30,8 +30,6 @@ import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
 import { MemberIdRequestPathParam } from './dto/request/member-id-path-param-request.dto';
 import { SetWorkspaceUserRoleRequest } from './dto/request/set-workspace-user-role-request.dto';
 import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
-import { TaskAssigneeIdRequestPathParam } from './dto/request/task-assignee-id-path-param-request.dto';
-import { SetTaskAssignmentStatusRequest } from './dto/request/update-task-assignment-status-request.dto';
 import {
   WorkspaceResponse,
   WorkspacesResponse,
@@ -40,12 +38,18 @@ import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
 } from './dto/response/workspace-members-response.dto';
-import { WorkspaceGoalsResponse } from './dto/response/workspace-goals-response.dto';
-import { LeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
 import {
-  WorkspaceTaskResponse,
-  WorkspaceTasksResponse,
-} from './dto/response/workspace-tasks-response.dto';
+  WorkspaceGoalResponse,
+  WorkspaceGoalsResponse,
+} from './dto/response/workspace-goals-response.dto';
+import { LeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
+import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
+import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
+import { UpdateTaskAssignmentsStatusesRequest } from './dto/request/update-task-assignments-statuses-request.dto';
+import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
+import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
+import { GoalIdRequestPathParam } from './dto/request/goal-id-path-param-request.dto';
 
 @Controller({
   path: 'workspaces',
@@ -166,20 +170,35 @@ export class WorkspaceController {
     });
   }
 
-  @Patch(':workspaceId/tasks/:taskId/assignments/:assigneeId/status')
+  @Patch(':workspaceId/tasks/:taskId')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
-  updateTaskAssignmentStatus(
+  updateTask(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
-    @Param() { assigneeId }: TaskAssigneeIdRequestPathParam,
-    @Body() { status }: SetTaskAssignmentStatusRequest,
-  ): Promise<WorkspaceTaskResponse> {
-    return this.workspaceService.updateTaskAssignmentStatus({
+    @Body() payload: UpdateTaskRequest,
+  ): Promise<UpdateTaskResponse> {
+    // This endpoint doesn't return WorkspaceTaskResponse because this endpoints
+    // doesn't update assignees - we do that via updateTaskAssigments endpoint
+    return this.workspaceService.updateTask({
       workspaceId,
       taskId,
-      assigneeId,
-      status,
+      payload,
+    });
+  }
+
+  @Patch(':workspaceId/tasks/:taskId/assignments/status')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  updateTaskAssigments(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+    @Body() payload: UpdateTaskAssignmentsStatusesRequest,
+  ): Promise<UpdateTaskAssignmentsStatusesResponse> {
+    return this.workspaceService.updateTaskAssigments({
+      workspaceId,
+      taskId,
+      payload,
     });
   }
 
@@ -193,6 +212,21 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspaceGoals({
       workspaceId: params.workspaceId,
       query,
+    });
+  }
+
+  @Patch(':workspaceId/goals/:goalId')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  updateGoal(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { goalId }: GoalIdRequestPathParam,
+    @Body() payload: UpdateGoalRequest,
+  ): Promise<WorkspaceGoalResponse> {
+    return this.workspaceService.updateGoal({
+      workspaceId,
+      goalId,
+      payload,
     });
   }
 
@@ -236,7 +270,7 @@ export class WorkspaceController {
 
   @Get(':workspaceId/leaderboard')
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   getLeaderboard(
     @Param() params: WorkspaceIdRequestPathParam,
   ): Promise<LeaderboardResponse> {
