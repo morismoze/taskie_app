@@ -20,7 +20,7 @@ export class UserSeedService {
     });
 
     if (countUser1 === 0) {
-      const user1 = await this.userRepository.save(
+      await this.userRepository.save(
         this.userRepository.create({
           email: 'john.doe@example.com',
           firstName: 'John',
@@ -39,7 +39,7 @@ export class UserSeedService {
     });
 
     if (countUser2 === 0) {
-      const user2 = await this.userRepository.save(
+      await this.userRepository.save(
         this.userRepository.create({
           email: 'jane.smith@example.com',
           firstName: 'Jane',
@@ -47,6 +47,63 @@ export class UserSeedService {
           status: UserStatus.ACTIVE,
           provider: AuthProvider.GOOGLE,
           socialId: 'google-jane',
+        }),
+      );
+    }
+
+    const countUser3 = await this.userRepository.count({
+      where: {
+        email: 'peter.griffin@example.com',
+      },
+    });
+
+    if (countUser3 === 0) {
+      await this.userRepository.save(
+        this.userRepository.create({
+          email: null,
+          firstName: 'Peter',
+          lastName: 'Griffin',
+          status: UserStatus.ACTIVE,
+          provider: null,
+          socialId: null,
+        }),
+      );
+    }
+
+    const countUser4 = await this.userRepository.count({
+      where: {
+        email: 'jim.morrison@example.com',
+      },
+    });
+
+    if (countUser4 === 0) {
+      await this.userRepository.save(
+        this.userRepository.create({
+          email: null,
+          firstName: 'Jim',
+          lastName: 'Morrison',
+          status: UserStatus.ACTIVE,
+          provider: null,
+          socialId: null,
+        }),
+      );
+    }
+
+    const countUser5 = await this.userRepository.count({
+      where: {
+        email: 'diego.maradona@example.com',
+      },
+    });
+
+    if (countUser5 === 0) {
+      await this.userRepository.save(
+        this.userRepository.create({
+          email: null,
+          firstName: 'Jim',
+          lastName: 'Morrison',
+          status: UserStatus.ACTIVE,
+          provider: null,
+          socialId: null,
         }),
       );
     }
