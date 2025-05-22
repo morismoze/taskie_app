@@ -26,7 +26,6 @@ export class UnknownExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     const message = exception.message;
-    console.log(exception);
 
     this.logger.error(
       `[${request.method}] ${httpAdapter.getRequestUrl(request)} - ${statusCode} - ${message}`,

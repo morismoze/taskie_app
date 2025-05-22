@@ -26,13 +26,13 @@ export class WorkspaceUserSeedService {
       where: { email: 'jane.smith@example.com' },
     });
     const user3 = await this.userRepository.findOne({
-      where: { email: 'peter.griffin@example.com' },
+      where: { firstName: 'Peter', lastName: 'Griffin' },
     });
     const user4 = await this.userRepository.findOne({
-      where: { email: 'jim.morisson@example.com' },
+      where: { firstName: 'Jim', lastName: 'Morrison' },
     });
     const user5 = await this.userRepository.findOne({
-      where: { email: 'diego.maradona@example.com' },
+      where: { firstName: 'Diego', lastName: 'Maradona' },
     });
 
     if (!user1 || !user2 || !user3 || !user4 || !user5) {
@@ -52,7 +52,9 @@ export class WorkspaceUserSeedService {
 
     let workspaceUser1 = await this.workspaceUserRepository.findOne({
       where: {
-        user: user1,
+        user: {
+          id: user1.id,
+        },
       },
     });
 
@@ -69,7 +71,9 @@ export class WorkspaceUserSeedService {
 
     let workspaceUser2 = await this.workspaceUserRepository.findOne({
       where: {
-        user: user2,
+        user: {
+          id: user2.id,
+        },
       },
     });
 
@@ -86,7 +90,9 @@ export class WorkspaceUserSeedService {
 
     const workspaceUser3 = await this.workspaceUserRepository.findOne({
       where: {
-        user: user3,
+        user: {
+          id: user3.id,
+        },
       },
     });
 
@@ -103,7 +109,9 @@ export class WorkspaceUserSeedService {
 
     const workspaceUser4 = await this.workspaceUserRepository.findOne({
       where: {
-        user: user4,
+        user: {
+          id: user4.id,
+        },
       },
     });
 
@@ -120,7 +128,9 @@ export class WorkspaceUserSeedService {
 
     const workspaceUser5 = await this.workspaceUserRepository.findOne({
       where: {
-        user: user4,
+        user: {
+          id: user5.id,
+        },
       },
     });
 

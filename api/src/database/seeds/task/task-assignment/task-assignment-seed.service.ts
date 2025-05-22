@@ -35,7 +35,7 @@ export class TaskAssignmentSeedService {
 
     const workspaceUser1 = await this.workspaceUserRepository.findOne({
       where: {
-        user: { email: 'peter.griffin@example.com' },
+        user: { firstName: 'Peter', lastName: 'Griffin' },
         workspace: {
           id: workspace1.id,
         },
@@ -44,16 +44,16 @@ export class TaskAssignmentSeedService {
     });
     const workspaceUser2 = await this.workspaceUserRepository.findOne({
       where: {
-        user: { email: 'jim.morisson@example.com' },
+        user: { firstName: 'Jim', lastName: 'Morrison' },
         workspace: {
-          id: workspace1.id,
+          id: workspace2.id,
         },
         workspaceRole: WorkspaceUserRole.MEMBER,
       },
     });
     const workspaceUser3 = await this.workspaceUserRepository.findOne({
       where: {
-        user: { email: 'diego.maradona@example.com' },
+        user: { firstName: 'Diego', lastName: 'Maradona' },
         workspace: {
           id: workspace1.id,
         },

@@ -1,6 +1,5 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
 import { WorkspaceEntity } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
 import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-assignment.entity';
@@ -8,7 +7,7 @@ import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-ass
 /**
  * Represents a concrete task that is abstracted via task assignments
  */
-@Entity({ name: 'tasks' })
+@Entity({ name: 'task' })
 export class TaskEntity extends RootBaseEntity {
   @ManyToOne(() => WorkspaceEntity)
   @JoinColumn({ name: 'workspace_id' })
@@ -23,7 +22,7 @@ export class TaskEntity extends RootBaseEntity {
   @Column({ nullable: true, type: 'varchar' })
   description!: string | null;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => WorkspaceUserEntity)
   @JoinColumn({ name: 'created_by_id' })
   createdBy!: WorkspaceUserEntity;
 

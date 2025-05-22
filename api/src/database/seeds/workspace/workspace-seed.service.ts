@@ -44,7 +44,7 @@ export class WorkspaceSeedService {
 
     const countWorkspace2 = await this.workspaceRepository.count({
       where: {
-        name: 'Development Team Alpha',
+        name: 'Marketing Outreach Beta',
       },
     });
 

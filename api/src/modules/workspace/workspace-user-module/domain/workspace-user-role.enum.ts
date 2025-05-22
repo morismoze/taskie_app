@@ -1,4 +1,4 @@
 export enum WorkspaceUserRole {
-  MANAGER,
-  MEMBER,
+  MANAGER = 'MANAGER',
+  MEMBER = 'MEMBER',
 }

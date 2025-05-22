@@ -43,14 +43,14 @@ export class GoalSeedService {
       where: {
         user: { email: 'jane.smith@example.com' },
         workspace: {
-          id: workspace1.id,
+          id: workspace2.id,
         },
         workspaceRole: WorkspaceUserRole.MANAGER,
       },
     });
     const workspaceUser3 = await this.workspaceUserRepository.findOne({
       where: {
-        user: { email: 'peter.griffin@example.com' },
+        user: { firstName: 'Peter', lastName: 'Griffin' },
         workspace: {
           id: workspace1.id,
         },
@@ -59,7 +59,7 @@ export class GoalSeedService {
     });
     const workspaceUser4 = await this.workspaceUserRepository.findOne({
       where: {
-        user: { email: 'jim.morisson@example.com' },
+        user: { firstName: 'Jim', lastName: 'Morrison' },
         workspace: {
           id: workspace2.id,
         },
@@ -68,7 +68,7 @@ export class GoalSeedService {
     });
     const workspaceUser5 = await this.workspaceUserRepository.findOne({
       where: {
-        user: { email: 'diego.maradona@example.com' },
+        user: { firstName: 'Diego', lastName: 'Maradona' },
         workspace: {
           id: workspace1.id,
         },
@@ -97,7 +97,7 @@ export class GoalSeedService {
       },
     });
 
-    if (countGoal1) {
+    if (countGoal1 === 0) {
       const goal1 = this.goalRepository.create({
         workspace: workspace1,
         assignee: workspaceUser3,
@@ -122,7 +122,7 @@ export class GoalSeedService {
       },
     });
 
-    if (countGoal2) {
+    if (countGoal2 === 0) {
       const goal2 = this.goalRepository.create({
         workspace: workspace1,
         assignee: workspaceUser5,
@@ -147,7 +147,7 @@ export class GoalSeedService {
       },
     });
 
-    if (countGoal3) {
+    if (countGoal3 === 0) {
       const goal3 = this.goalRepository.create({
         workspace: workspace2,
         assignee: workspaceUser4,

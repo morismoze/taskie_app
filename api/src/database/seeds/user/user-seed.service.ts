@@ -53,7 +53,8 @@ export class UserSeedService {
 
     const countUser3 = await this.userRepository.count({
       where: {
-        email: 'peter.griffin@example.com',
+        firstName: 'Peter',
+        lastName: 'Griffin',
       },
     });
 
@@ -72,7 +73,8 @@ export class UserSeedService {
 
     const countUser4 = await this.userRepository.count({
       where: {
-        email: 'jim.morrison@example.com',
+        firstName: 'Jim',
+        lastName: 'Morrison',
       },
     });
 
@@ -91,7 +93,8 @@ export class UserSeedService {
 
     const countUser5 = await this.userRepository.count({
       where: {
-        email: 'diego.maradona@example.com',
+        firstName: 'Diego',
+        lastName: 'Maradona',
       },
     });
 
@@ -99,8 +102,8 @@ export class UserSeedService {
       await this.userRepository.save(
         this.userRepository.create({
           email: null,
-          firstName: 'Jim',
-          lastName: 'Morrison',
+          firstName: 'Diego',
+          lastName: 'Maradona',
           status: UserStatus.ACTIVE,
           provider: null,
           socialId: null,

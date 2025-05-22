@@ -12,7 +12,7 @@
     "db:migration:run": "npm run typeorm -- migration:run",
     "db:migration:revert": "npm run typeorm --  migration:revert",
     "db:schema:drop": "npm run typeorm -- schema:drop",
-    "seed:run": "ts-node -r tsconfig-paths/register ./src/database/seeds/run-seed.ts",
+    "db:seed:run": "ts-node -r tsconfig-paths/register ./src/database/seeds/run-seed.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

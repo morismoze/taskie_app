@@ -1,4 +1,4 @@
 export enum WorkspaceUserStatus {
-  ACTIVE,
-  REMOVED,
+  ACTIVE = 'ACTIVE',
+  REMOVED = 'REMOVED',
 }

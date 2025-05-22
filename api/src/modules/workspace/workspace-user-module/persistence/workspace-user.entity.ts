@@ -37,7 +37,6 @@ export class WorkspaceUserEntity extends RootBaseEntity {
 
   // if a role ever gets more granular (permissions, descriptions, etc.) this can
   // be implemented as separate WorkspaceRole entity
-  @Index({ unique: true })
   @Column({
     name: 'workspace_role',
     type: 'enum',

@@ -41,6 +41,14 @@ class DatabaseEnvironmentVariablesValidator {
   @IsNumber()
   DATABASE_POOL_SIZE: number;
 
+  @IsNotEmpty()
+  @IsString()
+  DATABASE_PGADMIN_EMAIL: string;
+
+  @IsNotEmpty()
+  @IsString()
+  DATABASE_PGADMIN_PASSWORD: string;
+
   constructor(
     DATABASE_TYPE: string,
     DATABASE_HOST: string,
@@ -49,6 +57,8 @@ class DatabaseEnvironmentVariablesValidator {
     DATABASE_USERNAME: string,
     DATABASE_PASSWORD: string,
     DATABASE_POOL_SIZE: number,
+    DATABASE_PGADMIN_EMAIL: string,
+    DATABASE_PGADMIN_PASSWORD: string,
   ) {
     this.DATABASE_TYPE = DATABASE_TYPE;
     this.DATABASE_HOST = DATABASE_HOST;
@@ -57,6 +67,8 @@ class DatabaseEnvironmentVariablesValidator {
     this.DATABASE_USERNAME = DATABASE_USERNAME;
     this.DATABASE_PASSWORD = DATABASE_PASSWORD;
     this.DATABASE_POOL_SIZE = DATABASE_POOL_SIZE;
+    this.DATABASE_PGADMIN_EMAIL = DATABASE_PGADMIN_EMAIL;
+    this.DATABASE_PGADMIN_PASSWORD = DATABASE_PGADMIN_PASSWORD;
   }
 }
 
