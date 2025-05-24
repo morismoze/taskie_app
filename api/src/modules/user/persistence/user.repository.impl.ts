@@ -36,7 +36,9 @@ export class UserRepositoryImpl implements UserRepository {
 
     const savedEntity = await this.transactionalUserRepo.save(persistenceModel);
 
-    const newEntity = await this.findById(savedEntity.id);
+    const newEntity = await this.transactionalUserRepo.findOne({
+      where: { id: savedEntity.id },
+    });
 
     return newEntity;
   }
@@ -52,7 +54,9 @@ export class UserRepositoryImpl implements UserRepository {
 
     const savedEntity = await this.transactionalUserRepo.save(persistenceModel);
 
-    const newEntity = await this.findById(savedEntity.id);
+    const newEntity = await this.transactionalUserRepo.findOne({
+      where: { id: savedEntity.id },
+    });
 
     return newEntity;
   }

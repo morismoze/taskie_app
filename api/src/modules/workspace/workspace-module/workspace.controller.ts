@@ -116,7 +116,7 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspacesByUser(req.user.sub);
   }
 
-  @Post(':workspaceId/virtual-users')
+  @Post(':workspaceId/members/virtual')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -141,7 +141,7 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspaceMembers(params.workspaceId);
   }
 
-  @Put(':workspaceId/members/:memberId')
+  @Patch(':workspaceId/members/:memberId')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)

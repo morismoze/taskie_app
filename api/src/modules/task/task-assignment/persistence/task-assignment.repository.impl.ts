@@ -40,8 +40,8 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     const savedEntity =
       await this.transactionalTaskAssignmentRepo.save(persistenceModel);
 
-    const newEntity = await this.findById({
-      id: savedEntity.id,
+    const newEntity = await this.transactionalTaskAssignmentRepo.findOne({
+      where: { id: savedEntity.id },
       relations,
     });
 

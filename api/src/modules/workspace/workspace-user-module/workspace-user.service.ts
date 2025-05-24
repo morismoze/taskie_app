@@ -58,10 +58,17 @@ export class WorkspaceUserService {
   /**
    * This function returns workspace user membership a user has in a specific workspace
    */
-  async findByUserId(
-    userId: WorkspaceUser['user']['id'],
-  ): Promise<Nullable<WorkspaceUserCore>> {
-    return this.workspaceUserRepository.findByUserId({ userId });
+  async findByUserIdAndWorkspaceId({
+    userId,
+    workspaceId,
+  }: {
+    userId: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<Nullable<WorkspaceUserCore>> {
+    return this.workspaceUserRepository.findByUserIdAndWorkspaceId({
+      userId,
+      workspaceId,
+    });
   }
 
   /**

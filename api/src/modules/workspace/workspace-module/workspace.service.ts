@@ -225,9 +225,11 @@ export class WorkspaceService {
     }
 
     // Using assertion because workspace user should be always found based on how JWT works (custom secret)
-    const creatorWorkspaceUser = (await this.workspaceUserService.findByUserId(
-      createdById,
-    )) as WorkspaceUserCore;
+    const creatorWorkspaceUser =
+      (await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: createdById,
+        workspaceId,
+      })) as WorkspaceUserCore;
 
     return this.unitOfWorkService.withTransaction(async () => {
       // 1. Create core user
@@ -341,7 +343,7 @@ export class WorkspaceService {
       });
 
     const response: WorkspaceTasksResponse = {
-      data: tasks.map((task) => ({
+      items: tasks.map((task) => ({
         id: task.id,
         title: task.title,
         rewardPoints: task.rewardPoints,
@@ -385,7 +387,7 @@ export class WorkspaceService {
         query,
       });
 
-    const responseData: WorkspaceGoalsResponse['data'] = [];
+    const responseData: WorkspaceGoalsResponse['items'] = [];
 
     for (const goal of goals) {
       const accumulatedPoints =
@@ -409,7 +411,7 @@ export class WorkspaceService {
     }
 
     const response: WorkspaceGoalsResponse = {
-      data: responseData,
+      items: responseData,
       total,
     };
 

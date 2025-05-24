@@ -10,11 +10,11 @@ import { ProgressStatus } from '../../task/task-module/domain/progress-status.en
  */
 @Entity({ name: 'goal' })
 export class GoalEntity extends RootBaseEntity {
-  @ManyToOne(() => WorkspaceUserEntity)
+  @ManyToOne(() => WorkspaceUserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'assignee_id' })
   assignee!: WorkspaceUserEntity;
 
-  @ManyToOne(() => WorkspaceEntity)
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace!: WorkspaceEntity; // Workspace this goal belongs to
 
@@ -34,7 +34,10 @@ export class GoalEntity extends RootBaseEntity {
   })
   status!: ProgressStatus; // Current status of the goal
 
-  @ManyToOne(() => WorkspaceUserEntity)
+  @ManyToOne(() => WorkspaceUserEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'created_by_id' })
-  createdBy!: WorkspaceUserEntity; // The user who created this goal
+  createdBy!: WorkspaceUserEntity | null; // The user who created this goal
 }

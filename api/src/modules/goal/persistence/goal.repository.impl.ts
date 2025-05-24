@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import {
   FindManyOptions,
   FindOptionsRelations,
@@ -32,7 +33,7 @@ export class GoalRepositoryImpl implements GoalRepository {
       assigneeId: Goal['assignee']['id'];
     };
     workspaceId: Goal['workspace']['id'];
-    createdById: Goal['createdBy']['id'];
+    createdById: WorkspaceUser['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
     const persistenceModel = this.repo.create({

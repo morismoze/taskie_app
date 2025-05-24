@@ -13,11 +13,13 @@ export abstract class WorkspaceUserRepository {
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
-  abstract findByUserId({
+  abstract findByUserIdAndWorkspaceId({
     userId,
+    workspaceId,
     relations,
   }: {
     userId: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 

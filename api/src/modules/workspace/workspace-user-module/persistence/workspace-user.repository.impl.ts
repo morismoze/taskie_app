@@ -29,15 +29,17 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
-  async findByUserId({
+  async findByUserIdAndWorkspaceId({
     userId,
+    workspaceId,
     relations,
   }: {
     userId: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
     return await this.repo.findOne({
-      where: { user: { id: userId } },
+      where: { user: { id: userId }, workspace: { id: workspaceId } },
       relations,
     });
   }
@@ -101,8 +103,8 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     const savedEntity =
       await this.transactionalWorkspaceUserRepo.save(persistenceModel);
 
-    const newEntity = await this.findByUserId({
-      userId: savedEntity.user.id,
+    const newEntity = await this.transactionalWorkspaceUserRepo.findOne({
+      where: { id: savedEntity.id },
       relations,
     });
 

@@ -6,7 +6,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
   name: 'session',
 })
 export class SessionEntity extends RootBaseEntity {
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   @Index()
   user!: UserEntity;

@@ -1,3 +1,4 @@
+import { Paginable } from 'src/common/types/paginable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
 export interface WorkspaceTaskResponse {
@@ -13,7 +14,4 @@ export interface WorkspaceTaskResponse {
   }[];
 }
 
-export interface WorkspaceTasksResponse {
-  data: WorkspaceTaskResponse[];
-  total: number;
-}
+export type WorkspaceTasksResponse = Paginable<WorkspaceTaskResponse>;

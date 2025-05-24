@@ -50,8 +50,8 @@ export class TaskRepositoryImpl implements TaskRepository {
 
     const savedEntity = await this.transactionalTaskRepo.save(persistenceModel);
 
-    const newEntity = await this.findById({
-      id: savedEntity.id,
+    const newEntity = await this.transactionalTaskRepo.findOne({
+      where: { id: savedEntity.id },
       relations,
     });
 
@@ -124,7 +124,9 @@ export class TaskRepositoryImpl implements TaskRepository {
   }): Promise<Nullable<TaskEntity>> {
     this.transactionalTaskRepo.update(id, data);
 
-    const newEntity = await this.findById({ id });
+    const newEntity = await this.transactionalTaskRepo.findOne({
+      where: { id },
+    });
 
     return newEntity;
   }

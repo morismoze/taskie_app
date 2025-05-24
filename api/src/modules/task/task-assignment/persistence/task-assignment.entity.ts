@@ -15,11 +15,11 @@ import { TaskEntity } from '../../task-module/persistence/task.entity';
 
 @Entity({ name: 'task_assignment' })
 export class TaskAssignmentEntity extends RootBaseEntity {
-  @ManyToOne(() => TaskEntity)
+  @ManyToOne(() => TaskEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'task_id' })
   task!: TaskEntity;
 
-  @ManyToOne(() => WorkspaceUserEntity)
+  @ManyToOne(() => WorkspaceUserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'assignee_id' })
   assignee!: WorkspaceUserEntity;
 

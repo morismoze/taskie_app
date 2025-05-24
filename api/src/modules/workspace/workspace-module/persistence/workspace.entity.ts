@@ -10,9 +10,9 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
  */
 @Entity({ name: 'workspace' })
 export class WorkspaceEntity extends RootBaseEntity {
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'owned_by_id' })
-  createdBy!: UserEntity;
+  createdBy!: UserEntity | null;
 
   @OneToMany(() => GoalEntity, (goal) => goal.workspace)
   goals!: GoalEntity[];

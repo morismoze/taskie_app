@@ -4,7 +4,6 @@ import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/tr
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { Session } from '../../domain/session.domain';
 import { SessionEntity } from '../session.entity';
-import { SessionRepository } from '../session.repository';
 import { TransactionalSessionRepository } from './transactional-session.repository';
 
 @Injectable()
@@ -12,7 +11,6 @@ export class TransactionalSessionRepositoryImpl
   implements TransactionalSessionRepository
 {
   constructor(
-    private readonly repo: SessionRepository,
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
@@ -44,8 +42,8 @@ export class TransactionalSessionRepositoryImpl
     const savedEntity =
       await this.transactionalSessionRepo.save(persistenceModel);
 
-    const newEntity = await this.repo.findById({
-      id: savedEntity.id,
+    const newEntity = await this.transactionalSessionRepo.findOne({
+      where: { id: savedEntity.id },
       relations,
     });
 

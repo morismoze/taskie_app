@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
+import { User } from 'src/modules/user/domain/user.domain';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user.domain';
 import { Workspace } from '../domain/workspace.domain';
@@ -26,7 +27,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       description: Workspace['description'];
       pictureUrl: Workspace['pictureUrl'];
     };
-    createdById: Workspace['createdBy']['id'];
+    createdById: User['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>> {
     const persistenceModel = this.repo.create({
@@ -39,11 +40,10 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     const savedEntity =
       await this.transactionalWorkspaceRepo.save(persistenceModel);
 
-    const newEntity = await this.findById({
-      id: savedEntity.id,
+    const newEntity = await this.transactionalWorkspaceRepo.findOne({
+      where: { id: savedEntity.id },
       relations,
     });
-
     return newEntity;
   }
 

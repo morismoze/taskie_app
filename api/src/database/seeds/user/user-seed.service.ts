@@ -110,5 +110,25 @@ export class UserSeedService {
         }),
       );
     }
+
+    const countUser6 = await this.userRepository.count({
+      where: {
+        firstName: 'Andrej',
+        lastName: 'Plenković',
+      },
+    });
+
+    if (countUser6 === 0) {
+      await this.userRepository.save(
+        this.userRepository.create({
+          email: null,
+          firstName: 'Andrej',
+          lastName: 'Plenković',
+          status: UserStatus.ACTIVE,
+          provider: null,
+          socialId: null,
+        }),
+      );
+    }
   }
 }

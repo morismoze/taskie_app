@@ -1,4 +1,5 @@
 import { Nullable } from 'src/common/types/nullable.type';
+import { User } from 'src/modules/user/domain/user.domain';
 import { FindOptionsRelations } from 'typeorm';
 import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user.domain';
 import { Workspace } from '../domain/workspace.domain';
@@ -14,7 +15,7 @@ export abstract class WorkspaceRepository {
       description: Workspace['description'];
       pictureUrl: Workspace['pictureUrl'];
     };
-    createdById: Workspace['createdBy']['id'];
+    createdById: User['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>>;
 

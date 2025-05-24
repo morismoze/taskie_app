@@ -26,12 +26,12 @@ import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
 @Unique('UQ_workspace_user', ['user', 'workspace'])
 export class WorkspaceUserEntity extends RootBaseEntity {
   @Index()
-  @ManyToOne(() => WorkspaceEntity)
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace!: WorkspaceEntity;
 
   @Index()
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
 
@@ -56,7 +56,10 @@ export class WorkspaceUserEntity extends RootBaseEntity {
   // 2. when concrete workspace users are created when a user joins a workspace by invite link
   // It is null in the case when user creates a workspace, and is automatically defined
   // as the first workspace user of that workspace
-  @ManyToOne(() => WorkspaceUserEntity, { nullable: true })
+  @ManyToOne(() => WorkspaceUserEntity, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'created_by_id' })
   createdBy!: WorkspaceUserEntity | null;
 

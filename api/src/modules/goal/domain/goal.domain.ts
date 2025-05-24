@@ -10,5 +10,5 @@ export interface Goal extends RootDomain {
   description: string | null;
   requiredPoints: number;
   status: ProgressStatus;
-  createdBy: WorkspaceUser;
+  createdBy: WorkspaceUser | null;
 }

@@ -9,7 +9,7 @@ import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-ass
  */
 @Entity({ name: 'task' })
 export class TaskEntity extends RootBaseEntity {
-  @ManyToOne(() => WorkspaceEntity)
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace!: WorkspaceEntity; // Workspace the task belongs to
 
@@ -22,9 +22,9 @@ export class TaskEntity extends RootBaseEntity {
   @Column({ nullable: true, type: 'varchar' })
   description!: string | null;
 
-  @ManyToOne(() => WorkspaceUserEntity)
+  @ManyToOne(() => WorkspaceUserEntity, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by_id' })
-  createdBy!: WorkspaceUserEntity;
+  createdBy!: WorkspaceUserEntity | null;
 
   @Column({ type: 'timestamp', nullable: true, name: 'due_date' })
   dueDate!: Date | null;

@@ -1,5 +1,6 @@
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import { FindOptionsRelations } from 'typeorm';
 import { Goal } from '../domain/goal.domain';
 import { GoalEntity } from './goal.entity';
@@ -18,7 +19,7 @@ export abstract class GoalRepository {
       assigneeId: Goal['assignee']['id'];
     };
     workspaceId: Goal['workspace']['id'];
-    createdById: Goal['createdBy']['id'];
+    createdById: WorkspaceUser['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 

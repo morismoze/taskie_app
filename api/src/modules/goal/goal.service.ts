@@ -6,6 +6,7 @@ import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-modul
 import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
 import { UpdateGoalRequest } from '../workspace/workspace-module/dto/request/update-goal-request.dto';
+import { WorkspaceUser } from '../workspace/workspace-user-module/domain/workspace-user.domain';
 import { GoalCore } from './domain/goal-core.domain';
 import { GoalWithAssigneeUserCore } from './domain/goal-with-assignee-user-core.domain';
 import { Goal } from './domain/goal.domain';
@@ -72,7 +73,7 @@ export class GoalService {
     data,
   }: {
     workspaceId: Goal['workspace']['id'];
-    createdById: Goal['createdBy']['id'];
+    createdById: WorkspaceUser['id'];
     data: CreateGoalRequest;
   }): Promise<GoalCore> {
     const newGoal = await this.goalRepository.create({
