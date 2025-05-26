@@ -2,6 +2,11 @@ import { Injectable, Scope } from '@nestjs/common';
 import { EntitySchema, ObjectLiteral, ObjectType, Repository } from 'typeorm';
 import { UnitOfWorkService } from '../unit-of-work.service';
 
+/**
+ * This repository is request scoped because transaction has to be request scoped,
+ * or in other words transaction has to be closed before the request is resolved.
+ */
+
 @Injectable({ scope: Scope.REQUEST })
 export class TransactionalRepository {
   constructor(private unitOfWorkService: UnitOfWorkService) {}
