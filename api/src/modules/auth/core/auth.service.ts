@@ -19,6 +19,7 @@ import { Session } from 'src/modules/session/domain/session.domain';
 import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
 import { JwtRefreshPayload } from './strategies/jwt-refresh-payload.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
+import { SessionCore } from 'src/modules/session/domain/session-core.domain';
 
 @Injectable()
 export class AuthService {
@@ -46,106 +47,111 @@ export class AuthService {
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
   }): Promise<LoginResponse> {
-    let user: Nullable<User> = await this.userService.findBySocialIdAndProvider(
-      {
-        socialId: socialData.id,
-        provider: authProvider,
+    const { user, session } = await this.unitOfWorkService.withTransaction(
+      async () => {
+        let user = await this.userService.findBySocialIdAndProvider({
+          socialId: socialData.id,
+          provider: authProvider,
+        });
+
+        if (user) {
+          // User has already "registered" via a social auth provider so
+          // we check if there are any properties retrieved by the auth service
+          // that have changed.
+          let email: SocialLogin['email'] | undefined = undefined;
+          let firstName: SocialLogin['firstName'] | undefined = undefined;
+          let lastName: SocialLogin['lastName'] | undefined = undefined;
+          let profileImageUrl: SocialLogin['profileImageUrl'] | undefined =
+            undefined;
+
+          if (user.email !== socialData.email) {
+            email = socialData.email;
+          }
+
+          if (user.firstName !== socialData.firstName) {
+            firstName = socialData.firstName;
+          }
+
+          if (user.lastName !== socialData.lastName) {
+            lastName = socialData.lastName;
+          }
+
+          if (user.lastName !== socialData.lastName) {
+            profileImageUrl = socialData.profileImageUrl;
+          }
+
+          user = await this.userService.update({
+            id: user.id,
+            data: {
+              email,
+              firstName,
+              lastName,
+              profileImageUrl,
+            },
+          });
+        } else {
+          // User hasn't yet "registered"
+          user = await this.userService.create({
+            email: socialData.email,
+            firstName: socialData.firstName,
+            lastName: socialData.lastName,
+            socialId: socialData.id,
+            provider: authProvider,
+            profileImageUrl: socialData.profileImageUrl,
+            status: UserStatus.ACTIVE, // since it's auth register, we activate the user immediately
+          });
+        }
+
+        const hash = crypto
+          .createHash('sha256')
+          .update(crypto.randomBytes(length).toString('hex'))
+          .digest('hex');
+
+        const session = await this.sessionService.create({
+          userId: user.id,
+          hash,
+          ipAddress,
+          deviceModel,
+          osVersion,
+          appVersion,
+        });
+
+        return { user, session };
       },
     );
 
-    return this.unitOfWorkService.withTransaction(async () => {
-      if (user) {
-        // User has already "registered" via a social auth provider so
-        // we check if there are any properties retrieved by the auth service
-        // that have changed.
-        let email: SocialLogin['email'] | undefined = undefined;
-        let firstName: SocialLogin['firstName'] | undefined = undefined;
-        let lastName: SocialLogin['lastName'] | undefined = undefined;
-        let profileImageUrl: SocialLogin['profileImageUrl'] | undefined =
-          undefined;
+    // When user is first-time "registered", this will be empty array
+    const workspaceUserMemberships =
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id);
 
-        if (user.email !== socialData.email) {
-          email = socialData.email;
-        }
+    const { accessToken, refreshToken, tokenExpires } =
+      await this.getTokensData(
+        {
+          sub: user.id,
+          roles: workspaceUserMemberships.map((workspaceUser) => ({
+            workspaceId: workspaceUser.workspace.id,
+            role: workspaceUser.workspaceRole,
+          })),
+          sessionId: session.id,
+        },
+        session.hash,
+      );
 
-        if (user.firstName !== socialData.firstName) {
-          firstName = socialData.firstName;
-        }
+    const userDto: LoginResponse['user'] = {
+      email: user.email,
+      firstName: user.firstName,
+      id: user.id,
+      lastName: user.lastName,
+      profileImageUrl: user.profileImageUrl,
+      createdAt: user.createdAt,
+    };
 
-        if (user.lastName !== socialData.lastName) {
-          lastName = socialData.lastName;
-        }
-
-        if (user.lastName !== socialData.lastName) {
-          profileImageUrl = socialData.profileImageUrl;
-        }
-
-        user = await this.userService.update(user.id, {
-          email,
-          firstName,
-          lastName,
-          profileImageUrl,
-        });
-      } else {
-        // User hasn't yet "registered"
-        user = await this.userService.create({
-          email: socialData.email,
-          firstName: socialData.firstName,
-          lastName: socialData.lastName,
-          socialId: socialData.id,
-          provider: authProvider,
-          profileImageUrl: socialData.profileImageUrl,
-          status: UserStatus.ACTIVE, // since it's auth register, we activate the user immediately
-        });
-      }
-
-      const hash = crypto
-        .createHash('sha256')
-        .update(crypto.randomBytes(length).toString('hex'))
-        .digest('hex');
-
-      const session = await this.sessionService.create({
-        userId: user.id,
-        hash,
-        ipAddress,
-        deviceModel,
-        osVersion,
-        appVersion,
-      });
-
-      // When user is first-time "registered", this will be empty array
-      const workspaceUserMemberships =
-        await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id);
-
-      const { accessToken, refreshToken, tokenExpires } =
-        await this.getTokensData(
-          {
-            sub: user.id,
-            roles: workspaceUserMemberships.map((workspaceUser) => ({
-              workspaceId: workspaceUser.workspace.id,
-              role: workspaceUser.workspaceRole,
-            })),
-            sessionId: session.id,
-          },
-          hash,
-        );
-
-      const userDto: LoginResponse['user'] = {
-        email: user.email,
-        firstName: user.firstName,
-        id: user.id,
-        lastName: user.lastName,
-        profileImageUrl: user.profileImageUrl,
-        createdAt: user.createdAt,
-      };
-
-      return {
-        refreshToken,
-        accessToken,
-        tokenExpires,
-        user: userDto,
-      };
-    });
+    return {
+      refreshToken,
+      accessToken,
+      tokenExpires,
+      user: userDto,
+    };
   }
 
   async me(data: JwtPayload): Promise<UserResponse> {

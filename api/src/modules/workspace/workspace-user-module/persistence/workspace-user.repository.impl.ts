@@ -120,11 +120,27 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     data: Partial<WorkspaceUserCore>;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
-    this.repo.update(id, data);
+    this.transactionalWorkspaceUserRepo.update(id, data);
 
-    const newEntity = await this.findById({ id, relations });
+    const updatedEntity = await this.transactionalWorkspaceUserRepo.findOne({
+      where: { id },
+      relations,
+    });
 
-    return newEntity;
+    return updatedEntity;
+  }
+
+  async delete({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId: WorkspaceUser['user']['id'];
+  }): Promise<void> {
+    await this.repo.delete({
+      id: workspaceUserId,
+      workspace: { id: workspaceId },
+    });
   }
 
   private get transactionalWorkspaceUserRepo(): Repository<WorkspaceUserEntity> {

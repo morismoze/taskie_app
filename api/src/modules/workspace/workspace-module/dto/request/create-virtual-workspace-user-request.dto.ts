@@ -1,14 +1,10 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsValidPersonName } from 'src/common/validations/utils';
 
 export class CreateVirtualWorkspaceUserRequest {
-  @IsNotEmpty()
-  @IsString()
-  @Length(2, 50)
+  @IsValidPersonName({ required: true })
   firstName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Length(2, 50)
+  @IsValidPersonName({ required: true })
   lastName: string;
 
   constructor(firstName: string, lastName: string) {

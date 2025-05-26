@@ -49,6 +49,7 @@ import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-tas
 import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
+import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -70,44 +71,48 @@ export class WorkspaceService {
     createdById: JwtPayload['sub'];
     data: CreateWorkspaceRequest;
   }): Promise<WorkspaceResponse> {
-    return this.unitOfWorkService.withTransaction(async () => {
-      // 1. create a new empty workspace
-      const newWorkspace = await this.workspaceRepository.create({
-        data: {
-          description: data.description,
-          name: data.name,
-          pictureUrl: null,
-        },
-        createdById,
-      });
-
-      if (!newWorkspace) {
-        throw new ApiHttpException(
-          {
-            code: ApiErrorCode.SERVER_ERROR,
+    const { newWorkspace } = await this.unitOfWorkService.withTransaction(
+      async () => {
+        // 1. create a new empty workspace
+        const newWorkspace = await this.workspaceRepository.create({
+          data: {
+            description: data.description,
+            name: data.name,
+            pictureUrl: null,
           },
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+          createdById,
+        });
 
-      // 2. create a new workspace user for the owner
-      await this.workspaceUserService.create({
-        workspaceId: newWorkspace.id,
-        userId: createdById,
-        createdById: null,
-        workspaceRole: WorkspaceUserRole.MANAGER,
-        status: WorkspaceUserStatus.ACTIVE,
-      });
+        if (!newWorkspace) {
+          throw new ApiHttpException(
+            {
+              code: ApiErrorCode.SERVER_ERROR,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
 
-      const response: WorkspaceResponse = {
-        id: newWorkspace.id,
-        name: newWorkspace.name,
-        description: newWorkspace.description,
-        pictureUrl: newWorkspace.pictureUrl,
-      };
+        // 2. create a new workspace user for the owner
+        await this.workspaceUserService.create({
+          workspaceId: newWorkspace.id,
+          userId: createdById,
+          createdById: null,
+          workspaceRole: WorkspaceUserRole.MANAGER,
+          status: WorkspaceUserStatus.ACTIVE,
+        });
 
-      return response;
-    });
+        return { newWorkspace };
+      },
+    );
+
+    const response: WorkspaceResponse = {
+      id: newWorkspace.id,
+      name: newWorkspace.name,
+      description: newWorkspace.description,
+      pictureUrl: newWorkspace.pictureUrl,
+    };
+
+    return response;
   }
 
   async createInviteLink({
@@ -231,34 +236,37 @@ export class WorkspaceService {
         workspaceId,
       })) as WorkspaceUserCore;
 
-    return this.unitOfWorkService.withTransaction(async () => {
-      // 1. Create core user
-      const newUser = await this.userService.createVirtualUser({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        status: UserStatus.ACTIVE,
+    const { newUser, newWorkspaceUser } =
+      await this.unitOfWorkService.withTransaction(async () => {
+        // 1. Create core user
+        const newUser = await this.userService.createVirtualUser({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          status: UserStatus.ACTIVE,
+        });
+
+        // 2. Create a workspace user relation linking the user to the workspace
+        const newWorkspaceUser = await this.workspaceUserService.create({
+          workspaceId: workspace.id,
+          userId: newUser.id,
+          createdById: creatorWorkspaceUser.id,
+          workspaceRole: WorkspaceUserRole.MEMBER,
+          status: WorkspaceUserStatus.ACTIVE,
+        });
+
+        return { newUser, newWorkspaceUser };
       });
 
-      // 2. Create a workspace user relation linking the user to the workspace
-      const newWorkspaceUser = await this.workspaceUserService.create({
-        workspaceId: workspace.id,
-        userId: newUser.id,
-        createdById: creatorWorkspaceUser.id,
-        workspaceRole: WorkspaceUserRole.MEMBER,
-        status: WorkspaceUserStatus.ACTIVE,
-      });
+    const response: WorkspaceUserResponse = {
+      id: newWorkspaceUser.id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      // Currently uploading images while creating virtual users is not supported
+      profileImageUrl: null,
+      role: newWorkspaceUser.workspaceRole,
+    };
 
-      const response: WorkspaceUserResponse = {
-        id: newWorkspaceUser.id,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        // Currently uploading images while creating virtual users is not supported
-        profileImageUrl: null,
-        role: newWorkspaceUser.workspaceRole,
-      };
-
-      return response;
-    });
+    return response;
   }
 
   async getWorkspacesByUser(
@@ -440,7 +448,7 @@ export class WorkspaceService {
       );
     }
 
-    this.unitOfWorkService.withTransaction(async () => {
+    await this.unitOfWorkService.withTransaction(async () => {
       // Create new concrete task
       const newTask = await this.taskService.create({
         workspaceId,
@@ -457,8 +465,6 @@ export class WorkspaceService {
         });
       }
     });
-
-    return;
   }
 
   async createGoal({
@@ -528,14 +534,14 @@ export class WorkspaceService {
     return leaderboard;
   }
 
-  async setWorkspaceUserRole({
+  async updateWorkspaceUser({
     workspaceId,
     memberId,
-    role,
+    data,
   }: {
     workspaceId: Workspace['id'];
     memberId: WorkspaceUser['id'];
-    role: WorkspaceUser['workspaceRole'];
+    data: UpdateWorkspaceUserRequest;
   }): Promise<WorkspaceUserResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -550,12 +556,27 @@ export class WorkspaceService {
       );
     }
 
-    const updatedWorkspaceUser = await this.workspaceUserService.update(
-      memberId,
-      {
-        workspaceRole: role,
-      },
-    );
+    const { updatedWorkspaceUser } =
+      await this.unitOfWorkService.withTransaction(async () => {
+        const updatedWorkspaceUser = await this.workspaceUserService.update({
+          id: memberId,
+          data: {
+            workspaceRole: data.role,
+          },
+        });
+
+        if (data.firstName || data.lastName) {
+          await this.userService.update({
+            id: updatedWorkspaceUser.user.id,
+            data: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+            },
+          });
+        }
+
+        return { updatedWorkspaceUser };
+      });
 
     const response: WorkspaceUserResponse = {
       id: updatedWorkspaceUser.id,
@@ -566,6 +587,32 @@ export class WorkspaceService {
     };
 
     return response;
+  }
+
+  async removeUserFromWorkspace({
+    workspaceId,
+    memberId,
+  }: {
+    workspaceId: Workspace['id'];
+    memberId: WorkspaceUser['id'];
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.workspaceUserService.delete({
+      workspaceId,
+      workspaceUserId: memberId,
+    });
   }
 
   async updateTask({

@@ -108,7 +108,7 @@ export class TaskAssignmentService {
       (existingAssigneeId) => !existingAssigneeIds.includes(existingAssigneeId),
     );
 
-    return this.unitOfWorkService.withTransaction(() => {
+    await this.unitOfWorkService.withTransaction(() => {
       // 1. Delete task assignments if some assignees were removed from the task
       this.taskAssignmentRepository.deleteByTaskIdAndAssigneeIds({
         taskId,
@@ -123,8 +123,8 @@ export class TaskAssignmentService {
           status: ProgressStatus.IN_PROGRESS,
         });
       }
-
-      return this.findAllByTaskIdWithAssigneeUser(taskId);
     });
+
+    return this.findAllByTaskIdWithAssigneeUser(taskId);
   }
 }

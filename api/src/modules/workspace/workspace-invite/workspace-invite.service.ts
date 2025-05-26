@@ -137,38 +137,42 @@ export class WorkspaceInviteService {
       );
     }
 
-    return this.unitOfWorkService.withTransaction(async () => {
-      // Create a new workspace user
-      const newWorkspaceUser = await this.workspaceUserService.create({
-        workspaceId: workspaceInvite.workspace.id,
-        userId: usedById,
-        createdById: workspaceInvite.createdBy
-          ? workspaceInvite.createdBy.id
-          : null,
-        workspaceRole: WorkspaceUserRole.MEMBER,
-        status: WorkspaceUserStatus.ACTIVE,
-      });
-
-      // Mark the invite as used
-      const updatedInvite =
-        await this.transactionalWorkspaceInviteRepository.markUsedBy({
-          id: workspaceInvite.id,
-          usedById: newWorkspaceUser.id,
-          relations: {
-            workspace: true,
-          },
+    const { updatedInvite } = await this.unitOfWorkService.withTransaction(
+      async () => {
+        // Create a new workspace user
+        const newWorkspaceUser = await this.workspaceUserService.create({
+          workspaceId: workspaceInvite.workspace.id,
+          userId: usedById,
+          createdById: workspaceInvite.createdBy
+            ? workspaceInvite.createdBy.id
+            : null,
+          workspaceRole: WorkspaceUserRole.MEMBER,
+          status: WorkspaceUserStatus.ACTIVE,
         });
 
-      if (!updatedInvite) {
-        throw new ApiHttpException(
-          {
-            code: ApiErrorCode.SERVER_ERROR,
-          },
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+        // Mark the invite as used
+        const updatedInvite =
+          await this.transactionalWorkspaceInviteRepository.markUsedBy({
+            id: workspaceInvite.id,
+            usedById: newWorkspaceUser.id,
+            relations: {
+              workspace: true,
+            },
+          });
 
-      return updatedInvite;
-    });
+        if (!updatedInvite) {
+          throw new ApiHttpException(
+            {
+              code: ApiErrorCode.SERVER_ERROR,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        return { updatedInvite };
+      },
+    );
+
+    return updatedInvite;
   }
 }

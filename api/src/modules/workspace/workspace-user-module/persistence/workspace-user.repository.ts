@@ -64,4 +64,12 @@ export abstract class WorkspaceUserRepository {
     data: Partial<WorkspaceUserCore>;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
+
+  abstract delete({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId: WorkspaceUser['user']['id'];
+  }): Promise<void>;
 }

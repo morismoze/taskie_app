@@ -96,10 +96,13 @@ export class WorkspaceUserService {
     });
   }
 
-  async update(
-    id: WorkspaceUser['id'],
-    data: Partial<WorkspaceUserCore>,
-  ): Promise<WorkspaceUserWithUser> {
+  async update({
+    id,
+    data,
+  }: {
+    id: WorkspaceUser['id'];
+    data: Partial<WorkspaceUserCore>;
+  }): Promise<WorkspaceUserWithUser> {
     const workspaceUser = await this.findById(id);
 
     if (!workspaceUser) {
@@ -126,5 +129,29 @@ export class WorkspaceUserService {
     }
 
     return updatedWorkspaceUserUser;
+  }
+
+  async delete({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId: WorkspaceUser['user']['id'];
+  }): Promise<void> {
+    const workspaceUser = await this.findById(workspaceUserId);
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.workspaceUserRepository.delete({
+      workspaceId,
+      workspaceUserId: workspaceUser.id,
+    });
   }
 }

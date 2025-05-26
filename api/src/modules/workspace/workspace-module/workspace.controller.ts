@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -28,7 +29,7 @@ import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
 import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
 import { MemberIdRequestPathParam } from './dto/request/member-id-path-param-request.dto';
-import { SetWorkspaceUserRoleRequest } from './dto/request/set-workspace-user-role-request.dto';
+import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
 import {
   WorkspaceResponse,
@@ -145,15 +146,29 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
-  setWorkspaceUserRole(
+  updateWorkspaceUser(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { memberId }: MemberIdRequestPathParam,
-    @Body() { role }: SetWorkspaceUserRoleRequest,
+    @Body() data: UpdateWorkspaceUserRequest,
   ): Promise<WorkspaceUserResponse> {
-    return this.workspaceService.setWorkspaceUserRole({
+    return this.workspaceService.updateWorkspaceUser({
       workspaceId,
       memberId,
-      role,
+      data,
+    });
+  }
+
+  @Delete(':workspaceId/members/:memberId')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  removeUserFromWorkspace(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { memberId }: MemberIdRequestPathParam,
+  ): Promise<void> {
+    return this.workspaceService.removeUserFromWorkspace({
+      workspaceId,
+      memberId,
     });
   }
 

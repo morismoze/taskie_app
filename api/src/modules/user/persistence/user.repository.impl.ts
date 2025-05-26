@@ -99,13 +99,15 @@ export class UserRepositoryImpl implements UserRepository {
   }): Promise<Nullable<UserEntity>> {
     this.transactionalUserRepo.update(id, data);
 
-    const newEntity = await this.findById(id);
+    const updatedEntity = await this.transactionalUserRepo.findOne({
+      where: { id },
+    });
 
-    return newEntity;
+    return updatedEntity;
   }
 
-  async softDelete(id: User['id']): Promise<void> {
-    await this.repo.softDelete(id);
+  async delete(id: User['id']): Promise<void> {
+    await this.repo.delete(id);
   }
 
   private get transactionalUserRepo(): Repository<UserEntity> {

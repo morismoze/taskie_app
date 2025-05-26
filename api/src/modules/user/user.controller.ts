@@ -20,6 +20,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   softDelete(@Req() request: RequestWithUser): Promise<void> {
-    return this.userService.softDelete(request.user.sub);
+    return this.userService.delete(request.user.sub);
   }
 }

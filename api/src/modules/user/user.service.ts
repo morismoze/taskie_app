@@ -90,11 +90,14 @@ export class UserService {
     });
   }
 
-  async update(
-    userId: User['id'],
-    data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>,
-  ): Promise<User> {
-    const user = await this.userRepository.findById(userId);
+  async update({
+    id,
+    data,
+  }: {
+    id: User['id'];
+    data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+  }): Promise<User> {
+    const user = await this.userRepository.findById(id);
 
     if (!user) {
       throw new ApiHttpException(
@@ -109,7 +112,7 @@ export class UserService {
     if (data.email) {
       const existingUser = await this.userRepository.findByEmail(data.email);
 
-      if (existingUser && existingUser.id !== userId) {
+      if (existingUser && existingUser.id !== id) {
         throw new ApiHttpException(
           {
             code: ApiErrorCode.EMAIL_ALREADY_EXISTS,
@@ -120,7 +123,7 @@ export class UserService {
     }
 
     const updatedUser = await this.userRepository.update({
-      id: userId,
+      id,
       data,
     });
 
@@ -136,9 +139,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async softDelete(userId: User['id']): Promise<void> {
-    await this.userRepository.softDelete(userId);
-
-    await this.update(userId, { status: UserStatus.INACTIVE });
+  async delete(userId: User['id']): Promise<void> {
+    await this.userRepository.delete(userId);
   }
 }
