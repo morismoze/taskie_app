@@ -26,7 +26,11 @@ export class TaskEntity extends RootBaseEntity {
   @JoinColumn({ name: 'created_by_id' })
   createdBy!: WorkspaceUserEntity | null;
 
-  @Column({ type: 'timestamp', nullable: true, name: 'due_date' })
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+    name: 'due_date',
+  })
   dueDate!: Date | null;
 
   @OneToMany(() => TaskAssignmentEntity, (ta) => ta.task)

@@ -161,7 +161,7 @@ export class WorkspaceController {
   @Delete(':workspaceId/members/:memberId')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   removeUserFromWorkspace(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { memberId }: MemberIdRequestPathParam,

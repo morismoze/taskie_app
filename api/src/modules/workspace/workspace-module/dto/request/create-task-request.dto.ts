@@ -3,41 +3,28 @@ import {
   ArrayMinSize,
   IsArray,
   IsDate,
-  IsInt,
-  IsNotEmpty,
   IsOptional,
   IsString,
-  Max,
-  Min,
-  Validate,
 } from 'class-validator';
-import { IsMultipleOfConstraint } from 'src/common/validators/is-multiple-of.validator';
 import {
-  TASK_REWARD_POINTS_MAXIMAL,
-  TASK_REWARD_POINTS_MINIMAL,
-  TASK_REWARD_POINTS_STEP,
-} from 'src/modules/task/task-module/domain/reward-points.domain';
+  IsValidTaskDescription,
+  IsValidTaskDueDate,
+  IsValidTaskRewardPoints,
+  IsValidTaskTitle,
+} from 'src/common/decorators/request-validation-decorators';
 
 export class CreateTaskRequest {
-  @IsNotEmpty()
-  @IsString()
+  @IsValidTaskTitle()
   title: string;
 
-  @IsOptional()
-  @IsString()
+  @IsValidTaskDescription()
   description: string | null;
 
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsInt()
-  @Min(TASK_REWARD_POINTS_MINIMAL)
-  @Max(TASK_REWARD_POINTS_MAXIMAL)
-  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_STEP])
+  @IsValidTaskRewardPoints()
   rewardPoints: number;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate()
+  @IsValidTaskDueDate()
   dueDate: Date | null;
 
   @IsArray()

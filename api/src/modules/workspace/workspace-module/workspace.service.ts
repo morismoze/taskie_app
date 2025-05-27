@@ -637,8 +637,9 @@ export class WorkspaceService {
       );
     }
 
-    const updatedTask = await this.taskService.updateById({
-      id: taskId,
+    const updatedTask = await this.taskService.updateByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
       data: {
         title: payload.title,
         description: payload.description,

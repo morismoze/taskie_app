@@ -3,8 +3,7 @@ import { EntitySchema, ObjectLiteral, ObjectType, Repository } from 'typeorm';
 import { UnitOfWorkService } from '../unit-of-work.service';
 
 /**
- * This repository is request scoped because transaction has to be request scoped,
- * or in other words transaction has to be closed before the request is resolved.
+ * This repository is request scoped because transaction has to be request scoped
  */
 
 @Injectable({ scope: Scope.REQUEST })

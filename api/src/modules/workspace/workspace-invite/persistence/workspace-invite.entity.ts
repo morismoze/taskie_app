@@ -17,7 +17,7 @@ export class WorkspaceInviteEntity extends RootBaseEntity {
   @Column({ type: 'varchar' })
   token!: string;
 
-  @Column({ type: 'timestamp', name: 'expires_at' })
+  @Column({ type: 'timestamptz', name: 'expires_at' })
   expiresAt!: Date;
 
   @ManyToOne(() => WorkspaceUserEntity, {

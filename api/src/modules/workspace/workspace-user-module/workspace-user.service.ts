@@ -117,6 +117,9 @@ export class WorkspaceUserService {
     const updatedWorkspaceUserUser = await this.workspaceUserRepository.update({
       id,
       data,
+      relations: {
+        user: true,
+      },
     });
 
     if (!updatedWorkspaceUserUser) {

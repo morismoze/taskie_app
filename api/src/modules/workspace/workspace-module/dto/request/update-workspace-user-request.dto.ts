@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional } from 'class-validator';
-import { IsValidPersonName } from 'src/common/validations/utils';
+import { IsValidPersonName } from 'src/common/decorators/request-validation-decorators';
 import { WorkspaceUserRole } from '../../../workspace-user-module/domain/workspace-user-role.enum';
 
 export class UpdateWorkspaceUserRequest {
@@ -7,10 +7,12 @@ export class UpdateWorkspaceUserRequest {
    * Firstname and lastname are for virtual users
    */
 
-  @IsValidPersonName({ required: false })
+  @IsOptional()
+  @IsValidPersonName()
   firstName?: string;
 
-  @IsValidPersonName({ required: false })
+  @IsOptional()
+  @IsValidPersonName()
   lastName?: string;
 
   @IsOptional()

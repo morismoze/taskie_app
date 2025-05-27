@@ -1,10 +1,10 @@
-import { IsValidPersonName } from 'src/common/validations/utils';
+import { IsValidPersonName } from 'src/common/decorators/request-validation-decorators';
 
 export class CreateVirtualWorkspaceUserRequest {
-  @IsValidPersonName({ required: true })
+  @IsValidPersonName()
   firstName: string;
 
-  @IsValidPersonName({ required: true })
+  @IsValidPersonName()
   lastName: string;
 
   constructor(firstName: string, lastName: string) {

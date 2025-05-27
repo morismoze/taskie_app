@@ -94,14 +94,29 @@ export class TaskService {
     });
   }
 
-  async updateById({
-    id,
+  async findByTaskIdAndWorkspaceId({
+    taskId,
+    workspaceId,
+  }: {
+    taskId: Task['id'];
+    workspaceId: Task['workspace']['id'];
+  }): Promise<Nullable<TaskCore>> {
+    return await this.taskRepository.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
+    });
+  }
+
+  async updateByTaskIdAndWorkspaceId({
+    taskId,
+    workspaceId,
     data,
   }: {
-    id: Task['id'];
+    taskId: Task['id'];
+    workspaceId: Task['workspace']['id'];
     data: UpdateTaskRequest;
   }): Promise<TaskCore> {
-    const task = this.findById(id);
+    const task = await this.findByTaskIdAndWorkspaceId({ taskId, workspaceId });
 
     if (!task) {
       throw new ApiHttpException(
@@ -113,7 +128,7 @@ export class TaskService {
     }
 
     const newTask = await this.taskRepository.update({
-      id,
+      id: taskId,
       data,
     });
 

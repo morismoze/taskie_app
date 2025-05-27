@@ -71,6 +71,21 @@ export class TaskRepositoryImpl implements TaskRepository {
     });
   }
 
+  async findByTaskIdAndWorkspaceId({
+    taskId,
+    workspaceId,
+    relations,
+  }: {
+    taskId: Task['id'];
+    workspaceId: Task['workspace']['id'];
+    relations?: FindOptionsRelations<TaskEntity>;
+  }): Promise<Nullable<TaskEntity>> {
+    return await this.repo.findOne({
+      where: { id: taskId, workspace: { id: workspaceId } },
+      relations,
+    });
+  }
+
   async findAllByWorkspaceId({
     workspaceId,
     query: { page, limit, status, search },

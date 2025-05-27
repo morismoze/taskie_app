@@ -11,14 +11,14 @@ export abstract class RootBaseEntity extends BaseEntity {
   id!: string;
 
   @CreateDateColumn({
-    type: 'timestamp',
+    type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
     name: 'created_at',
   })
   createdAt!: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
+    type: 'timestamptz',
     onUpdate: 'CURRENT_TIMESTAMP',
     default: () => 'CURRENT_TIMESTAMP',
     name: 'updated_at',
@@ -27,7 +27,7 @@ export abstract class RootBaseEntity extends BaseEntity {
   updatedAt!: Date;
 
   @DeleteDateColumn({
-    type: 'timestamp',
+    type: 'timestamptz',
     nullable: true,
     name: 'deleted_at',
   })
