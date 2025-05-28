@@ -3,7 +3,6 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
-import { TaskAssignmentService } from '../task/task-assignment/task-assignment.service';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
 import { UpdateGoalRequest } from '../workspace/workspace-module/dto/request/update-goal-request.dto';
 import { WorkspaceUser } from '../workspace/workspace-user-module/domain/workspace-user.domain';
@@ -14,10 +13,7 @@ import { GoalRepository } from './persistence/goal.repository';
 
 @Injectable()
 export class GoalService {
-  constructor(
-    private readonly goalRepository: GoalRepository,
-    private readonly taskAssignmentService: TaskAssignmentService,
-  ) {}
+  constructor(private readonly goalRepository: GoalRepository) {}
 
   async findPaginatedByWorkspaceWithAssignee({
     workspaceId,

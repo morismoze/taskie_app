@@ -662,11 +662,11 @@ export class WorkspaceService {
   async updateTaskAssigments({
     workspaceId,
     taskId,
-    payload,
+    assignments,
   }: {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
-    payload: UpdateTaskAssignmentsStatusesRequest;
+    assignments: UpdateTaskAssignmentsStatusesRequest['assignments'];
   }): Promise<UpdateTaskAssignmentsStatusesResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -682,7 +682,7 @@ export class WorkspaceService {
     }
 
     // We need to check if provided assignee IDs exist as workspace users
-    const providedAssigneeIds = payload.map((item) => item.assigneeId);
+    const providedAssigneeIds = assignments.map((item) => item.assigneeId);
     const existingWorkspaceUsers = await this.workspaceUserService.findAllByIds(
       {
         workspaceId,
@@ -703,7 +703,8 @@ export class WorkspaceService {
     const updatedTaskAssignments =
       await this.taskAssignmentService.updateAssignessByTaskId({
         taskId,
-        data: payload,
+        workspaceId,
+        data: assignments,
       });
 
     const response: UpdateTaskAssignmentsStatusesResponse =

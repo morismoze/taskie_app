@@ -1,11 +1,4 @@
-import { Type } from 'class-transformer';
-import {
-  ArrayMinSize,
-  IsArray,
-  IsDate,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
 import {
   IsValidTaskDescription,
   IsValidTaskDueDate,

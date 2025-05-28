@@ -208,12 +208,12 @@ export class WorkspaceController {
   updateTaskAssigments(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
-    @Body() payload: UpdateTaskAssignmentsStatusesRequest,
+    @Body() { assignments }: UpdateTaskAssignmentsStatusesRequest,
   ): Promise<UpdateTaskAssignmentsStatusesResponse> {
     return this.workspaceService.updateTaskAssigments({
       workspaceId,
       taskId,
-      payload,
+      assignments,
     });
   }
 

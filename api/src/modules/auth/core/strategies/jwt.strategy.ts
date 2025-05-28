@@ -37,7 +37,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     logger.error(`User ID: ${payload.sub}`);
 
     // Passport will build a user object based on the return value of our validate()
-    // method, and attach it as a property on the Request object.
+    // method, and attach it as a property `user` on the Request object.
     return payload;
   }
 }
