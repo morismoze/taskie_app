@@ -72,4 +72,17 @@ export abstract class WorkspaceUserRepository {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['user']['id'];
   }): Promise<void>;
+
+  abstract getWorkspaceLeaderboard(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<
+    {
+      id: string;
+      firstName: string;
+      lastName: string;
+      profileImageUrl: string | null;
+      accumulatedPoints: number;
+      completedTasks: number;
+    }[]
+  >;
 }

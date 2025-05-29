@@ -43,7 +43,7 @@ import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
 } from './dto/response/workspace-goals-response.dto';
-import { LeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
+import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
 import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
@@ -88,6 +88,7 @@ export class WorkspaceController {
   }
 
   @Get('invites/:inviteToken')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   getWorkspaceInfoByInviteToken(
     @Param() params: WorkspaceInviteTokenRequestPathParam,
@@ -224,7 +225,7 @@ export class WorkspaceController {
 
   @Patch(':workspaceId/tasks/:taskId/assignments')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
   updateTaskAssigments(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
@@ -287,11 +288,11 @@ export class WorkspaceController {
   }
 
   @Get(':workspaceId/leaderboard')
-  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
   getLeaderboard(
     @Param() params: WorkspaceIdRequestPathParam,
-  ): Promise<LeaderboardResponse> {
+  ): Promise<WorkspaceLeaderboardResponse> {
     return this.workspaceService.getWorkspaceLeaderboard(params.workspaceId);
   }
 }

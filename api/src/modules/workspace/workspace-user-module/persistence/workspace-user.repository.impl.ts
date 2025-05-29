@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
+import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { FindOptionsRelations, In, Repository } from 'typeorm';
 import { WorkspaceUserCore } from '../domain/workspace-user-core.domain';
+import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
 import { WorkspaceUserRepository } from './workspace-user.repository';
@@ -141,6 +143,51 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
       id: workspaceUserId,
       workspace: { id: workspaceId },
     });
+  }
+
+  async getWorkspaceLeaderboard(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<
+    {
+      id: string;
+      firstName: string;
+      lastName: string;
+      profileImageUrl: string | null;
+      accumulatedPoints: number;
+      completedTasks: number;
+    }[]
+  > {
+    return (
+      this.repo
+        .createQueryBuilder('wu')
+        .leftJoin('wu.user', 'u')
+        // Leaderboard takes only completed tasks into context
+        .leftJoin('wu.taskAssignments', 'ta', 'ta.status = :completedStatus', {
+          completedStatus: ProgressStatus.COMPLETED,
+        })
+        .leftJoin('ta.task', 't')
+        .select([
+          'wu.id AS "id"',
+          'u.firstName AS "firstName"',
+          'u.lastName AS "lastName"',
+          'u.profileImageUrl AS "profileImageUrl"',
+          'COALESCE(SUM(t.rewardPoints), 0) AS "accumulatedPoints"',
+          'COUNT(ta.id) AS "completedTasks"',
+        ])
+        .where('wu.workspace.id = :workspaceId', { workspaceId })
+        .andWhere('wu.workspaceRole = :memberRole', {
+          memberRole: WorkspaceUserRole.MEMBER,
+        })
+        .groupBy('wu.id, u.firstName, u.lastName, u.profileImageUrl')
+        // Leaderboard start with the best score
+        .orderBy('"accumulatedPoints"', 'DESC')
+        .addOrderBy('"completedTasks"', 'DESC')
+        .addOrderBy('u.firstName', 'ASC')
+        .addOrderBy('u.lastName', 'ASC')
+        // This returns raw data as defined in the SQL query itself. Function getMany on the other hand
+        // returns data and tries to build the array of entity type records (WorkspaceUser[] in this case)
+        .getRawMany()
+    );
   }
 
   private get transactionalWorkspaceUserRepo(): Repository<WorkspaceUserEntity> {

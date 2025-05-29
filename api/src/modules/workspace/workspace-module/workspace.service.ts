@@ -39,7 +39,7 @@ import {
   WorkspaceGoalsResponse,
 } from './dto/response/workspace-goals-response.dto';
 import {
-  LeaderboardResponse,
+  WorkspaceLeaderboardResponse,
   LeaderboardUserResponse,
 } from './dto/response/workspace-leaderboard-response.dto';
 import { Task } from 'src/modules/task/task-module/domain/task.domain';
@@ -501,37 +501,24 @@ export class WorkspaceService {
 
   async getWorkspaceLeaderboard(
     workspaceId: Workspace['id'],
-  ): Promise<LeaderboardResponse> {
-    /**
-     * This service can probably be made better regarding performance
-     * by doin a single query on WorkspaceUser entity
-     */
+  ): Promise<WorkspaceLeaderboardResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
 
-    // 1. Get all workspace members
-    const workspaceUsers = await this.getWorkspaceMembers(workspaceId);
-    const leaderboard: LeaderboardUserResponse[] = await Promise.all(
-      workspaceUsers.map(async (workspaceUser) => {
-        const accumulatedPoints =
-          await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser(
-            {
-              workspaceUserId: workspaceUser.id,
-              workspaceId,
-            },
-          );
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-        return {
-          id: workspaceUser.id,
-          firstName: workspaceUser.firstName,
-          lastName: workspaceUser.lastName,
-          profileImageUrl: workspaceUser.profileImageUrl,
-          accumulatedPoints: accumulatedPoints,
-        };
-      }),
-    );
+    const leaderboardData =
+      await this.workspaceUserService.getLeaderboardData(workspaceId);
 
-    leaderboard.sort((a, b) => b.accumulatedPoints - a.accumulatedPoints);
-
-    return leaderboard;
+    return leaderboardData;
   }
 
   async updateWorkspaceUser({

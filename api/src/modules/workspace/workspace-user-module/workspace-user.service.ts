@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { WorkspaceLeaderboardResponse } from '../workspace-module/dto/response/workspace-leaderboard-response.dto';
 import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
 import { WorkspaceUserWithUser } from './domain/workspace-user-with-user.domain';
 import { WorkspaceUserWithWorkspaceCore } from './domain/workspace-user-with-workspace.domain';
@@ -156,5 +157,13 @@ export class WorkspaceUserService {
       workspaceId,
       workspaceUserId: workspaceUser.id,
     });
+  }
+
+  async getLeaderboardData(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<WorkspaceLeaderboardResponse> {
+    const leaderboard =
+      this.workspaceUserRepository.getWorkspaceLeaderboard(workspaceId);
+    return leaderboard;
   }
 }
