@@ -31,7 +31,7 @@ export class TaskEntity extends RootBaseEntity {
     nullable: true,
     name: 'due_date',
   })
-  dueDate!: Date | null;
+  dueDate!: string | null;
 
   @OneToMany(() => TaskAssignmentEntity, (ta) => ta.task)
   taskAssignments!: TaskAssignmentEntity[];

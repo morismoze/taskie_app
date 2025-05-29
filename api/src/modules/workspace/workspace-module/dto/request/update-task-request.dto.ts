@@ -9,29 +9,29 @@ import {
 export class UpdateTaskRequest {
   @IsOptional()
   @IsValidTaskTitle()
-  title: string;
+  title?: string;
 
   @IsOptional()
   @IsValidTaskDescription()
-  description: string | null;
+  description?: string | null;
 
   @IsOptional()
   @IsValidTaskRewardPoints()
-  rewardPoints: number;
+  rewardPoints?: number;
 
   @IsOptional()
   @IsValidTaskDueDate()
-  dueDate: Date | null;
+  dueDate?: string;
 
   constructor(
     title: string,
     rewardPoints: number,
-    description?: string | null,
-    dueDate?: Date | null,
+    description: string,
+    dueDate: string,
   ) {
     this.title = title;
     this.rewardPoints = rewardPoints;
-    this.description = description ?? null;
-    this.dueDate = dueDate ?? null;
+    this.description = description;
+    this.dueDate = dueDate;
   }
 }

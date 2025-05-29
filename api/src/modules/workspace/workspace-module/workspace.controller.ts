@@ -46,7 +46,7 @@ import {
 import { LeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
 import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
-import { UpdateTaskAssignmentsStatusesRequest } from './dto/request/update-task-assignments-statuses-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
@@ -172,79 +172,6 @@ export class WorkspaceController {
     });
   }
 
-  @Get(':workspaceId/tasks')
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
-  @HttpCode(HttpStatus.OK)
-  getTasks(
-    @Param() params: WorkspaceIdRequestPathParam,
-    @Query() query: WorkspaceItemRequestQuery,
-  ): Promise<WorkspaceTasksResponse> {
-    return this.workspaceService.getWorkspaceTasks({
-      workspaceId: params.workspaceId,
-      query,
-    });
-  }
-
-  @Patch(':workspaceId/tasks/:taskId')
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
-  @HttpCode(HttpStatus.OK)
-  updateTask(
-    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
-    @Param() { taskId }: TaskIdRequestPathParam,
-    @Body() payload: UpdateTaskRequest,
-  ): Promise<UpdateTaskResponse> {
-    // This endpoint doesn't return WorkspaceTaskResponse because this endpoints
-    // doesn't update assignees - we do that via updateTaskAssigments endpoint
-    return this.workspaceService.updateTask({
-      workspaceId,
-      taskId,
-      payload,
-    });
-  }
-
-  @Patch(':workspaceId/tasks/:taskId/assignments/status')
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
-  @HttpCode(HttpStatus.OK)
-  updateTaskAssigments(
-    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
-    @Param() { taskId }: TaskIdRequestPathParam,
-    @Body() { assignments }: UpdateTaskAssignmentsStatusesRequest,
-  ): Promise<UpdateTaskAssignmentsStatusesResponse> {
-    return this.workspaceService.updateTaskAssigments({
-      workspaceId,
-      taskId,
-      assignments,
-    });
-  }
-
-  @Get(':workspaceId/goals')
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
-  @HttpCode(HttpStatus.OK)
-  getGoals(
-    @Param() params: WorkspaceIdRequestPathParam,
-    @Query() query: WorkspaceItemRequestQuery,
-  ): Promise<WorkspaceGoalsResponse> {
-    return this.workspaceService.getWorkspaceGoals({
-      workspaceId: params.workspaceId,
-      query,
-    });
-  }
-
-  @Patch(':workspaceId/goals/:goalId')
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
-  @HttpCode(HttpStatus.OK)
-  updateGoal(
-    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
-    @Param() { goalId }: GoalIdRequestPathParam,
-    @Body() payload: UpdateGoalRequest,
-  ): Promise<WorkspaceGoalResponse> {
-    return this.workspaceService.updateGoal({
-      workspaceId,
-      goalId,
-      payload,
-    });
-  }
-
   @Post(':workspaceId/tasks')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
@@ -264,6 +191,53 @@ export class WorkspaceController {
     });
   }
 
+  @Get(':workspaceId/tasks')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  getTasks(
+    @Param() params: WorkspaceIdRequestPathParam,
+    @Query() query: WorkspaceItemRequestQuery,
+  ): Promise<WorkspaceTasksResponse> {
+    return this.workspaceService.getWorkspaceTasks({
+      workspaceId: params.workspaceId,
+      query,
+    });
+  }
+
+  @Patch(':workspaceId/tasks/:taskId')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  updateTask(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+    @Body() payload: UpdateTaskRequest,
+  ): Promise<UpdateTaskResponse> {
+    // This endpoint doesn't return WorkspaceTaskResponse because this endpoints
+    // doesn't update assignees - we do that via updateTaskAssigments endpoint
+    return this.workspaceService.updateTask({
+      workspaceId,
+      taskId,
+      payload,
+    });
+  }
+
+  @Patch(':workspaceId/tasks/:taskId/assignments')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  updateTaskAssigments(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+    @Body() { assignments }: UpdateTaskAssignmentsRequest,
+  ): Promise<UpdateTaskAssignmentsStatusesResponse> {
+    return this.workspaceService.updateTaskAssigments({
+      workspaceId,
+      taskId,
+      assignments,
+    });
+  }
+
   @Post(':workspaceId/goals')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
@@ -280,6 +254,35 @@ export class WorkspaceController {
       workspaceId: params.workspaceId,
       createdById: request.user.sub,
       data,
+    });
+  }
+
+  @Get(':workspaceId/goals')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  getGoals(
+    @Param() params: WorkspaceIdRequestPathParam,
+    @Query() query: WorkspaceItemRequestQuery,
+  ): Promise<WorkspaceGoalsResponse> {
+    return this.workspaceService.getWorkspaceGoals({
+      workspaceId: params.workspaceId,
+      query,
+    });
+  }
+
+  @Patch(':workspaceId/goals/:goalId')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  updateGoal(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { goalId }: GoalIdRequestPathParam,
+    @Body() payload: UpdateGoalRequest,
+  ): Promise<WorkspaceGoalResponse> {
+    return this.workspaceService.updateGoal({
+      workspaceId,
+      goalId,
+      payload,
     });
   }
 

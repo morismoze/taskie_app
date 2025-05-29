@@ -1,15 +1,24 @@
-import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import {
   IsValidTaskDescription,
   IsValidTaskDueDate,
   IsValidTaskRewardPoints,
   IsValidTaskTitle,
 } from 'src/common/decorators/request-validation-decorators';
+import { TASK_MAXIMUM_ASSIGNEES_NUMBER } from 'src/modules/task/task-module/domain/task.constants';
 
 export class CreateTaskRequest {
   @IsValidTaskTitle()
   title: string;
 
+  @IsOptional()
   @IsValidTaskDescription()
   description: string | null;
 
@@ -18,11 +27,12 @@ export class CreateTaskRequest {
 
   @IsOptional()
   @IsValidTaskDueDate()
-  dueDate: Date | null;
+  dueDate: string | null;
 
   @IsArray()
-  @IsString({ each: true })
+  @IsUUID('4', { each: true })
   @ArrayMinSize(1)
+  @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_NUMBER)
   assignees: string[]; // Array of WorkspaceUser IDs
 
   constructor(
@@ -30,7 +40,7 @@ export class CreateTaskRequest {
     rewardPoints: number,
     assignees: string[],
     description?: string | null,
-    dueDate?: Date | null,
+    dueDate?: string | null,
   ) {
     this.title = title;
     this.rewardPoints = rewardPoints;

@@ -126,7 +126,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     data: Partial<TaskAssignmentCore>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    this.repo.update(id, data);
+    await this.repo.update(id, data);
 
     const newEntity = await this.findById({ id, relations });
 

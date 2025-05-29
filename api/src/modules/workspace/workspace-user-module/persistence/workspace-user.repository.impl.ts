@@ -120,7 +120,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     data: Partial<WorkspaceUserCore>;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
-    this.transactionalWorkspaceUserRepo.update(id, data);
+    await this.transactionalWorkspaceUserRepo.update(id, data);
 
     const updatedEntity = await this.transactionalWorkspaceUserRepo.findOne({
       where: { id },

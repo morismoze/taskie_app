@@ -3,5 +3,5 @@ export interface UpdateTaskResponse {
   title: string;
   description: string | null;
   rewardPoints: number;
-  dueDate: Date | null;
+  dueDate: string | null;
 }

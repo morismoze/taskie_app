@@ -65,7 +65,7 @@ export class TaskSeedService {
         rewardPoints: 50,
         description:
           'Full authentication flow for users, including JWT and refresh tokens.',
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         createdBy: workspaceUser1,
       });
       await this.taskRepository.save(task1Entity);
@@ -83,7 +83,7 @@ export class TaskSeedService {
         title: 'Design Dashboard UI',
         rewardPoints: 30,
         description: 'Create initial user interface for the main dashboard.',
-        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
         createdBy: workspaceUser1,
       });
       await this.taskRepository.save(task2Entity);
@@ -102,7 +102,7 @@ export class TaskSeedService {
         rewardPoints: 20,
         description:
           'Document all REST API endpoints for user, workspace, and tasks.',
-        dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Overdue
+        dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Overdue
         createdBy: workspaceUser2,
       });
       await this.taskRepository.save(task3Entity);
@@ -121,7 +121,7 @@ export class TaskSeedService {
         rewardPoints: 40,
         description:
           'Configure continuous integration and deployment for the backend.',
-        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
         createdBy: workspaceUser2,
       });
       await this.taskRepository.save(task4Entity);

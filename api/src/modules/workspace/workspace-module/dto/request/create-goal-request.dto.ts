@@ -1,49 +1,34 @@
-import { Type } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 import {
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-  Validate,
-} from 'class-validator';
-import { IsMultipleOfConstraint } from 'src/common/validators/is-multiple-of.validator';
-import {
-  TASK_REWARD_POINTS_MINIMAL,
-  TASK_REWARD_POINTS_STEP,
-} from 'src/modules/task/task-module/domain/reward-points.domain';
+  IsValidGoalAssignee,
+  IsValidGoalDescription,
+  IsValidGoalRequiredPoints,
+  IsValidGoalTitle,
+} from 'src/common/decorators/request-validation-decorators';
 
 export class CreateGoalRequest {
-  @IsNotEmpty()
-  @IsString()
+  @IsValidGoalTitle()
   title: string;
 
   @IsOptional()
-  @IsString()
-  description: string | null;
+  @IsValidGoalDescription()
+  description?: string;
 
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsInt()
-  @Min(TASK_REWARD_POINTS_MINIMAL)
-  @Max(1000000) // This is trying to define a reasonable upper limit
-  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_STEP])
+  @IsValidGoalRequiredPoints()
   requiredPoints: number;
 
-  @IsNotEmpty()
-  @IsString({ each: true })
+  @IsValidGoalAssignee()
   assignee: string; // WorkspaceUser ID
 
   constructor(
     title: string,
     requiredPoints: number,
     assignee: string,
-    description?: string | null,
+    description?: string,
   ) {
     this.title = title;
     this.requiredPoints = requiredPoints;
     this.assignee = assignee;
-    this.description = description ?? null;
+    this.description = description;
   }
 }

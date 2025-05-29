@@ -56,7 +56,9 @@ export class WorkspaceInviteService {
     const token = generateUniqueToken(WORKSPACE_INVITE_LINK_LENGTH);
     const now = new Date();
     const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-    const expiresAt = new Date(now.getTime() + twentyFourHoursInMillis);
+    const expiresAt = new Date(
+      now.getTime() + twentyFourHoursInMillis,
+    ).toISOString();
 
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
@@ -127,7 +129,7 @@ export class WorkspaceInviteService {
     // Check if that workspace invite was already used or expired
     if (
       workspaceInvite.usedBy !== null ||
-      workspaceInvite.expiresAt < new Date()
+      workspaceInvite.expiresAt < new Date().toISOString()
     ) {
       throw new ApiHttpException(
         {

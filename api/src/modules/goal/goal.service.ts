@@ -76,7 +76,7 @@ export class GoalService {
       workspaceId,
       data: {
         title: data.title,
-        description: data.description,
+        description: data.description || null,
         requiredPoints: data.requiredPoints,
         assigneeId: data.assignee,
       },
@@ -101,14 +101,29 @@ export class GoalService {
     });
   }
 
-  async updateById({
-    id,
+  async findByGoalIdAndWorkspaceId({
+    goalId,
+    workspaceId,
+  }: {
+    goalId: Goal['id'];
+    workspaceId: Goal['workspace']['id'];
+  }): Promise<Nullable<GoalCore>> {
+    return await this.goalRepository.findByGoalIdAndWorkspaceId({
+      goalId,
+      workspaceId,
+    });
+  }
+
+  async updateByGoalIdAndWorkspaceId({
+    goalId,
+    workspaceId,
     data,
   }: {
-    id: Goal['id'];
+    goalId: Goal['id'];
+    workspaceId: Goal['workspace']['id'];
     data: UpdateGoalRequest;
   }): Promise<GoalWithAssigneeUserCore> {
-    const goal = await this.findById(id);
+    const goal = await this.findByGoalIdAndWorkspaceId({ goalId, workspaceId });
 
     if (!goal) {
       throw new ApiHttpException(
@@ -120,7 +135,7 @@ export class GoalService {
     }
 
     const newGoal = await this.goalRepository.update({
-      id,
+      id: goalId,
       data: {
         title: data.title,
         description: data.description,

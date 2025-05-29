@@ -13,7 +13,7 @@ export abstract class WorkspaceInviteRepository {
       token: WorkspaceInvite['token'];
       workspaceId: WorkspaceInvite['workspace']['id'];
       createdById: WorkspaceUser['id'];
-      expiresAt: Date;
+      expiresAt: string;
     };
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>>;

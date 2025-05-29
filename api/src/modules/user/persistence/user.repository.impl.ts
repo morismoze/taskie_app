@@ -97,7 +97,7 @@ export class UserRepositoryImpl implements UserRepository {
     id: User['id'];
     data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
   }): Promise<Nullable<UserEntity>> {
-    this.transactionalUserRepo.update(id, data);
+    await this.transactionalUserRepo.update(id, data);
 
     const updatedEntity = await this.transactionalUserRepo.findOne({
       where: { id },

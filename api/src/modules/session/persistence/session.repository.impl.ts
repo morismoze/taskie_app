@@ -37,11 +37,14 @@ export class SessionRepositoryImpl implements SessionRepository {
     >;
     relations?: FindOptionsRelations<SessionEntity>;
   }): Promise<Nullable<SessionEntity>> {
-    const persistenceModel = this.repo.create({ id, ...data });
+    await this.repo.update(id, data);
 
-    await this.repo.save(persistenceModel);
+    const newEntity = await this.findById({
+      id,
+      relations,
+    });
 
-    return this.findById({ id, relations });
+    return newEntity;
   }
 
   async deleteById(id: Session['id']): Promise<void> {

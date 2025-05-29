@@ -44,7 +44,7 @@ import {
 } from './dto/response/workspace-leaderboard-response.dto';
 import { Task } from 'src/modules/task/task-module/domain/task.domain';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
-import { UpdateTaskAssignmentsStatusesRequest } from './dto/request/update-task-assignments-statuses-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
@@ -666,7 +666,7 @@ export class WorkspaceService {
   }: {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
-    assignments: UpdateTaskAssignmentsStatusesRequest['assignments'];
+    assignments: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<UpdateTaskAssignmentsStatusesResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -738,8 +738,25 @@ export class WorkspaceService {
       );
     }
 
-    const updatedGoal = await this.goalService.updateById({
-      id: goalId,
+    if (payload.assigneeId) {
+      // We need to check if provided assignee ID exists as a workspace user
+      const workspaceUser = this.workspaceUserService.findById(
+        payload.assigneeId,
+      );
+
+      if (!workspaceUser) {
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.INVALID_PAYLOAD,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
+    const updatedGoal = await this.goalService.updateByGoalIdAndWorkspaceId({
+      goalId,
+      workspaceId,
       data: payload,
     });
 

@@ -129,7 +129,12 @@ export class TaskService {
 
     const newTask = await this.taskRepository.update({
       id: taskId,
-      data,
+      data: {
+        title: data.title,
+        description: data.description,
+        rewardPoints: data.rewardPoints,
+        dueDate: data.dueDate,
+      },
     });
 
     if (!newTask) {

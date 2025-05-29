@@ -4,5 +4,5 @@ export interface UserResponse {
   lastName: string;
   email: string | null;
   profileImageUrl: string | null;
-  createdAt: Date;
+  createdAt: string;
 }

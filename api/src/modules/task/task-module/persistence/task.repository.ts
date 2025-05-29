@@ -59,8 +59,20 @@ export abstract class TaskRepository {
   abstract update({
     id,
     data,
+    relations,
   }: {
     id: Task['id'];
-    data: Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+    data: Partial<
+      Omit<
+        Task,
+        | 'id'
+        | 'createdAt'
+        | 'updatedAt'
+        | 'deletedAt'
+        | 'workspace'
+        | 'createdBy'
+      >
+    >;
+    relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>>;
 }

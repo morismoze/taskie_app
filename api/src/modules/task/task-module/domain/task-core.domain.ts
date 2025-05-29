@@ -4,5 +4,5 @@ export interface TaskCore extends RootDomain {
   title: string;
   rewardPoints: number;
   description: string | null;
-  dueDate: Date | null;
+  dueDate: string | null;
 }

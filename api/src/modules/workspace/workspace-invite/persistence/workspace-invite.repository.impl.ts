@@ -24,7 +24,7 @@ export class WorkspaceInviteRepositoryImpl
       token: WorkspaceInvite['token'];
       workspaceId: WorkspaceInvite['workspace']['id'];
       createdById: WorkspaceUser['id'];
-      expiresAt: Date;
+      expiresAt: string;
     };
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>> {
@@ -72,7 +72,7 @@ export class WorkspaceInviteRepositoryImpl
   }
 
   async deleteExpiredInvites(): Promise<void> {
-    const now = new Date();
+    const now = new Date().toISOString();
     await this.repo.delete({
       expiresAt: LessThan(now),
     });

@@ -5,14 +5,15 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
-  IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { TASK_MAXIMUM_ASSIGNEES_NUMBER } from 'src/modules/task/task-module/domain/task.constants';
 
-export class TaskAssignmentStatusUpdate {
+export class TaskAssignmentUpdate {
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   assigneeId: string;
 
   @IsNotEmpty()
@@ -25,15 +26,15 @@ export class TaskAssignmentStatusUpdate {
   }
 }
 
-export class UpdateTaskAssignmentsStatusesRequest {
+export class UpdateTaskAssignmentsRequest {
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(1)
-  @ArrayMaxSize(1000) // Just a safe upper limit
-  @Type(() => TaskAssignmentStatusUpdate)
-  assignments: TaskAssignmentStatusUpdate[];
+  @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_NUMBER)
+  @Type(() => TaskAssignmentUpdate)
+  assignments: TaskAssignmentUpdate[];
 
-  constructor(assignments: TaskAssignmentStatusUpdate[]) {
+  constructor(assignments: TaskAssignmentUpdate[]) {
     this.assignments = assignments;
   }
 }

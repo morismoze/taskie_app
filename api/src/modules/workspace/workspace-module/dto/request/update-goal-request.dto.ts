@@ -1,57 +1,44 @@
-import { Type } from 'class-transformer';
+import { IsEnum, IsOptional } from 'class-validator';
 import {
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-  Validate,
-} from 'class-validator';
-import { IsMultipleOfConstraint } from 'src/common/validators/is-multiple-of.validator';
+  IsValidGoalAssignee,
+  IsValidGoalDescription,
+  IsValidGoalRequiredPoints,
+  IsValidGoalTitle,
+} from 'src/common/decorators/request-validation-decorators';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-import {
-  TASK_REWARD_POINTS_MINIMAL,
-  TASK_REWARD_POINTS_STEP,
-} from 'src/modules/task/task-module/domain/reward-points.domain';
 
 export class UpdateGoalRequest {
   @IsOptional()
-  @IsString()
-  title: string;
+  @IsValidGoalTitle()
+  title?: string;
 
   @IsOptional()
-  @IsString()
-  description: string | null;
+  @IsValidGoalDescription()
+  description?: string | null;
 
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsInt()
-  @Min(TASK_REWARD_POINTS_MINIMAL)
-  @Max(1000000) // This is trying to define a reasonable upper limit
-  @Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_STEP])
-  requiredPoints: number;
+  @IsOptional()
+  @IsValidGoalRequiredPoints()
+  requiredPoints?: number;
 
-  @IsNotEmpty()
-  @IsString({ each: true })
-  assigneeId: string; // WorkspaceUser ID
+  @IsOptional()
+  @IsValidGoalAssignee()
+  assigneeId?: string; // WorkspaceUser ID
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(ProgressStatus)
-  status: ProgressStatus;
+  status?: ProgressStatus;
 
   constructor(
-    title: string,
-    requiredPoints: number,
-    assigneeId: string,
-    status: ProgressStatus,
-    description?: string | null,
+    title?: string,
+    requiredPoints?: number,
+    assigneeId?: string,
+    status?: ProgressStatus,
+    description?: string,
   ) {
     this.title = title;
     this.requiredPoints = requiredPoints;
     this.assigneeId = assigneeId;
-    this.description = description ?? null;
+    this.description = description;
     this.status = status;
   }
 }

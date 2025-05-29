@@ -24,7 +24,7 @@ export class TransactionalWorkspaceInviteRepositoryImpl
     usedById: User['id'];
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>> {
-    this.transactionalWorkspaceInviteRepo.update(id, {
+    await this.transactionalWorkspaceInviteRepo.update(id, {
       usedBy: { id: usedById },
     });
 

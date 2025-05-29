@@ -8,6 +8,6 @@ export type LoginResponse = {
     lastName: string;
     email: string | null;
     profileImageUrl: string | null;
-    createdAt: Date;
+    createdAt: string;
   };
 };

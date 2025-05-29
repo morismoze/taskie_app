@@ -133,14 +133,27 @@ export class TaskRepositoryImpl implements TaskRepository {
   async update({
     id,
     data,
+    relations,
   }: {
     id: Task['id'];
-    data: Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
+    data: Partial<
+      Omit<
+        Task,
+        | 'id'
+        | 'createdAt'
+        | 'updatedAt'
+        | 'deletedAt'
+        | 'workspace'
+        | 'createdBy'
+      >
+    >;
+    relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    this.transactionalTaskRepo.update(id, data);
+    await this.repo.update(id, data);
 
-    const newEntity = await this.transactionalTaskRepo.findOne({
-      where: { id },
+    const newEntity = await this.findById({
+      id,
+      relations,
     });
 
     return newEntity;

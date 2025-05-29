@@ -4,8 +4,8 @@ import {
   IsDate,
   IsInt,
   IsNotEmpty,
-  IsOptional,
   IsString,
+  IsUUID,
   Length,
   Max,
   MaxLength,
@@ -17,7 +17,7 @@ import {
   TASK_REWARD_POINTS_MAXIMAL,
   TASK_REWARD_POINTS_MINIMAL,
   TASK_REWARD_POINTS_STEP,
-} from 'src/modules/task/task-module/domain/reward-points.domain';
+} from 'src/modules/task/task-module/domain/task.constants';
 import { IsMultipleOfConstraint } from '../validators/is-multiple-of.validator';
 
 export const IsValidPersonName = () => {
@@ -49,5 +49,32 @@ export const IsValidTaskRewardPoints = () => {
 
 export const IsValidTaskDueDate = () => {
   const decorators = [Type(() => Date), IsDate(), MinDate(new Date())];
+  return applyDecorators(...decorators);
+};
+
+export const IsValidGoalTitle = () => {
+  const decorators = [IsNotEmpty(), IsString()];
+  return applyDecorators(...decorators);
+};
+
+export const IsValidGoalDescription = () => {
+  const decorators = [IsNotEmpty(), IsString(), MaxLength(150)];
+  return applyDecorators(...decorators);
+};
+
+export const IsValidGoalRequiredPoints = () => {
+  const decorators = [
+    IsNotEmpty(),
+    Type(() => Number),
+    IsInt(),
+    Min(TASK_REWARD_POINTS_MINIMAL),
+    Max(1000000), // This is trying to define a reasonable upper limit
+    Validate(IsMultipleOfConstraint, [TASK_REWARD_POINTS_STEP]),
+  ];
+  return applyDecorators(...decorators);
+};
+
+export const IsValidGoalAssignee = () => {
+  const decorators = [IsNotEmpty(), IsUUID()];
   return applyDecorators(...decorators);
 };

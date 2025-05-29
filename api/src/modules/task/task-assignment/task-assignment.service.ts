@@ -3,7 +3,7 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
-import { UpdateTaskAssignmentsStatusesRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignments-statuses-request.dto';
+import { UpdateTaskAssignmentsRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignment-status-request.dto';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';
 import { TaskService } from '../task-module/task.service';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
@@ -97,7 +97,7 @@ export class TaskAssignmentService {
   }: {
     taskId: TaskAssignment['task']['id'];
     workspaceId: TaskAssignment['task']['workspace']['id'];
-    data: UpdateTaskAssignmentsStatusesRequest['assignments'];
+    data: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<TaskAssignmentWithAssigneeUser[]> {
     // 1. Check that the given task exists in the given workspace
     const task = await this.taskService.findByTaskIdAndWorkspaceId({

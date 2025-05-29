@@ -70,6 +70,21 @@ export class GoalRepositoryImpl implements GoalRepository {
     });
   }
 
+  async findByGoalIdAndWorkspaceId({
+    goalId,
+    workspaceId,
+    relations,
+  }: {
+    goalId: Goal['id'];
+    workspaceId: Goal['workspace']['id'];
+    relations?: FindOptionsRelations<GoalEntity>;
+  }): Promise<Nullable<GoalEntity>> {
+    return await this.repo.findOne({
+      where: { id: goalId, workspace: { id: workspaceId } },
+      relations,
+    });
+  }
+
   async findAllByWorkspaceId({
     workspaceId,
     query: { page, limit, status, search },
@@ -126,7 +141,7 @@ export class GoalRepositoryImpl implements GoalRepository {
     >;
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    this.repo.update(id, data);
+    await this.repo.update(id, data);
 
     const newEntity = await this.findById({ id, relations });
 

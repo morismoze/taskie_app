@@ -31,6 +31,16 @@ export abstract class GoalRepository {
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
+  abstract findByGoalIdAndWorkspaceId({
+    goalId,
+    workspaceId,
+    relations,
+  }: {
+    goalId: Goal['id'];
+    workspaceId: Goal['workspace']['id'];
+    relations?: FindOptionsRelations<GoalEntity>;
+  }): Promise<Nullable<GoalEntity>>;
+
   abstract findAllByWorkspaceId({
     workspaceId,
     query: { page, limit, status, search },

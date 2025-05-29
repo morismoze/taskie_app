@@ -17,6 +17,8 @@ export class SessionCleanupService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 7);
 
-    await this.sessionRepository.deleteInactiveSessionsBefore(cutoffDate);
+    await this.sessionRepository.deleteInactiveSessionsBefore(
+      cutoffDate.toISOString(),
+    );
   }
 }
