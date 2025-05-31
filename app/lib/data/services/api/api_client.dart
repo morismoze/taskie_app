@@ -1,23 +1,28 @@
-// lib/data/services/api/dio_client.dart
 import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../utils/command.dart';
 import '../local/secure_storage_service.dart';
-import 'models/auth/auth_api_service.dart';
+import 'auth/auth_api_service.dart';
+import 'auth/models/response/token_refresh_response.dart';
 
-class DioClient {
-  DioClient(this._authApiService, this._secureStorageService)
-    : _dio = Dio(
-        BaseOptions(
-          baseUrl: AppConfig.baseUrl,
-          headers: {'Content-Type': 'application/json'},
-        ),
-      ) {
-    _dio.interceptors.add(
+class ApiClient {
+  ApiClient({
+    required AuthApiService authApiService,
+    required SecureStorageService secureStorageService,
+  }) : _authApiService = authApiService,
+       _secureStorageService = secureStorageService,
+       _client = Dio(
+         BaseOptions(
+           baseUrl: "https://localhost:5000",
+           headers: {'Content-Type': 'application/json'},
+         ),
+       ) {
+    _client.interceptors.addAll([
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final accessTokenResult = await _secureStorageService
@@ -41,20 +46,25 @@ class DioClient {
           return handler.next(error);
         },
       ),
-    );
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        enabled: kReleaseMode == false,
+      ),
+    ]);
   }
 
-  final Dio _dio;
+  final Dio _client;
   final AuthApiService _authApiService;
   final SecureStorageService _secureStorageService;
-  final _log = Logger('DioClient');
 
   // Semaphore for token refresh
   bool _isRefreshing = false;
-  // Completer for waiting on token refresh finish
+  // Completer which waits on token refresh finish
   Completer<void>? _refreshTokenCompleter;
 
-  Dio get dio => _dio;
+  Dio get client => _client;
 
   Future<void> _handle401Error(
     DioException error,
@@ -74,18 +84,17 @@ class DioClient {
       final refreshTokenResult = await _authApiService.refreshToken();
 
       switch (refreshTokenResult) {
-        case Ok<>():
-         _refreshTokenCompleter!.complete();
-         // Repeat original request
-         return handler.next(error);
-        case Error<>():
-        _refreshTokenCompleter!.complete();
+        case Ok<TokenRefreshResponse>():
+          _refreshTokenCompleter!.complete();
+          // Repeat original request
+          return handler.next(error);
+        case Error<TokenRefreshResponse>():
+          _refreshTokenCompleter!.complete();
         // set with authrepo isauthenticated to false
       }
     } catch (e) {
-      _log.severe('Error during refresh token process: $e');
-      _refreshTokenCompleter!.completeError(e); // Završi s greškom
-      rethrow; // Ponovno baci grešku
+      _refreshTokenCompleter!.completeError(e);
+      rethrow;
     } finally {
       _isRefreshing = false;
       _refreshTokenCompleter = null;

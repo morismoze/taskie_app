@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../data/repositories/auth/auth_repository_impl.dart';
 import 'routes.dart';
 
 /// Top go_router entry point.

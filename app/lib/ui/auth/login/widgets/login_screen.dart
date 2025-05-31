@@ -18,19 +18,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.login.addListener(_onResult);
+    widget.viewModel.loginWithGoogle.addListener(_onResult);
   }
 
   @override
   void didUpdateWidget(covariant LoginScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.login.removeListener(_onResult);
-    widget.viewModel.login.addListener(_onResult);
+    oldWidget.viewModel.loginWithGoogle.removeListener(_onResult);
+    widget.viewModel.loginWithGoogle.addListener(_onResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.login.removeListener(_onResult);
+    widget.viewModel.loginWithGoogle.removeListener(_onResult);
     super.dispose();
   }
 
@@ -41,13 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onResult() {
-    if (widget.viewModel.login.completed) {
-      widget.viewModel.login.clearResult();
+    if (widget.viewModel.loginWithGoogle.completed) {
+      widget.viewModel.loginWithGoogle.clearResult();
       context.go(Routes.tasks);
     }
 
-    if (widget.viewModel.login.error) {
-      widget.viewModel.login.clearResult();
+    if (widget.viewModel.loginWithGoogle.error) {
+      widget.viewModel.loginWithGoogle.clearResult();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.localization.somethingWentWrong)),
       );

@@ -1,27 +1,18 @@
-import 'package:logging/logging.dart';
-
+import '../../../../data/repositories/auth/auth_repository_impl.dart';
 import '../../../../utils/command.dart';
 
 class LoginViewModel {
   LoginViewModel({required AuthRepository authRepository})
     : _authRepository = authRepository {
-    login = Command1<void, (String email, String password)>(_login);
+    loginWithGoogle = Command0(_loginWithGoogle);
   }
 
   final AuthRepository _authRepository;
-  final _log = Logger('LoginViewModel');
 
-  late Command1 login;
+  late Command0 loginWithGoogle;
 
-  Future<Result<void>> _login((String, String) credentials) async {
-    final (email, password) = credentials;
-    final result = await _authRepository.login(
-      email: email,
-      password: password,
-    );
-    if (result is Error<void>) {
-      _log.warning('Login failed! ${result.error}');
-    }
+  Future<Result<void>> _loginWithGoogle() async {
+    final result = await _authRepository.loginWithGoogle();
     return result;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logging/logging.dart';
 
-import '../../../../../utils/command.dart';
+import '../../../utils/command.dart';
 
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -12,7 +12,7 @@ class GoogleAuthService {
   final _log = Logger("GoogleAuthService");
 
   /// Returns ID token
-  Future<Result<String>> authenticate() async {
+  Future<Result<String?>> authenticate() async {
     try {
       final googleUser = await _googleSignIn.signIn();
 
@@ -26,7 +26,7 @@ class GoogleAuthService {
         return Result.error(Exception("Missing ID token"));
       }
 
-      return Result.ok(googleAuth.idToken!);
+      return Result.ok(googleAuth.idToken);
     } on Exception catch (e) {
       _log.severe("Failed Google sign-in", e);
       return Result.error(e);

@@ -1,25 +1,27 @@
 import 'package:logging/logging.dart';
 
 import '../../../utils/command.dart';
-import '../../services/external/google/auth/google_auth_service.dart';
+import '../../services/api/auth/auth_api_service.dart';
+import '../../services/api/auth/models/request/social_login_request.dart';
+import '../../services/api/auth/models/response/login_response.dart';
+import '../../services/external/google_auth_service.dart';
 import '../../services/local/secure_storage_service.dart';
 import 'auth_repository.dart';
 
 class AuthRepository extends BaseAuthRepository {
   AuthRepository({
-    required ApiClient apiClient,
+    required AuthApiService authApiService,
     required GoogleAuthService googleAuthService,
     required SecureStorageService secureStorageService,
-  }) : _apiClient = apiClient,
+  }) : _authApiService = authApiService,
        _googleAuthService = googleAuthService,
        _secureStorageService = secureStorageService;
 
-  final ApiClient _apiClient;
+  final AuthApiService _authApiService;
   final GoogleAuthService _googleAuthService;
   final SecureStorageService _secureStorageService;
 
   bool? _isAuthenticated;
-  String? _authToken;
   final _log = Logger('AuthRepository');
 
   @override
@@ -33,14 +35,13 @@ class AuthRepository extends BaseAuthRepository {
     final result = await _secureStorageService.getAccessToken();
     switch (result) {
       case Ok<String?>():
-        _authToken = result.value;
         _isAuthenticated = result.value != null;
       case Error<String?>():
         _log.severe(
           'Failed to fetch access token from secure storage',
           result.error,
         );
-    };
+    }
 
     return _isAuthenticated ?? false;
   }
@@ -55,7 +56,20 @@ class AuthRepository extends BaseAuthRepository {
 
     final googleIdToken = (googleIdTokenResult as Ok<String>).value;
 
-    final apiResponseResult = 
+    final apiResponseResult = await _authApiService.login(
+      SocialLoginRequest(googleIdToken),
+    );
+
+    switch (apiResponseResult) {
+      case Ok<LoginResponse>():
+        _isAuthenticated = true;
+        return await _secureStorageService.setAccessToken(
+          apiResponseResult.value.accessToken,
+        );
+      case Error<LoginResponse>():
+        _log.warning('Error logging in', apiResponseResult.error);
+        return Result.error(apiResponseResult.error);
+    }
   }
 
   @override
