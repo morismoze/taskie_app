@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class AuthGoogleRequest {
+export class SocialLoginRequest {
   @IsNotEmpty()
   @IsString()
   idToken: string;

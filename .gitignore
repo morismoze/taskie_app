@@ -51,6 +51,7 @@
 /app/.buildlog/
 /app/.history
 /app/.svn/
+/app/.swiftpm/
 /app/migrate_working_dir/
 
 # IntelliJ related

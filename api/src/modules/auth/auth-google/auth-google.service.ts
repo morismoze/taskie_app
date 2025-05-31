@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
 import { AggregatedConfig } from 'src/config/config.type';
 import { SocialLogin } from '../core/domain/social-login.domain';
-import { AuthGoogleRequest } from './dto/google-auth-request.dto';
+import { SocialLoginRequest } from '../core/dto/social-login-request.dto';
 
 @Injectable()
 export class AuthGoogleService {
@@ -16,32 +16,32 @@ export class AuthGoogleService {
     );
   }
 
-  async getProfileByToken(requestDto: AuthGoogleRequest): Promise<SocialLogin> {
+  async getProfileByToken(data: SocialLoginRequest): Promise<SocialLogin> {
     const ticket = await this.google.verifyIdToken({
-      idToken: requestDto.idToken,
+      idToken: data.idToken,
       audience: this.configService.getOrThrow('google.auth.clientId', {
         infer: true,
       }),
     });
 
-    const data = ticket.getPayload();
+    const payload = ticket.getPayload();
 
     if (
-      !data ||
-      !data.email ||
-      !data.given_name ||
-      !data.family_name ||
-      !data.picture
+      !payload ||
+      !payload.email ||
+      !payload.given_name ||
+      !payload.family_name ||
+      !payload.picture
     ) {
       throw new UnauthorizedException();
     }
 
     return {
-      id: data.sub,
-      email: data.email!,
-      firstName: data.given_name,
-      lastName: data.family_name,
-      profileImageUrl: data.picture,
+      id: payload.sub,
+      email: payload.email!,
+      firstName: payload.given_name,
+      lastName: payload.family_name,
+      profileImageUrl: payload.picture,
     };
   }
 }

@@ -10,8 +10,8 @@ import { Request } from 'express';
 import { AuthService } from '../core/auth.service';
 import { AuthProvider } from '../core/domain/auth-provider.enum';
 import { LoginResponse } from '../core/dto/login-response.dto';
+import { SocialLoginRequest } from '../core/dto/social-login-request.dto';
 import { AuthGoogleService } from './auth-google.service';
-import { AuthGoogleRequest } from './dto/google-auth-request.dto';
 
 @Controller({
   path: 'auth/google',
@@ -26,7 +26,7 @@ export class AuthGoogleController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Req() request: Request,
-    @Body() loginDto: AuthGoogleRequest,
+    @Body() loginDto: SocialLoginRequest,
   ): Promise<LoginResponse> {
     const socialData = await this.authGoogleService.getProfileByToken(loginDto);
 
