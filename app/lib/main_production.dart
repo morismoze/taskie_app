@@ -8,6 +8,7 @@ import 'main.dart';
 /// Production config entry point.
 /// Launch with `flutter run --target lib/main_production.dart`.
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Logger.root.level = Level.OFF;
 
   runApp(MultiProvider(providers: providers, child: const MainApp()));

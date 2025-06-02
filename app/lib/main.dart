@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
+import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
 
-import 'config/dependencies.dart';
 import 'core/l10n/app_localizations.dart';
-import 'core/localization/app_localization.dart';
-import 'main.dart';
-import 'main_development.dart' as development;
+import 'main_staging.dart' as staging;
 import 'routing/router.dart';
 
-/// Default main method
 void main() {
-  // Launch development config by default
-  development.main();
+  // Launch staging config by default
+  staging.main();
 }
 
 class MainApp extends StatelessWidget {
@@ -23,11 +19,11 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      scrollBehavior: AppCustomScrollBehavior(),
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       routerConfig: router(context.read()),
+      debugShowCheckedModeBanner: false,
+      builder: (context, child) =>
+          FTheme(data: FThemes.blue.light, child: child!),
     );
   }
 }

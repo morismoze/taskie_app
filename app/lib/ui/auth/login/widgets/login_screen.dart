@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
@@ -36,8 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return FScaffold(
+      child: Text('yesasasassss', style: TextStyle(color: Colors.purple)),
+    );
   }
 
   void _onResult() {

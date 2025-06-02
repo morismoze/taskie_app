@@ -18,7 +18,7 @@ class SecureStorageService {
     }
   }
 
-  Future<Result<String?>> setAccessToken(String token) async {
+  Future<Result<void>> setAccessToken(String? token) async {
     try {
       await _storage.write(key: _accessTokenKey, value: token);
       return const Result.ok(null);
@@ -37,7 +37,7 @@ class SecureStorageService {
     }
   }
 
-  Future<Result<String?>> setRefreshToken(String token) async {
+  Future<Result<void>> setRefreshToken(String? token) async {
     try {
       await _storage.write(key: _refreshTokenKey, value: token);
       return const Result.ok(null);

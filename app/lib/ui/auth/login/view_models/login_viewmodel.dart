@@ -1,4 +1,4 @@
-import '../../../../data/repositories/auth/auth_repository_impl.dart';
+import '../../../../data/repositories/auth/auth_repository.dart';
 import '../../../../utils/command.dart';
 
 class LoginViewModel {

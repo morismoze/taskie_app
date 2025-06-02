@@ -3,6 +3,8 @@ import 'package:logging/logging.dart';
 
 import '../../../utils/command.dart';
 
+enum GoogleSignInResult { cancelled, missingIdToken }
+
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // Scopes are defined in the Google console for the backend. Frontend
@@ -17,13 +19,13 @@ class GoogleAuthService {
       final googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        return Result.error(Exception("Cancelled sign-in"));
+        return Result.error(Exception(GoogleSignInResult.cancelled));
       }
 
       final googleAuth = await googleUser.authentication;
 
       if (googleAuth.idToken == null) {
-        return Result.error(Exception("Missing ID token"));
+        return Result.error(Exception(GoogleSignInResult.missingIdToken));
       }
 
       return Result.ok(googleAuth.idToken);
