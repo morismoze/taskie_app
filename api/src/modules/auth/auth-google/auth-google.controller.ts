@@ -24,7 +24,7 @@ export class AuthGoogleController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  async login(
+  async signIn(
     @Req() request: Request,
     @Body() loginDto: SocialLoginRequest,
   ): Promise<LoginResponse> {

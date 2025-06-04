@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../data/services/external/google/exceptions/google_sign_in_cancelled_exception.dart';
 import '../../../../routing/routes.dart';
+import '../../../../utils/command.dart';
 import '../view_models/login_viewmodel.dart';
 
 const images = [
@@ -44,19 +47,19 @@ class _SignInScreenState extends State<SignInScreen> {
         statusBarColor: Colors.transparent,
       ),
     );
-    widget.viewModel.loginWithGoogle.addListener(_onResult);
+    widget.viewModel.signInWithGoogle.addListener(_onResult);
   }
 
   @override
   void didUpdateWidget(covariant SignInScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loginWithGoogle.removeListener(_onResult);
-    widget.viewModel.loginWithGoogle.addListener(_onResult);
+    oldWidget.viewModel.signInWithGoogle.removeListener(_onResult);
+    widget.viewModel.signInWithGoogle.addListener(_onResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.loginWithGoogle.removeListener(_onResult);
+    widget.viewModel.signInWithGoogle.removeListener(_onResult);
     super.dispose();
   }
 
@@ -110,17 +113,19 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
             SizedBox(height: 50),
             FButton(
+              style: FButtonStyle.primary,
               onPress: () {
-                if (widget.viewModel.loginWithGoogle.running) {
+                if (widget.viewModel.signInWithGoogle.running) {
                   return;
                 }
-                widget.viewModel.loginWithGoogle.execute();
+                widget.viewModel.signInWithGoogle.execute();
               },
-              child: widget.viewModel.loginWithGoogle.running == true
-                  ? CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.red,
-                    )
-                  : Text(context.localization.signIn),
+              child: widget.viewModel.signInWithGoogle.running == true
+                  ? CupertinoActivityIndicator(color: Colors.white)
+                  : Text(
+                      context.localization.signIn,
+                      style: TextStyle(fontSize: 20),
+                    ),
             ),
           ],
         ),
@@ -129,16 +134,29 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _onResult() {
-    if (widget.viewModel.loginWithGoogle.completed) {
-      widget.viewModel.loginWithGoogle.clearResult();
+    if (widget.viewModel.signInWithGoogle.completed) {
+      widget.viewModel.signInWithGoogle.clearResult();
       context.go(Routes.tasks);
     }
 
-    if (widget.viewModel.loginWithGoogle.error) {
-      widget.viewModel.loginWithGoogle.clearResult();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.localization.somethingWentWrong)),
-      );
+    if (widget.viewModel.signInWithGoogle.error) {
+      final errorResult = widget.viewModel.signInWithGoogle.result as Error;
+
+      switch (errorResult.error) {
+        case GoogleSignInCancelledException():
+          showFToast(
+            context: context,
+            title: Text(context.localization.signInGoogleCanceled),
+          );
+          break;
+        default:
+          showFToast(
+            context: context,
+            title: Text(context.localization.somethingWentWrong),
+          );
+      }
+
+      widget.viewModel.signInWithGoogle.clearResult();
     }
   }
 }

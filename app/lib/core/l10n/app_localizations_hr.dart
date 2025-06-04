@@ -18,6 +18,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get signIn => 'Prijavi se';
 
   @override
+  String get signInGoogleCanceled =>
+      'Google prijava otkazana. Molimo pokušajte ponovno.';
+
+  @override
   String get somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
 
   @override

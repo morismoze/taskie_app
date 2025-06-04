@@ -116,6 +116,12 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get signIn;
 
+  /// No description provided for @signInGoogleCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in cancelled. Please try again.'**
+  String get signInGoogleCanceled;
+
   /// No description provided for @somethingWentWrong.
   ///
   /// In en, this message translates to:

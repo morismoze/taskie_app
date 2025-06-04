@@ -1,6 +1,7 @@
 import '../../../../config/api_endpoints.dart';
 import '../../../../utils/command.dart';
 import '../api_client.dart';
+import '../api_response.dart';
 import 'models/request/social_login_request.dart';
 import 'models/response/login_response.dart';
 
@@ -11,8 +12,17 @@ class AuthApiService {
 
   Future<Result<LoginResponse>> login(SocialLoginRequest payload) async {
     try {
-      final response = await _apiClient.client.post(ApiEndpoints.loginGoogle);
-      return Result.ok(LoginResponse.fromJson(response.data));
+      final response = await _apiClient.client.post(
+        ApiEndpoints.loginGoogle,
+        data: payload,
+      );
+
+      final apiResponse = ApiResponse<LoginResponse>.fromJson(
+        response.data,
+        (json) => LoginResponse.fromJson(json as Map<String, dynamic>),
+      );
+
+      return Result.ok(apiResponse.data!);
     } on Exception catch (e) {
       return Result.error(e);
     }

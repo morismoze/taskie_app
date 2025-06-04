@@ -2,6 +2,7 @@
   "signInTitleStart": "Happy Chores, Happy Kids.",
   "signInTitleEnd": "Happy Home.",
   "signIn": "Sign in",
+  "signInGoogleCanceled": "Google sign-in cancelled. Please try again.",
   "somethingWentWrong": "Uh-oh! Something went wrong",
   "tryAgain": "Try again"
 }

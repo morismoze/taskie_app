@@ -19,4 +19,7 @@ abstract final class Env {
 
   @EnviedField(varName: 'BACKEND_URL')
   static final String backendUrl = _Env.backendUrl;
+
+  @EnviedField(varName: 'GOOGLE_AUTH_CLIENT_ID')
+  static final String googleAuthClientId = _Env.googleAuthClientId;
 }

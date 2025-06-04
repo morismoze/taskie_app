@@ -18,6 +18,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in';
 
   @override
+  String get signInGoogleCanceled =>
+      'Google sign-in cancelled. Please try again.';
+
+  @override
   String get somethingWentWrong => 'Uh-oh! Something went wrong';
 
   @override

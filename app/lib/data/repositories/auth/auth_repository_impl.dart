@@ -4,7 +4,7 @@ import '../../../utils/command.dart';
 import '../../services/api/auth/auth_api_service.dart';
 import '../../services/api/auth/models/request/social_login_request.dart';
 import '../../services/api/auth/models/response/login_response.dart';
-import '../../services/external/google_auth_service.dart';
+import '../../services/external/google/google_auth_service.dart';
 import 'auth_repository.dart';
 import 'auth_state_repository.dart';
 
@@ -24,11 +24,11 @@ class AuthRepositoryImpl extends AuthRepository {
   final _log = Logger('AuthRepository');
 
   @override
-  Future<Result<void>> loginWithGoogle() async {
+  Future<Result<void>> signInWithGoogle() async {
     try {
       final googleIdTokenResult = await _googleAuthService.authenticate();
 
-      if (googleIdTokenResult is Error<String?>) {
+      if (googleIdTokenResult is Error<String>) {
         return googleIdTokenResult;
       }
 

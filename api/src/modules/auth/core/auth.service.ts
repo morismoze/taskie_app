@@ -1,25 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AggregatedConfig } from 'src/config/config.type';
-import ms from 'ms';
 import * as crypto from 'crypto';
-import { JwtPayload } from './strategies/jwt-payload.type';
+import * as ms from 'ms';
+import { AggregatedConfig } from 'src/config/config.type';
+import { Session } from 'src/modules/session/domain/session.domain';
+import { SessionService } from 'src/modules/session/session.service';
+import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
+import { UserStatus } from 'src/modules/user/domain/user-status.enum';
+import { User } from 'src/modules/user/domain/user.domain';
+import { UserResponse } from 'src/modules/user/dto/user-response.dto';
+import { UserService } from 'src/modules/user/user.service';
+import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
+import { AuthProvider } from './domain/auth-provider.enum';
 import { SocialLogin } from './domain/social-login.domain';
 import { LoginResponse } from './dto/login-response.dto';
-import { Nullable } from 'src/common/types/nullable.type';
-import { User } from 'src/modules/user/domain/user.domain';
-import { UserService } from 'src/modules/user/user.service';
-import { AuthProvider } from './domain/auth-provider.enum';
-import { UserStatus } from 'src/modules/user/domain/user-status.enum';
-import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
-import { UserResponse } from 'src/modules/user/dto/user-response.dto';
-import { SessionService } from 'src/modules/session/session.service';
-import { Session } from 'src/modules/session/domain/session.domain';
 import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
+import { JwtPayload } from './strategies/jwt-payload.type';
 import { JwtRefreshPayload } from './strategies/jwt-refresh-payload.type';
-import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
-import { SessionCore } from 'src/modules/session/domain/session-core.domain';
 
 @Injectable()
 export class AuthService {
@@ -104,7 +103,7 @@ export class AuthService {
 
         const hash = crypto
           .createHash('sha256')
-          .update(crypto.randomBytes(length).toString('hex'))
+          .update(randomStringGenerator())
           .digest('hex');
 
         const session = await this.sessionService.create({
@@ -184,7 +183,7 @@ export class AuthService {
 
     const newHash = crypto
       .createHash('sha256')
-      .update(crypto.randomBytes(length).toString('hex'))
+      .update(randomStringGenerator())
       .digest('hex');
 
     // Invalidate the existing session with new hash

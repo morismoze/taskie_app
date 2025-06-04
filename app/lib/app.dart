@@ -16,8 +16,10 @@ class MainApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       routerConfig: router(context.read()),
       debugShowCheckedModeBanner: false,
-      builder: (context, child) =>
-          FTheme(data: FThemes.blue.light, child: child!),
+      builder: (context, child) => FTheme(
+        data: FThemes.blue.light,
+        child: FToaster(child: child!),
+      ),
     );
   }
 }

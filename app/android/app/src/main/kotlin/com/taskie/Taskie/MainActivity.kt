@@ -1,4 +1,4 @@
-package com.example.taskie
+package com.taskie.Taskie
 
 import io.flutter.embedding.android.FlutterActivity
 
