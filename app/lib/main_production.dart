@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
+import 'app.dart';
 import 'config/dependencies.dart';
-import 'main.dart';
 
 /// Production config entry point.
-/// Launch with `flutter run --target lib/main_production.dart`.
+/// Launch with `derry run:production`
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   Logger.root.level = Level.OFF;
 
   runApp(MultiProvider(providers: providers, child: const MainApp()));

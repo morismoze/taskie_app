@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../data/repositories/auth/auth_state_repository.dart';
 import '../ui/auth/login/view_models/login_viewmodel.dart';
-import '../ui/auth/login/widgets/login_screen.dart';
+import '../ui/auth/login/widgets/sign_in_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -23,7 +23,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
     GoRoute(
       path: Routes.login,
       builder: (context, state) {
-        return LoginScreen(
+        return SignInScreen(
           viewModel: LoginViewModel(authRepository: context.read()),
         );
       },

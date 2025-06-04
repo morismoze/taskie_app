@@ -9,6 +9,12 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get signInTitleStart => 'Happy Chores, Happy Kids.';
+
+  @override
+  String get signInTitleEnd => 'Happy Home.';
+
+  @override
   String get signIn => 'Sign in';
 
   @override

@@ -9,6 +9,12 @@ class AppLocalizationsHr extends AppLocalizations {
   AppLocalizationsHr([String locale = 'hr']) : super(locale);
 
   @override
+  String get signInTitleStart => 'Učenje odgovornosti.';
+
+  @override
+  String get signInTitleEnd => 'Zabava nagrađivanja.';
+
+  @override
   String get signIn => 'Prijavi se';
 
   @override

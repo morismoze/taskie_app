@@ -85,3 +85,11 @@
 /app/android/app/debug
 /app/android/app/profile
 /app/android/app/release
+
+# Env
+/app/lib/config/.env.development
+/app/lib/config/.env.development.g.dart
+/app/lib/config/.env.staging
+/app/lib/config/.env.staging.g.dart
+/app/lib/config/.env.production
+/app/lib/config/.env.production.g.dart

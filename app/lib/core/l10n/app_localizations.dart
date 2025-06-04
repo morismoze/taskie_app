@@ -98,6 +98,18 @@ abstract class AppLocalizations {
     Locale('hr'),
   ];
 
+  /// No description provided for @signInTitleStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Happy Chores, Happy Kids.'**
+  String get signInTitleStart;
+
+  /// No description provided for @signInTitleEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Happy Home.'**
+  String get signInTitleEnd;
+
   /// No description provided for @signIn.
   ///
   /// In en, this message translates to:

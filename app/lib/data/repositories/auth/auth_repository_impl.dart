@@ -28,7 +28,7 @@ class AuthRepositoryImpl extends AuthRepository {
     try {
       final googleIdTokenResult = await _googleAuthService.authenticate();
 
-      if (googleIdTokenResult is Error<String>) {
+      if (googleIdTokenResult is Error<String?>) {
         return googleIdTokenResult;
       }
 

@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'config/dependencies.dart';
 
-/// Staging config entry point.
-/// Launch with `derry run:staging`
+/// Development config entry point.
+/// Launch with `derry run:development`
 void main() {
   Logger.root.level = Level.ALL;
 

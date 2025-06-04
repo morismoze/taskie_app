@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
+import '../../../config/environment/env.dart';
 import '../../repositories/auth/auth_state_repository.dart';
 import '../local/secure_storage_service.dart';
 import 'interceptors/request_headers_interceptor.dart';
@@ -21,7 +21,7 @@ class ApiClient {
         requestHeader: true,
         requestBody: true,
         responseBody: true,
-        enabled: kReleaseMode == false,
+        enabled: Env.env != Environment.production,
       ),
       UnauthorizedInterceptor(
         mainClient: _client,
@@ -42,7 +42,7 @@ class ApiClient {
   static Dio _instantiateApiClient() {
     return Dio(
       BaseOptions(
-        baseUrl: 'https://localhost:5000',
+        baseUrl: Env.backendUrl,
         headers: {'Content-Type': 'application/json'},
       ),
     );

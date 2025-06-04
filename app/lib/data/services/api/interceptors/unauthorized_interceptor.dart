@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 
+import '../../../../config/api_endpoints.dart';
 import '../../../../utils/command.dart';
 import '../../../repositories/auth/auth_state_repository.dart';
 import '../../local/secure_storage_service.dart';
@@ -18,7 +19,15 @@ class UnauthorizedInterceptor extends Interceptor {
        _mainClient = mainClient,
        _secureStorageService = secureStorageService;
 
+  // This client uses request interceptor which sets the Authorization
+  // Bearer from access token read from secure storage
   final Dio _mainClient;
+  // This client is the same as mainClient (basic options wise), but
+  // doesn't have any interceptor. It is used for token refresh request
+  // because backend expects the Authorization Bearer header to be set
+  // to the refresh token (not access token) and as we have that request
+  // interceptor on main client (which sets the Authorization Bearer header
+  // to access token), it can't be used.
   final Dio _rawClient;
   final SecureStorageService _secureStorageService;
   final AuthStateRepository _authStateRepository;
@@ -34,11 +43,10 @@ class UnauthorizedInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    // if the refresh token is invalid, logout user
-    if (err.requestOptions.path.contains('/auth/refresh')) {
-      await _logoutUser();
-      return handler.next(err);
-    }
+    // This interceptor will never trigger for 401 on /auth/refresh because
+    // we used rawClient for that request, and that client doesn't have any
+    // interceptors, meaning it doesn't use this UnauthorizedInterceptor, so there
+    // is not chance of loop 401 problem.
 
     if (err.requestOptions.path.contains('/auth/logout')) {
       _authStateRepository.setAuthenticated(SetAuthStateArgumentsFalse());
@@ -51,17 +59,13 @@ class UnauthorizedInterceptor extends Interceptor {
         try {
           await _refreshTokenCompleter!.future;
         } on Exception {
-          _refreshTokenCompleter = null;
           _logoutUser();
           return handler.next(err);
         }
       }
 
-      // Repeat request
-      await _repeatRequestAfterTokenRefresh(err, handler);
-      _refreshTokenCompleter = null;
-
-      return;
+      // Repeat the request which waited for the completer to complete
+      return await _repeatRequestAfterTokenRefresh(err, handler);
     }
 
     // Start the token refresh process
@@ -69,10 +73,7 @@ class UnauthorizedInterceptor extends Interceptor {
 
     // _mainClient should now in RequestHeadersInterceptor read new accessToken value from storage
 
-    // Complete the completer future
-    _refreshTokenCompleter!.complete();
-
-    // Repeat request
+    // Repeat the original request which first fired 401 interceptor
     return await _repeatRequestAfterTokenRefresh(err, handler);
   }
 
@@ -93,7 +94,7 @@ class UnauthorizedInterceptor extends Interceptor {
 
       final refreshToken = (refreshTokenResult as Ok<String>).value;
       final refreshTokenResponse = await _rawClient.post(
-        '/auth/refresh',
+        ApiEndpoints.refreshToken,
         options: Options(headers: {'Authorization': refreshToken}),
       );
       final data = TokenRefreshResponse.fromJson(refreshTokenResponse.data);
@@ -106,15 +107,22 @@ class UnauthorizedInterceptor extends Interceptor {
       );
 
       if (setAccessTokenResult is Error || setRefreshTokenResult is Error) {
+        _refreshTokenCompleter!.completeError(
+          'Error saving tokens to the storage:',
+        );
         await _logoutUser();
         return handler.next(originalError);
       }
+
+      // Complete the completer future
+      _refreshTokenCompleter!.complete();
     } catch (e) {
       _refreshTokenCompleter!.completeError(e);
       await _logoutUser();
       return handler.next(originalError);
     } finally {
       _isRefreshing = false;
+      _refreshTokenCompleter = null;
     }
   }
 
@@ -122,13 +130,17 @@ class UnauthorizedInterceptor extends Interceptor {
     DioException originalError,
     ErrorInterceptorHandler handler,
   ) async {
-    final response = await _mainClient.fetch(originalError.requestOptions);
-    return handler.resolve(response);
+    try {
+      final response = await _mainClient.fetch(originalError.requestOptions);
+      return handler.resolve(response);
+    } on Exception {
+      // do something here
+    }
   }
 
   Future<void> _logoutUser() async {
     try {
-      await _mainClient.delete('/auth/logout');
+      await _mainClient.delete(ApiEndpoints.logout);
     } finally {
       _authStateRepository.setAuthenticated(SetAuthStateArgumentsFalse());
     }

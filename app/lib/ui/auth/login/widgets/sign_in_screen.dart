@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:forui/forui.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../routing/routes.dart';
+import '../view_models/login_viewmodel.dart';
+
+const images = [
+  [
+    'assets/images/signin_notebook_object.png',
+    'assets/images/signin_rocket_object.png',
+    'assets/images/signin_zoom_object.png',
+  ],
+  [
+    'assets/images/signin_crown_object.png',
+    'assets/images/signin_target_object.png',
+    'assets/images/signin_gym_object.png',
+  ],
+  [
+    'assets/images/signin_gingerbread_object.png',
+    'assets/images/signin_calendar_object.png',
+    'assets/images/signin_snowman_object.png',
+  ],
+];
+
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key, required this.viewModel});
+
+  final LoginViewModel viewModel;
+
+  @override
+  State<StatefulWidget> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+      ),
+    );
+    widget.viewModel.loginWithGoogle.addListener(_onResult);
+  }
+
+  @override
+  void didUpdateWidget(covariant SignInScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.loginWithGoogle.removeListener(_onResult);
+    widget.viewModel.loginWithGoogle.addListener(_onResult);
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.loginWithGoogle.removeListener(_onResult);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FScaffold(
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                ...images.map(
+                  (rows) => Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...rows.map((image) => Image(image: AssetImage(image))),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 50),
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                child: Column(
+                  children: [
+                    Text(
+                      context.localization.signInTitleStart,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      context.localization.signInTitleEnd,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 50),
+            FButton(
+              onPress: () {
+                if (widget.viewModel.loginWithGoogle.running) {
+                  return;
+                }
+                widget.viewModel.loginWithGoogle.execute();
+              },
+              child: widget.viewModel.loginWithGoogle.running == true
+                  ? CircularProgressIndicator.adaptive(
+                      backgroundColor: Colors.red,
+                    )
+                  : Text(context.localization.signIn),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onResult() {
+    if (widget.viewModel.loginWithGoogle.completed) {
+      widget.viewModel.loginWithGoogle.clearResult();
+      context.go(Routes.tasks);
+    }
+
+    if (widget.viewModel.loginWithGoogle.error) {
+      widget.viewModel.loginWithGoogle.clearResult();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.localization.somethingWentWrong)),
+      );
+    }
+  }
+}

@@ -1,5 +1,8 @@
 abstract final class Routes {
+  // Public routes
   static const login = '/login';
+
+  // Private routes
   static const tasks = '/tasks';
   static String taskWithId(int id) => '$tasks/$id';
   static const leaderboard = '/leaderboard';
