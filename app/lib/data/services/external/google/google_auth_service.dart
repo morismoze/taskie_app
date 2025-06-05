@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logging/logging.dart';
 
@@ -9,9 +11,8 @@ import 'exceptions/google_sign_in_unknown_exception.dart';
 
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: Env.googleAuthClientId,
-    // Scopes are defined in the Google console for the backend. Frontend
-    // only needs the token ID so it can send it to backend
+    clientId: Platform.isIOS ? Env.googleAuthClientId : null,
+    serverClientId: Platform.isAndroid ? Env.googleAuthClientId : null,
     scopes: const [
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',
@@ -35,9 +36,14 @@ class GoogleAuthService {
         return Result.error(Exception(GoogleSignInInvalidIdTokenException()));
       }
 
+      // After the user was successfully authenticated, we want to disconnect him out
+      // which removes the user from the user information cache. This disables auto login
+      // on _googleSignIn.signIn(), and prompts the account choice window wvery time.
+      await GoogleSignIn().disconnect();
+
       return Result.ok(googleAuth.idToken!);
     } on Exception catch (e) {
-      _log.severe("Failed Google sign-in", e);
+      _log.severe("Failed Google sign-in or sign-out", e);
       return Result.error(Exception(GoogleSignInUnknownException()));
     }
   }

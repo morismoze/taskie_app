@@ -1,8 +1,8 @@
 import '../../../../data/repositories/auth/auth_repository.dart';
 import '../../../../utils/command.dart';
 
-class LoginViewModel {
-  LoginViewModel({required AuthRepository authRepository})
+class SignInViewModel {
+  SignInViewModel({required AuthRepository authRepository})
     : _authRepository = authRepository {
     signInWithGoogle = Command0(_signInWithGoogle);
   }

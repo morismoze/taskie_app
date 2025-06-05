@@ -48,7 +48,6 @@ abstract class Command<T> extends ChangeNotifier {
     if (_running) return;
 
     // Notify listeners.
-    // e.g. button shows loading state
     _running = true;
     _result = null;
     notifyListeners();

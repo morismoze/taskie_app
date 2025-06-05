@@ -8,7 +8,7 @@ import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../data/services/external/google/exceptions/google_sign_in_cancelled_exception.dart';
 import '../../../../routing/routes.dart';
 import '../../../../utils/command.dart';
-import '../view_models/login_viewmodel.dart';
+import '../view_models/sign_in_viewmodel.dart';
 
 const images = [
   [
@@ -31,7 +31,7 @@ const images = [
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.viewModel});
 
-  final LoginViewModel viewModel;
+  final SignInViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _SignInScreenState();
@@ -112,20 +112,23 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
             SizedBox(height: 50),
-            FButton(
-              style: FButtonStyle.primary,
-              onPress: () {
-                if (widget.viewModel.signInWithGoogle.running) {
-                  return;
-                }
-                widget.viewModel.signInWithGoogle.execute();
-              },
-              child: widget.viewModel.signInWithGoogle.running == true
-                  ? CupertinoActivityIndicator(color: Colors.white)
-                  : Text(
-                      context.localization.signIn,
-                      style: TextStyle(fontSize: 20),
-                    ),
+            ListenableBuilder(
+              listenable: widget.viewModel.signInWithGoogle,
+              builder: (context, _) => FButton(
+                style: FButtonStyle.primary,
+                onPress: () {
+                  if (widget.viewModel.signInWithGoogle.running) {
+                    return;
+                  }
+                  widget.viewModel.signInWithGoogle.execute();
+                },
+                child: widget.viewModel.signInWithGoogle.running == true
+                    ? CupertinoActivityIndicator(color: Colors.white)
+                    : Text(
+                        context.localization.signIn,
+                        style: TextStyle(fontSize: 20),
+                      ),
+              ),
             ),
           ],
         ),

@@ -1,6 +1,10 @@
 abstract final class Routes {
+  //Initial route
+  static const splash = '/';
+
   // Public routes
   static const login = '/login';
+  static const initialCreateWorkspace = '/create-workspace-initial';
 
   // Private routes
   static const tasks = '/tasks';
