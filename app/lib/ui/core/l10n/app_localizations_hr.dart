@@ -15,7 +15,11 @@ class AppLocalizationsHr extends AppLocalizations {
   String get signInTitleEnd => 'Zabava nagrađivanja.';
 
   @override
-  String get signIn => 'Prijavi se';
+  String get singInSubtitle =>
+      'Organizirajte rutine, motivirajte djecu i slavite svaku pobjedu.';
+
+  @override
+  String get signInViaGoogle => 'Prijavi se putem Googlea';
 
   @override
   String get signInGoogleCanceled =>

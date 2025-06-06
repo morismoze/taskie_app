@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import '../data/repositories/auth/auth_state_repository.dart';
 import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
-import '../ui/splash/view_models/splash_viewmodel.dart';
-import '../ui/splash/widgets/splash_screen.dart';
+import '../ui/entry/view_models/entry_viewmodel.dart';
+import '../ui/entry/widgets/entry_screen.dart';
 import '../ui/tasks/view_models/tasks_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/workspaces/view_models/initial_create_workspace_viewmodel.dart';
@@ -21,16 +21,16 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 /// to /login when the user logs out.
 GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: Routes.splash,
+  initialLocation: Routes.entry,
   debugLogDiagnostics: true,
   redirect: _redirect,
   refreshListenable: authStateRepository,
   routes: [
     GoRoute(
-      path: Routes.splash,
+      path: Routes.entry,
       builder: (context, state) {
-        return SplashScreen(
-          viewModel: SplashViewModel(authRepository: context.read()),
+        return EntryScreen(
+          viewModel: EntryViewModel(workspaceRepository: context.read()),
         );
       },
     ),
@@ -71,7 +71,7 @@ Future<String?> _redirect(BuildContext context, GoRouterState state) async {
 
   // if the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
-    return Routes.tasks;
+    return Routes.entry;
   }
 
   // no need to redirect

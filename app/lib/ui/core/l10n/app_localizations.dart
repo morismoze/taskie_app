@@ -110,11 +110,17 @@ abstract class AppLocalizations {
   /// **'Happy Home.'**
   String get signInTitleEnd;
 
-  /// No description provided for @signIn.
+  /// No description provided for @singInSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Sign in'**
-  String get signIn;
+  /// **'Organize routines, motivate children, and celebrate every win.'**
+  String get singInSubtitle;
+
+  /// No description provided for @signInViaGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in via Google'**
+  String get signInViaGoogle;
 
   /// No description provided for @signInGoogleCanceled.
   ///

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
 
-import 'core/l10n/app_localizations.dart';
 import 'routing/router.dart';
+import 'ui/core/l10n/app_localizations.dart';
+import 'ui/core/theme/theme.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -13,13 +13,11 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      themeMode: ThemeMode.system,
-      routerConfig: router(context.read()),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => FTheme(
-        data: FThemes.blue.light,
-        child: FToaster(child: child!),
-      ),
+      routerConfig: router(context.read()),
     );
   }
 }

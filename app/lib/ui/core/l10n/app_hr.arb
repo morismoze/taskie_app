@@ -1,7 +1,8 @@
 {
   "signInTitleStart": "Učenje odgovornosti.",
   "signInTitleEnd": "Zabava nagrađivanja.",
-  "signIn": "Prijavi se",
+  "singInSubtitle": "Organizirajte rutine, motivirajte djecu i slavite svaku pobjedu.",
+  "signInViaGoogle": "Prijavi se putem Googlea",
   "signInGoogleCanceled": "Google prijava otkazana. Molimo pokušajte ponovno.",
   "somethingWentWrong": "Uh-oh! Nešto je pošlo po zlu",
   "tryAgain": "Pokušajte ponovno"

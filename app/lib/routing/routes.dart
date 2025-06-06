@@ -1,6 +1,6 @@
 abstract final class Routes {
   //Initial route
-  static const splash = '/';
+  static const entry = '/';
 
   // Public routes
   static const login = '/login';

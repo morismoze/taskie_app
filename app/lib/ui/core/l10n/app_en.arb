@@ -1,7 +1,8 @@
 {
   "signInTitleStart": "Happy Chores, Happy Kids.",
   "signInTitleEnd": "Happy Home.",
-  "signIn": "Sign in",
+  "singInSubtitle": "Organize routines, motivate children, and celebrate every win.",
+  "signInViaGoogle": "Sign in via Google",
   "signInGoogleCanceled": "Google sign-in cancelled. Please try again.",
   "somethingWentWrong": "Uh-oh! Something went wrong",
   "tryAgain": "Try again"

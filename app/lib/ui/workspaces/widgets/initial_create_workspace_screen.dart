@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:forui/forui.dart';
 
 import '../view_models/initial_create_workspace_viewmodel.dart';
 
@@ -42,13 +41,11 @@ class _InitialCreateWorkspaceScreenState
 
   @override
   Widget build(BuildContext context) {
-    return FScaffold(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('initial create workspace')],
-        ),
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text('initial create workspace')],
       ),
     );
   }

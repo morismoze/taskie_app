@@ -15,7 +15,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInTitleEnd => 'Happy Home.';
 
   @override
-  String get signIn => 'Sign in';
+  String get singInSubtitle =>
+      'Organize routines, motivate children, and celebrate every win.';
+
+  @override
+  String get signInViaGoogle => 'Sign in via Google';
 
   @override
   String get signInGoogleCanceled =>
