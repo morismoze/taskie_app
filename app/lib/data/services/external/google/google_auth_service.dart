@@ -26,14 +26,16 @@ class GoogleAuthService {
       final googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        return Result.error(GoogleSignInCancelledException());
+        return const Result.error(GoogleSignInCancelledException());
       }
 
       final googleAuth = await googleUser.authentication;
 
       if (googleAuth.idToken == null) {
         _log.severe("Invalid ID token", googleAuth);
-        return Result.error(Exception(GoogleSignInInvalidIdTokenException()));
+        return Result.error(
+          Exception(const GoogleSignInInvalidIdTokenException()),
+        );
       }
 
       // After the user was successfully authenticated, we want to disconnect him out
@@ -43,8 +45,9 @@ class GoogleAuthService {
 
       return Result.ok(googleAuth.idToken!);
     } on Exception catch (e) {
-      _log.severe("Failed Google sign-in or sign-out", e);
-      return Result.error(Exception(GoogleSignInUnknownException()));
+      print('LOGGGGGG: $e');
+      _log.severe("Failed Google sign-in or sign-out", e.toString());
+      return Result.error(Exception(const GoogleSignInUnknownException()));
     }
   }
 }

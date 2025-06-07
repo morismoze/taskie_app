@@ -5,5 +5,6 @@
   "signInViaGoogle": "Prijavi se putem Googlea",
   "signInGoogleCanceled": "Google prijava otkazana. Molimo pokušajte ponovno.",
   "somethingWentWrong": "Uh-oh! Nešto je pošlo po zlu",
-  "tryAgain": "Pokušajte ponovno"
+  "tryAgain": "Pokušajte ponovno",
+  "errorWhileLoadingWorkspaces": "Uh-oh! Došlo je do problema prilikom učitavanja vaših radnih prostora"
 }

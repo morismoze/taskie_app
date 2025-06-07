@@ -5,5 +5,6 @@
   "signInViaGoogle": "Sign in via Google",
   "signInGoogleCanceled": "Google sign-in cancelled. Please try again.",
   "somethingWentWrong": "Uh-oh! Something went wrong",
-  "tryAgain": "Try again"
+  "tryAgain": "Try again",
+  "errorWhileLoadingWorkspaces": "Uh-oh! We've had some troubles loading up your workspaces"
 }

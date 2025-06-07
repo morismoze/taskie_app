@@ -19,3 +19,4 @@ linter:
     - prefer_final_locals
     - prefer_relative_imports
     - file_names
+    - prefer_const_constructors

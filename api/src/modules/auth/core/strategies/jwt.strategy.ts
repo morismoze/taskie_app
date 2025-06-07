@@ -1,10 +1,10 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { OrNever } from 'src/common/types/or-never.type';
 import { AggregatedConfig } from 'src/config/config.type';
 import { JwtPayload } from './jwt-payload.type';
-import { OrNever } from 'src/common/types/or-never.type';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -32,9 +32,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     // Based on the way JWT signing works, we're guaranteed that we're receiving a valid token that
     // we have previously signed and issued to a valid user.
-
-    const logger = new Logger(JwtStrategy.name);
-    logger.error(`User ID: ${payload.sub}`);
 
     // Passport will build a user object based on the return value of our validate()
     // method, and attach it as a property `user` on the Request object.

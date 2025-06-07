@@ -30,4 +30,8 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tryAgain => 'Pokušajte ponovno';
+
+  @override
+  String get errorWhileLoadingWorkspaces =>
+      'Uh-oh! Došlo je do problema prilikom učitavanja vaših radnih prostora';
 }

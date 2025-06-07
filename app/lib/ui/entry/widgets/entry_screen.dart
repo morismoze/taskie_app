@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../routing/routes.dart';
+import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/entry_viewmodel.dart';
 
@@ -50,11 +54,11 @@ class _EntryScreenState extends State<EntryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipRRect(
+                const ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                   child: Image(image: AssetImage('assets/images/app_icon.png')),
                 ),
-                SizedBox(height: 18),
+                const SizedBox(height: 18),
                 ActivityIndicator(
                   radius: 16,
                   color: Theme.of(context).colorScheme.primary,
@@ -67,5 +71,24 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
-  void _onResult() {}
+  void _onResult() {
+    if (widget.viewModel.loadWorkspaces.completed) {
+      widget.viewModel.loadWorkspaces.clearResult();
+      if (widget.viewModel.workspaces.isEmpty) {
+        return context.go(Routes.createWorkspace);
+      }
+      return context.go(Routes.tasks);
+    }
+
+    if (widget.viewModel.loadWorkspaces.error) {
+      widget.viewModel.loadWorkspaces.clearResult();
+      AppSnackbar.of(context).showError(
+        message: context.localization.errorWhileLoadingWorkspaces,
+        actionData: AppSnackBarActionData(
+          label: context.localization.tryAgain,
+          onPressed: widget.viewModel.loadWorkspaces.execute,
+        ),
+      );
+    }
+  }
 }

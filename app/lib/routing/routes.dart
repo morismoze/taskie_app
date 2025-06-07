@@ -1,10 +1,10 @@
 abstract final class Routes {
-  //Initial route
+  // Initial route
   static const entry = '/';
 
   // Public routes
   static const login = '/login';
-  static const initialCreateWorkspace = '/create-workspace-initial';
+  static const createWorkspace = '/create-workspace';
 
   // Private routes
   static const tasks = '/tasks';

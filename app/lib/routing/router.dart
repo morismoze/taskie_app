@@ -30,7 +30,10 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       path: Routes.entry,
       builder: (context, state) {
         return EntryScreen(
-          viewModel: EntryViewModel(workspaceRepository: context.read()),
+          viewModel: EntryViewModel(
+            workspaceRepository: context.read(),
+            authStateRepository: context.read(),
+          ),
         );
       },
     ),
@@ -43,7 +46,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       },
     ),
     GoRoute(
-      path: Routes.initialCreateWorkspace,
+      path: Routes.createWorkspace,
       builder: (context, state) {
         return InitialCreateWorkspaceScreen(
           viewModel: InitialWorkspacesViewModel(authRepository: context.read()),
@@ -65,6 +68,7 @@ Future<String?> _redirect(BuildContext context, GoRouterState state) async {
   // if the user is not logged in, they need to login
   final loggedIn = await context.read<AuthStateRepository>().isAuthenticated;
   final loggingIn = state.matchedLocation == Routes.login;
+
   if (!loggedIn) {
     return Routes.login;
   }

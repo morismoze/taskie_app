@@ -1,14 +1,19 @@
+import '../../../data/repositories/auth/auth_state_repository.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../utils/command.dart';
 
 class EntryViewModel {
-  EntryViewModel({required WorkspaceRepository workspaceRepository})
-    : _workspaceRepository = workspaceRepository {
+  EntryViewModel({
+    required WorkspaceRepository workspaceRepository,
+    required AuthStateRepository authStateRepository,
+  }) : _workspaceRepository = workspaceRepository,
+       _authStateRepository = authStateRepository {
     loadWorkspaces = Command0(_loadWorkspaces)..execute();
   }
 
   final WorkspaceRepository _workspaceRepository;
+  final AuthStateRepository _authStateRepository;
 
   final List<Workspace> _workspaces = [];
 

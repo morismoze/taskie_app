@@ -139,6 +139,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get tryAgain;
+
+  /// No description provided for @errorWhileLoadingWorkspaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some troubles loading up your workspaces'**
+  String get errorWhileLoadingWorkspaces;
 }
 
 class _AppLocalizationsDelegate

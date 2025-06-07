@@ -9,6 +9,7 @@ import '../../../../utils/command.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_button.dart';
+import '../../../core/ui/app_snackbar.dart';
 import '../../../core/ui/blurred_circles_background.dart';
 import '../view_models/sign_in_viewmodel.dart';
 
@@ -72,15 +73,15 @@ class _SignInScreenState extends State<SignInScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image(image: AssetImage('assets/images/logo.png')),
-                Expanded(
+                const Image(image: AssetImage('assets/images/logo.png')),
+                const Expanded(
                   flex: 2,
                   child: Image(
                     image: AssetImage('assets/images/sign_in_illustration.png'),
                   ),
                 ),
 
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Column(
                   children: [
                     Text(
@@ -93,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     FractionallySizedBox(
                       widthFactor: 0.75,
                       child: Text(
@@ -104,7 +105,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 ListenableBuilder(
                   listenable: widget.viewModel.signInWithGoogle,
                   builder: (context, _) => AppButton(
@@ -133,8 +134,14 @@ class _SignInScreenState extends State<SignInScreen> {
 
       switch (errorResult.error) {
         case GoogleSignInCancelledException():
+          AppSnackbar.of(
+            context,
+          ).showError(message: context.localization.signInGoogleCanceled);
           break;
         default:
+          AppSnackbar.of(
+            context,
+          ).showError(message: context.localization.somethingWentWrong);
       }
 
       widget.viewModel.signInWithGoogle.clearResult();

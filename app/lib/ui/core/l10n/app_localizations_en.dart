@@ -30,4 +30,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tryAgain => 'Try again';
+
+  @override
+  String get errorWhileLoadingWorkspaces =>
+      'Uh-oh! We\'ve had some troubles loading up your workspaces';
 }
