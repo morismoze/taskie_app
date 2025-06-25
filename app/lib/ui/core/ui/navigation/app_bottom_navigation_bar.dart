@@ -5,40 +5,50 @@ import 'package:go_router/go_router.dart';
 import '../../../../routing/routes.dart';
 import '../../l10n/l10n_extensions.dart';
 import '../../theme/colors.dart';
+import '../../theme/dimens.dart';
+
+const kFloatingActionButtonSize = 56.0;
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final items = _getItems(context);
-
-    return Theme(
-      data: Theme.of(context).copyWith(
-        splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
+    return BottomAppBar(
+      padding: const EdgeInsets.only(
+        left: Dimens.paddingHorizontal,
+        right: Dimens.paddingHorizontal * 1.75 + kFloatingActionButtonSize,
+        top: 0,
+        bottom: 0,
       ),
-      child: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.grey3, width: 0.25)),
-        ),
-        child: BottomNavigationBar(
-          showUnselectedLabels: false,
-          backgroundColor: Theme.of(context).colorScheme.onSecondary,
-          unselectedItemColor: AppColors.grey3,
-          selectedFontSize: 10,
-          currentIndex: _calculateSelectedIndex(context),
-          onTap: (int idx) => _onItemTapped(idx, context),
-          items: items
-              .map(
-                (item) => BottomNavigationBarItem(
-                  icon: FaIcon(item.$1, size: 18),
-                  label: item.$2,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                ),
-              )
-              .toList(),
+      height: kFloatingActionButtonSize,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            splashFactory: NoSplash.splashFactory,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+          ),
+          child: BottomNavigationBar(
+            showUnselectedLabels: false,
+            backgroundColor: AppColors.purple1Light,
+            unselectedItemColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.4),
+            selectedFontSize: 10,
+            currentIndex: _calculateSelectedIndex(context),
+            onTap: (int idx) => _onItemTapped(idx, context),
+            items: _getItems(context)
+                .map(
+                  (item) => BottomNavigationBarItem(
+                    icon: FaIcon(item.$1, size: 18),
+                    label: item.$2,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ),
     );

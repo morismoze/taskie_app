@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logging/logging.dart';
 
@@ -11,8 +9,8 @@ import 'exceptions/google_sign_in_unknown_exception.dart';
 
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: Platform.isIOS ? Env.googleAuthClientId : null,
-    serverClientId: Platform.isAndroid ? Env.googleAuthClientId : null,
+    clientId: Env.googleAuthClientId,
+    serverClientId: Env.googleAuthClientId,
     scopes: const ['email', 'profile'],
   );
   final _log = Logger("GoogleAuthService");

@@ -21,8 +21,8 @@ class _TasksScreenState extends State<TasksScreen> {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.red,
       ),
     );
     widget.viewModel.loadUser.addListener(_onResult);
