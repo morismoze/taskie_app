@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 abstract final class AppColors {
   static const black1 = Color(0xFF101010);
-  static const blue1 = Color(0xFF2945FF);
-  static final blue1Light = Color.lerp(white1, blue1, 0.05);
+  static const purple1 = Color(0xFF5F34E2);
+  static const purple1Light = Color(0xFFEEE9FF);
   static const white1 = Color(0xFFFFFFFF);
   static const grey1 = Color(0xFFF2F2F2);
   static const grey2 = Color(0xFF4D4D4D);
@@ -14,7 +14,7 @@ abstract final class AppColors {
 
   static const lightColorScheme = ColorScheme(
     brightness: Brightness.light,
-    primary: AppColors.blue1,
+    primary: AppColors.purple1,
     onPrimary: AppColors.white1,
     secondary: AppColors.black1,
     onSecondary: AppColors.white1,
@@ -27,7 +27,7 @@ abstract final class AppColors {
   static const darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
     primary: AppColors.white1,
-    onPrimary: AppColors.blue1,
+    onPrimary: AppColors.purple1,
     secondary: AppColors.white1,
     onSecondary: AppColors.black1,
     surface: AppColors.black1,

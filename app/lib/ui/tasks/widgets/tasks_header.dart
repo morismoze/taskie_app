@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/util/color.dart';
 import '../view_models/tasks_viewmodel.dart';
+import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {
   const TasksHeader({super.key, required this.viewModel});
@@ -23,22 +25,41 @@ class TasksHeader extends StatelessWidget {
     final fullName = '${user.firstName} ${user.lastName}';
 
     return Padding(
-      padding: EdgeInsets.only(
-        left: Dimens.of(context).paddingScreenHorizontal,
-        right: Dimens.of(context).paddingScreenHorizontal,
-        top: Dimens.of(context).paddingScreenVertical,
-        bottom: Dimens.paddingVertical,
+      padding: EdgeInsets.symmetric(
+        vertical: Dimens.of(context).paddingScreenVertical,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AppAvatar(
-            text: firstNameFirstLetter,
-            backgroundColor: ColorGenerator.generateColorFromString(fullName),
-            imageUrl: user.profileImageUrl,
+          Row(
+            children: [
+              AppAvatar(
+                text: firstNameFirstLetter,
+                backgroundColor: ColorGenerator.generateColorFromString(
+                  fullName,
+                ),
+                imageUrl: user.profileImageUrl,
+              ),
+              const SizedBox(width: 13),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.localization.tasksHello,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelMedium!.copyWith(fontSize: 14),
+                  ),
+                  Text(
+                    fullName,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
+              ),
+            ],
           ),
-          const Text('Add task'),
+          const WorkspaceSwitcher(),
         ],
       ),
     );

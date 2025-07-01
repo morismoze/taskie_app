@@ -82,4 +82,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorWhileCreatingWorkspace =>
       'Uh-oh! We\'ve had some trouble creating your workspace';
+
+  @override
+  String get tasksHello => 'Hello!';
 }

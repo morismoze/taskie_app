@@ -60,25 +60,19 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
           child: SafeArea(
-            child: Padding(
-              padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
-                bottom: Dimens.paddingVertical * 2,
-              ),
-              // LayoutBuilder is used here because SingleChildScrollView takes minimum
-              // space and doesn't "respect" Columns main axis alignment.
-              child: LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Padding(
+                    padding: Dimens.of(context).edgeInsetsScreenSymmetric,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         const Image(
                           image: AssetImage(Assets.createWorkspaceIllustration),
                         ),
+                        const SizedBox(height: 20),
                         Column(
                           children: [
                             Text(
@@ -117,6 +111,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 60),
                         _buildForm(),
                       ],
                     ),
@@ -190,12 +185,11 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             validator: _validateName,
             textInputAction: TextInputAction.next,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 15),
           AppTextFormField(
             controller: _descriptionController,
             label: context.localization.workspaceDescriptionLabel,
             validator: _validateDescription,
-            minLines: 3,
             maxLines: null,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.go,

@@ -229,6 +229,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble creating your workspace'**
   String get errorWhileCreatingWorkspace;
+
+  /// No description provided for @tasksHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello!'**
+  String get tasksHello;
 }
 
 class _AppLocalizationsDelegate

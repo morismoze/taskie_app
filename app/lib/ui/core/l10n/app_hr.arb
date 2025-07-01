@@ -20,5 +20,6 @@
   "workspaceCreateNameMaxLength": "Naziv može imati najviše 50 znakova",
   "workspaceCreateDescriptionMaxLength": "Opis može imati najviše 250 znakova",
   "requiredField": "Ovo polje je obvezno",
-  "errorWhileCreatingWorkspace": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora"
+  "errorWhileCreatingWorkspace": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora",
+  "tasksHello": "Pozdrav!"
 }
