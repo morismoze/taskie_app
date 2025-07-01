@@ -5,6 +5,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/util/color.dart';
 import '../view_models/tasks_viewmodel.dart';
+import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {
   const TasksHeader({super.key, required this.viewModel});
@@ -40,7 +41,7 @@ class TasksHeader extends StatelessWidget {
                 ),
                 imageUrl: user.profileImageUrl,
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 13),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -58,7 +59,7 @@ class TasksHeader extends StatelessWidget {
               ),
             ],
           ),
-          const Text('Add task'),
+          const WorkspaceSwitcher(),
         ],
       ),
     );

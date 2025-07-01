@@ -43,31 +43,29 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SizedBox.expand(
-        child: BlurredCirclesBackground(
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: Dimens.of(context).paddingScreenHorizontal,
-                right: Dimens.of(context).paddingScreenHorizontal,
-                bottom: kBottomNavigationBarHeight + Dimens.paddingVertical,
-              ),
-              child: Column(
-                children: [
-                  ListenableBuilder(
-                    listenable: widget.viewModel.loadUser,
-                    builder: (context, child) {
-                      if (widget.viewModel.loadUser.completed) {
-                        return child!;
-                      }
-                      return const SizedBox.shrink();
-                    },
-                    child: TasksHeader(viewModel: widget.viewModel),
-                  ),
-                ],
-              ),
+    return SizedBox.expand(
+      child: BlurredCirclesBackground(
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: Dimens.of(context).paddingScreenHorizontal,
+              right: Dimens.of(context).paddingScreenHorizontal,
+              bottom: kBottomNavigationBarHeight + Dimens.paddingVertical,
+            ),
+            child: Column(
+              children: [
+                ListenableBuilder(
+                  listenable: widget.viewModel.loadUser,
+                  builder: (context, child) {
+                    if (widget.viewModel.loadUser.completed) {
+                      return child!;
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  child: TasksHeader(viewModel: widget.viewModel),
+                ),
+              ],
             ),
           ),
         ),

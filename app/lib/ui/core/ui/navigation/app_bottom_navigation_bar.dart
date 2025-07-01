@@ -6,8 +6,7 @@ import '../../../../routing/routes.dart';
 import '../../l10n/l10n_extensions.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
-
-const kFloatingActionButtonSize = 56.0;
+import '../../util/constants.dart';
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({super.key});
@@ -17,11 +16,11 @@ class AppBottomNavigationBar extends StatelessWidget {
     return BottomAppBar(
       padding: const EdgeInsets.only(
         left: Dimens.paddingHorizontal,
-        right: Dimens.paddingHorizontal * 1.75 + kFloatingActionButtonSize,
+        right: Dimens.paddingHorizontal * 1.75 + kAppFloatingActionButtonSize,
         top: 0,
         bottom: 0,
       ),
-      height: kFloatingActionButtonSize,
+      height: kAppFloatingActionButtonSize,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Theme(
