@@ -235,6 +235,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hello!'**
   String get tasksHello;
+
+  /// No description provided for @tasksDrawerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspaces'**
+  String get tasksDrawerTitle;
 }
 
 class _AppLocalizationsDelegate

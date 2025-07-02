@@ -85,4 +85,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksHello => 'Hello!';
+
+  @override
+  String get tasksDrawerTitle => 'Workspaces';
 }

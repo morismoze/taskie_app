@@ -4,7 +4,7 @@ abstract final class Dimens {
   const Dimens();
 
   /// General horizontal padding used to separate UI items
-  static const paddingHorizontal = 20.0;
+  static const paddingHorizontal = 16.0;
 
   /// General vertical padding used to separate UI items
   static const paddingVertical = 24.0;

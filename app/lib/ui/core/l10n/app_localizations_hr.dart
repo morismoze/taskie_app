@@ -85,4 +85,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksHello => 'Pozdrav!';
+
+  @override
+  String get tasksDrawerTitle => 'Radni prostori';
 }

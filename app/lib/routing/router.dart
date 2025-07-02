@@ -78,7 +78,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
         GoRoute(
           path: Routes.leaderboard,
           pageBuilder: (context, state) {
-            return const NoTransitionPage(child: Text('goals'));
+            return const NoTransitionPage(child: Text('leaderboard'));
           },
         ),
         GoRoute(

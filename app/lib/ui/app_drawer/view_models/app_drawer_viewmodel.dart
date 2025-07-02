@@ -8,19 +8,19 @@ import '../../../utils/command.dart';
 class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({required WorkspaceRepository workspaceRepository})
     : _workspaceRepository = workspaceRepository {
-    load = Command0(_load)..execute();
+    loadWorkspaces = Command0(_loadWorkspaces)..execute();
   }
 
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('AppDrawerViewModel');
 
-  late Command0 load;
+  late Command0 loadWorkspaces;
 
   List<Workspace> _workspaces = [];
 
   List<Workspace> get workspaces => _workspaces;
 
-  Future<Result<void>> _load() async {
+  Future<Result<void>> _loadWorkspaces() async {
     final result = await _workspaceRepository.getWorkspaces();
 
     switch (result) {

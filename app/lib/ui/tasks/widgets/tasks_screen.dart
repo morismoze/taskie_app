@@ -59,11 +59,10 @@ class _TasksScreenState extends State<TasksScreen> {
                   listenable: widget.viewModel.loadUser,
                   builder: (context, child) {
                     if (widget.viewModel.loadUser.completed) {
-                      return child!;
+                      return TasksHeader(viewModel: widget.viewModel);
                     }
                     return const SizedBox.shrink();
                   },
-                  child: TasksHeader(viewModel: widget.viewModel),
                 ),
               ],
             ),

@@ -21,5 +21,6 @@
   "workspaceCreateDescriptionMaxLength": "Description can have at most 250 characters",
   "requiredField": "This field is required",
   "errorWhileCreatingWorkspace": "Uh-oh! We've had some trouble creating your workspace",
-  "tasksHello": "Hello!"
+  "tasksHello": "Hello!",
+  "tasksDrawerTitle": "Workspaces"
 }
