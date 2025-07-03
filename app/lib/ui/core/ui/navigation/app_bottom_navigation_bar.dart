@@ -56,7 +56,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   static int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
-      final path when path.startsWith(Routes.tasks) => 0,
+      final path when path.startsWith(Routes.tasksRelative) => 0,
       final path when path.startsWith(Routes.leaderboard) => 1,
       final path when path.startsWith(Routes.goals) => 2,
       _ => 0,
@@ -66,7 +66,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        GoRouter.of(context).go(Routes.tasks);
+        GoRouter.of(context).go(Routes.tasksRelative);
       case 1:
         GoRouter.of(context).go(Routes.leaderboard);
       case 2:

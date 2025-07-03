@@ -8,4 +8,10 @@ abstract class WorkspaceRepository {
     required String name,
     String? description,
   });
+
+  Future<Result<String>> createWorkspaceInviteLink({
+    required String workspaceId,
+  });
+
+  Future<Result<void>> leaveWorkspace({required String workspaceId});
 }

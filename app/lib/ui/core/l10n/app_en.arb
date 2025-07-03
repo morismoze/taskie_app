@@ -1,4 +1,5 @@
 {
+  "cancel": "Cancel",
   "signInTitleStart": "Happy Chores, Happy Kids.",
   "signInTitleEnd": "Happy Home.",
   "signInSubtitle": "Organize routines, motivate children, and celebrate every win.",
@@ -22,5 +23,10 @@
   "requiredField": "This field is required",
   "errorWhileCreatingWorkspace": "Uh-oh! We've had some trouble creating your workspace",
   "tasksHello": "Hello!",
-  "tasksDrawerTitle": "Workspaces"
+  "appDrawerTitle": "Workspaces",
+  "appDrawerInviteMembers": "Invite new members",
+  "appDrawerLeaveWorkspace": "Leave workspace",
+  "appDrawerLeaveWorkspaceModalMessage": "Are you sure you want to leave this workspace?",
+  "appDrawerLeaveWorkspaceModalCta": "Leave",
+  "appDrawerCreateNewWorkspace": "Create new workspace"
 }

@@ -1,6 +1,7 @@
 import '../../../domain/models/workspace.dart';
 import '../../../utils/command.dart';
 import '../../services/api/workspace/models/request/create_workspace_request.dart';
+import '../../services/api/workspace/models/response/create_workspace_invite_link_response.dart';
 import '../../services/api/workspace/models/response/workspace_response.dart';
 import '../../services/api/workspace/workspace_api_service.dart';
 import 'workspace_repository.dart';
@@ -55,6 +56,42 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
         case Ok<WorkspaceResponse>():
           return const Result.ok(null);
         case Error<WorkspaceResponse>():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<String>> createWorkspaceInviteLink({
+    required String workspaceId,
+  }) async {
+    try {
+      final result = await _workspaceApiService.createWorkspaceInviteLink(
+        workspaceId,
+      );
+
+      switch (result) {
+        case Ok<CreateWorkspaceInviteLinkResponse>():
+          return Result.ok(result.value.inviteLink);
+        case Error<CreateWorkspaceInviteLinkResponse>():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<void>> leaveWorkspace({required String workspaceId}) async {
+    try {
+      final result = await _workspaceApiService.leaveWorkspace(workspaceId);
+
+      switch (result) {
+        case Ok():
+          return const Result.ok(null);
+        case Error():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

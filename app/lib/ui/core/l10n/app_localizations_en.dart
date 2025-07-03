@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
   String get signInTitleStart => 'Happy Chores, Happy Kids.';
 
   @override
@@ -87,5 +90,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksHello => 'Hello!';
 
   @override
-  String get tasksDrawerTitle => 'Workspaces';
+  String get appDrawerTitle => 'Workspaces';
+
+  @override
+  String get appDrawerInviteMembers => 'Invite new members';
+
+  @override
+  String get appDrawerLeaveWorkspace => 'Leave workspace';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalMessage =>
+      'Are you sure you want to leave this workspace?';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalCta => 'Leave';
+
+  @override
+  String get appDrawerCreateNewWorkspace => 'Create new workspace';
 }

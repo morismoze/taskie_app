@@ -127,7 +127,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
 
   void _onResult() {
     if (widget.viewModel.createWorkspace.completed) {
-      GoRouter.of(context).go(Routes.tasks);
+      GoRouter.of(context).go(Routes.tasksRelative);
       widget.viewModel.createWorkspace.clearResult();
     }
 

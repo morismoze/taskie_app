@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('hr'),
   ];
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -236,11 +242,41 @@ abstract class AppLocalizations {
   /// **'Hello!'**
   String get tasksHello;
 
-  /// No description provided for @tasksDrawerTitle.
+  /// No description provided for @appDrawerTitle.
   ///
   /// In en, this message translates to:
   /// **'Workspaces'**
-  String get tasksDrawerTitle;
+  String get appDrawerTitle;
+
+  /// No description provided for @appDrawerInviteMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite new members'**
+  String get appDrawerInviteMembers;
+
+  /// No description provided for @appDrawerLeaveWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave workspace'**
+  String get appDrawerLeaveWorkspace;
+
+  /// No description provided for @appDrawerLeaveWorkspaceModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to leave this workspace?'**
+  String get appDrawerLeaveWorkspaceModalMessage;
+
+  /// No description provided for @appDrawerLeaveWorkspaceModalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get appDrawerLeaveWorkspaceModalCta;
+
+  /// No description provided for @appDrawerCreateNewWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new workspace'**
+  String get appDrawerCreateNewWorkspace;
 }
 
 class _AppLocalizationsDelegate

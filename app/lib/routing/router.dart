@@ -10,8 +10,10 @@ import '../ui/entry/view_models/entry_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
 import '../ui/tasks/view_models/tasks_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
-import '../ui/workspaces/view_models/create_workspace_viewmodel.dart';
-import '../ui/workspaces/widgets/create_workspace_screen.dart';
+import '../ui/workspace_create/view_models/create_workspace_viewmodel.dart';
+import '../ui/workspace_create/widgets/create_workspace_screen.dart';
+import '../ui/workspace_invite/view_models/workspace_invite_viewmodel.dart';
+import '../ui/workspace_invite/widgets/workspace_invite_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -49,15 +51,35 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       },
     ),
     GoRoute(
-      path: Routes.createWorkspace,
-      builder: (context, state) {
-        return CreateWorkspaceScreen(
-          viewModel: CreateWorkspaceViewModel(
-            workspaceRepository: context.read(),
-            userRepository: context.read(),
-          ),
-        );
-      },
+      path: Routes.workspacesRelative,
+      builder: (context, state) => const SizedBox.shrink(),
+      routes: [
+        GoRoute(
+          path: 'create',
+          builder: (context, state) {
+            return CreateWorkspaceScreen(
+              viewModel: CreateWorkspaceViewModel(
+                workspaceRepository: context.read(),
+                userRepository: context.read(),
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          path: ':id/invite',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final viewModel = WorkspaceInviteViewModel(
+              workspaceRepository: context.read(),
+            );
+
+            // Initiate new invite link fetch when opening workspace invite screen
+            viewModel.createInviteLink.execute(id);
+
+            return WorkspaceInviteScreen(viewModel: viewModel);
+          },
+        ),
+      ],
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -66,7 +88,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       },
       routes: [
         GoRoute(
-          path: Routes.tasks,
+          path: Routes.tasksRelative,
           pageBuilder: (context, state) {
             return NoTransitionPage(
               child: TasksScreen(

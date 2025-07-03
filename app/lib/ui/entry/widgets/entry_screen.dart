@@ -97,7 +97,7 @@ class _EntryScreenState extends State<EntryScreen> {
     if (widget.viewModel.userHasNoWorkspaces) {
       context.go(Routes.createWorkspace);
     } else {
-      context.go(Routes.tasks);
+      context.go(Routes.tasksRelative);
     }
   }
 }

@@ -49,7 +49,7 @@ class UnauthorizedInterceptor extends Interceptor {
     // is not chance of loop 401 problem.
 
     if (err.requestOptions.path.contains('/auth/logout')) {
-      _authStateRepository.setAuthenticated(SetAuthStateArgumentsFalse());
+      _authStateRepository.setAuthenticated(const SetAuthStateArgumentsFalse());
       return handler.next(err);
     }
 
@@ -142,7 +142,7 @@ class UnauthorizedInterceptor extends Interceptor {
     try {
       await _mainClient.delete(ApiEndpoints.logout);
     } finally {
-      _authStateRepository.setAuthenticated(SetAuthStateArgumentsFalse());
+      _authStateRepository.setAuthenticated(const SetAuthStateArgumentsFalse());
     }
   }
 }

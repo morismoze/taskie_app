@@ -1,4 +1,5 @@
 {
+  "cancel": "Otkaži",
   "signInTitleStart": "Učenje odgovornosti.",
   "signInTitleEnd": "Zabava nagrađivanja.",
   "signInSubtitle": "Organizirajte rutine, motivirajte djecu i slavite svaku pobjedu.",
@@ -22,5 +23,10 @@
   "requiredField": "Ovo polje je obvezno",
   "errorWhileCreatingWorkspace": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora",
   "tasksHello": "Pozdrav!",
-  "tasksDrawerTitle": "Radni prostori"
+  "appDrawerTitle": "Radni prostori",
+  "appDrawerInviteMembers": "Pozovi nove članove",
+  "appDrawerLeaveWorkspace": "Napusti radni prostor",
+  "appDrawerLeaveWorkspaceModalMessage": "Jeste li sigurni da želite napustiti ovaj radni prostor?",
+  "appDrawerLeaveWorkspaceModalCta": "Napusti",
+  "appDrawerCreateNewWorkspace": "Stvori novi radni prostor"
 }

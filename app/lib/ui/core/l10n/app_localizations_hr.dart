@@ -9,6 +9,9 @@ class AppLocalizationsHr extends AppLocalizations {
   AppLocalizationsHr([String locale = 'hr']) : super(locale);
 
   @override
+  String get cancel => 'Otkaži';
+
+  @override
   String get signInTitleStart => 'Učenje odgovornosti.';
 
   @override
@@ -87,5 +90,21 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksHello => 'Pozdrav!';
 
   @override
-  String get tasksDrawerTitle => 'Radni prostori';
+  String get appDrawerTitle => 'Radni prostori';
+
+  @override
+  String get appDrawerInviteMembers => 'Pozovi nove članove';
+
+  @override
+  String get appDrawerLeaveWorkspace => 'Napusti radni prostor';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalMessage =>
+      'Jeste li sigurni da želite napustiti ovaj radni prostor?';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
+
+  @override
+  String get appDrawerCreateNewWorkspace => 'Stvori novi radni prostor';
 }

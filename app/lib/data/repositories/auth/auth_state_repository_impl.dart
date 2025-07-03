@@ -40,37 +40,33 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
   void setAuthenticated(SetAuthStateArguments args) async {
     switch (args) {
       case SetAuthStateArgumentsFalse():
-        if (_isAuthenticated != false) {
-          _isAuthenticated = false;
-          notifyListeners();
+        final setAccessTokenResult = await _secureStorageService.setAccessToken(
+          null,
+        );
+        final setRefreshTokenResult = await _secureStorageService
+            .setRefreshToken(null);
 
-          final setAccessTokenResult = await _secureStorageService
-              .setAccessToken(null);
-          final setRefreshTokenResult = await _secureStorageService
-              .setRefreshToken(null);
-
-          if (setAccessTokenResult is Error || setRefreshTokenResult is Error) {
-            _log.severe(
-              'Failed to clear access and/or refresh token from storage',
-            );
-          }
+        if (setAccessTokenResult is Error || setRefreshTokenResult is Error) {
+          _log.severe(
+            'Failed to clear access and/or refresh token from storage',
+          );
         }
+
+        _isAuthenticated = null;
+        notifyListeners();
       case SetAuthStateArgumentsTrue():
-        if (_isAuthenticated != true) {
-          _isAuthenticated = true;
-          notifyListeners();
+        final setAccessTokenResult = await _secureStorageService.setAccessToken(
+          args.accessToken,
+        );
+        final setRefreshTokenResult = await _secureStorageService
+            .setRefreshToken(args.refreshToken);
 
-          final setAccessTokenResult = await _secureStorageService
-              .setAccessToken(args.accessToken);
-          final setRefreshTokenResult = await _secureStorageService
-              .setRefreshToken(args.refreshToken);
-
-          if (setAccessTokenResult is Error || setRefreshTokenResult is Error) {
-            _log.severe(
-              'Failed to set access and/or refresh token from storage',
-            );
-          }
+        if (setAccessTokenResult is Error || setRefreshTokenResult is Error) {
+          _log.severe('Failed to set access and/or refresh token from storage');
         }
+
+        _isAuthenticated = true;
+        notifyListeners();
     }
   }
 }

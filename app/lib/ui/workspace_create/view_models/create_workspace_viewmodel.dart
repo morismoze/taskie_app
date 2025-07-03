@@ -13,9 +13,7 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
   }) : _workspaceRepository = workspaceRepository,
        _userRepository = userRepository {
     load = Command0(_load)..execute();
-    createWorkspace = Command1<void, (String name, String? description)>(
-      _createWorkspace,
-    );
+    createWorkspace = Command1(_createWorkspace);
   }
 
   final WorkspaceRepository _workspaceRepository;

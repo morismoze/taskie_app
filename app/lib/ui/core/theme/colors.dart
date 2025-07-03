@@ -5,7 +5,7 @@ abstract final class AppColors {
   static const purple1 = Color(0xFF5F34E2);
   static const purple1Light = Color(0xFFEEE9FF);
   static const white1 = Color(0xFFFFFFFF);
-  static const grey1 = Color(0xFFF2F2F2);
+  static const grey1 = Color.fromARGB(255, 225, 225, 225);
   static const grey2 = Color(0xFF4D4D4D);
   static const grey3 = Color(0xFFA4A4A4);
   static const whiteTransparent = Color(0x4DFFFFFF);

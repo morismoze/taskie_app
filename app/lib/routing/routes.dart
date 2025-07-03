@@ -4,12 +4,14 @@ abstract final class Routes {
 
   // Public routes
   static const login = '/login';
-  static const createWorkspace = '/create-workspace';
+  static const workspacesRelative = '/workspaces';
+  static const createWorkspace = '$workspacesRelative/create';
 
   // Private routes
-  static const tasks = '/tasks';
-  static String taskWithId(int id) => '$tasks/$id';
+  static const tasksRelative = '/tasks';
+  static String taskWithId(String id) => '$tasksRelative/$id';
   static const leaderboard = '/leaderboard';
   static const goals = '/goals';
-  static String goalWithId(int id) => '$goals/$id';
+  static String goalWithId(String id) => '$goals/$id';
+  static String workspaceInvite(String id) => '$workspacesRelative/$id/invite';
 }

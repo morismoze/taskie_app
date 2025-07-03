@@ -13,6 +13,8 @@ class AppShellScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // This is a place which can be optimized - a new instance of AppDrawerViewModel
+    // is generated on every navigation inside the ShellRoute.
     final appDrawerViewModel = AppDrawerViewModel(
       workspaceRepository: context.read(),
     );

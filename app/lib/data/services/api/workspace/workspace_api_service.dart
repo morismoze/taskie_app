@@ -3,6 +3,8 @@ import '../../../../utils/command.dart';
 import '../api_client.dart';
 import '../api_response.dart';
 import 'models/request/create_workspace_request.dart';
+import 'models/request/workspace_id_path_param.dart';
+import 'models/response/create_workspace_invite_link_response.dart';
 import 'models/response/workspace_response.dart';
 
 class WorkspaceApiService {
@@ -42,6 +44,38 @@ class WorkspaceApiService {
       );
 
       return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<CreateWorkspaceInviteLinkResponse>> createWorkspaceInviteLink(
+    WorkspaceIdPathParam workspaceId,
+  ) async {
+    try {
+      final response = await _apiClient.client.post(
+        ApiEndpoints.createWorkspaceInviteLink(workspaceId),
+      );
+
+      final apiResponse =
+          ApiResponse<CreateWorkspaceInviteLinkResponse>.fromJson(
+            response.data,
+            (json) => CreateWorkspaceInviteLinkResponse.fromJson(
+              json as Map<String, dynamic>,
+            ),
+          );
+
+      return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<void>> leaveWorkspace(WorkspaceIdPathParam workspaceId) async {
+    try {
+      await _apiClient.client.delete(ApiEndpoints.leaveWorkspace(workspaceId));
+
+      return const Result.ok(null);
     } on Exception catch (e) {
       return Result.error(e);
     }
