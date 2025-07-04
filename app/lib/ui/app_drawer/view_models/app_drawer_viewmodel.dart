@@ -22,12 +22,17 @@ class AppDrawerViewModel extends ChangeNotifier {
 
   List<Workspace> get workspaces => _workspaces;
 
+  Future<String?> get activeWorkspaceId =>
+      _workspaceRepository.activeWorkspaceId;
+
   String? _inviteLink;
 
   String? get inviteLink => _inviteLink;
 
-  Future<Result<void>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces();
+  Future<Result<void>> _loadWorkspaces({bool forceFetch = false}) async {
+    final result = await _workspaceRepository.getWorkspaces(
+      forceFetch: forceFetch,
+    );
 
     switch (result) {
       case Ok():
@@ -45,9 +50,10 @@ class AppDrawerViewModel extends ChangeNotifier {
       workspaceId: workspaceId,
     );
 
+    // After leaving the workspace we need to re-fetch workspaces
     switch (result) {
       case Ok():
-        break;
+        _loadWorkspaces(forceFetch: true);
       case Error():
         _log.warning('Failed to create workspace invite link', result.error);
     }

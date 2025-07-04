@@ -21,6 +21,7 @@
   "workspaceCreateNameMaxLength": "Naziv može imati najviše 50 znakova",
   "workspaceCreateDescriptionMaxLength": "Opis može imati najviše 250 znakova",
   "requiredField": "Ovo polje je obvezno",
+  "optional": "opcionalno",
   "errorWhileCreatingWorkspace": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora",
   "tasksHello": "Pozdrav!",
   "appDrawerTitle": "Radni prostori",
@@ -28,5 +29,6 @@
   "appDrawerLeaveWorkspace": "Napusti radni prostor",
   "appDrawerLeaveWorkspaceModalMessage": "Jeste li sigurni da želite napustiti ovaj radni prostor?",
   "appDrawerLeaveWorkspaceModalCta": "Napusti",
+  "errorWhileLeavingWorkspace": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
   "appDrawerCreateNewWorkspace": "Stvori novi radni prostor"
 }

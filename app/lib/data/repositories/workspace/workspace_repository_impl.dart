@@ -1,37 +1,88 @@
+import 'package:logging/logging.dart';
+
 import '../../../domain/models/workspace.dart';
 import '../../../utils/command.dart';
 import '../../services/api/workspace/models/request/create_workspace_request.dart';
 import '../../services/api/workspace/models/response/create_workspace_invite_link_response.dart';
 import '../../services/api/workspace/models/response/workspace_response.dart';
 import '../../services/api/workspace/workspace_api_service.dart';
+import '../../services/local/shared_preferences_service.dart';
 import 'workspace_repository.dart';
 
-class WorkspaceRepositoryImpl implements WorkspaceRepository {
-  WorkspaceRepositoryImpl({required WorkspaceApiService workspaceApiService})
-    : _workspaceApiService = workspaceApiService;
+class WorkspaceRepositoryImpl extends WorkspaceRepository {
+  WorkspaceRepositoryImpl({
+    required WorkspaceApiService workspaceApiService,
+    required SharedPreferencesService sharedPreferencesService,
+  }) : _workspaceApiService = workspaceApiService,
+       _sharedPreferencesService = sharedPreferencesService;
 
   final WorkspaceApiService _workspaceApiService;
+  final SharedPreferencesService _sharedPreferencesService;
+
+  final _log = Logger('WorkspaceRepository');
+  List<Workspace>? _cachedData;
+  String? _activeWorkspaceId;
 
   @override
-  Future<Result<List<Workspace>>> getWorkspaces() async {
-    // We don't cache workspaces, because fetching workspaces on the Entry screen
-    // and them being in sync with the backend is crucial
+  Future<void> setActiveWorkspaceId(String workspaceId) async {
+    await _sharedPreferencesService.setActiveWorkspaceId(
+      workspaceId: workspaceId,
+    );
+    _activeWorkspaceId = workspaceId;
+    notifyListeners();
+  }
+
+  @override
+  Future<String?> get activeWorkspaceId async {
+    if (_activeWorkspaceId != null) {
+      return _activeWorkspaceId!;
+    }
+
+    final result = await _sharedPreferencesService.getActiveWorkspaceId();
+    switch (result) {
+      case Ok<String?>():
+        _activeWorkspaceId = result.value;
+        notifyListeners();
+        return _activeWorkspaceId;
+      case Error<String?>():
+        _log.severe(
+          'Failed to read active workspace ID from shared prefs',
+          result.error,
+        );
+        return null;
+    }
+  }
+
+  @override
+  Future<Result<List<Workspace>>> getWorkspaces({
+    bool forceFetch = false,
+  }) async {
+    if (_cachedData != null && !forceFetch) {
+      return Result.ok(_cachedData!);
+    }
+
     try {
       final result = await _workspaceApiService.getWorkspaces();
       switch (result) {
         case Ok<List<WorkspaceResponse>>():
-          return Result.ok(
-            result.value
-                .map(
-                  (workspace) => Workspace(
-                    id: workspace.id,
-                    name: workspace.name,
-                    description: workspace.description,
-                    pictureUrl: workspace.pictureUrl,
-                  ),
-                )
-                .toList(),
-          );
+          final mappedData = result.value
+              .map(
+                (workspace) => Workspace(
+                  id: workspace.id,
+                  name: workspace.name,
+                  description: workspace.description,
+                  pictureUrl: workspace.pictureUrl,
+                ),
+              )
+              .toList();
+          _cachedData = mappedData;
+
+          if (_activeWorkspaceId == null && mappedData.isNotEmpty) {
+            final firstWorkspaceId = mappedData[0].id;
+            setActiveWorkspaceId(firstWorkspaceId);
+          }
+
+          return Result.ok(mappedData);
         case Error<List<WorkspaceResponse>>():
           return Result.error(result.error);
       }
@@ -41,7 +92,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Result<void>> createWorkspace({
+  Future<Result<Workspace>> createWorkspace({
     required String name,
     String? description,
   }) async {
@@ -54,7 +105,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
       switch (result) {
         case Ok<WorkspaceResponse>():
-          return const Result.ok(null);
+          final workspace = result.value;
+          final mappedData = Workspace(
+            id: workspace.id,
+            name: workspace.name,
+            description: workspace.description,
+            pictureUrl: workspace.pictureUrl,
+          );
+
+          setActiveWorkspaceId(mappedData.id);
+
+          return Result.ok(mappedData);
         case Error<WorkspaceResponse>():
           return Result.error(result.error);
       }

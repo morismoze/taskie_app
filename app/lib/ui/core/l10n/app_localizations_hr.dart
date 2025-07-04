@@ -83,6 +83,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get requiredField => 'Ovo polje je obvezno';
 
   @override
+  String get optional => 'opcionalno';
+
+  @override
   String get errorWhileCreatingWorkspace =>
       'Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora';
 
@@ -104,6 +107,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
+
+  @override
+  String get errorWhileLeavingWorkspace =>
+      'Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora';
 
   @override
   String get appDrawerCreateNewWorkspace => 'Stvori novi radni prostor';

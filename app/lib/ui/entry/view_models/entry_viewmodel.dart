@@ -7,7 +7,7 @@ import '../../../utils/command.dart';
 class EntryViewModel extends ChangeNotifier {
   EntryViewModel({required WorkspaceRepository workspaceRepository})
     : _workspaceRepository = workspaceRepository {
-    load = Command0(_load)..execute();
+    loadWorkspaces = Command0(_loadWorkspaces)..execute();
   }
 
   final WorkspaceRepository _workspaceRepository;
@@ -17,9 +17,12 @@ class EntryViewModel extends ChangeNotifier {
 
   bool get userHasNoWorkspaces => _userHasNoWorkspaces;
 
-  late Command0 load;
+  Future<String?> get activeWorkspaceId =>
+      _workspaceRepository.activeWorkspaceId;
 
-  Future<Result<void>> _load() async {
+  late Command0 loadWorkspaces;
+
+  Future<Result<void>> _loadWorkspaces() async {
     final result = await _workspaceRepository.getWorkspaces();
 
     switch (result) {

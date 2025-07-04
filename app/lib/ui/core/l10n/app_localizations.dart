@@ -230,6 +230,12 @@ abstract class AppLocalizations {
   /// **'This field is required'**
   String get requiredField;
 
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get optional;
+
   /// No description provided for @errorWhileCreatingWorkspace.
   ///
   /// In en, this message translates to:
@@ -271,6 +277,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Leave'**
   String get appDrawerLeaveWorkspaceModalCta;
+
+  /// No description provided for @errorWhileLeavingWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble removing you from the workspace'**
+  String get errorWhileLeavingWorkspace;
 
   /// No description provided for @appDrawerCreateNewWorkspace.
   ///

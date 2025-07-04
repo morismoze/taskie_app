@@ -29,22 +29,22 @@ class _EntryScreenState extends State<EntryScreen> {
         statusBarColor: Colors.transparent,
       ),
     );
-    widget.viewModel.load.addListener(_onLoadWorkspacesResult);
+    widget.viewModel.loadWorkspaces.addListener(_onLoadWorkspacesResult);
     widget.viewModel.addListener(_onViewModelChanged);
   }
 
   @override
   void didUpdateWidget(covariant EntryScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.load.addListener(_onLoadWorkspacesResult);
-    oldWidget.viewModel.load.removeListener(_onLoadWorkspacesResult);
+    widget.viewModel.loadWorkspaces.addListener(_onLoadWorkspacesResult);
+    oldWidget.viewModel.loadWorkspaces.removeListener(_onLoadWorkspacesResult);
     oldWidget.viewModel.removeListener(_onViewModelChanged);
     widget.viewModel.addListener(_onViewModelChanged);
   }
 
   @override
   void dispose() {
-    widget.viewModel.load.removeListener(_onLoadWorkspacesResult);
+    widget.viewModel.loadWorkspaces.removeListener(_onLoadWorkspacesResult);
     widget.viewModel.removeListener(_onViewModelChanged);
     super.dispose();
   }
@@ -77,14 +77,14 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   void _onLoadWorkspacesResult() {
-    if (widget.viewModel.load.completed) {
-      widget.viewModel.load.clearResult();
+    if (widget.viewModel.loadWorkspaces.completed) {
+      widget.viewModel.loadWorkspaces.clearResult();
     }
 
-    if (widget.viewModel.load.error) {
+    if (widget.viewModel.loadWorkspaces.error) {
       // If there was an error while loading up workspaces, we show a error
       // snackbar and redirect user to the login page
-      widget.viewModel.load.clearResult();
+      widget.viewModel.loadWorkspaces.clearResult();
       AppSnackbar.showError(
         context: context,
         message: context.localization.errorWhileLoadingWorkspaces,
@@ -93,11 +93,21 @@ class _EntryScreenState extends State<EntryScreen> {
     }
   }
 
-  void _onViewModelChanged() {
+  void _onViewModelChanged() async {
     if (widget.viewModel.userHasNoWorkspaces) {
-      context.go(Routes.createWorkspace);
+      context.go(Routes.createWorkspaceInitial);
     } else {
-      context.go(Routes.tasksRelative);
+      final activeWorkspaceId = await widget.viewModel.activeWorkspaceId;
+      if (mounted) {
+        // After this navigation to /tasks, we are sure that activeWorkspaceId
+        // in WorkspaceRepository is set.
+        context.go(
+          activeWorkspaceId != null
+              ? Routes.tasks(workspaceId: activeWorkspaceId)
+              : Routes.login,
+        );
+        return;
+      }
     }
   }
 }

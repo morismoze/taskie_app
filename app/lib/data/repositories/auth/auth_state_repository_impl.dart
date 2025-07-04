@@ -4,7 +4,6 @@ import '../../../utils/command.dart';
 import '../../services/local/secure_storage_service.dart';
 import 'auth_state_repository.dart';
 
-/// This repository is designed to use only by [AuthRepository] and [ApiClient] classes
 class AuthStateRepositoryImpl extends AuthStateRepository {
   AuthStateRepositoryImpl({required SecureStorageService secureStorageService})
     : _secureStorageService = secureStorageService;

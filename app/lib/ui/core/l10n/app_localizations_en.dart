@@ -83,6 +83,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requiredField => 'This field is required';
 
   @override
+  String get optional => 'optional';
+
+  @override
   String get errorWhileCreatingWorkspace =>
       'Uh-oh! We\'ve had some trouble creating your workspace';
 
@@ -104,6 +107,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Leave';
+
+  @override
+  String get errorWhileLeavingWorkspace =>
+      'Uh-oh! We\'ve had some trouble removing you from the workspace';
 
   @override
   String get appDrawerCreateNewWorkspace => 'Create new workspace';

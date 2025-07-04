@@ -7,32 +7,26 @@ import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../utils/command.dart';
 
-class CreateWorkspaceViewModel extends ChangeNotifier {
-  CreateWorkspaceViewModel({
+class CreateWorkspaceInitialViewModel extends ChangeNotifier {
+  CreateWorkspaceInitialViewModel({
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
   }) : _workspaceRepository = workspaceRepository,
        _userRepository = userRepository {
     loadUser = Command0(_loadUser)..execute();
-    loadWorkspaces = Command0(_loadWorkspaces)..execute();
     createWorkspace = Command1(_createWorkspace);
   }
 
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
-  final _log = Logger('CreateWorkspaceViewModel');
+  final _log = Logger('CreateWorkspaceInitialViewModel');
 
   late Command0 loadUser;
-  late Command0 loadWorkspaces;
   late Command1<void, (String name, String? description)> createWorkspace;
 
   User? _user;
 
   User? get user => _user;
-
-  List<Workspace> _workspaces = [];
-
-  List<Workspace> get workspaces => _workspaces;
 
   Future<Result<void>> _loadUser() async {
     final result = await _userRepository.getUser();
@@ -49,22 +43,6 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _loadWorkspaces({bool forceFetch = false}) async {
-    final result = await _workspaceRepository.getWorkspaces(
-      forceFetch: forceFetch,
-    );
-
-    switch (result) {
-      case Ok():
-        _workspaces = result.value;
-      case Error():
-        _log.warning('Failed to load workspaces', result.error);
-    }
-
-    notifyListeners();
-    return result;
-  }
-
   Future<Result<Workspace>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
     final result = await _workspaceRepository.createWorkspace(
@@ -75,9 +53,22 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
     switch (result) {
       case Ok():
         // Refetch workspaces after successful workspace creation
-        _loadWorkspaces(forceFetch: true);
+        _loadWorkspaces();
       case Error():
         _log.warning('Failed to create workspace', result.error);
+    }
+
+    return result;
+  }
+
+  Future<Result<void>> _loadWorkspaces() async {
+    final result = await _workspaceRepository.getWorkspaces(forceFetch: true);
+
+    switch (result) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to load workspaces', result.error);
     }
 
     return result;

@@ -12,6 +12,8 @@ import '../ui/tasks/view_models/tasks_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
+import '../ui/workspace_create_initial/view_models/create_workspace_initial_viewmodel.dart';
+import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
 import '../ui/workspace_invite/view_models/workspace_invite_viewmodel.dart';
 import '../ui/workspace_invite/widgets/workspace_invite_screen.dart';
 import 'routes.dart';
@@ -27,6 +29,20 @@ final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
 ///
 /// Listens to changes in [AuthStateRepository] to redirect the user
 /// to /login when the user logs out.
+///
+/// Routes hierarchy:
+/// /login
+/// /entry
+/// /workspaces
+///   /create/initial
+///   /create
+///   /:id
+///     /leaderboard
+///     /invite
+///     /tasks
+///       /:id
+///     /goals
+///       /:id
 GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: Routes.entry,
@@ -55,12 +71,25 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       builder: (context, state) => const SizedBox.shrink(),
       routes: [
         GoRoute(
-          path: 'create',
+          path: 'create/initial',
           builder: (context, state) {
-            return CreateWorkspaceScreen(
-              viewModel: CreateWorkspaceViewModel(
+            return CreateWorkspaceInitialScreen(
+              viewModel: CreateWorkspaceInitialViewModel(
                 workspaceRepository: context.read(),
                 userRepository: context.read(),
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          path: 'create',
+          pageBuilder: (context, state) {
+            return NoTransitionPage(
+              child: CreateWorkspaceScreen(
+                viewModel: CreateWorkspaceViewModel(
+                  userRepository: context.read(),
+                  workspaceRepository: context.read(),
+                ),
               ),
             );
           },
@@ -79,35 +108,38 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
             return WorkspaceInviteScreen(viewModel: viewModel);
           },
         ),
-      ],
-    ),
-    ShellRoute(
-      navigatorKey: _shellNavigatorKey,
-      builder: (BuildContext context, GoRouterState state, Widget child) {
-        return AppShellScaffold(child: child);
-      },
-      routes: [
-        GoRoute(
-          path: Routes.tasksRelative,
-          pageBuilder: (context, state) {
-            return NoTransitionPage(
-              child: TasksScreen(
-                viewModel: TasksViewModel(userRepository: context.read()),
-              ),
-            );
+        ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return AppShellScaffold(child: child);
           },
-        ),
-        GoRoute(
-          path: Routes.leaderboard,
-          pageBuilder: (context, state) {
-            return const NoTransitionPage(child: Text('leaderboard'));
-          },
-        ),
-        GoRoute(
-          path: Routes.goals,
-          pageBuilder: (context, state) {
-            return const NoTransitionPage(child: Text('goals'));
-          },
+          routes: [
+            GoRoute(
+              path: ':id/tasks',
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                  child: TasksScreen(
+                    viewModel: TasksViewModel(
+                      userRepository: context.read(),
+                      workspaceRepository: context.read(),
+                    ),
+                  ),
+                );
+              },
+            ),
+            GoRoute(
+              path: ':id/leaderboard',
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: Text('leaderboard'));
+              },
+            ),
+            GoRoute(
+              path: ':id/goals',
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: Text('goals'));
+              },
+            ),
+          ],
         ),
       ],
     ),

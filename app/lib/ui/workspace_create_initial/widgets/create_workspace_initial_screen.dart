@@ -13,18 +13,19 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/create_workspace_viewmodel.dart';
+import '../view_models/create_workspace_initial_viewmodel.dart';
 
-class CreateWorkspaceScreen extends StatefulWidget {
-  const CreateWorkspaceScreen({super.key, required this.viewModel});
+class CreateWorkspaceInitialScreen extends StatefulWidget {
+  const CreateWorkspaceInitialScreen({super.key, required this.viewModel});
 
-  final CreateWorkspaceViewModel viewModel;
+  final CreateWorkspaceInitialViewModel viewModel;
 
   @override
-  State<StatefulWidget> createState() => _CreateWorkspaceScreenState();
+  State<StatefulWidget> createState() => _CreateWorkspaceInitialScreenState();
 }
 
-class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
+class _CreateWorkspaceInitialScreenState
+    extends State<CreateWorkspaceInitialScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -33,13 +34,16 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   void initState() {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark),
+      const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+      ),
     );
     widget.viewModel.createWorkspace.addListener(_onResult);
   }
 
   @override
-  void didUpdateWidget(covariant CreateWorkspaceScreen oldWidget) {
+  void didUpdateWidget(covariant CreateWorkspaceInitialScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.createWorkspace.removeListener(_onResult);
     widget.viewModel.createWorkspace.addListener(_onResult);
