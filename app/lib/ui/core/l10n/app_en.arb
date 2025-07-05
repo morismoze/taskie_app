@@ -25,10 +25,13 @@
   "errorWhileCreatingWorkspace": "Uh-oh! We've had some trouble creating your workspace",
   "tasksHello": "Hello!",
   "appDrawerTitle": "Workspaces",
+  "appDrawerEditWorkspace": "Edit workspace setttings",
   "appDrawerInviteMembers": "Invite new members",
   "appDrawerLeaveWorkspace": "Leave workspace",
   "appDrawerLeaveWorkspaceModalMessage": "Are you sure you want to leave this workspace?",
   "appDrawerLeaveWorkspaceModalCta": "Leave",
-  "errorWhileLeavingWorkspace": "Uh-oh! We've had some trouble removing you from the workspace",
-  "appDrawerCreateNewWorkspace": "Create new workspace"
+  "appDrawerLeaveWorkspaceSuccess": "Successfully left the {workspaceName} workspace",
+  "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
+  "appDrawerCreateNewWorkspace": "Create new workspace",
+  "appDrawerPreferences": "Preferences"
 }

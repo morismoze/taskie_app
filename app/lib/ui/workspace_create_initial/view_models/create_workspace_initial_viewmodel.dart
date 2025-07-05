@@ -45,6 +45,7 @@ class CreateWorkspaceInitialViewModel extends ChangeNotifier {
 
   Future<Result<Workspace>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
+
     final result = await _workspaceRepository.createWorkspace(
       name: name,
       description: description,
@@ -52,24 +53,12 @@ class CreateWorkspaceInitialViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        // Refetch workspaces after successful workspace creation
-        _loadWorkspaces();
+        break;
       case Error():
         _log.warning('Failed to create workspace', result.error);
     }
 
-    return result;
-  }
-
-  Future<Result<void>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces(forceFetch: true);
-
-    switch (result) {
-      case Ok():
-        break;
-      case Error():
-        _log.warning('Failed to load workspaces', result.error);
-    }
+    // No need for calling loadWorkspaces here since this screen is on separate page
 
     return result;
   }

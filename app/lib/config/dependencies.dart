@@ -5,6 +5,8 @@ import '../data/repositories/auth/auth_repository.dart';
 import '../data/repositories/auth/auth_repository_impl.dart';
 import '../data/repositories/auth/auth_state_repository.dart';
 import '../data/repositories/auth/auth_state_repository_impl.dart';
+import '../data/repositories/preferences/preferences_repository.dart';
+import '../data/repositories/preferences/preferences_repository_impl.dart';
 import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/user/user_repository_impl.dart';
 import '../data/repositories/workspace/workspace_repository.dart';
@@ -40,6 +42,7 @@ List<SingleChildWidget> get providers {
           AuthRepositoryImpl(
                 authApiService: context.read(),
                 googleAuthService: context.read(),
+                authStateRepository: context.read(),
               )
               as AuthRepository,
     ),
@@ -65,6 +68,9 @@ List<SingleChildWidget> get providers {
                 sharedPreferencesService: context.read(),
               )
               as WorkspaceRepository,
+    ),
+    Provider(
+      create: (context) => PreferencesRepositoryImpl() as PreferencesRepository,
     ),
   ];
 }

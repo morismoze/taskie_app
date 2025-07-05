@@ -96,6 +96,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerTitle => 'Radni prostori';
 
   @override
+  String get appDrawerEditWorkspace => 'Uredi postavke radnog prostora';
+
+  @override
   String get appDrawerInviteMembers => 'Pozovi nove članove';
 
   @override
@@ -109,9 +112,17 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
 
   @override
-  String get errorWhileLeavingWorkspace =>
+  String appDrawerLeaveWorkspaceSuccess(Object workspaceName) {
+    return 'Uspješno ste napustili $workspaceName radni prostor';
+  }
+
+  @override
+  String get appDrawerLeaveWorkspaceError =>
       'Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora';
 
   @override
   String get appDrawerCreateNewWorkspace => 'Stvori novi radni prostor';
+
+  @override
+  String get appDrawerPreferences => 'Preference';
 }

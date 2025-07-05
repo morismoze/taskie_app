@@ -18,7 +18,8 @@ class RequestHeadersInterceptor extends Interceptor {
     final accessTokenResult = await _secureStorageService.getAccessToken();
     switch (accessTokenResult) {
       case Ok<String?>():
-        if (accessTokenResult.value != null) {
+        if (accessTokenResult.value != null &&
+            options.headers['Authorization'] == null) {
           options.headers['Authorization'] =
               'Bearer ${accessTokenResult.value}';
         }

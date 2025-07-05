@@ -10,7 +10,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
 
   final SecureStorageService _secureStorageService;
 
-  bool? _isAuthenticated = false;
+  bool? _isAuthenticated;
   final _log = Logger('AuthStateRepository');
 
   @override

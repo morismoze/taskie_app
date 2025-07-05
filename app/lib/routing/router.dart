@@ -8,6 +8,8 @@ import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/core/ui/navigation/app_shell_scaffold.dart';
 import '../ui/entry/view_models/entry_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
+import '../ui/preferences/view_models/preferences_viewmodel.dart';
+import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_viewmodel.dart';
@@ -16,6 +18,8 @@ import '../ui/workspace_create_initial/view_models/create_workspace_initial_view
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
 import '../ui/workspace_invite/view_models/workspace_invite_viewmodel.dart';
 import '../ui/workspace_invite/widgets/workspace_invite_screen.dart';
+import '../ui/workspace_settings/view_models/workspace_settings_viewmodel.dart';
+import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -83,13 +87,12 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
         ),
         GoRoute(
           path: 'create',
-          pageBuilder: (context, state) {
-            return NoTransitionPage(
-              child: CreateWorkspaceScreen(
-                viewModel: CreateWorkspaceViewModel(
-                  userRepository: context.read(),
-                  workspaceRepository: context.read(),
-                ),
+          builder: (context, state) {
+            return CreateWorkspaceScreen(
+              viewModel: CreateWorkspaceViewModel(
+                userRepository: context.read(),
+                workspaceRepository: context.read(),
+                authRepository: context.read(),
               ),
             );
           },
@@ -106,6 +109,16 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
             viewModel.createInviteLink.execute(id);
 
             return WorkspaceInviteScreen(viewModel: viewModel);
+          },
+        ),
+        GoRoute(
+          path: ':id/settings',
+          builder: (context, state) {
+            return WorkspaceSettingsScreen(
+              viewModel: WorkspaceSettingsViewmodel(
+                workspaceRepository: context.read(),
+              ),
+            );
           },
         ),
         ShellRoute(
@@ -142,6 +155,16 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: Routes.preferences,
+      builder: (context, state) {
+        return PreferencesScreen(
+          viewModel: PreferencesViewModel(
+            preferencesRepository: context.read(),
+          ),
+        );
+      },
     ),
   ],
 );

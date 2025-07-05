@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
@@ -32,9 +31,6 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark),
-    );
     widget.viewModel.createWorkspace.addListener(_onResult);
   }
 
@@ -187,7 +183,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             textInputAction: TextInputAction.next,
             maxCharacterCount: ValidationRules.workspaceNameMaxLength,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           AppTextFormField(
             controller: _descriptionController,
             label: context.localization.workspaceDescriptionLabel,

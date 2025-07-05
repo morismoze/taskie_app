@@ -254,6 +254,12 @@ abstract class AppLocalizations {
   /// **'Workspaces'**
   String get appDrawerTitle;
 
+  /// No description provided for @appDrawerEditWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit workspace setttings'**
+  String get appDrawerEditWorkspace;
+
   /// No description provided for @appDrawerInviteMembers.
   ///
   /// In en, this message translates to:
@@ -278,17 +284,29 @@ abstract class AppLocalizations {
   /// **'Leave'**
   String get appDrawerLeaveWorkspaceModalCta;
 
-  /// No description provided for @errorWhileLeavingWorkspace.
+  /// No description provided for @appDrawerLeaveWorkspaceSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully left the {workspaceName} workspace'**
+  String appDrawerLeaveWorkspaceSuccess(Object workspaceName);
+
+  /// No description provided for @appDrawerLeaveWorkspaceError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble removing you from the workspace'**
-  String get errorWhileLeavingWorkspace;
+  String get appDrawerLeaveWorkspaceError;
 
   /// No description provided for @appDrawerCreateNewWorkspace.
   ///
   /// In en, this message translates to:
   /// **'Create new workspace'**
   String get appDrawerCreateNewWorkspace;
+
+  /// No description provided for @appDrawerPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get appDrawerPreferences;
 }
 
 class _AppLocalizationsDelegate

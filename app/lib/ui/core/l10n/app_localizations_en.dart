@@ -96,6 +96,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerTitle => 'Workspaces';
 
   @override
+  String get appDrawerEditWorkspace => 'Edit workspace setttings';
+
+  @override
   String get appDrawerInviteMembers => 'Invite new members';
 
   @override
@@ -109,9 +112,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerLeaveWorkspaceModalCta => 'Leave';
 
   @override
-  String get errorWhileLeavingWorkspace =>
+  String appDrawerLeaveWorkspaceSuccess(Object workspaceName) {
+    return 'Successfully left the $workspaceName workspace';
+  }
+
+  @override
+  String get appDrawerLeaveWorkspaceError =>
       'Uh-oh! We\'ve had some trouble removing you from the workspace';
 
   @override
   String get appDrawerCreateNewWorkspace => 'Create new workspace';
+
+  @override
+  String get appDrawerPreferences => 'Preferences';
 }

@@ -27,9 +27,18 @@ class AppTextButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leadingIcon != null) ...[
-            FaIcon(
-              leadingIcon,
-              color: color ?? Theme.of(context).colorScheme.secondary,
+            SizedBox(
+              width:
+                  18, // FaIcon.size gives weird diffs on icons with different widths
+              height:
+                  18, // FaIcon.size gives weird diffs on icons with different widths
+              child: Align(
+                alignment: Alignment.center,
+                child: FaIcon(
+                  leadingIcon,
+                  color: color ?? Theme.of(context).colorScheme.secondary,
+                ),
+              ),
             ),
             const SizedBox(width: 12),
           ],

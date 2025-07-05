@@ -28,5 +28,8 @@ abstract final class Routes {
   }) => '${goals(workspaceId: workspaceId)}$goalId';
   static String workspaceInvite(String workspaceId) =>
       '${workspaceWithId(workspaceId)}/invite';
+  static String workspaceSettings(String workspaceId) =>
+      '${workspaceWithId(workspaceId)}/settings';
   static const createWorkspace = '$workspacesRelative/create';
+  static const preferences = '/preferences';
 }

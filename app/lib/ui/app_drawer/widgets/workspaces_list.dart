@@ -17,7 +17,7 @@ class WorkspacesList extends StatelessWidget {
           horizontal: Dimens.paddingHorizontal,
         ),
         child: ListenableBuilder(
-          listenable: viewModel,
+          listenable: viewModel.loadWorkspaces,
           builder: (context, child) {
             if (viewModel.loadWorkspaces.completed) {
               return child!;
@@ -30,21 +30,23 @@ class WorkspacesList extends StatelessWidget {
               future: viewModel.activeWorkspaceId,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(0),
-                    itemCount: viewModel.workspaces.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: Dimens.paddingVertical / 1.75),
-                    itemBuilder: (_, index) {
-                      final workspace = viewModel.workspaces[index];
-                      return WorkspaceTile(
-                        id: workspace.id,
-                        name: workspace.name,
-                        viewModel: viewModel,
-                        isActive: snapshot.data == workspace.id,
-                        pictureUrl: workspace.pictureUrl,
-                      );
-                    },
+                  return OverflowBox(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(0),
+                      itemCount: viewModel.workspaces.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: Dimens.paddingVertical / 1.75),
+                      itemBuilder: (_, index) {
+                        final workspace = viewModel.workspaces[index];
+                        return WorkspaceTile(
+                          id: workspace.id,
+                          name: workspace.name,
+                          viewModel: viewModel,
+                          isActive: snapshot.data == workspace.id,
+                          pictureUrl: workspace.pictureUrl,
+                        );
+                      },
+                    ),
                   );
                 }
                 return const SizedBox.shrink();

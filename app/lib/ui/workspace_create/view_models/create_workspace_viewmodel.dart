@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
+import '../../../data/repositories/auth/auth_repository.dart';
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../domain/models/user.dart';
@@ -11,8 +12,10 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
   CreateWorkspaceViewModel({
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
+    required AuthRepository authRepository,
   }) : _workspaceRepository = workspaceRepository,
-       _userRepository = userRepository {
+       _userRepository = userRepository,
+       _authRepository = authRepository {
     loadUser = Command0(_loadUser)..execute();
     loadWorkspaces = Command0(_loadWorkspaces)..execute();
     createWorkspace = Command1(_createWorkspace);
@@ -20,6 +23,7 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
 
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
+  final AuthRepository _authRepository;
   final _log = Logger('CreateWorkspaceViewModel');
 
   late Command0 loadUser;
@@ -67,19 +71,34 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
 
   Future<Result<Workspace>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
-    final result = await _workspaceRepository.createWorkspace(
+
+    final resultCreate = await _workspaceRepository.createWorkspace(
       name: name,
       description: description,
     );
 
-    switch (result) {
+    switch (resultCreate) {
       case Ok():
-        // Refetch workspaces after successful workspace creation
-        _loadWorkspaces(forceFetch: true);
+        break;
       case Error():
-        _log.warning('Failed to create workspace', result.error);
+        _log.warning('Failed to create workspace', resultCreate.error);
     }
 
-    return result;
+    // We need to refresh the access token since we keep list of roles with
+    // corresponding workspaces inside the access token.
+    final resultRefresh = await _authRepository.refreshAcessToken();
+
+    switch (resultRefresh) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to refresh token', resultRefresh.error);
+    }
+
+    // We need to load workspaces again - this will load from repository cache, which was updated with the
+    // given workspace by adding it to that cache list in WorkspaceRepository.createWorkspace function.
+    await _loadWorkspaces();
+
+    return resultCreate;
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../utils/command.dart';
+import '../../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -57,9 +59,13 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
-      leading: WorkspaceImage(
-        url: widget.pictureUrl,
-        isActive: widget.isActive,
+      leading: InkWell(
+        splashFactory: NoSplash.splashFactory,
+        onTap: () => widget.viewModel.setActiveWorkspace.execute(widget.id),
+        child: WorkspaceImage(
+          url: widget.pictureUrl,
+          isActive: widget.isActive,
+        ),
       ),
       trailing: InkWell(
         splashFactory: NoSplash.splashFactory,
@@ -110,7 +116,20 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
           ),
           const SizedBox(height: 20),
           AppTextButton(
-            onPress: () => context.push(Routes.workspaceInvite(widget.id)),
+            onPress: () {
+              Navigator.of(context).pop(); // Close bottom sheet
+              Navigator.of(context).pop(); // Close drawer
+              context.push(Routes.workspaceSettings(widget.id));
+            },
+            label: context.localization.appDrawerEditWorkspace,
+            leadingIcon: FontAwesomeIcons.pencil,
+          ),
+          AppTextButton(
+            onPress: () {
+              Navigator.of(context).pop(); // Close bottom sheet
+              Navigator.of(context).pop(); // Close drawer
+              context.push(Routes.workspaceInvite(widget.id));
+            },
             label: context.localization.appDrawerInviteMembers,
             leadingIcon: FontAwesomeIcons.userPlus,
           ),
@@ -158,15 +177,36 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
     if (widget.viewModel.leaveWorkspace.completed) {
       widget.viewModel.leaveWorkspace.clearResult();
       Navigator.of(context).pop(); // Close modal
+      Navigator.of(context).pop(); // Close bottom sheet
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.appDrawerLeaveWorkspaceSuccess(
+          widget.name,
+        ),
+      );
     }
 
     if (widget.viewModel.leaveWorkspace.error) {
+      final errorResult = widget.viewModel.leaveWorkspace.result as Error;
+
+      switch (errorResult.error) {
+        case RefreshTokenFailedException():
+          Navigator.of(context).pop(); // Close modal
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.appDrawerLeaveWorkspaceError,
+          );
+          context.go(Routes.login);
+          break;
+        default:
+          Navigator.of(context).pop(); // Close modal
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.appDrawerLeaveWorkspaceError,
+          );
+      }
+
       widget.viewModel.leaveWorkspace.clearResult();
-      Navigator.of(context).pop(); // Close modal
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.errorWhileLeavingWorkspace,
-      );
     }
   }
 }

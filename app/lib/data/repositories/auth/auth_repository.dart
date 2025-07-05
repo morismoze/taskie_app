@@ -5,4 +5,6 @@ abstract class AuthRepository {
   Future<Result<Auth>> signInWithGoogle();
 
   Future<Result<void>> signOut();
+
+  Future<Result<void>> refreshAcessToken();
 }

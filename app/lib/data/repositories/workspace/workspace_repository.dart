@@ -6,7 +6,7 @@ import '../../../utils/command.dart';
 abstract class WorkspaceRepository extends ChangeNotifier {
   Future<String?> get activeWorkspaceId;
 
-  Future<void> setActiveWorkspaceId(String workspaceId);
+  Future<Result<void>> setActiveWorkspaceId(String workspaceId);
 
   Future<Result<List<Workspace>>> getWorkspaces({bool forceFetch = false});
 

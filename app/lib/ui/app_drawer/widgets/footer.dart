@@ -14,6 +14,7 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(
           height: 10,
@@ -27,16 +28,26 @@ class Footer extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: Dimens.paddingHorizontal,
           ),
-          child: Align(
-            alignment: Alignment.bottomLeft,
-            child: AppTextButton(
-              onPress: () {
-                Navigator.pop(context);
-                context.push(Routes.createWorkspace);
-              },
-              label: context.localization.appDrawerCreateNewWorkspace,
-              leadingIcon: FontAwesomeIcons.plus,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppTextButton(
+                onPress: () {
+                  Navigator.pop(context);
+                  context.push(Routes.createWorkspace);
+                },
+                label: context.localization.appDrawerCreateNewWorkspace,
+                leadingIcon: FontAwesomeIcons.plus,
+              ),
+              AppTextButton(
+                onPress: () {
+                  Navigator.pop(context);
+                  context.push(Routes.preferences);
+                },
+                label: context.localization.appDrawerPreferences,
+                leadingIcon: FontAwesomeIcons.gear,
+              ),
+            ],
           ),
         ),
       ],

@@ -20,16 +20,33 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   final SharedPreferencesService _sharedPreferencesService;
 
   final _log = Logger('WorkspaceRepository');
-  List<Workspace>? _cachedData;
   String? _activeWorkspaceId;
+  List<Workspace>? _cachedWorkspacesList;
+  // Invite links per workspace IDs (workspaceId: inviteLink)
+  final Map<String, String> _cachedWorkspaceInviteLinks = {};
 
   @override
-  Future<void> setActiveWorkspaceId(String workspaceId) async {
-    await _sharedPreferencesService.setActiveWorkspaceId(
+  Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
+    if (_activeWorkspaceId != null && _activeWorkspaceId == workspaceId) {
+      return const Result.ok(null);
+    }
+
+    final result = await _sharedPreferencesService.setActiveWorkspaceId(
       workspaceId: workspaceId,
     );
-    _activeWorkspaceId = workspaceId;
-    notifyListeners();
+
+    switch (result) {
+      case Ok():
+        _activeWorkspaceId = workspaceId;
+        notifyListeners();
+      case Error():
+        _log.severe(
+          'Failed to set active workspace to shared prefs',
+          result.error,
+        );
+    }
+
+    return result;
   }
 
   @override
@@ -39,6 +56,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     }
 
     final result = await _sharedPreferencesService.getActiveWorkspaceId();
+
     switch (result) {
       case Ok<String?>():
         _activeWorkspaceId = result.value;
@@ -57,8 +75,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   Future<Result<List<Workspace>>> getWorkspaces({
     bool forceFetch = false,
   }) async {
-    if (_cachedData != null && !forceFetch) {
-      return Result.ok(_cachedData!);
+    if (_cachedWorkspacesList != null && !forceFetch) {
+      return Result.ok(_cachedWorkspacesList!);
     }
 
     try {
@@ -75,10 +93,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
                 ),
               )
               .toList();
-          _cachedData = mappedData;
+          _cachedWorkspacesList = mappedData;
 
-          if (_activeWorkspaceId == null && mappedData.isNotEmpty) {
-            final firstWorkspaceId = mappedData[0].id;
+          if (await activeWorkspaceId == null && mappedData.isNotEmpty) {
+            final firstWorkspaceId = mappedData.first.id;
             setActiveWorkspaceId(firstWorkspaceId);
           }
 
@@ -106,16 +124,20 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       switch (result) {
         case Ok<WorkspaceResponse>():
           final workspace = result.value;
-          final mappedData = Workspace(
+          final newWorkspace = Workspace(
             id: workspace.id,
             name: workspace.name,
             description: workspace.description,
             pictureUrl: workspace.pictureUrl,
           );
 
-          setActiveWorkspaceId(mappedData.id);
+          // Add the new workspace to the local list (cache)
+          _cachedWorkspacesList!.add(newWorkspace);
 
-          return Result.ok(mappedData);
+          // Set new workspace as active one
+          setActiveWorkspaceId(newWorkspace.id);
+
+          return Result.ok(newWorkspace);
         case Error<WorkspaceResponse>():
           return Result.error(result.error);
       }
@@ -128,6 +150,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   Future<Result<String>> createWorkspaceInviteLink({
     required String workspaceId,
   }) async {
+    if (_cachedWorkspaceInviteLinks[workspaceId] != null) {
+      return Result.ok(_cachedWorkspaceInviteLinks[workspaceId]!);
+    }
+
     try {
       final result = await _workspaceApiService.createWorkspaceInviteLink(
         workspaceId,
@@ -135,7 +161,9 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
       switch (result) {
         case Ok<CreateWorkspaceInviteLinkResponse>():
-          return Result.ok(result.value.inviteLink);
+          final inviteLink = result.value.inviteLink;
+          _cachedWorkspaceInviteLinks[workspaceId] = inviteLink;
+          return Result.ok(inviteLink);
         case Error<CreateWorkspaceInviteLinkResponse>():
           return Result.error(result.error);
       }
@@ -146,11 +174,24 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
   @override
   Future<Result<void>> leaveWorkspace({required String workspaceId}) async {
+    final leavingWorkspace = _cachedWorkspacesList?.firstWhere(
+      (workspace) => workspace.id == workspaceId,
+    );
     try {
       final result = await _workspaceApiService.leaveWorkspace(workspaceId);
 
       switch (result) {
         case Ok():
+          final workspacesList = _cachedWorkspacesList;
+
+          // Remove the leaving workspace from the local list (cache)
+          _cachedWorkspacesList?.remove(leavingWorkspace);
+
+          // Set a first workspace from the cached list as active one
+          if (workspacesList != null && workspacesList.isNotEmpty) {
+            final firstWorkspaceId = workspacesList.first.id;
+            setActiveWorkspaceId(firstWorkspaceId);
+          }
           return const Result.ok(null);
         case Error():
           return Result.error(result.error);
