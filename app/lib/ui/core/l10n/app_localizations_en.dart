@@ -112,9 +112,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerLeaveWorkspaceModalCta => 'Leave';
 
   @override
-  String appDrawerLeaveWorkspaceSuccess(Object workspaceName) {
-    return 'Successfully left the $workspaceName workspace';
-  }
+  String get appDrawerLeaveWorkspaceSuccess =>
+      'Successfully left the workspace';
 
   @override
   String get appDrawerLeaveWorkspaceError =>

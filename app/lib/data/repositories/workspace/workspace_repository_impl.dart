@@ -28,6 +28,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   @override
   Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
     if (_activeWorkspaceId != null && _activeWorkspaceId == workspaceId) {
+      // Early return if the same workspaceId is already set
       return const Result.ok(null);
     }
 
@@ -70,6 +71,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         return null;
     }
   }
+
+  @override
+  bool get hasNoWorkspaces =>
+      _cachedWorkspacesList == null || _cachedWorkspacesList!.isEmpty;
 
   @override
   Future<Result<List<Workspace>>> getWorkspaces({
@@ -132,8 +137,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           );
 
           // Add the new workspace to the local list (cache)
-          _cachedWorkspacesList!.add(newWorkspace);
-
+          _cachedWorkspacesList?.add(newWorkspace);
           // Set new workspace as active one
           setActiveWorkspaceId(newWorkspace.id);
 
@@ -182,16 +186,17 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
       switch (result) {
         case Ok():
-
           // Remove the leaving workspace from the local list (cache)
-          _cachedWorkspacesList?.remove(leavingWorkspace);
-
-          // Set a first workspace from the cached list as active one
+          _cachedWorkspacesList!.remove(leavingWorkspace);
+          // Set a first workspace from the cached list as active one only if
+          // the leaving workspace was the current active one
           if (_cachedWorkspacesList != null &&
-              _cachedWorkspacesList!.isNotEmpty) {
+              _cachedWorkspacesList!.isNotEmpty &&
+              workspaceId == _activeWorkspaceId) {
             final firstWorkspaceId = _cachedWorkspacesList!.first.id;
             setActiveWorkspaceId(firstWorkspaceId);
           }
+
           return const Result.ok(null);
         case Error():
           return Result.error(result.error);

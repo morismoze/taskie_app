@@ -9,7 +9,7 @@ import '../view_models/create_workspace_initial_viewmodel.dart';
 class CreateFormInitial extends StatefulWidget {
   const CreateFormInitial({super.key, required this.viewModel});
 
-  final CreateWorkspaceInitialViewModel viewModel;
+  final CreateWorkspaceInitialScreenViewModel viewModel;
 
   @override
   State<CreateFormInitial> createState() => _CreateFormInitialState();

@@ -287,8 +287,8 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerLeaveWorkspaceSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Successfully left the {workspaceName} workspace'**
-  String appDrawerLeaveWorkspaceSuccess(Object workspaceName);
+  /// **'Successfully left the workspace'**
+  String get appDrawerLeaveWorkspaceSuccess;
 
   /// No description provided for @appDrawerLeaveWorkspaceError.
   ///

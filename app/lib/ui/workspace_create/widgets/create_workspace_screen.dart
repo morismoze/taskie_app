@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
-import '../../../domain/models/workspace.dart';
-import '../../../routing/routes.dart';
-import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/create_workspace_viewmodel.dart';
 import 'form.dart';
@@ -15,32 +10,13 @@ import 'form.dart';
 class CreateWorkspaceScreen extends StatefulWidget {
   const CreateWorkspaceScreen({super.key, required this.viewModel});
 
-  final CreateWorkspaceViewModel viewModel;
+  final CreateWorkspaceScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _CreateWorkspaceScreenState();
 }
 
 class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
-  @override
-  void initState() {
-    super.initState();
-    widget.viewModel.createWorkspace.addListener(_onResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant CreateWorkspaceScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspace.removeListener(_onResult);
-    widget.viewModel.createWorkspace.addListener(_onResult);
-  }
-
-  @override
-  void dispose() {
-    widget.viewModel.createWorkspace.removeListener(_onResult);
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,25 +86,5 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
         ),
       ),
     );
-  }
-
-  void _onResult() {
-    print('ALOOOO1 ${widget.viewModel.createWorkspace.completed}');
-    print('ALOOOO2 ${widget.viewModel.createWorkspace.error}');
-    print('ALOOOO3 ${widget.viewModel.createWorkspace.result}');
-    if (widget.viewModel.createWorkspace.completed) {
-      final newWorkspaceId =
-          (widget.viewModel.createWorkspace.result as Ok<Workspace>).value.id;
-      widget.viewModel.createWorkspace.clearResult();
-      GoRouter.of(context).go(Routes.tasks(workspaceId: newWorkspaceId));
-    }
-
-    if (widget.viewModel.createWorkspace.error) {
-      widget.viewModel.createWorkspace.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.errorWhileCreatingWorkspace,
-      );
-    }
   }
 }

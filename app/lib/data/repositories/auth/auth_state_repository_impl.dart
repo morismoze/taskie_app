@@ -82,7 +82,13 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
   }
 
   @override
-  Future<Result<void>> setAuthenticated((String, String)? tokens) async {
+  void setAuthenticated(bool isAuthenticated) async {
+    _isAuthenticated = isAuthenticated;
+    notifyListeners();
+  }
+
+  @override
+  Future<Result<void>> setTokens((String, String)? tokens) async {
     switch (tokens) {
       case == null:
         final setAccessTokenResult = await _secureStorageService.setAccessToken(
@@ -99,8 +105,6 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
         }
 
         _refreshToken = null;
-        _isAuthenticated = null;
-        notifyListeners();
       case != null:
         final (accessToken, refreshToken) = tokens;
         final setAccessTokenResult = await _secureStorageService.setAccessToken(
@@ -114,9 +118,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
           return Result.error(Exception());
         }
 
-        _isAuthenticated = true;
         _refreshToken = refreshToken;
-        notifyListeners();
     }
 
     return const Result.ok(null);

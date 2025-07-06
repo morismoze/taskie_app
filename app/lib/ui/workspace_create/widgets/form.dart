@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/workspace.dart';
+import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
+import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../../workspace_create/view_models/create_workspace_viewmodel.dart';
 
 class CreateForm extends StatefulWidget {
   const CreateForm({super.key, required this.viewModel});
 
-  final CreateWorkspaceViewModel viewModel;
+  final CreateWorkspaceScreenViewModel viewModel;
 
   @override
   State<CreateForm> createState() => _CreateFormState();
@@ -23,15 +28,19 @@ class _CreateFormState extends State<CreateForm> {
   @override
   void initState() {
     super.initState();
+    widget.viewModel.createWorkspace.addListener(_onResult);
   }
 
   @override
   void didUpdateWidget(covariant CreateForm oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.createWorkspace.removeListener(_onResult);
+    widget.viewModel.createWorkspace.addListener(_onResult);
   }
 
   @override
   void dispose() {
+    widget.viewModel.createWorkspace.removeListener(_onResult);
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
@@ -106,6 +115,23 @@ class _CreateFormState extends State<CreateForm> {
         return context.localization.workspaceCreateDescriptionMaxLength;
       default:
         return null;
+    }
+  }
+
+  void _onResult() {
+    if (widget.viewModel.createWorkspace.completed) {
+      final newWorkspaceId =
+          (widget.viewModel.createWorkspace.result as Ok<Workspace>).value.id;
+      widget.viewModel.createWorkspace.clearResult();
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
+    }
+
+    if (widget.viewModel.createWorkspace.error) {
+      widget.viewModel.createWorkspace.clearResult();
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.errorWhileCreatingWorkspace,
+      );
     }
   }
 }

@@ -30,7 +30,7 @@
   "appDrawerLeaveWorkspace": "Napusti radni prostor",
   "appDrawerLeaveWorkspaceModalMessage": "Jeste li sigurni da želite napustiti ovaj radni prostor?",
   "appDrawerLeaveWorkspaceModalCta": "Napusti",
-  "appDrawerLeaveWorkspaceSuccess": "Uspješno ste napustili {workspaceName} radni prostor",
+  "appDrawerLeaveWorkspaceSuccess": "Uspješno ste napustili radni prostor",
   "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
   "appDrawerCreateNewWorkspace": "Stvori novi radni prostor",
   "appDrawerPreferences": "Preference"

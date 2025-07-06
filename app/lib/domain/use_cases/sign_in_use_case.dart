@@ -28,10 +28,11 @@ class SignInUseCase {
 
     switch (signInWithGoogleResult) {
       case Ok<Auth>():
-        _authStateRepository.setAuthenticated((
+        _authStateRepository.setTokens((
           signInWithGoogleResult.value.accessToken,
           signInWithGoogleResult.value.refreshToken,
         ));
+        _authStateRepository.setAuthenticated(true);
         _userRepository.setUser(signInWithGoogleResult.value.user);
         return const Result.ok(null);
       case Error<Auth>():

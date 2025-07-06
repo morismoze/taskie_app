@@ -42,7 +42,8 @@ class UnauthorizedInterceptor extends Interceptor {
     }
 
     if (err.requestOptions.path.contains(ApiEndpoints.refreshToken)) {
-      _authStateRepository.setAuthenticated(null);
+      await _authStateRepository.setTokens(null);
+      _authStateRepository.setAuthenticated(false);
       return handler.next(err);
     }
 
@@ -87,7 +88,7 @@ class UnauthorizedInterceptor extends Interceptor {
         (json) => RefreshTokenResponse.fromJson(json as Map<String, dynamic>),
       );
 
-      final setAuthResult = await _authStateRepository.setAuthenticated((
+      final setAuthResult = await _authStateRepository.setTokens((
         apiResponse.data!.accessToken,
         apiResponse.data!.refreshToken,
       ));
@@ -104,7 +105,8 @@ class UnauthorizedInterceptor extends Interceptor {
       }
     } catch (e) {
       _refreshTokenCompleter!.completeError(e);
-      _authStateRepository.setAuthenticated(null);
+      await _authStateRepository.setTokens(null);
+      _authStateRepository.setAuthenticated(false);
       return handler.next(originalError);
     } finally {
       _isRefreshing = false;
@@ -119,8 +121,10 @@ class UnauthorizedInterceptor extends Interceptor {
     try {
       final response = await _mainClient.fetch(originalError.requestOptions);
       return handler.resolve(response);
-    } on Exception {
-      _authStateRepository.setAuthenticated(null);
+    } on DioException catch (e) {
+      await _authStateRepository.setTokens(null);
+      _authStateRepository.setAuthenticated(false);
+      return handler.reject(e);
     }
   }
 }

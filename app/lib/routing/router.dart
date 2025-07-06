@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/repositories/auth/auth_state_repository.dart';
+import '../data/repositories/workspace/workspace_repository.dart';
 import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/core/ui/navigation/app_shell_scaffold.dart';
@@ -48,11 +49,11 @@ final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
 ///     /goals
 ///       /:id
 GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
-  navigatorKey: _rootNavigatorKey,
   initialLocation: Routes.entry,
   debugLogDiagnostics: true,
   redirect: _redirect,
   refreshListenable: authStateRepository,
+  navigatorKey: _rootNavigatorKey,
   routes: [
     GoRoute(
       path: Routes.login,
@@ -71,91 +72,84 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       },
     ),
     GoRoute(
-      path: Routes.workspacesRelative,
-      builder: (context, state) => const SizedBox.shrink(),
+      path: '${Routes.workspacesRelative}/create/initial',
+      builder: (context, state) {
+        return CreateWorkspaceInitialScreen(
+          viewModel: CreateWorkspaceInitialScreenViewModel(
+            workspaceRepository: context.read(),
+            userRepository: context.read(),
+            refreshTokenUseCase: context.read(),
+          ),
+        );
+      },
+    ),
+    ShellRoute(
+      redirect: _shellRouteRedirect,
+      navigatorKey: _shellNavigatorKey,
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return AppShellScaffold(child: child);
+      },
       routes: [
         GoRoute(
-          path: 'create/initial',
-          builder: (context, state) {
-            return CreateWorkspaceInitialScreen(
-              viewModel: CreateWorkspaceInitialViewModel(
-                workspaceRepository: context.read(),
-                userRepository: context.read(),
-                refreshTokenUseCase: context.read(),
+          path: '${Routes.workspacesRelative}/:id/tasks',
+          pageBuilder: (context, state) {
+            return NoTransitionPage(
+              child: TasksScreen(
+                viewModel: TasksViewModel(
+                  userRepository: context.read(),
+                  workspaceRepository: context.read(),
+                ),
               ),
             );
           },
         ),
         GoRoute(
-          path: 'create',
-          builder: (context, state) {
-            return CreateWorkspaceScreen(
-              viewModel: CreateWorkspaceViewModel(
-                userRepository: context.read(),
-                workspaceRepository: context.read(),
-                refreshTokenUseCase: context.read(),
-              ),
-            );
+          path: '${Routes.workspacesRelative}/:id/leaderboard',
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: Text('leaderboard'));
           },
         ),
         GoRoute(
-          path: ':id/invite',
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            final viewModel = WorkspaceInviteViewModel(
-              workspaceRepository: context.read(),
-            );
-
-            // Initiate new invite link fetch when opening workspace invite screen
-            viewModel.createInviteLink.execute(id);
-
-            return WorkspaceInviteScreen(viewModel: viewModel);
+          path: '${Routes.workspacesRelative}/:id/goals',
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: Text('goals'));
           },
-        ),
-        GoRoute(
-          path: ':id/settings',
-          builder: (context, state) {
-            return WorkspaceSettingsScreen(
-              viewModel: WorkspaceSettingsViewmodel(
-                workspaceRepository: context.read(),
-              ),
-            );
-          },
-        ),
-        ShellRoute(
-          navigatorKey: _shellNavigatorKey,
-          builder: (BuildContext context, GoRouterState state, Widget child) {
-            return AppShellScaffold(child: child);
-          },
-          routes: [
-            GoRoute(
-              path: ':id/tasks',
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                  child: TasksScreen(
-                    viewModel: TasksViewModel(
-                      userRepository: context.read(),
-                      workspaceRepository: context.read(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            GoRoute(
-              path: ':id/leaderboard',
-              pageBuilder: (context, state) {
-                return const NoTransitionPage(child: Text('leaderboard'));
-              },
-            ),
-            GoRoute(
-              path: ':id/goals',
-              pageBuilder: (context, state) {
-                return const NoTransitionPage(child: Text('goals'));
-              },
-            ),
-          ],
         ),
       ],
+    ),
+    GoRoute(
+      path: '${Routes.workspacesRelative}/create',
+      builder: (context, state) => CreateWorkspaceScreen(
+        viewModel: CreateWorkspaceScreenViewModel(
+          userRepository: context.read(),
+          workspaceRepository: context.read(),
+          refreshTokenUseCase: context.read(),
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '${Routes.workspacesRelative}/:id/invite',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        final viewModel = WorkspaceInviteViewModel(
+          workspaceRepository: context.read(),
+        );
+
+        // Initiate new invite link fetch when opening workspace invite screen
+        viewModel.createInviteLink.execute(id);
+
+        return WorkspaceInviteScreen(viewModel: viewModel);
+      },
+    ),
+    GoRoute(
+      path: '${Routes.workspacesRelative}/:id/settings',
+      builder: (context, state) {
+        return WorkspaceSettingsScreen(
+          viewModel: WorkspaceSettingsViewmodel(
+            workspaceRepository: context.read(),
+          ),
+        );
+      },
     ),
     GoRoute(
       path: Routes.preferences,
@@ -182,6 +176,22 @@ Future<String?> _redirect(BuildContext context, GoRouterState state) async {
   // if the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
     return Routes.entry;
+  }
+
+  // no need to redirect
+  return null;
+}
+
+Future<String?> _shellRouteRedirect(
+  BuildContext context,
+  GoRouterState state,
+) async {
+  // if the user is not part of any workspace anymore (e.g. left all workspaces),
+  // we need to redirect the user to workspace initial creation screen
+  final hasNoWorkspaces = context.read<WorkspaceRepository>().hasNoWorkspaces;
+
+  if (hasNoWorkspaces) {
+    return Routes.createWorkspaceInitial;
   }
 
   // no need to redirect

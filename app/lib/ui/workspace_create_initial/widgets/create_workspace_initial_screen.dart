@@ -16,7 +16,7 @@ import '../view_models/create_workspace_initial_viewmodel.dart';
 class CreateWorkspaceInitialScreen extends StatefulWidget {
   const CreateWorkspaceInitialScreen({super.key, required this.viewModel});
 
-  final CreateWorkspaceInitialViewModel viewModel;
+  final CreateWorkspaceInitialScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _CreateWorkspaceInitialScreenState();

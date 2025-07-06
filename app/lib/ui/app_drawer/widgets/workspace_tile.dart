@@ -187,9 +187,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
       Navigator.of(context).pop(); // Close bottom sheet
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.appDrawerLeaveWorkspaceSuccess(
-          widget.name,
-        ),
+        message: context.localization.appDrawerLeaveWorkspaceSuccess,
       );
     }
 

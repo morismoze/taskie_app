@@ -35,7 +35,9 @@ class UserRepositoryImpl implements UserRepository {
           profileImageUrl: result.value.profileImageUrl,
           createdAt: DateTime.parse(result.value.createdAt),
         );
+
         setUser(user);
+
         return Result.ok(user);
       case Error<UserResponse>():
         return Result.error(result.error);

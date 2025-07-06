@@ -21,7 +21,7 @@ abstract class Command<T> extends ChangeNotifier {
 
   bool _running = false;
 
-  /// True when the action is running.
+  /// True when the action is running
   bool get running => _running;
 
   Result<T>? _result;
@@ -33,7 +33,7 @@ abstract class Command<T> extends ChangeNotifier {
   bool get completed => _result is Ok;
 
   /// Get last action result
-  Result? get result => _result;
+  Result<T>? get result => _result;
 
   /// Clear last action result
   void clearResult() {
@@ -47,7 +47,7 @@ abstract class Command<T> extends ChangeNotifier {
     // e.g. avoid multiple taps on button
     if (_running) return;
 
-    // Notify listeners.
+    // Notify listeners
     _running = true;
     _result = null;
     notifyListeners();

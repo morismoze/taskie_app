@@ -65,7 +65,6 @@ class AppDrawerViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _leaveWorkspace(String workspaceId) async {
-    await Future.delayed(const Duration(seconds: 10));
     final resultLeave = await _workspaceRepository.leaveWorkspace(
       workspaceId: workspaceId,
     );

@@ -30,7 +30,7 @@
   "appDrawerLeaveWorkspace": "Leave workspace",
   "appDrawerLeaveWorkspaceModalMessage": "Are you sure you want to leave this workspace?",
   "appDrawerLeaveWorkspaceModalCta": "Leave",
-  "appDrawerLeaveWorkspaceSuccess": "Successfully left the {workspaceName} workspace",
+  "appDrawerLeaveWorkspaceSuccess": "Successfully left the workspace",
   "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
   "appDrawerCreateNewWorkspace": "Create new workspace",
   "appDrawerPreferences": "Preferences"

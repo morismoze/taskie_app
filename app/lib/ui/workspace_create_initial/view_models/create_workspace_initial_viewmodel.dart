@@ -8,8 +8,8 @@ import '../../../domain/models/workspace.dart';
 import '../../../domain/use_cases/refresh_token_use_case.dart';
 import '../../../utils/command.dart';
 
-class CreateWorkspaceInitialViewModel extends ChangeNotifier {
-  CreateWorkspaceInitialViewModel({
+class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
+  CreateWorkspaceInitialScreenViewModel({
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
     required RefreshTokenUseCase refreshTokenUseCase,
@@ -23,7 +23,7 @@ class CreateWorkspaceInitialViewModel extends ChangeNotifier {
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
-  final _log = Logger('CreateWorkspaceInitialViewModel');
+  final _log = Logger('CreateWorkspaceInitialScreenViewModel');
 
   late Command0 loadUser;
   late Command1<void, (String name, String? description)> createWorkspace;

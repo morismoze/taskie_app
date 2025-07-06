@@ -112,9 +112,8 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
 
   @override
-  String appDrawerLeaveWorkspaceSuccess(Object workspaceName) {
-    return 'Uspješno ste napustili $workspaceName radni prostor';
-  }
+  String get appDrawerLeaveWorkspaceSuccess =>
+      'Uspješno ste napustili radni prostor';
 
   @override
   String get appDrawerLeaveWorkspaceError =>
