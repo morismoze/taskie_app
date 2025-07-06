@@ -81,6 +81,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
               viewModel: CreateWorkspaceInitialViewModel(
                 workspaceRepository: context.read(),
                 userRepository: context.read(),
+                refreshTokenUseCase: context.read(),
               ),
             );
           },
@@ -92,7 +93,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
               viewModel: CreateWorkspaceViewModel(
                 userRepository: context.read(),
                 workspaceRepository: context.read(),
-                authRepository: context.read(),
+                refreshTokenUseCase: context.read(),
               ),
             );
           },

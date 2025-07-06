@@ -145,8 +145,9 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
   }
 
   void _confirmWorkspaceLeave(BuildContext context, String workspaceId) {
-    AppModal.show(
+    AppDialog.show(
       context: context,
+      canPop: widget.viewModel.leaveWorkspace.running,
       title: FaIcon(
         FontAwesomeIcons.circleExclamation,
         color: Theme.of(context).colorScheme.error,
@@ -157,19 +158,25 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         style: Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.center,
       ),
-      ctaButton: ListenableBuilder(
-        listenable: widget.viewModel.leaveWorkspace,
-        builder: (_, _) => AppFilledButton(
-          label: context.localization.appDrawerLeaveWorkspaceModalCta,
-          onPress: () => widget.viewModel.leaveWorkspace.execute(workspaceId),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          isLoading: widget.viewModel.leaveWorkspace.running,
+      actions: [
+        ListenableBuilder(
+          listenable: widget.viewModel.leaveWorkspace,
+          builder: (_, _) => AppFilledButton(
+            label: context.localization.appDrawerLeaveWorkspaceModalCta,
+            onPress: () => widget.viewModel.leaveWorkspace.execute(workspaceId),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            isLoading: widget.viewModel.leaveWorkspace.running,
+          ),
         ),
-      ),
-      cancelButton: AppTextButton(
-        label: context.localization.cancel,
-        onPress: () => Navigator.pop(context),
-      ),
+        ListenableBuilder(
+          listenable: widget.viewModel.leaveWorkspace,
+          builder: (_, _) => AppTextButton(
+            disabled: widget.viewModel.leaveWorkspace.running,
+            label: context.localization.cancel,
+            onPress: () => Navigator.pop(context),
+          ),
+        ),
+      ],
     );
   }
 
@@ -191,22 +198,21 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
 
       switch (errorResult.error) {
         case RefreshTokenFailedException():
+          widget.viewModel.leaveWorkspace.clearResult();
           Navigator.of(context).pop(); // Close modal
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          context.go(Routes.login);
           break;
         default:
+          widget.viewModel.leaveWorkspace.clearResult();
           Navigator.of(context).pop(); // Close modal
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
       }
-
-      widget.viewModel.leaveWorkspace.clearResult();
     }
   }
 }

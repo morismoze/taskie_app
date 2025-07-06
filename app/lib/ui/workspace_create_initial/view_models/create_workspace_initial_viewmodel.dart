@@ -5,20 +5,24 @@ import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace.dart';
+import '../../../domain/use_cases/refresh_token_use_case.dart';
 import '../../../utils/command.dart';
 
 class CreateWorkspaceInitialViewModel extends ChangeNotifier {
   CreateWorkspaceInitialViewModel({
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
+    required RefreshTokenUseCase refreshTokenUseCase,
   }) : _workspaceRepository = workspaceRepository,
-       _userRepository = userRepository {
+       _userRepository = userRepository,
+       _refreshTokenUseCase = refreshTokenUseCase {
     loadUser = Command0(_loadUser)..execute();
     createWorkspace = Command1(_createWorkspace);
   }
 
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
+  final RefreshTokenUseCase _refreshTokenUseCase;
   final _log = Logger('CreateWorkspaceInitialViewModel');
 
   late Command0 loadUser;
@@ -46,20 +50,31 @@ class CreateWorkspaceInitialViewModel extends ChangeNotifier {
   Future<Result<Workspace>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
 
-    final result = await _workspaceRepository.createWorkspace(
+    final resultCreate = await _workspaceRepository.createWorkspace(
       name: name,
       description: description,
     );
 
-    switch (result) {
+    switch (resultCreate) {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to create workspace', result.error);
+        _log.warning('Failed to create workspace', resultCreate.error);
+        return Result.error(resultCreate.error);
     }
 
-    // No need for calling loadWorkspaces here since this screen is on separate page
+    // We need to refresh the access token since we keep list of roles with
+    // corresponding workspaces inside the access token.
+    final resultRefresh = await _refreshTokenUseCase.refreshAcessToken();
 
-    return result;
+    switch (resultRefresh) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to refresh token', resultRefresh.error);
+        return Result.error(resultRefresh.error);
+    }
+
+    return resultCreate;
   }
 }

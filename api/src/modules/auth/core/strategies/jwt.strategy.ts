@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false, // To be explicit
-      secretOrKey: configService.get('auth.secret', { infer: true }),
+      secretOrKey: configService.get('auth.secret', { infer: true })!,
     });
   }
 

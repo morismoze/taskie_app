@@ -23,9 +23,7 @@ class SignInUseCase {
 
     switch (signOutResult) {
       case Ok():
-        _authStateRepository.setAuthenticated(
-          const SetAuthStateArgumentsFalse(),
-        );
+        _authStateRepository.setAuthenticated(null);
         return const Result.ok(null);
       case Error():
         _log.warning('Error signing in with Google', signOutResult.error);

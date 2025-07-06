@@ -3,20 +3,16 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../config/environment/env.dart';
 import '../../repositories/auth/auth_state_repository.dart';
-import '../local/secure_storage_service.dart';
 import 'interceptors/request_headers_interceptor.dart';
 import 'interceptors/unauthorized_interceptor.dart';
 
 class ApiClient {
-  ApiClient({
-    required AuthStateRepository authStateRepository,
-    required SecureStorageService secureStorageService,
-  }) : _authStateRepository = authStateRepository,
-       _secureStorageService = secureStorageService,
-       _client = _instantiateApiClient(),
-       _rawClient = _instantiateApiClient() {
+  ApiClient({required AuthStateRepository authStateRepository})
+    : _authStateRepository = authStateRepository,
+      _client = _instantiateApiClient(),
+      _rawClient = _instantiateApiClient() {
     _client.interceptors.addAll([
-      RequestHeadersInterceptor(secureStorageService: _secureStorageService),
+      RequestHeadersInterceptor(authStateRepository: _authStateRepository),
       PrettyDioLogger(
         requestHeader: true,
         requestBody: true,
@@ -26,15 +22,21 @@ class ApiClient {
       UnauthorizedInterceptor(
         mainClient: _client,
         rawClient: _rawClient,
-        secureStorageService: _secureStorageService,
         authStateRepository: _authStateRepository,
+      ),
+    ]);
+    _rawClient.interceptors.addAll([
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        enabled: Env.env != Environment.production,
       ),
     ]);
   }
 
   final Dio _client;
   final Dio _rawClient;
-  final SecureStorageService _secureStorageService;
   final AuthStateRepository _authStateRepository;
 
   Dio get client => _client;

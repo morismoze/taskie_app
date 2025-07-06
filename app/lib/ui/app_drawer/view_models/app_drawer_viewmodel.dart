@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
-import '../../../data/repositories/auth/auth_repository.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../domain/models/workspace.dart';
+import '../../../domain/use_cases/refresh_token_use_case.dart';
 import '../../../utils/command.dart';
 
 class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({
     required WorkspaceRepository workspaceRepository,
-    required AuthRepository authRepository,
+    required RefreshTokenUseCase refreshTokenUseCase,
   }) : _workspaceRepository = workspaceRepository,
-       _authRepository = authRepository {
+       _refreshTokenUseCase = refreshTokenUseCase {
     loadWorkspaces = Command0(_loadWorkspaces);
     leaveWorkspace = Command1(_leaveWorkspace);
     setActiveWorkspace = Command1(_setActiveWorkspace);
   }
 
   final WorkspaceRepository _workspaceRepository;
-  final AuthRepository _authRepository;
+  final RefreshTokenUseCase _refreshTokenUseCase;
   final _log = Logger('AppDrawerViewModel');
 
   late Command0 loadWorkspaces;
@@ -65,6 +65,7 @@ class AppDrawerViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _leaveWorkspace(String workspaceId) async {
+    await Future.delayed(const Duration(seconds: 10));
     final resultLeave = await _workspaceRepository.leaveWorkspace(
       workspaceId: workspaceId,
     );
@@ -74,17 +75,19 @@ class AppDrawerViewModel extends ChangeNotifier {
         break;
       case Error():
         _log.warning('Failed to leave the workspace', resultLeave.error);
+        return Result.error(resultLeave.error);
     }
 
     // We need to refresh the access token since we keep list of roles with
     // corresponding workspaces inside the access token.
-    final resultRefresh = await _authRepository.refreshAcessToken();
+    final resultRefresh = await _refreshTokenUseCase.refreshAcessToken();
 
     switch (resultRefresh) {
       case Ok():
         break;
       case Error():
         _log.warning('Failed to refresh token', resultRefresh.error);
+        return Result.error(resultRefresh.error);
     }
 
     // We need to load workspaces again - this will load from repository cache, which was updated with the

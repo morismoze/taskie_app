@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   HttpCode,
@@ -10,6 +11,7 @@ import {
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { RequestWithUser } from './domain/request-with-user.domain';
+import { TokenRefreshRequest } from './dto/token-refresh-request.dto';
 import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
@@ -26,6 +28,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   refresh(
     @Req() request: Request & { user: JwtRefreshPayload },
+    @Body() _: TokenRefreshRequest,
   ): Promise<TokenRefreshResponse> {
     return this.authService.refreshToken(request.user);
   }

@@ -18,7 +18,7 @@ class AppShellScaffold extends StatelessWidget {
     // and AppBottomNavigationBarViewmodel are generated on every navigation inside the ShellRoute.
     final appDrawerViewModel = AppDrawerViewModel(
       workspaceRepository: context.read(),
-      authRepository: context.read(),
+      refreshTokenUseCase: context.read(),
     );
     final appBottomNavigationBarViewModel = AppBottomNavigationBarViewmodel(
       workspaceRepository: context.read(),

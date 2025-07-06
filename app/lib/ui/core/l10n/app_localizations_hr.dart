@@ -19,7 +19,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get signInSubtitle =>
-      'Organizirajte rutine, motivirajte djecu i slavite svaku pobjedu.';
+      'Organizirajte rutine, motivirajte djecu i slavite svaki uspjeh.';
 
   @override
   String get signInGetStarted => 'Započnimo';

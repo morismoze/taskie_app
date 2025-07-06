@@ -8,17 +8,19 @@ class AppTextButton extends StatelessWidget {
     required this.label,
     this.leadingIcon,
     this.color,
+    this.disabled = false,
   });
 
   final void Function() onPress;
   final String label;
   final IconData? leadingIcon;
   final Color? color;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: onPress,
+      onPressed: disabled ? () {} : onPress,
       style: TextButton.styleFrom(
         overlayColor: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 0),

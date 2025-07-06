@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { OrNever } from 'src/common/types/or-never.type';
 import { AggregatedConfig } from 'src/config/config.type';
+import { TokenRefreshRequest } from '../dto/token-refresh-request.dto';
 import { JwtRefreshPayload } from './jwt-refresh-payload.type';
 
 @Injectable()
@@ -22,13 +23,17 @@ export class JwtRefreshStrategy extends PassportStrategy(
   // is invoked, and if it fails for any reason, it will throw UnauthorizedException
   constructor(configService: ConfigService<AggregatedConfig>) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromBodyField(
+        TokenRefreshRequest.REFRESH_TOKEN_FIELD_NAME,
+      ),
       ignoreExpiration: false, // To be explicit
-      secretOrKey: configService.get('auth.refreshSecret', { infer: true }),
+      secretOrKey: configService.get('auth.refreshSecret', { infer: true })!,
     });
   }
 
   public validate(payload: JwtRefreshPayload): OrNever<JwtRefreshPayload> {
+    console.log(payload);
+
     if (!payload.sessionId) {
       throw new UnauthorizedException();
     }

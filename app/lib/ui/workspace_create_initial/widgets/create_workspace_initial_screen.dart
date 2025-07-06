@@ -3,16 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
-import '../../../domain/constants/validation_rules.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
-import '../../core/ui/app_text_form_field.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../workspace_create_initial/widgets/form.dart';
 import '../view_models/create_workspace_initial_viewmodel.dart';
 
 class CreateWorkspaceInitialScreen extends StatefulWidget {
@@ -26,10 +24,6 @@ class CreateWorkspaceInitialScreen extends StatefulWidget {
 
 class _CreateWorkspaceInitialScreenState
     extends State<CreateWorkspaceInitialScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -52,8 +46,6 @@ class _CreateWorkspaceInitialScreenState
   @override
   void dispose() {
     widget.viewModel.createWorkspace.removeListener(_onResult);
-    _nameController.dispose();
-    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -115,7 +107,7 @@ class _CreateWorkspaceInitialScreenState
                           ],
                         ),
                         const SizedBox(height: 60),
-                        _buildForm(),
+                        CreateFormInitial(viewModel: widget.viewModel),
                       ],
                     ),
                   ),
@@ -132,8 +124,8 @@ class _CreateWorkspaceInitialScreenState
     if (widget.viewModel.createWorkspace.completed) {
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<Workspace>).value.id;
-      GoRouter.of(context).go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
+      GoRouter.of(context).go(Routes.tasks(workspaceId: newWorkspaceId));
     }
 
     if (widget.viewModel.createWorkspace.error) {
@@ -143,76 +135,5 @@ class _CreateWorkspaceInitialScreenState
         message: context.localization.errorWhileCreatingWorkspace,
       );
     }
-  }
-
-  void _onSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      final name = _nameController.text;
-      final description = _descriptionController.text;
-      widget.viewModel.createWorkspace.execute((name, description));
-    }
-  }
-
-  String? _validateName(String? value) {
-    switch (value) {
-      case final String? value when value == null:
-        return context.localization.requiredField;
-      case final String value
-          when value.length < ValidationRules.workspaceNameMinLength:
-        return context.localization.workspaceCreateNameMinLength;
-      case final String value
-          when value.length > ValidationRules.workspaceNameMaxLength:
-        return context.localization.workspaceCreateNameMaxLength;
-      default:
-        return null;
-    }
-  }
-
-  String? _validateDescription(String? value) {
-    switch (value) {
-      case final String value
-          when value.length > ValidationRules.workspaceDescriptionMaxLength:
-        return context.localization.workspaceCreateDescriptionMaxLength;
-      default:
-        return null;
-    }
-  }
-
-  Widget _buildForm() {
-    return Form(
-      key: _formKey,
-      autovalidateMode: AutovalidateMode.onUnfocus,
-      child: Column(
-        children: [
-          AppTextFormField(
-            controller: _nameController,
-            label: context.localization.workspaceNameLabel,
-            validator: _validateName,
-            textInputAction: TextInputAction.next,
-            maxCharacterCount: ValidationRules.workspaceNameMaxLength,
-          ),
-          const SizedBox(height: 15),
-          AppTextFormField(
-            controller: _descriptionController,
-            label: context.localization.workspaceDescriptionLabel,
-            validator: _validateDescription,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.go,
-            required: false,
-            maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
-          ),
-          const SizedBox(height: 30),
-          ListenableBuilder(
-            listenable: widget.viewModel.createWorkspace,
-            builder: (context, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: context.localization.workspaceCreateLabel,
-              isLoading: widget.viewModel.createWorkspace.running,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -182,14 +182,14 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
       switch (result) {
         case Ok():
-          final workspacesList = _cachedWorkspacesList;
 
           // Remove the leaving workspace from the local list (cache)
           _cachedWorkspacesList?.remove(leavingWorkspace);
 
           // Set a first workspace from the cached list as active one
-          if (workspacesList != null && workspacesList.isNotEmpty) {
-            final firstWorkspaceId = workspacesList.first.id;
+          if (_cachedWorkspacesList != null &&
+              _cachedWorkspacesList!.isNotEmpty) {
+            final firstWorkspaceId = _cachedWorkspacesList!.first.id;
             setActiveWorkspaceId(firstWorkspaceId);
           }
           return const Result.ok(null);

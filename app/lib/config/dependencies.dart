@@ -18,6 +18,7 @@ import '../data/services/api/workspace/workspace_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
+import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
 
 List<SingleChildWidget> get providers {
@@ -31,10 +32,7 @@ List<SingleChildWidget> get providers {
               as AuthStateRepository,
     ),
     Provider(
-      create: (context) => ApiClient(
-        authStateRepository: context.read(),
-        secureStorageService: context.read(),
-      ),
+      create: (context) => ApiClient(authStateRepository: context.read()),
     ),
     Provider(create: (context) => AuthApiService(apiClient: context.read())),
     Provider(
@@ -71,6 +69,12 @@ List<SingleChildWidget> get providers {
     ),
     Provider(
       create: (context) => PreferencesRepositoryImpl() as PreferencesRepository,
+    ),
+    Provider(
+      create: (context) => RefreshTokenUseCase(
+        authApiService: context.read(),
+        authStateRepository: context.read(),
+      ),
     ),
   ];
 }
