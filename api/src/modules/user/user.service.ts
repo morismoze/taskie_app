@@ -3,13 +3,17 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
+import { WorkspaceUserService } from '../workspace/workspace-user-module/workspace-user.service';
 import { User } from './domain/user.domain';
-import { UserResponse } from './dto/user-response.dto';
+import { RolePerWorkspace, UserResponse } from './dto/user-response.dto';
 import { UserRepository } from './persistence/user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly workspaceUserService: WorkspaceUserService,
+  ) {}
 
   /**
    * This method creates a new user who "registered" via auth provider
@@ -72,14 +76,23 @@ export class UserService {
     // Using assertion because user should be always found based on how JWT works (custom secret)
     const user = (await this.findById(data.sub)) as User;
 
+    const rolesPerWorkspaces: RolePerWorkspace[] = (
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id)
+    ).map((wu) => ({
+      workspaceId: wu.workspace.id,
+      role: wu.workspaceRole,
+    }));
+
     const userDto: UserResponse = {
       email: user.email,
       firstName: user.firstName,
       id: user.id,
       lastName: user.lastName,
+      roles: rolesPerWorkspaces,
       profileImageUrl: user.profileImageUrl,
       createdAt: user.createdAt,
     };
+    console.log(userDto);
 
     return userDto;
   }

@@ -1,13 +1,8 @@
-export type LoginResponse = {
+import { UserResponse } from 'src/modules/user/dto/user-response.dto';
+
+export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   tokenExpires: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string | null;
-    profileImageUrl: string | null;
-    createdAt: string;
-  };
-};
+  user: UserResponse;
+}

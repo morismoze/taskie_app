@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
 
-class EntryViewModel extends ChangeNotifier {
+class EntryViewModel {
   EntryViewModel({required WorkspaceRepository workspaceRepository})
     : _workspaceRepository = workspaceRepository {
     loadWorkspaces = Command0(_loadWorkspaces)..execute();
@@ -13,13 +12,6 @@ class EntryViewModel extends ChangeNotifier {
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('EntryViewModel');
 
-  bool _userHasNoWorkspaces = false;
-
-  bool get userHasNoWorkspaces => _userHasNoWorkspaces;
-
-  Future<String?> get activeWorkspaceId =>
-      _workspaceRepository.activeWorkspaceId;
-
   late Command0 loadWorkspaces;
 
   Future<Result<void>> _loadWorkspaces() async {
@@ -27,13 +19,12 @@ class EntryViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _userHasNoWorkspaces = result.value.isEmpty;
+        _log.warning('Successfully loaded workspaces on entry screen');
+        break;
       case Error():
         _log.warning('Failed to load workspaces', result.error);
-        _userHasNoWorkspaces = false;
     }
 
-    notifyListeners();
     return result;
   }
 }

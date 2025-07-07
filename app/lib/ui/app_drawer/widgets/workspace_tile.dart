@@ -119,7 +119,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
             onPress: () {
               Navigator.of(context).pop(); // Close bottom sheet
               Navigator.of(context).pop(); // Close drawer
-              context.push(Routes.workspaceSettings(widget.id));
+              context.push(Routes.workspaceSettings);
             },
             label: context.localization.appDrawerEditWorkspace,
             leadingIcon: FontAwesomeIcons.pencil,
@@ -128,7 +128,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
             onPress: () {
               Navigator.of(context).pop(); // Close bottom sheet
               Navigator.of(context).pop(); // Close drawer
-              context.push(Routes.workspaceInvite(widget.id));
+              context.push(Routes.workspaceInvite);
             },
             label: context.localization.appDrawerInviteMembers,
             leadingIcon: FontAwesomeIcons.userPlus,

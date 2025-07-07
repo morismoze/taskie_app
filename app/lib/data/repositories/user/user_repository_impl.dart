@@ -10,18 +10,17 @@ class UserRepositoryImpl implements UserRepository {
 
   final UserApiService _userApiService;
 
-  User? _cachedData;
+  User? _cachedUser;
 
   @override
-  Result<void> setUser(User user) {
-    _cachedData = user;
-    return const Result.ok(null);
+  void setUser(User user) {
+    _cachedUser = user;
   }
 
   @override
   Future<Result<User>> getUser() async {
-    if (_cachedData != null) {
-      return Future.value(Result.ok(_cachedData!));
+    if (_cachedUser != null) {
+      return Result.ok(_cachedUser!);
     }
 
     final result = await _userApiService.getCurrentUser();
@@ -32,11 +31,12 @@ class UserRepositoryImpl implements UserRepository {
           email: result.value.email,
           firstName: result.value.firstName,
           lastName: result.value.lastName,
+          roles: result.value.roles,
           profileImageUrl: result.value.profileImageUrl,
           createdAt: DateTime.parse(result.value.createdAt),
         );
 
-        setUser(user);
+        _cachedUser = user;
 
         return Result.ok(user);
       case Error<UserResponse>():

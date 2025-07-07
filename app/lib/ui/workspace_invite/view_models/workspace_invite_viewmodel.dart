@@ -7,22 +7,20 @@ import '../../../utils/command.dart';
 class WorkspaceInviteViewModel extends ChangeNotifier {
   WorkspaceInviteViewModel({required WorkspaceRepository workspaceRepository})
     : _workspaceRepository = workspaceRepository {
-    createInviteLink = Command1(_createInviteLink);
+    createInviteLink = Command0(_createInviteLink)..execute();
   }
 
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('WorkspaceInviteViewModel');
 
-  late Command1<void, String> createInviteLink;
+  late Command0 createInviteLink;
 
   String? _inviteLink;
 
   String? get inviteLink => _inviteLink;
 
-  Future<Result<void>> _createInviteLink(String workspaceId) async {
-    final result = await _workspaceRepository.createWorkspaceInviteLink(
-      workspaceId: workspaceId,
-    );
+  Future<Result<void>> _createInviteLink() async {
+    final result = await _workspaceRepository.createWorkspaceInviteLink();
 
     switch (result) {
       case Ok():

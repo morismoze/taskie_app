@@ -4,32 +4,24 @@ abstract final class Routes {
 
   // Public routes
   static const login = '/login';
-  static const workspacesRelative = '/workspaces';
-  static const createWorkspaceInitial = '$workspacesRelative/create/initial';
 
   // Private routes
-  static String workspaceWithId(String id) => '$workspacesRelative/$id';
+  static const workspacesRelative = '/workspaces';
+  static const workspaceCreateInitial = '$workspacesRelative/create/initial';
+  static const workspaceCreate = '$workspacesRelative/create';
+  static const workspaceInvite = '$workspacesRelative/invite';
+  static const workspaceSettings = '$workspacesRelative/settings';
+
   static const tasksRelative = '/tasks';
-  static String tasks({required String workspaceId}) =>
-      '${workspaceWithId(workspaceId)}$tasksRelative';
-  static String taskWithId({
-    required String workspaceId,
-    required String taskId,
-  }) => '${tasks(workspaceId: workspaceId)}/$taskId';
-  static const leaderboardRelative = '/leaderboard';
-  static String leaderboard({required String workspaceId}) =>
-      '${workspaceWithId(workspaceId)}$leaderboardRelative';
+  static const tasks = '$workspacesRelative$tasksRelative';
+  static String taskWithId({required String taskId}) => '$tasks/$taskId';
+
+  static const leaderboard = '/leaderboard';
+
   static const goalsRelative = '/goals';
-  static String goals({required String workspaceId}) =>
-      '${workspaceWithId(workspaceId)}$goalsRelative';
-  static String goalWithId({
-    required String workspaceId,
-    required String goalId,
-  }) => '${goals(workspaceId: workspaceId)}$goalId';
-  static String workspaceInvite(String workspaceId) =>
-      '${workspaceWithId(workspaceId)}/invite';
-  static String workspaceSettings(String workspaceId) =>
-      '${workspaceWithId(workspaceId)}/settings';
-  static const createWorkspace = '$workspacesRelative/create';
+  static const goals = '$workspacesRelative$goalsRelative';
+  static String goalWithId({required String goalId}) => '$goals/$goalId';
+
+  // Private global route for setting global settings (e.g. language).
   static const preferences = '/preferences';
 }

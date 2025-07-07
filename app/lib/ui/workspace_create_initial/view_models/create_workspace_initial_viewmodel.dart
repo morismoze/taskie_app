@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../domain/models/user.dart';
-import '../../../domain/models/workspace.dart';
 import '../../../domain/use_cases/refresh_token_use_case.dart';
 import '../../../utils/command.dart';
 
@@ -47,7 +46,7 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<Workspace>> _createWorkspace((String, String?) details) async {
+  Future<Result<void>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
 
     final resultCreate = await _workspaceRepository.createWorkspace(

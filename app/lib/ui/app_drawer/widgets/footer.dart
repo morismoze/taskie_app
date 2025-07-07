@@ -34,7 +34,7 @@ class Footer extends StatelessWidget {
               AppTextButton(
                 onPress: () {
                   Navigator.of(context).pop(); // Close drawer
-                  context.push(Routes.createWorkspace);
+                  context.push(Routes.workspaceCreate);
                 },
                 label: context.localization.appDrawerCreateNewWorkspace,
                 leadingIcon: FontAwesomeIcons.plus,

@@ -71,18 +71,6 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '${Routes.workspacesRelative}/create/initial',
-      builder: (context, state) {
-        return CreateWorkspaceInitialScreen(
-          viewModel: CreateWorkspaceInitialScreenViewModel(
-            workspaceRepository: context.read(),
-            userRepository: context.read(),
-            refreshTokenUseCase: context.read(),
-          ),
-        );
-      },
-    ),
     ShellRoute(
       redirect: _shellRouteRedirect,
       navigatorKey: _shellNavigatorKey,
@@ -91,7 +79,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       },
       routes: [
         GoRoute(
-          path: '${Routes.workspacesRelative}/:id/tasks',
+          path: Routes.tasks,
           pageBuilder: (context, state) {
             return NoTransitionPage(
               child: TasksScreen(
@@ -104,13 +92,13 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
           },
         ),
         GoRoute(
-          path: '${Routes.workspacesRelative}/:id/leaderboard',
+          path: Routes.leaderboard,
           pageBuilder: (context, state) {
             return const NoTransitionPage(child: Text('leaderboard'));
           },
         ),
         GoRoute(
-          path: '${Routes.workspacesRelative}/:id/goals',
+          path: Routes.goals,
           pageBuilder: (context, state) {
             return const NoTransitionPage(child: Text('goals'));
           },
@@ -118,7 +106,19 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       ],
     ),
     GoRoute(
-      path: '${Routes.workspacesRelative}/create',
+      path: Routes.workspaceCreateInitial,
+      builder: (context, state) {
+        return CreateWorkspaceInitialScreen(
+          viewModel: CreateWorkspaceInitialScreenViewModel(
+            workspaceRepository: context.read(),
+            userRepository: context.read(),
+            refreshTokenUseCase: context.read(),
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.workspaceCreate,
       builder: (context, state) => CreateWorkspaceScreen(
         viewModel: CreateWorkspaceScreenViewModel(
           userRepository: context.read(),
@@ -128,21 +128,17 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
       ),
     ),
     GoRoute(
-      path: '${Routes.workspacesRelative}/:id/invite',
+      path: Routes.workspaceInvite,
       builder: (context, state) {
-        final id = state.pathParameters['id']!;
         final viewModel = WorkspaceInviteViewModel(
           workspaceRepository: context.read(),
         );
-
-        // Initiate new invite link fetch when opening workspace invite screen
-        viewModel.createInviteLink.execute(id);
 
         return WorkspaceInviteScreen(viewModel: viewModel);
       },
     ),
     GoRoute(
-      path: '${Routes.workspacesRelative}/:id/settings',
+      path: Routes.workspaceSettings,
       builder: (context, state) {
         return WorkspaceSettingsScreen(
           viewModel: WorkspaceSettingsViewmodel(
@@ -182,16 +178,13 @@ Future<String?> _redirect(BuildContext context, GoRouterState state) async {
   return null;
 }
 
-Future<String?> _shellRouteRedirect(
-  BuildContext context,
-  GoRouterState state,
-) async {
+String? _shellRouteRedirect(BuildContext context, GoRouterState state) {
   // if the user is not part of any workspace anymore (e.g. left all workspaces),
   // we need to redirect the user to workspace initial creation screen
   final hasNoWorkspaces = context.read<WorkspaceRepository>().hasNoWorkspaces;
 
   if (hasNoWorkspaces) {
-    return Routes.createWorkspaceInitial;
+    return Routes.workspaceCreateInitial;
   }
 
   // no need to redirect

@@ -13,6 +13,7 @@ class AppDrawerViewModel extends ChangeNotifier {
   }) : _workspaceRepository = workspaceRepository,
        _refreshTokenUseCase = refreshTokenUseCase {
     loadWorkspaces = Command0(_loadWorkspaces);
+    loadActiveWorkspaceId = Command0(_loadActiveWorkspaceId);
     leaveWorkspace = Command1(_leaveWorkspace);
     setActiveWorkspace = Command1(_setActiveWorkspace);
   }
@@ -22,6 +23,7 @@ class AppDrawerViewModel extends ChangeNotifier {
   final _log = Logger('AppDrawerViewModel');
 
   late Command0 loadWorkspaces;
+  late Command0 loadActiveWorkspaceId;
   late Command1<void, String> leaveWorkspace;
   late Command1<void, String> setActiveWorkspace;
 
@@ -29,12 +31,27 @@ class AppDrawerViewModel extends ChangeNotifier {
 
   List<Workspace> get workspaces => _workspaces;
 
-  Future<String?> get activeWorkspaceId =>
-      _workspaceRepository.activeWorkspaceId;
+  String? _activeWorkspaceId;
+
+  String? get activeWorkspaceId => _activeWorkspaceId;
 
   String? _inviteLink;
 
   String? get inviteLink => _inviteLink;
+
+  Future<Result<void>> _loadActiveWorkspaceId() async {
+    final result = await _workspaceRepository.getActiveWorkspaceId();
+
+    switch (result) {
+      case Ok():
+        _activeWorkspaceId = result.value;
+        notifyListeners();
+      case Error():
+        _log.warning('Failed to load active workspace ID', result.error);
+    }
+
+    return result;
+  }
 
   Future<Result<void>> _loadWorkspaces() async {
     final result = await _workspaceRepository.getWorkspaces();
@@ -42,11 +59,11 @@ class AppDrawerViewModel extends ChangeNotifier {
     switch (result) {
       case Ok():
         _workspaces = result.value;
+        notifyListeners();
       case Error():
         _log.warning('Failed to load workspaces', result.error);
     }
 
-    notifyListeners();
     return result;
   }
 
@@ -55,12 +72,12 @@ class AppDrawerViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        _activeWorkspaceId = workspaceId;
+        notifyListeners();
       case Error():
         _log.warning('Failed to set active workspace', result.error);
     }
 
-    notifyListeners();
     return result;
   }
 

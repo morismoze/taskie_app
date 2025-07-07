@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../routing/routes.dart';
-import '../../core/l10n/l10n_extensions.dart';
-import '../../core/theme/colors.dart';
-import '../../core/theme/dimens.dart';
-import '../../core/util/constants.dart';
-import '../view_models/app_bottom_navigation_bar_viewmodel.dart';
+import '../ui/core/l10n/l10n_extensions.dart';
+import '../ui/core/theme/colors.dart';
+import '../ui/core/theme/dimens.dart';
+import '../ui/core/util/constants.dart';
+import 'routes.dart';
 
 class AppBottomNavigationBar extends StatelessWidget {
-  const AppBottomNavigationBar({super.key, required this.viewModel});
-
-  final AppBottomNavigationBarViewmodel viewModel;
+  const AppBottomNavigationBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,28 +57,21 @@ class AppBottomNavigationBar extends StatelessWidget {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
       final path when path.contains(Routes.tasksRelative) => 0,
-      final path when path.contains(Routes.leaderboardRelative) => 1,
+      final path when path.contains(Routes.leaderboard) => 1,
       final path when path.contains(Routes.goalsRelative) => 2,
       _ => 0,
     };
   }
 
   void _onItemTapped(int index, BuildContext context) async {
-    final activeWorkspaceId = await viewModel.activeWorkspaceId;
     if (context.mounted) {
       switch (index) {
         case 0:
-          GoRouter.of(
-            context,
-          ).go(Routes.tasks(workspaceId: activeWorkspaceId!));
+          GoRouter.of(context).go(Routes.tasks);
         case 1:
-          GoRouter.of(
-            context,
-          ).go(Routes.leaderboard(workspaceId: activeWorkspaceId!));
+          GoRouter.of(context).go(Routes.leaderboard);
         case 2:
-          GoRouter.of(
-            context,
-          ).go(Routes.goals(workspaceId: activeWorkspaceId!));
+          GoRouter.of(context).go(Routes.goals);
       }
     }
   }

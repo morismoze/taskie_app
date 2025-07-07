@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
-import '../../../domain/models/workspace.dart';
 import '../../../routing/routes.dart';
-import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
@@ -122,10 +120,8 @@ class _CreateWorkspaceInitialScreenState
 
   void _onResult() {
     if (widget.viewModel.createWorkspace.completed) {
-      final newWorkspaceId =
-          (widget.viewModel.createWorkspace.result as Ok<Workspace>).value.id;
       widget.viewModel.createWorkspace.clearResult();
-      GoRouter.of(context).go(Routes.tasks(workspaceId: newWorkspaceId));
+      GoRouter.of(context).go(Routes.tasks);
     }
 
     if (widget.viewModel.createWorkspace.error) {

@@ -30,7 +30,6 @@ class _EntryScreenState extends State<EntryScreen> {
       ),
     );
     widget.viewModel.loadWorkspaces.addListener(_onLoadWorkspacesResult);
-    widget.viewModel.addListener(_onViewModelChanged);
   }
 
   @override
@@ -38,14 +37,11 @@ class _EntryScreenState extends State<EntryScreen> {
     super.didUpdateWidget(oldWidget);
     widget.viewModel.loadWorkspaces.addListener(_onLoadWorkspacesResult);
     oldWidget.viewModel.loadWorkspaces.removeListener(_onLoadWorkspacesResult);
-    oldWidget.viewModel.removeListener(_onViewModelChanged);
-    widget.viewModel.addListener(_onViewModelChanged);
   }
 
   @override
   void dispose() {
     widget.viewModel.loadWorkspaces.removeListener(_onLoadWorkspacesResult);
-    widget.viewModel.removeListener(_onViewModelChanged);
     super.dispose();
   }
 
@@ -79,6 +75,7 @@ class _EntryScreenState extends State<EntryScreen> {
   void _onLoadWorkspacesResult() {
     if (widget.viewModel.loadWorkspaces.completed) {
       widget.viewModel.loadWorkspaces.clearResult();
+      context.go(Routes.tasks);
     }
 
     if (widget.viewModel.loadWorkspaces.error) {
@@ -90,24 +87,6 @@ class _EntryScreenState extends State<EntryScreen> {
         message: context.localization.errorWhileLoadingWorkspaces,
       );
       context.go(Routes.login);
-    }
-  }
-
-  void _onViewModelChanged() async {
-    if (widget.viewModel.userHasNoWorkspaces) {
-      context.go(Routes.createWorkspaceInitial);
-    } else {
-      final activeWorkspaceId = await widget.viewModel.activeWorkspaceId;
-      if (mounted) {
-        // After this navigation to /tasks, we are sure that activeWorkspaceId
-        // in WorkspaceRepository is set.
-        context.go(
-          activeWorkspaceId != null
-              ? Routes.tasks(workspaceId: activeWorkspaceId)
-              : Routes.login,
-        );
-        return;
-      }
     }
   }
 }

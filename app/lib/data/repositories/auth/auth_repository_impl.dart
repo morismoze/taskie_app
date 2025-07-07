@@ -53,6 +53,7 @@ class AuthRepositoryImpl extends AuthRepository {
                 firstName: apiLoginResult.value.user.firstName,
                 lastName: apiLoginResult.value.user.lastName,
                 createdAt: DateTime.parse(apiLoginResult.value.user.createdAt),
+                roles: apiLoginResult.value.user.roles,
                 email: apiLoginResult.value.user.email,
                 profileImageUrl: apiLoginResult.value.user.profileImageUrl,
               ),

@@ -25,6 +25,12 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   // Invite links per workspace IDs (workspaceId: inviteLink)
   final Map<String, String> _cachedWorkspaceInviteLinks = {};
 
+  // This is listenable used for redirection to workspace creation
+  // screen in case user is not part of any workspace.
+  @override
+  bool get hasNoWorkspaces =>
+      _cachedWorkspacesList == null || _cachedWorkspacesList!.isEmpty;
+
   @override
   Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
     if (_activeWorkspaceId != null && _activeWorkspaceId == workspaceId) {
@@ -39,7 +45,6 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     switch (result) {
       case Ok():
         _activeWorkspaceId = workspaceId;
-        notifyListeners();
       case Error():
         _log.severe(
           'Failed to set active workspace to shared prefs',
@@ -51,9 +56,9 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Future<String?> get activeWorkspaceId async {
+  Future<Result<String?>> getActiveWorkspaceId() async {
     if (_activeWorkspaceId != null) {
-      return _activeWorkspaceId!;
+      return Result.ok(_activeWorkspaceId);
     }
 
     final result = await _sharedPreferencesService.getActiveWorkspaceId();
@@ -61,20 +66,13 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     switch (result) {
       case Ok<String?>():
         _activeWorkspaceId = result.value;
-        notifyListeners();
-        return _activeWorkspaceId;
+        return Result.ok(_activeWorkspaceId);
+
       case Error<String?>():
-        _log.severe(
-          'Failed to read active workspace ID from shared prefs',
-          result.error,
-        );
-        return null;
+        _log.severe('Failed to read active workspace ID', result.error);
+        return Result.error(result.error);
     }
   }
-
-  @override
-  bool get hasNoWorkspaces =>
-      _cachedWorkspacesList == null || _cachedWorkspacesList!.isEmpty;
 
   @override
   Future<Result<List<Workspace>>> getWorkspaces({
@@ -100,9 +98,14 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
               .toList();
           _cachedWorkspacesList = mappedData;
 
-          if (await activeWorkspaceId == null && mappedData.isNotEmpty) {
+          if (_activeWorkspaceId == null && mappedData.isNotEmpty) {
             final firstWorkspaceId = mappedData.first.id;
             setActiveWorkspaceId(firstWorkspaceId);
+          }
+
+          // If user is not part of any workspace, notify the navigation redirection listener
+          if (_cachedWorkspacesList!.isEmpty) {
+            notifyListeners();
           }
 
           return Result.ok(mappedData);
@@ -115,7 +118,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Future<Result<Workspace>> createWorkspace({
+  Future<Result<void>> createWorkspace({
     required String name,
     String? description,
   }) async {
@@ -151,22 +154,20 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Future<Result<String>> createWorkspaceInviteLink({
-    required String workspaceId,
-  }) async {
-    if (_cachedWorkspaceInviteLinks[workspaceId] != null) {
-      return Result.ok(_cachedWorkspaceInviteLinks[workspaceId]!);
+  Future<Result<String>> createWorkspaceInviteLink() async {
+    if (_cachedWorkspaceInviteLinks[_activeWorkspaceId] != null) {
+      return Result.ok(_cachedWorkspaceInviteLinks[_activeWorkspaceId]!);
     }
 
     try {
       final result = await _workspaceApiService.createWorkspaceInviteLink(
-        workspaceId,
+        _activeWorkspaceId!,
       );
 
       switch (result) {
         case Ok<CreateWorkspaceInviteLinkResponse>():
           final inviteLink = result.value.inviteLink;
-          _cachedWorkspaceInviteLinks[workspaceId] = inviteLink;
+          _cachedWorkspaceInviteLinks[_activeWorkspaceId!] = inviteLink;
           return Result.ok(inviteLink);
         case Error<CreateWorkspaceInviteLinkResponse>():
           return Result.error(result.error);
@@ -190,11 +191,15 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           _cachedWorkspacesList!.remove(leavingWorkspace);
           // Set a first workspace from the cached list as active one only if
           // the leaving workspace was the current active one
-          if (_cachedWorkspacesList != null &&
-              _cachedWorkspacesList!.isNotEmpty &&
+          if (_cachedWorkspacesList!.isNotEmpty &&
               workspaceId == _activeWorkspaceId) {
             final firstWorkspaceId = _cachedWorkspacesList!.first.id;
             setActiveWorkspaceId(firstWorkspaceId);
+          }
+
+          // If user no more part of any workspace, notify the navigation redirection listener
+          if (_cachedWorkspacesList!.isEmpty) {
+            notifyListeners();
           }
 
           return const Result.ok(null);

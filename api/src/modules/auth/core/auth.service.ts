@@ -10,6 +10,7 @@ import { SessionService } from 'src/modules/session/session.service';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { User } from 'src/modules/user/domain/user.domain';
+import { RolePerWorkspace } from 'src/modules/user/dto/user-response.dto';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
 import { AuthProvider } from './domain/auth-provider.enum';
@@ -135,11 +136,19 @@ export class AuthService {
         session.hash,
       );
 
+    const rolesPerWorkspaces: RolePerWorkspace[] = (
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id)
+    ).map((wu) => ({
+      workspaceId: wu.workspace.id,
+      role: wu.workspaceRole,
+    }));
+
     const userDto: LoginResponse['user'] = {
       email: user.email,
       firstName: user.firstName,
       id: user.id,
       lastName: user.lastName,
+      roles: rolesPerWorkspaces,
       profileImageUrl: user.profileImageUrl,
       createdAt: user.createdAt,
     };
