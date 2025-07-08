@@ -9,6 +9,7 @@ class UserResponse {
     required this.firstName,
     required this.lastName,
     required this.createdAt,
+    required this.roles,
     this.email,
     this.profileImageUrl,
   });
@@ -17,9 +18,33 @@ class UserResponse {
   final String firstName;
   final String lastName;
   final String createdAt;
+  final List<RolePerWorkspace> roles;
   final String? email;
   final String? profileImageUrl;
 
   factory UserResponse.fromJson(Map<String, dynamic> json) =>
       _$UserResponseFromJson(json);
+}
+
+@JsonSerializable()
+class RolePerWorkspace {
+  RolePerWorkspace({required this.workspaceId, required this.role});
+
+  final String workspaceId;
+  final WorkspaceRole role;
+
+  factory RolePerWorkspace.fromJson(Map<String, dynamic> json) =>
+      _$RolePerWorkspaceFromJson(json);
+}
+
+enum WorkspaceRole {
+  @JsonValue('MANAGER')
+  manager('MANAGER'),
+
+  @JsonValue('MEMBER')
+  member('MEMBER');
+
+  const WorkspaceRole(this.value);
+
+  final String value;
 }

@@ -22,7 +22,7 @@ class AppFilledButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FilledButton(
-      onPressed: onPress,
+      onPressed: isLoading ? () {} : onPress,
       style: Theme.of(context).filledButtonTheme.style!.copyWith(
         backgroundColor: backgroundColor != null
             ? WidgetStateProperty.all(backgroundColor)

@@ -9,6 +9,9 @@ class AppLocalizationsHr extends AppLocalizations {
   AppLocalizationsHr([String locale = 'hr']) : super(locale);
 
   @override
+  String get cancel => 'Otkaži';
+
+  @override
   String get signInTitleStart => 'Učenje odgovornosti.';
 
   @override
@@ -16,7 +19,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get signInSubtitle =>
-      'Organizirajte rutine, motivirajte djecu i slavite svaku pobjedu.';
+      'Organizirajte rutine, motivirajte djecu i slavite svaki uspjeh.';
 
   @override
   String get signInGetStarted => 'Započnimo';
@@ -80,9 +83,45 @@ class AppLocalizationsHr extends AppLocalizations {
   String get requiredField => 'Ovo polje je obvezno';
 
   @override
+  String get optional => 'opcionalno';
+
+  @override
   String get errorWhileCreatingWorkspace =>
       'Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora';
 
   @override
   String get tasksHello => 'Pozdrav!';
+
+  @override
+  String get appDrawerTitle => 'Radni prostori';
+
+  @override
+  String get appDrawerEditWorkspace => 'Uredi postavke radnog prostora';
+
+  @override
+  String get appDrawerInviteMembers => 'Pozovi nove članove';
+
+  @override
+  String get appDrawerLeaveWorkspace => 'Napusti radni prostor';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalMessage =>
+      'Jeste li sigurni da želite napustiti ovaj radni prostor?';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
+
+  @override
+  String get appDrawerLeaveWorkspaceSuccess =>
+      'Uspješno ste napustili radni prostor';
+
+  @override
+  String get appDrawerLeaveWorkspaceError =>
+      'Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora';
+
+  @override
+  String get appDrawerCreateNewWorkspace => 'Stvori novi radni prostor';
+
+  @override
+  String get appDrawerPreferences => 'Preference';
 }

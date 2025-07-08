@@ -13,44 +13,44 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { RequireWorkspaceUserRole } from './decorators/workspace-role.decorator';
-import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
+import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
+import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
+import { RequireWorkspaceUserRole } from './decorators/workspace-role.decorator';
+import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
+import { CreateTaskRequest } from './dto/request/create-task-request.dto';
 import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
-import { WorkspaceService } from './workspace.service';
-import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
-import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
-import { CreateTaskRequest } from './dto/request/create-task-request.dto';
-import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { GoalIdRequestPathParam } from './dto/request/goal-id-path-param-request.dto';
+import { MemberIdRequestPathParam } from './dto/request/member-id-path-param-request.dto';
+import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
+import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
+import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
+import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
-import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
-import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
-import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
-import { MemberIdRequestPathParam } from './dto/request/member-id-path-param-request.dto';
-import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
-import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
-import {
-  WorkspaceResponse,
-  WorkspacesResponse,
-} from './dto/response/workspaces-response.dto';
-import {
-  WorkspaceUserResponse,
-  WorkspaceUsersResponse,
-} from './dto/response/workspace-members-response.dto';
+import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
 } from './dto/response/workspace-goals-response.dto';
 import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
+import {
+  WorkspaceUserResponse,
+  WorkspaceUsersResponse,
+} from './dto/response/workspace-members-response.dto';
 import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
-import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
-import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
-import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
-import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
-import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
-import { GoalIdRequestPathParam } from './dto/request/goal-id-path-param-request.dto';
+import {
+  WorkspaceResponse,
+  WorkspacesResponse,
+} from './dto/response/workspaces-response.dto';
+import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
+import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
+import { WorkspaceService } from './workspace.service';
 
 @Controller({
   path: 'workspaces',
@@ -170,6 +170,19 @@ export class WorkspaceController {
     return this.workspaceService.removeUserFromWorkspace({
       workspaceId,
       memberId,
+    });
+  }
+
+  @Delete(':workspaceId/members')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  leaveWorkspace(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Req() request: RequestWithUser,
+  ): Promise<void> {
+    return this.workspaceService.leaveWorkspace({
+      workspaceId,
+      memberId: request.user.sub,
     });
   }
 

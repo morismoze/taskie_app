@@ -5,36 +5,23 @@ import 'package:dio/dio.dart';
 import '../../../../config/api_endpoints.dart';
 import '../../../../utils/command.dart';
 import '../../../repositories/auth/auth_state_repository.dart';
-import '../../local/secure_storage_service.dart';
-import '../auth/models/response/token_refresh_response.dart';
+import '../api_response.dart';
+import '../auth/models/request/refresh_token_request.dart';
+import '../auth/models/response/refresh_token_response.dart';
 
 class UnauthorizedInterceptor extends Interceptor {
   UnauthorizedInterceptor({
     required AuthStateRepository authStateRepository,
-    required Dio mainClient,
-    required Dio rawClient,
-    required SecureStorageService secureStorageService,
+    required Dio client,
   }) : _authStateRepository = authStateRepository,
-       _rawClient = rawClient,
-       _mainClient = mainClient,
-       _secureStorageService = secureStorageService;
+       _client = client;
 
-  // This client uses request interceptor which sets the Authorization
-  // Bearer from access token read from secure storage
-  final Dio _mainClient;
-  // This client is the same as mainClient (basic options wise), but
-  // doesn't have any interceptor. It is used for token refresh request
-  // because backend expects the Authorization Bearer header to be set
-  // to the refresh token (not access token) and as we have that request
-  // interceptor on main client (which sets the Authorization Bearer header
-  // to access token), it can't be used.
-  final Dio _rawClient;
-  final SecureStorageService _secureStorageService;
+  final Dio _client;
   final AuthStateRepository _authStateRepository;
 
   // Semaphore for token refresh
   bool _isRefreshing = false;
-  // Completer which waits on token refresh finish
+  // Completer which makes other requsts which got 401 response to wait on token refresh finish
   Completer<void>? _refreshTokenCompleter;
 
   @override
@@ -43,13 +30,9 @@ class UnauthorizedInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    // This interceptor will never trigger for 401 on /auth/refresh because
-    // we used rawClient for that request, and that client doesn't have any
-    // interceptors, meaning it doesn't use this UnauthorizedInterceptor, so there
-    // is not chance of loop 401 problem.
-
-    if (err.requestOptions.path.contains('/auth/logout')) {
-      _authStateRepository.setAuthenticated(SetAuthStateArgumentsFalse());
+    if (err.requestOptions.path.contains(ApiEndpoints.refreshToken)) {
+      await _authStateRepository.setTokens(null);
+      _authStateRepository.setAuthenticated(false);
       return handler.next(err);
     }
 
@@ -59,7 +42,6 @@ class UnauthorizedInterceptor extends Interceptor {
         try {
           await _refreshTokenCompleter!.future;
         } on Exception {
-          _logoutUser();
           return handler.next(err);
         }
       }
@@ -71,12 +53,15 @@ class UnauthorizedInterceptor extends Interceptor {
     // Start the token refresh process
     await _refreshToken(err, handler);
 
-    // _mainClient should now in RequestHeadersInterceptor read new accessToken value from storage
+    // _mainClient should now read new accessToken value from storage in RequestHeadersInterceptor
 
     // Repeat the original request which first fired 401 interceptor
     return await _repeatRequestAfterTokenRefresh(err, handler);
   }
 
+  // This interceptor can't use refreshToken from AuthRepository (or any repository for that matter)
+  // because it depends on AuthApiService which depends on ApiClient, and ApiClient would then
+  // depend on AuthRepository - this would result in circular dependency problem.
   Future<void> _refreshToken(
     DioException originalError,
     ErrorInterceptorHandler handler,
@@ -85,40 +70,35 @@ class UnauthorizedInterceptor extends Interceptor {
     _refreshTokenCompleter = Completer<void>();
 
     try {
-      final refreshTokenResult = await _secureStorageService.getRefreshToken();
-
-      if (refreshTokenResult is Error) {
-        await _logoutUser();
-        return handler.next(originalError);
-      }
-
-      final refreshToken = (refreshTokenResult as Ok<String>).value;
-      final refreshTokenResponse = await _rawClient.post(
+      final (_, refreshToken) = await _authStateRepository.tokens;
+      final refreshTokenResponse = await _client.post(
         ApiEndpoints.refreshToken,
-        options: Options(headers: {'Authorization': refreshToken}),
+        data: RefreshTokenRequest(refreshToken),
       );
-      final data = TokenRefreshResponse.fromJson(refreshTokenResponse.data);
-
-      final setAccessTokenResult = await _secureStorageService.setAccessToken(
-        data.accessToken,
-      );
-      final setRefreshTokenResult = await _secureStorageService.setRefreshToken(
-        data.refreshToken,
+      final apiResponse = ApiResponse<RefreshTokenResponse>.fromJson(
+        refreshTokenResponse.data,
+        (json) => RefreshTokenResponse.fromJson(json as Map<String, dynamic>),
       );
 
-      if (setAccessTokenResult is Error || setRefreshTokenResult is Error) {
-        _refreshTokenCompleter!.completeError(
-          'Error saving tokens to the storage:',
-        );
-        await _logoutUser();
-        return handler.next(originalError);
+      final setAuthResult = await _authStateRepository.setTokens((
+        apiResponse.data!.accessToken,
+        apiResponse.data!.refreshToken,
+      ));
+
+      switch (setAuthResult) {
+        case Ok():
+          // Complete the completer future
+          _refreshTokenCompleter!.complete();
+        case Error():
+          _refreshTokenCompleter!.completeError(
+            'Error saving tokens to the storage',
+          );
+          return handler.next(originalError);
       }
-
-      // Complete the completer future
-      _refreshTokenCompleter!.complete();
     } catch (e) {
       _refreshTokenCompleter!.completeError(e);
-      await _logoutUser();
+      await _authStateRepository.setTokens(null);
+      _authStateRepository.setAuthenticated(false);
       return handler.next(originalError);
     } finally {
       _isRefreshing = false;
@@ -131,18 +111,12 @@ class UnauthorizedInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) async {
     try {
-      final response = await _mainClient.fetch(originalError.requestOptions);
+      final response = await _client.fetch(originalError.requestOptions);
       return handler.resolve(response);
-    } on Exception {
-      // do something here
-    }
-  }
-
-  Future<void> _logoutUser() async {
-    try {
-      await _mainClient.delete(ApiEndpoints.logout);
-    } finally {
-      _authStateRepository.setAuthenticated(SetAuthStateArgumentsFalse());
+    } on DioException catch (e) {
+      await _authStateRepository.setTokens(null);
+      _authStateRepository.setAuthenticated(false);
+      return handler.reject(e);
     }
   }
 }

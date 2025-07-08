@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../routing/routes.dart';
-import '../../l10n/l10n_extensions.dart';
-import '../../theme/colors.dart';
-import '../../theme/dimens.dart';
-import '../../util/constants.dart';
+import '../ui/core/l10n/l10n_extensions.dart';
+import '../ui/core/theme/colors.dart';
+import '../ui/core/theme/dimens.dart';
+import '../ui/core/util/constants.dart';
+import 'routes.dart';
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({super.key});
@@ -56,21 +56,23 @@ class AppBottomNavigationBar extends StatelessWidget {
   static int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
-      final path when path.startsWith(Routes.tasks) => 0,
-      final path when path.startsWith(Routes.leaderboard) => 1,
-      final path when path.startsWith(Routes.goals) => 2,
+      final path when path.contains(Routes.tasksRelative) => 0,
+      final path when path.contains(Routes.leaderboard) => 1,
+      final path when path.contains(Routes.goalsRelative) => 2,
       _ => 0,
     };
   }
 
-  void _onItemTapped(int index, BuildContext context) {
-    switch (index) {
-      case 0:
-        GoRouter.of(context).go(Routes.tasks);
-      case 1:
-        GoRouter.of(context).go(Routes.leaderboard);
-      case 2:
-        GoRouter.of(context).go(Routes.goals);
+  void _onItemTapped(int index, BuildContext context) async {
+    if (context.mounted) {
+      switch (index) {
+        case 0:
+          GoRouter.of(context).go(Routes.tasks);
+        case 1:
+          GoRouter.of(context).go(Routes.leaderboard);
+        case 2:
+          GoRouter.of(context).go(Routes.goals);
+      }
     }
   }
 

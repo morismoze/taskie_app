@@ -14,18 +14,17 @@ class SignInUseCase {
   final AuthRepository _authRepository;
   final AuthStateRepository _authStateRepository;
 
-  final _log = Logger('SignInUseCase');
+  final _log = Logger('SignOutUseCase');
 
-  /// On sign out we need to do two things: 1. trigger sign out request
-  /// from [AuthRepository] and 2. remove authenticated state in [AuthStateRepository]
+  /// On sign out we need to do two things: 1. trigger sign out request from [AuthRepository] and
+  /// 2. set authenticated state in [AuthStateRepository]
   Future<Result<void>> signOut() async {
     final signOutResult = await _authRepository.signOut();
 
     switch (signOutResult) {
       case Ok():
-        _authStateRepository.setAuthenticated(
-          const SetAuthStateArgumentsFalse(),
-        );
+        _authStateRepository.setAuthenticated(false);
+        _authStateRepository.setTokens(null);
         return const Result.ok(null);
       case Error():
         _log.warning('Error signing in with Google', signOutResult.error);

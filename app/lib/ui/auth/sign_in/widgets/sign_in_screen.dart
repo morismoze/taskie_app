@@ -13,17 +13,6 @@ import '../../../core/ui/app_snackbar.dart';
 import '../../../core/ui/blurred_circles_background.dart';
 import '../view_models/sign_in_viewmodel.dart';
 
-const images = [
-  [
-    'assets/images/signin_notebook_object.png',
-    'assets/images/signin_zoom_object.png',
-  ],
-  [
-    'assets/images/signin_calendar_object.png',
-    'assets/images/signin_gym_object.png',
-  ],
-];
-
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.viewModel});
 
@@ -105,28 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       ListenableBuilder(
                         listenable: widget.viewModel.signInWithGoogle,
                         builder: (context, _) => AppFilledButton(
-                          onPress: () => AppModalBottomSheet.show(
-                            context: context,
-                            enableDrag:
-                                !widget.viewModel.signInWithGoogle.running,
-                            isDismissable:
-                                !widget.viewModel.signInWithGoogle.running,
-                            // Even though the entire outer AppFilledButton is inside ListenableBuilder, the child
-                            // of the bottom sheet snapshots current state of `widget.viewModel.signInWithGoogle` when
-                            // opened (something like closure). Hence why it also needs to be wrapped inside ListenableBuilder
-                            child: ListenableBuilder(
-                              listenable: widget.viewModel.signInWithGoogle,
-                              builder: (context, _) => AppFilledButton(
-                                onPress: () =>
-                                    widget.viewModel.signInWithGoogle.execute(),
-                                label: context.localization.signInViaGoogle,
-                                leadingIcon: FontAwesomeIcons.google,
-                                isLoading:
-                                    widget.viewModel.signInWithGoogle.running,
-                                backgroundColor: Colors.red[800],
-                              ),
-                            ),
-                          ),
+                          onPress: _onSignInStart,
                           label: context.localization.signInGetStarted,
                         ),
                       ),
@@ -144,11 +112,9 @@ class _SignInScreenState extends State<SignInScreen> {
   void _onResult() {
     if (widget.viewModel.signInWithGoogle.completed) {
       widget.viewModel.signInWithGoogle.clearResult();
-      Navigator.pop(context);
     }
 
     if (widget.viewModel.signInWithGoogle.error) {
-      Navigator.pop(context);
       final errorResult = widget.viewModel.signInWithGoogle.result as Error;
 
       switch (errorResult.error) {
@@ -167,5 +133,26 @@ class _SignInScreenState extends State<SignInScreen> {
 
       widget.viewModel.signInWithGoogle.clearResult();
     }
+  }
+
+  void _onSignInStart() {
+    AppModalBottomSheet.show(
+      context: context,
+      enableDrag: !widget.viewModel.signInWithGoogle.running,
+      isDismissable: !widget.viewModel.signInWithGoogle.running,
+      // Even though the entire outer AppFilledButton is inside ListenableBuilder, the child
+      // of the bottom sheet snapshots current state of `widget.viewModel.signInWithGoogle` when
+      // opened (something like closure). Hence why it also needs to be wrapped inside ListenableBuilder
+      child: ListenableBuilder(
+        listenable: widget.viewModel.signInWithGoogle,
+        builder: (context, _) => AppFilledButton(
+          onPress: () => widget.viewModel.signInWithGoogle.execute(),
+          label: context.localization.signInViaGoogle,
+          leadingIcon: FontAwesomeIcons.google,
+          isLoading: widget.viewModel.signInWithGoogle.running,
+          backgroundColor: Colors.red[800],
+        ),
+      ),
+    );
   }
 }

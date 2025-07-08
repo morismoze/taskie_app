@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('hr'),
   ];
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -224,6 +230,12 @@ abstract class AppLocalizations {
   /// **'This field is required'**
   String get requiredField;
 
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get optional;
+
   /// No description provided for @errorWhileCreatingWorkspace.
   ///
   /// In en, this message translates to:
@@ -235,6 +247,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hello!'**
   String get tasksHello;
+
+  /// No description provided for @appDrawerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspaces'**
+  String get appDrawerTitle;
+
+  /// No description provided for @appDrawerEditWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit workspace setttings'**
+  String get appDrawerEditWorkspace;
+
+  /// No description provided for @appDrawerInviteMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite new members'**
+  String get appDrawerInviteMembers;
+
+  /// No description provided for @appDrawerLeaveWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave workspace'**
+  String get appDrawerLeaveWorkspace;
+
+  /// No description provided for @appDrawerLeaveWorkspaceModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to leave this workspace?'**
+  String get appDrawerLeaveWorkspaceModalMessage;
+
+  /// No description provided for @appDrawerLeaveWorkspaceModalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get appDrawerLeaveWorkspaceModalCta;
+
+  /// No description provided for @appDrawerLeaveWorkspaceSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully left the workspace'**
+  String get appDrawerLeaveWorkspaceSuccess;
+
+  /// No description provided for @appDrawerLeaveWorkspaceError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble removing you from the workspace'**
+  String get appDrawerLeaveWorkspaceError;
+
+  /// No description provided for @appDrawerCreateNewWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new workspace'**
+  String get appDrawerCreateNewWorkspace;
+
+  /// No description provided for @appDrawerPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get appDrawerPreferences;
 }
 
 class _AppLocalizationsDelegate

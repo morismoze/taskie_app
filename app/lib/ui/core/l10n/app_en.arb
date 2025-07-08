@@ -1,4 +1,5 @@
 {
+  "cancel": "Cancel",
   "signInTitleStart": "Happy Chores, Happy Kids.",
   "signInTitleEnd": "Happy Home.",
   "signInSubtitle": "Organize routines, motivate children, and celebrate every win.",
@@ -20,6 +21,17 @@
   "workspaceCreateNameMaxLength": "Name can have at most 50 characters",
   "workspaceCreateDescriptionMaxLength": "Description can have at most 250 characters",
   "requiredField": "This field is required",
+  "optional": "optional",
   "errorWhileCreatingWorkspace": "Uh-oh! We've had some trouble creating your workspace",
-  "tasksHello": "Hello!"
+  "tasksHello": "Hello!",
+  "appDrawerTitle": "Workspaces",
+  "appDrawerEditWorkspace": "Edit workspace setttings",
+  "appDrawerInviteMembers": "Invite new members",
+  "appDrawerLeaveWorkspace": "Leave workspace",
+  "appDrawerLeaveWorkspaceModalMessage": "Are you sure you want to leave this workspace?",
+  "appDrawerLeaveWorkspaceModalCta": "Leave",
+  "appDrawerLeaveWorkspaceSuccess": "Successfully left the workspace",
+  "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
+  "appDrawerCreateNewWorkspace": "Create new workspace",
+  "appDrawerPreferences": "Preferences"
 }

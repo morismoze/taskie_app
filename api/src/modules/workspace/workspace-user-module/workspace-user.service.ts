@@ -73,7 +73,8 @@ export class WorkspaceUserService {
   }
 
   /**
-   * This function returns workspace user memberships a user has in different workspaces
+   * This function returns workspace user memberships a user has in
+   * different workspaces with workspace relation loaded.
    */
   async findAllByUserIdWithWorkspace(
     userId: WorkspaceUser['user']['id'],

@@ -20,10 +20,7 @@ class _TasksScreenState extends State<TasksScreen> {
   void initState() {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.red,
-      ),
+      const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark),
     );
     widget.viewModel.loadUser.addListener(_onResult);
   }
@@ -59,11 +56,10 @@ class _TasksScreenState extends State<TasksScreen> {
                   listenable: widget.viewModel.loadUser,
                   builder: (context, child) {
                     if (widget.viewModel.loadUser.completed) {
-                      return child!;
+                      return TasksHeader(viewModel: widget.viewModel);
                     }
                     return const SizedBox.shrink();
                   },
-                  child: TasksHeader(viewModel: widget.viewModel),
                 ),
               ],
             ),

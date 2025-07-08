@@ -1,30 +1,24 @@
 import 'package:dio/dio.dart';
 
-import '../../../../utils/command.dart';
-import '../../local/secure_storage_service.dart'; // Uvezi SecureStorageService
+import '../../../repositories/auth/auth_state_repository.dart';
 
 class RequestHeadersInterceptor extends Interceptor {
-  RequestHeadersInterceptor({
-    required SecureStorageService secureStorageService,
-  }) : _secureStorageService = secureStorageService;
+  RequestHeadersInterceptor({required AuthStateRepository authStateRepository})
+    : _authStateRepository = authStateRepository;
 
-  final SecureStorageService _secureStorageService;
+  final AuthStateRepository _authStateRepository;
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final accessTokenResult = await _secureStorageService.getAccessToken();
-    switch (accessTokenResult) {
-      case Ok<String?>():
-        if (accessTokenResult.value != null) {
-          options.headers['Authorization'] =
-              'Bearer ${accessTokenResult.value}';
-        }
-        break;
-      default:
+    final (accessToken, _) = await _authStateRepository.tokens;
+
+    if (accessToken != null) {
+      options.headers['Authorization'] = 'Bearer $accessToken';
     }
+
     return handler.next(options);
   }
 }

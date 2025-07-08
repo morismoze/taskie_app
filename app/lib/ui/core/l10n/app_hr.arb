@@ -1,7 +1,8 @@
 {
+  "cancel": "Otkaži",
   "signInTitleStart": "Učenje odgovornosti.",
   "signInTitleEnd": "Zabava nagrađivanja.",
-  "signInSubtitle": "Organizirajte rutine, motivirajte djecu i slavite svaku pobjedu.",
+  "signInSubtitle": "Organizirajte rutine, motivirajte djecu i slavite svaki uspjeh.",
   "signInGetStarted": "Započnimo",
   "signInViaGoogle": "Prijavi se putem Googlea",
   "signInGoogleCanceled": "Google prijava otkazana. Molimo pokušajte ponovno.",
@@ -20,6 +21,17 @@
   "workspaceCreateNameMaxLength": "Naziv može imati najviše 50 znakova",
   "workspaceCreateDescriptionMaxLength": "Opis može imati najviše 250 znakova",
   "requiredField": "Ovo polje je obvezno",
+  "optional": "opcionalno",
   "errorWhileCreatingWorkspace": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora",
-  "tasksHello": "Pozdrav!"
+  "tasksHello": "Pozdrav!",
+  "appDrawerTitle": "Radni prostori",
+  "appDrawerEditWorkspace": "Uredi postavke radnog prostora",
+  "appDrawerInviteMembers": "Pozovi nove članove",
+  "appDrawerLeaveWorkspace": "Napusti radni prostor",
+  "appDrawerLeaveWorkspaceModalMessage": "Jeste li sigurni da želite napustiti ovaj radni prostor?",
+  "appDrawerLeaveWorkspaceModalCta": "Napusti",
+  "appDrawerLeaveWorkspaceSuccess": "Uspješno ste napustili radni prostor",
+  "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
+  "appDrawerCreateNewWorkspace": "Stvori novi radni prostor",
+  "appDrawerPreferences": "Preference"
 }

@@ -1,55 +1,52 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
-import { GoalService } from 'src/modules/goal/goal.service';
-import { TaskService } from 'src/modules/task/task-module/task.service';
-import { UserService } from 'src/modules/user/user.service';
-import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
-import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
-import { Workspace } from './domain/workspace.domain';
-import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
-import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
-import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
-import { WorkspaceRepository } from './persistence/workspace.repository';
-import { CreateTaskRequest } from './dto/request/create-task-request.dto';
-import { TaskAssignmentService } from 'src/modules/task/task-assignment/task-assignment.service';
-import { UserStatus } from 'src/modules/user/domain/user-status.enum';
-import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
-import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
 import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
-import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
-import { WorkspaceUserCore } from '../workspace-user-module/domain/workspace-user-core.domain';
+import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
+import { Goal } from 'src/modules/goal/domain/goal.domain';
+import { GoalService } from 'src/modules/goal/goal.service';
+import { TaskAssignmentService } from 'src/modules/task/task-assignment/task-assignment.service';
+import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { Task } from 'src/modules/task/task-module/domain/task.domain';
+import { TaskService } from 'src/modules/task/task-module/task.service';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
+import { UserStatus } from 'src/modules/user/domain/user-status.enum';
+import { UserService } from 'src/modules/user/user.service';
+import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
+import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
+import { WorkspaceUserCore } from '../workspace-user-module/domain/workspace-user-core.domain';
+import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
+import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
+import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
+import { Workspace } from './domain/workspace.domain';
+import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
+import { CreateTaskRequest } from './dto/request/create-task-request.dto';
+import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
+import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
+import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
+import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
+import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
+import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
-  WorkspaceResponse,
-  WorkspacesResponse,
-} from './dto/response/workspaces-response.dto';
+  WorkspaceGoalResponse,
+  WorkspaceGoalsResponse,
+} from './dto/response/workspace-goals-response.dto';
+import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
 import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
 } from './dto/response/workspace-members-response.dto';
 import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
 import {
-  WorkspaceGoalResponse,
-  WorkspaceGoalsResponse,
-} from './dto/response/workspace-goals-response.dto';
-import {
-  WorkspaceLeaderboardResponse,
-  LeaderboardUserResponse,
-} from './dto/response/workspace-leaderboard-response.dto';
-import { Task } from 'src/modules/task/task-module/domain/task.domain';
-import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
-import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
-import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
-import { Goal } from 'src/modules/goal/domain/goal.domain';
-import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
-import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
-import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
+  WorkspaceResponse,
+  WorkspacesResponse,
+} from './dto/response/workspaces-response.dto';
+import { WorkspaceRepository } from './persistence/workspace.repository';
 
 @Injectable()
 export class WorkspaceService {
@@ -599,6 +596,34 @@ export class WorkspaceService {
     await this.workspaceUserService.delete({
       workspaceId,
       workspaceUserId: memberId,
+    });
+  }
+
+  async leaveWorkspace({
+    workspaceId,
+    memberId,
+  }: {
+    workspaceId: Workspace['id'];
+    memberId: JwtPayload['sub'];
+  }): Promise<void> {
+    const workspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        workspaceId,
+        userId: memberId,
+      });
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.workspaceUserService.delete({
+      workspaceId,
+      workspaceUserId: workspaceUser.id,
     });
   }
 

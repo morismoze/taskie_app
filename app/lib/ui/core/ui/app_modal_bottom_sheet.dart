@@ -57,7 +57,7 @@ class AppModalBottomSheet {
       children: [
         Center(
           child: Padding(
-            padding: const EdgeInsets.only(top: Dimens.paddingVertical / 2),
+            padding: const EdgeInsets.only(top: Dimens.paddingVertical),
             child: Container(
               color: Theme.of(context).colorScheme.secondary,
               width: 50,

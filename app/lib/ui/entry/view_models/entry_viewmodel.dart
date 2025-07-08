@@ -1,36 +1,34 @@
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
 
-class EntryViewModel extends ChangeNotifier {
+class EntryViewModel {
   EntryViewModel({required WorkspaceRepository workspaceRepository})
     : _workspaceRepository = workspaceRepository {
-    load = Command0(_load)..execute();
+    loadWorkspaces = Command0(_loadWorkspaces)..execute();
   }
 
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('EntryViewModel');
 
-  bool _userHasNoWorkspaces = false;
+  late Command0 loadWorkspaces;
 
-  bool get userHasNoWorkspaces => _userHasNoWorkspaces;
-
-  late Command0 load;
-
-  Future<Result<void>> _load() async {
+  Future<Result<void>> _loadWorkspaces() async {
     final result = await _workspaceRepository.getWorkspaces();
 
     switch (result) {
       case Ok():
-        _userHasNoWorkspaces = result.value.isEmpty;
+        break;
       case Error():
         _log.warning('Failed to load workspaces', result.error);
-        _userHasNoWorkspaces = false;
     }
 
-    notifyListeners();
+    // After we initially loaded workspaces, we also need to set active workspace ID and
+    // that will be done by calling [getActiveWorkspaceId] method, which will on app launch
+    // read from storage.
+    await _workspaceRepository.getActiveWorkspaceId();
+
     return result;
   }
 }

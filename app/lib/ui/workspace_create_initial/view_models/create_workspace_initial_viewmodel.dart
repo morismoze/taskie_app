@@ -4,32 +4,32 @@ import 'package:logging/logging.dart';
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 import '../../../domain/models/user.dart';
+import '../../../domain/use_cases/create_workspace_use_case.dart';
 import '../../../utils/command.dart';
 
-class CreateWorkspaceViewModel extends ChangeNotifier {
-  CreateWorkspaceViewModel({
+class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
+  CreateWorkspaceInitialScreenViewModel({
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
-  }) : _workspaceRepository = workspaceRepository,
-       _userRepository = userRepository {
-    load = Command0(_load)..execute();
-    createWorkspace = Command1<void, (String name, String? description)>(
-      _createWorkspace,
-    );
+    required CreateWorkspaceUseCase createWorkspaceUseCase,
+  }) : _userRepository = userRepository,
+       _createWorkspaceUseCase = createWorkspaceUseCase {
+    loadUser = Command0(_loadUser)..execute();
+    createWorkspace = Command1(_createWorkspace);
   }
 
-  final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
-  final _log = Logger('CreateWorkspaceViewModel');
+  final CreateWorkspaceUseCase _createWorkspaceUseCase;
+  final _log = Logger('CreateWorkspaceInitialScreenViewModel');
 
-  late Command0 load;
+  late Command0 loadUser;
   late Command1<void, (String name, String? description)> createWorkspace;
 
   User? _user;
 
   User? get user => _user;
 
-  Future<Result<void>> _load() async {
+  Future<Result<void>> _loadUser() async {
     final result = await _userRepository.getUser();
 
     switch (result) {
@@ -40,15 +40,18 @@ class CreateWorkspaceViewModel extends ChangeNotifier {
         _log.warning('Failed to load user', result.error);
     }
 
+    notifyListeners();
     return result;
   }
 
-  Future<Result<void>> _createWorkspace((String, String?) credentials) async {
-    final (name, description) = credentials;
-    final result = await _workspaceRepository.createWorkspace(
+  Future<Result<void>> _createWorkspace((String, String?) details) async {
+    final (name, description) = details;
+
+    final resultCreate = await _createWorkspaceUseCase.createWorkspace(
       name: name,
       description: description,
     );
-    return result;
+
+    return resultCreate;
   }
 }

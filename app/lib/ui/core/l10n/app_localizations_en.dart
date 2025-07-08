@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
   String get signInTitleStart => 'Happy Chores, Happy Kids.';
 
   @override
@@ -80,9 +83,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requiredField => 'This field is required';
 
   @override
+  String get optional => 'optional';
+
+  @override
   String get errorWhileCreatingWorkspace =>
       'Uh-oh! We\'ve had some trouble creating your workspace';
 
   @override
   String get tasksHello => 'Hello!';
+
+  @override
+  String get appDrawerTitle => 'Workspaces';
+
+  @override
+  String get appDrawerEditWorkspace => 'Edit workspace setttings';
+
+  @override
+  String get appDrawerInviteMembers => 'Invite new members';
+
+  @override
+  String get appDrawerLeaveWorkspace => 'Leave workspace';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalMessage =>
+      'Are you sure you want to leave this workspace?';
+
+  @override
+  String get appDrawerLeaveWorkspaceModalCta => 'Leave';
+
+  @override
+  String get appDrawerLeaveWorkspaceSuccess =>
+      'Successfully left the workspace';
+
+  @override
+  String get appDrawerLeaveWorkspaceError =>
+      'Uh-oh! We\'ve had some trouble removing you from the workspace';
+
+  @override
+  String get appDrawerCreateNewWorkspace => 'Create new workspace';
+
+  @override
+  String get appDrawerPreferences => 'Preferences';
 }
