@@ -24,7 +24,6 @@ class AppShellScaffold extends StatelessWidget {
       drawer: AppDrawer(viewModel: appDrawerViewModel),
       onDrawerChanged: (isOpened) {
         if (isOpened) {
-          print(' ququququququ');
           appDrawerViewModel.loadWorkspaces.execute();
           appDrawerViewModel.loadActiveWorkspaceId.execute();
         }

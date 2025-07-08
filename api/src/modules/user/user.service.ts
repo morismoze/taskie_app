@@ -92,7 +92,6 @@ export class UserService {
       profileImageUrl: user.profileImageUrl,
       createdAt: user.createdAt,
     };
-    console.log(userDto);
 
     return userDto;
   }

@@ -12,27 +12,16 @@ import '../auth/models/response/refresh_token_response.dart';
 class UnauthorizedInterceptor extends Interceptor {
   UnauthorizedInterceptor({
     required AuthStateRepository authStateRepository,
-    required Dio mainClient,
-    required Dio rawClient,
+    required Dio client,
   }) : _authStateRepository = authStateRepository,
-       _rawClient = rawClient,
-       _mainClient = mainClient;
+       _client = client;
 
-  // This client uses request interceptor which sets the Authorization
-  // Bearer from access token read from secure storage
-  final Dio _mainClient;
-  // This client is the same as mainClient (basic options wise), but
-  // doesn't have any interceptor. It is used for token refresh request
-  // because backend expects the Authorization Bearer header to be set
-  // to the refresh token (not access token) and as we have that request
-  // interceptor on main client (which sets the Authorization Bearer header
-  // to access token), it can't be used.
-  final Dio _rawClient;
+  final Dio _client;
   final AuthStateRepository _authStateRepository;
 
   // Semaphore for token refresh
   bool _isRefreshing = false;
-  // Completer which waits on token refresh finish
+  // Completer which makes other requsts which got 401 response to wait on token refresh finish
   Completer<void>? _refreshTokenCompleter;
 
   @override
@@ -70,6 +59,9 @@ class UnauthorizedInterceptor extends Interceptor {
     return await _repeatRequestAfterTokenRefresh(err, handler);
   }
 
+  // This interceptor can't use refreshToken from AuthRepository (or any repository for that matter)
+  // because it depends on AuthApiService which depends on ApiClient, and ApiClient would then
+  // depend on AuthRepository - this would result in circular dependency problem.
   Future<void> _refreshToken(
     DioException originalError,
     ErrorInterceptorHandler handler,
@@ -79,7 +71,7 @@ class UnauthorizedInterceptor extends Interceptor {
 
     try {
       final (_, refreshToken) = await _authStateRepository.tokens;
-      final refreshTokenResponse = await _rawClient.post(
+      final refreshTokenResponse = await _client.post(
         ApiEndpoints.refreshToken,
         data: RefreshTokenRequest(refreshToken),
       );
@@ -119,7 +111,7 @@ class UnauthorizedInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) async {
     try {
-      final response = await _mainClient.fetch(originalError.requestOptions);
+      final response = await _client.fetch(originalError.requestOptions);
       return handler.resolve(response);
     } on DioException catch (e) {
       await _authStateRepository.setTokens(null);

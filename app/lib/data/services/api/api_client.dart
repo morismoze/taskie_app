@@ -9,8 +9,12 @@ import 'interceptors/unauthorized_interceptor.dart';
 class ApiClient {
   ApiClient({required AuthStateRepository authStateRepository})
     : _authStateRepository = authStateRepository,
-      _client = _instantiateApiClient(),
-      _rawClient = _instantiateApiClient() {
+      _client = Dio(
+        BaseOptions(
+          baseUrl: Env.backendUrl,
+          headers: {'Content-Type': 'application/json'},
+        ),
+      ) {
     _client.interceptors.addAll([
       RequestHeadersInterceptor(authStateRepository: _authStateRepository),
       PrettyDioLogger(
@@ -20,33 +24,14 @@ class ApiClient {
         enabled: Env.env != Environment.production,
       ),
       UnauthorizedInterceptor(
-        mainClient: _client,
-        rawClient: _rawClient,
+        client: _client,
         authStateRepository: _authStateRepository,
-      ),
-    ]);
-    _rawClient.interceptors.addAll([
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        enabled: Env.env != Environment.production,
       ),
     ]);
   }
 
   final Dio _client;
-  final Dio _rawClient;
   final AuthStateRepository _authStateRepository;
 
   Dio get client => _client;
-
-  static Dio _instantiateApiClient() {
-    return Dio(
-      BaseOptions(
-        baseUrl: Env.backendUrl,
-        headers: {'Content-Type': 'application/json'},
-      ),
-    );
-  }
 }

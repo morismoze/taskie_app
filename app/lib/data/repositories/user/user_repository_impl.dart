@@ -18,8 +18,8 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Result<User>> getUser() async {
-    if (_cachedUser != null) {
+  Future<Result<User>> getUser({bool forceFetch = false}) async {
+    if (!forceFetch && _cachedUser != null) {
       return Result.ok(_cachedUser!);
     }
 

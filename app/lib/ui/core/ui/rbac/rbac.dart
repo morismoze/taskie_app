@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,11 +14,16 @@ class Rbac extends StatelessWidget {
     required this.permission,
     required this.child,
     this.fallback,
+    this.workspaceId,
   });
 
   final RbacPermission permission;
   final Widget child;
   final Widget? fallback;
+
+  /// This field is used only in the app drawer, where we need to check
+  /// each permissions for each separate workspace.
+  final String? workspaceId;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +41,17 @@ class Rbac extends StatelessWidget {
         final userResult = snapshot.data![0];
         final activeWorkspaceIdResult = snapshot.data![1];
 
-        if (userResult is Ok<User> && activeWorkspaceIdResult is Ok<String>) {
+        if (userResult is Ok<User> && activeWorkspaceIdResult is Ok<String?>) {
           final userRoles = userResult.value.roles;
           final activeWorkspaceId = activeWorkspaceIdResult.value;
-          final workspaceRole = userRoles.firstWhere(
-            (workspaceRole) => workspaceRole.workspaceId == activeWorkspaceId,
+          final focusedWorkspaceId = workspaceId ?? activeWorkspaceId;
+          final workspaceRole = userRoles.firstWhereOrNull(
+            (workspaceRole) => workspaceRole.workspaceId == focusedWorkspaceId,
           );
+
+          if (workspaceRole == null) {
+            return const SizedBox.shrink();
+          }
 
           final hasAccess = RbacConfig.hasPermission(
             workspaceRole.role,

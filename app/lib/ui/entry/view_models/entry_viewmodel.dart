@@ -19,11 +19,15 @@ class EntryViewModel {
 
     switch (result) {
       case Ok():
-        _log.warning('Successfully loaded workspaces on entry screen');
         break;
       case Error():
         _log.warning('Failed to load workspaces', result.error);
     }
+
+    // After we initially loaded workspaces, we also need to set active workspace ID and
+    // that will be done by calling [getActiveWorkspaceId] method, which will on app launch
+    // read from storage.
+    await _workspaceRepository.getActiveWorkspaceId();
 
     return result;
   }

@@ -14,7 +14,7 @@ class SignInUseCase {
   final AuthRepository _authRepository;
   final AuthStateRepository _authStateRepository;
 
-  final _log = Logger('SignInUseCase');
+  final _log = Logger('SignOutUseCase');
 
   /// On sign out we need to do two things: 1. trigger sign out request from [AuthRepository] and
   /// 2. set authenticated state in [AuthStateRepository]

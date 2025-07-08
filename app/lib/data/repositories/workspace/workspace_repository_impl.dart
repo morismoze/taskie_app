@@ -62,12 +62,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     }
 
     final result = await _sharedPreferencesService.getActiveWorkspaceId();
-
     switch (result) {
       case Ok<String?>():
         _activeWorkspaceId = result.value;
         return Result.ok(_activeWorkspaceId);
-
       case Error<String?>():
         _log.severe('Failed to read active workspace ID', result.error);
         return Result.error(result.error);
@@ -78,7 +76,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   Future<Result<List<Workspace>>> getWorkspaces({
     bool forceFetch = false,
   }) async {
-    if (_cachedWorkspacesList != null && !forceFetch) {
+    if (!forceFetch && _cachedWorkspacesList != null) {
       return Result.ok(_cachedWorkspacesList!);
     }
 
@@ -97,11 +95,6 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
               )
               .toList();
           _cachedWorkspacesList = mappedData;
-
-          if (_activeWorkspaceId == null && mappedData.isNotEmpty) {
-            final firstWorkspaceId = mappedData.first.id;
-            setActiveWorkspaceId(firstWorkspaceId);
-          }
 
           // If user is not part of any workspace, notify the navigation redirection listener
           if (_cachedWorkspacesList!.isEmpty) {
@@ -144,7 +137,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           // Set new workspace as active one
           setActiveWorkspaceId(newWorkspace.id);
 
-          return Result.ok(newWorkspace);
+          return const Result.ok(null);
         case Error<WorkspaceResponse>():
           return Result.error(result.error);
       }
@@ -197,7 +190,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
             setActiveWorkspaceId(firstWorkspaceId);
           }
 
-          // If user no more part of any workspace, notify the navigation redirection listener
+          // If user is no more part of any workspace, notify the navigation redirection listener
           if (_cachedWorkspacesList!.isEmpty) {
             notifyListeners();
           }

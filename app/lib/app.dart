@@ -17,7 +17,10 @@ class MainApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      routerConfig: router(context.read()),
+      routerConfig: router(
+        authStateRepository: context.read(),
+        workspaceRepository: context.read(),
+      ),
       builder: (context, child) {
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(

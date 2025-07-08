@@ -1,37 +1,33 @@
 import 'package:logging/logging.dart';
 
+import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
 import '../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
-import '../../data/services/api/auth/auth_api_service.dart';
-import '../../data/services/api/auth/models/request/refresh_token_request.dart';
 import '../../utils/command.dart';
 
 class RefreshTokenUseCase {
   RefreshTokenUseCase({
-    required AuthApiService authApiService,
+    required AuthRepository authRepository,
     required AuthStateRepository authStateRepository,
-  }) : _authApiService = authApiService,
+  }) : _authRepository = authRepository,
        _authStateRepository = authStateRepository;
 
-  final AuthApiService _authApiService;
+  final AuthRepository _authRepository;
   final AuthStateRepository _authStateRepository;
 
   final _log = Logger('RefreshTokenUseCase');
 
-  /// Refreshes access token via [AuthApiService] and sets authenticated state in [AuthStateRepository].
+  /// Refreshes access token via [RefreshTokenRepository] and sets authenticated state in [AuthStateRepository].
   /// This is set in the use-case and not in AuthRepository, because repositories shouldn't depend on each other.
   /// And alse because this logic is used in bunch of places, so this acts as a single source of truth.
   Future<Result<void>> refreshAcessToken() async {
     try {
       final (_, refreshToken) = await _authStateRepository.tokens;
-      final result = await _authApiService.refreshAccessToken(
-        RefreshTokenRequest(refreshToken),
-      );
+      final result = await _authRepository.refreshToken(refreshToken);
 
       switch (result) {
         case Ok():
-          final accessToken = result.value.accessToken;
-          final refreshToken = result.value.refreshToken;
+          final (accessToken, refreshToken) = result.value;
           await _authStateRepository.setTokens((accessToken, refreshToken));
           return const Result.ok(null);
         case Error():

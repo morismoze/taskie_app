@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../utils/command.dart';
 import '../../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
+import '../../../domain/constants/rbac.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -12,6 +13,7 @@ import '../../core/ui/app_modal.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_button.dart';
+import '../../core/ui/rbac/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
 
@@ -115,23 +117,31 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
             ],
           ),
           const SizedBox(height: 20),
-          AppTextButton(
-            onPress: () {
-              Navigator.of(context).pop(); // Close bottom sheet
-              Navigator.of(context).pop(); // Close drawer
-              context.push(Routes.workspaceSettings);
-            },
-            label: context.localization.appDrawerEditWorkspace,
-            leadingIcon: FontAwesomeIcons.pencil,
+          Rbac(
+            permission: RbacPermission.workspaceManageSettings,
+            workspaceId: widget.id,
+            child: AppTextButton(
+              onPress: () {
+                Navigator.of(context).pop(); // Close bottom sheet
+                Navigator.of(context).pop(); // Close drawer
+                context.push(Routes.workspaceSettings);
+              },
+              label: context.localization.appDrawerEditWorkspace,
+              leadingIcon: FontAwesomeIcons.pencil,
+            ),
           ),
-          AppTextButton(
-            onPress: () {
-              Navigator.of(context).pop(); // Close bottom sheet
-              Navigator.of(context).pop(); // Close drawer
-              context.push(Routes.workspaceInvite);
-            },
-            label: context.localization.appDrawerInviteMembers,
-            leadingIcon: FontAwesomeIcons.userPlus,
+          Rbac(
+            permission: RbacPermission.workspaceInviteUsers,
+            workspaceId: widget.id,
+            child: AppTextButton(
+              onPress: () {
+                Navigator.of(context).pop(); // Close bottom sheet
+                Navigator.of(context).pop(); // Close drawer
+                context.push(Routes.workspaceInvite);
+              },
+              label: context.localization.appDrawerInviteMembers,
+              leadingIcon: FontAwesomeIcons.userPlus,
+            ),
           ),
           AppTextButton(
             onPress: () => _confirmWorkspaceLeave(context, workspaceId),

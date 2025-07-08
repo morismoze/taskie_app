@@ -108,8 +108,10 @@ class AppDrawerViewModel extends ChangeNotifier {
 
     // We need to load workspaces again - this will load from repository cache, which was updated with the
     // given workspace by removing it from that cache list in WorkspaceRepository.leaveWorkspace function.
-    final resultLoad = _loadWorkspaces();
+    await _loadWorkspaces();
 
-    return resultLoad;
+    final resultSet = _setActiveWorkspace(_workspaces[0].id);
+
+    return resultSet;
   }
 }

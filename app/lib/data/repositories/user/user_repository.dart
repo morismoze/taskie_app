@@ -6,5 +6,5 @@ abstract class UserRepository {
   void setUser(User user);
 
   /// Get current user
-  Future<Result<User>> getUser();
+  Future<Result<User>> getUser({bool forceFetch = false});
 }

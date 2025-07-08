@@ -48,7 +48,10 @@ final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
 ///       /:id
 ///     /goals
 ///       /:id
-GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
+GoRouter router({
+  required AuthStateRepository authStateRepository,
+  required WorkspaceRepository workspaceRepository,
+}) => GoRouter(
   initialLocation: Routes.entry,
   debugLogDiagnostics: true,
   redirect: _redirect,
@@ -56,18 +59,18 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
   navigatorKey: _rootNavigatorKey,
   routes: [
     GoRoute(
-      path: Routes.login,
-      builder: (context, state) {
-        return SignInScreen(
-          viewModel: SignInViewModel(signInUseCase: context.read()),
-        );
-      },
-    ),
-    GoRoute(
       path: Routes.entry,
       builder: (context, state) {
         return EntryScreen(
           viewModel: EntryViewModel(workspaceRepository: context.read()),
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.login,
+      builder: (context, state) {
+        return SignInScreen(
+          viewModel: SignInViewModel(signInUseCase: context.read()),
         );
       },
     ),
@@ -112,7 +115,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
           viewModel: CreateWorkspaceInitialScreenViewModel(
             workspaceRepository: context.read(),
             userRepository: context.read(),
-            refreshTokenUseCase: context.read(),
+            createWorkspaceUseCase: context.read(),
           ),
         );
       },
@@ -123,7 +126,7 @@ GoRouter router(AuthStateRepository authStateRepository) => GoRouter(
         viewModel: CreateWorkspaceScreenViewModel(
           userRepository: context.read(),
           workspaceRepository: context.read(),
-          refreshTokenUseCase: context.read(),
+          createWorkspaceUseCase: context.read(),
         ),
       ),
     ),
