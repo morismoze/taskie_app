@@ -8,12 +8,16 @@ import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
+import '../ui/goals_create/view_models/create_goal_viewmodel.dart';
+import '../ui/goals_create/widgets/create_goal_screen.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/navigation/combined_listeable.dart';
 import '../ui/preferences/view_models/preferences_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
+import '../ui/tasks_create/view_models/create_task_viewmodel.dart';
+import '../ui/tasks_create/widgets/create_task_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_viewmodel.dart';
@@ -85,7 +89,7 @@ GoRouter router({
       },
       routes: [
         GoRoute(
-          path: Routes.tasks,
+          path: Routes.tasksRelative,
           pageBuilder: (context, state) {
             return NoTransitionPage(
               child: TasksScreen(
@@ -96,6 +100,19 @@ GoRouter router({
               ),
             );
           },
+          routes: [
+            GoRoute(
+              path: 'create',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                return CreateTaskScreen(
+                  viewModel: CreateTaskViewmodel(
+                    workspaceRepository: context.read(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: Routes.leaderboard,
@@ -104,10 +121,23 @@ GoRouter router({
           },
         ),
         GoRoute(
-          path: Routes.goals,
+          path: Routes.goalsRelative,
           pageBuilder: (context, state) {
             return const NoTransitionPage(child: Text('goals'));
           },
+          routes: [
+            GoRoute(
+              path: 'create',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                return CreateGoalScreen(
+                  viewModel: CreateGoalViewmodel(
+                    workspaceRepository: context.read(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ],
     ),
@@ -136,11 +166,11 @@ GoRouter router({
     GoRoute(
       path: Routes.workspaceInvite,
       builder: (context, state) {
-        final viewModel = WorkspaceInviteViewModel(
-          workspaceRepository: context.read(),
+        return WorkspaceInviteScreen(
+          viewModel: WorkspaceInviteViewModel(
+            workspaceRepository: context.read(),
+          ),
         );
-
-        return WorkspaceInviteScreen(viewModel: viewModel);
       },
     ),
     GoRoute(

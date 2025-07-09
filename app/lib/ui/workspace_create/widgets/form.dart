@@ -119,7 +119,7 @@ class _CreateFormState extends State<CreateForm> {
   void _onResult() {
     if (widget.viewModel.createWorkspace.completed) {
       widget.viewModel.createWorkspace.clearResult();
-      context.go(Routes.tasks);
+      context.go(Routes.tasksRelative);
     }
 
     if (widget.viewModel.createWorkspace.error) {

@@ -14,10 +14,6 @@ class AppIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onPress,
-      style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
-      icon: icon,
-    );
+    return IconButton(onPressed: onPress, icon: icon);
   }
 }

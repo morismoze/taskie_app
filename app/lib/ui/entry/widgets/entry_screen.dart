@@ -75,7 +75,7 @@ class _EntryScreenState extends State<EntryScreen> {
   void _onLoadWorkspacesResult() {
     if (widget.viewModel.loadWorkspaces.completed) {
       widget.viewModel.loadWorkspaces.clearResult();
-      context.go(Routes.tasks);
+      context.go(Routes.tasksRelative);
     }
 
     if (widget.viewModel.loadWorkspaces.error) {

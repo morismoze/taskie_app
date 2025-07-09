@@ -42,13 +42,19 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom učitavanja vaših radnih prostora';
 
   @override
-  String get tasksLabel => 'Zadatci';
+  String get bottomNavigationBarTasksLabel => 'Zadatci';
 
   @override
-  String get leaderboardLabel => 'Ljestvica';
+  String get bottomNavigationBarLeaderboardLabel => 'Ljestvica';
 
   @override
-  String get goalsLabel => 'Ciljevi';
+  String get bottomNavigationBarGoalsLabel => 'Ciljevi';
+
+  @override
+  String get bottomNavigationBarFabTask => 'Stvori novi zadatak';
+
+  @override
+  String get bottomNavigationBarFabGoal => 'Stvori novi cilj';
 
   @override
   String get workspaceNameLabel => 'Naziv radnog prostora';

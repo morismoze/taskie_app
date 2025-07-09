@@ -13,22 +13,15 @@ class AppBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      padding: const EdgeInsets.only(
-        left: Dimens.paddingHorizontal,
-        right: Dimens.paddingHorizontal * 1.75 + kAppFloatingActionButtonSize,
-        top: 0,
-        bottom: 0,
-      ),
-      height: kAppFloatingActionButtonSize,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            splashFactory: NoSplash.splashFactory,
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-          ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: Dimens.paddingHorizontal,
+          right: Dimens.paddingHorizontal * 1.75 + kAppFloatingActionButtonSize,
+          top: 0,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
           child: BottomNavigationBar(
             showUnselectedLabels: false,
             backgroundColor: AppColors.purple1Light,
@@ -63,24 +56,31 @@ class AppBottomAppBar extends StatelessWidget {
     };
   }
 
-  void _onItemTapped(int index, BuildContext context) async {
-    if (context.mounted) {
-      switch (index) {
-        case 0:
-          GoRouter.of(context).go(Routes.tasks);
-        case 1:
-          GoRouter.of(context).go(Routes.leaderboard);
-        case 2:
-          GoRouter.of(context).go(Routes.goals);
-      }
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        GoRouter.of(context).go(Routes.tasksRelative);
+      case 1:
+        GoRouter.of(context).go(Routes.leaderboard);
+      case 2:
+        GoRouter.of(context).go(Routes.goalsRelative);
     }
   }
 
   List<(IconData, String)> _getItems(BuildContext context) {
     return [
-      (FontAwesomeIcons.house, context.localization.tasksLabel),
-      (FontAwesomeIcons.trophy, context.localization.leaderboardLabel),
-      (FontAwesomeIcons.solidFlag, context.localization.goalsLabel),
+      (
+        FontAwesomeIcons.house,
+        context.localization.bottomNavigationBarTasksLabel,
+      ),
+      (
+        FontAwesomeIcons.trophy,
+        context.localization.bottomNavigationBarLeaderboardLabel,
+      ),
+      (
+        FontAwesomeIcons.solidFlag,
+        context.localization.bottomNavigationBarGoalsLabel,
+      ),
     ];
   }
 }

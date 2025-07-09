@@ -32,7 +32,9 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: SizedBox.expand(
-        child: BlurredCirclesBackground(child: Text('Prefereces')),
+        child: BlurredCirclesBackground(
+          child: SafeArea(child: Text('preferences')),
+        ),
       ),
     );
   }

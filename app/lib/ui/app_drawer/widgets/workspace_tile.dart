@@ -62,7 +62,6 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       leading: InkWell(
-        splashFactory: NoSplash.splashFactory,
         onTap: () => widget.viewModel.setActiveWorkspace.execute(widget.id),
         child: WorkspaceImage(
           url: widget.pictureUrl,
@@ -70,7 +69,6 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         ),
       ),
       trailing: InkWell(
-        splashFactory: NoSplash.splashFactory,
         onTap: () => _onWorkspaceOptionsTap(context, widget.id),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
