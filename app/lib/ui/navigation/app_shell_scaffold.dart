@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../routing/app_bottom_navigation_bar.dart';
-import '../../../app_drawer/view_models/app_drawer_viewmodel.dart';
-import '../../../app_drawer/widgets/app_drawer.dart';
+import '../app_drawer/view_models/app_drawer_viewmodel.dart';
+import '../app_drawer/widgets/app_drawer.dart';
+import 'app_bottom_app_bar.dart';
 import 'app_floating_action_button.dart';
 
 class AppShellScaffold extends StatelessWidget {
@@ -29,7 +29,7 @@ class AppShellScaffold extends StatelessWidget {
         }
       },
       extendBody: true,
-      bottomNavigationBar: const AppBottomNavigationBar(),
+      bottomNavigationBar: const AppBottomAppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: const AppFloatingActionButton(),
       body: child,

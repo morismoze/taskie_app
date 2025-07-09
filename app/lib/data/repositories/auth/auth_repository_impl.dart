@@ -11,7 +11,7 @@ import '../../services/api/auth/models/response/refresh_token_response.dart';
 import '../../services/external/google/google_auth_service.dart';
 import 'auth_repository.dart';
 
-class AuthRepositoryImpl extends AuthRepository {
+class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required AuthApiService authApiService,
     required GoogleAuthService googleAuthService,

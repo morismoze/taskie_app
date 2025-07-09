@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../ui/core/l10n/l10n_extensions.dart';
-import '../ui/core/theme/colors.dart';
-import '../ui/core/theme/dimens.dart';
-import '../ui/core/util/constants.dart';
-import 'routes.dart';
+import '../../routing/routes.dart';
+import '../core/l10n/l10n_extensions.dart';
+import '../core/theme/colors.dart';
+import '../core/theme/dimens.dart';
+import '../core/util/constants.dart';
 
-class AppBottomNavigationBar extends StatelessWidget {
-  const AppBottomNavigationBar({super.key});
+class AppBottomAppBar extends StatelessWidget {
+  const AppBottomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {

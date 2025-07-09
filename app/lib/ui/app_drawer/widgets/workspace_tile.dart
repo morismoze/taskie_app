@@ -13,7 +13,7 @@ import '../../core/ui/app_modal.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_button.dart';
-import '../../core/ui/rbac/rbac.dart';
+import '../../core/ui/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
 

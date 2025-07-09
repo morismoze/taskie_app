@@ -2,11 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/repositories/user/user_repository.dart';
-import '../../../../data/repositories/workspace/workspace_repository.dart';
-import '../../../../domain/constants/rbac.dart';
-import '../../../../domain/models/user.dart';
-import '../../../../utils/command.dart';
+import '../../../data/repositories/user/user_repository.dart';
+import '../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../domain/constants/rbac.dart';
+import '../../../domain/models/user.dart';
+import '../../../utils/command.dart';
 
 class Rbac extends StatelessWidget {
   const Rbac({

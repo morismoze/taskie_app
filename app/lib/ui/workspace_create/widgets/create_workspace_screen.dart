@@ -76,6 +76,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                         ),
                         const SizedBox(height: 60),
                         CreateForm(viewModel: widget.viewModel),
+                        const Text('this is not initial create'),
                       ],
                     ),
                   ),

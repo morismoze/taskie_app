@@ -28,8 +28,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   // This is listenable used for redirection to workspace creation
   // screen in case user is not part of any workspace.
   @override
-  bool get hasNoWorkspaces =>
-      _cachedWorkspacesList == null || _cachedWorkspacesList!.isEmpty;
+  bool? get hasNoWorkspaces => _cachedWorkspacesList?.isEmpty;
 
   @override
   Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
