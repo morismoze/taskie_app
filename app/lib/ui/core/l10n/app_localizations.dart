@@ -319,6 +319,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferences'**
   String get appDrawerPreferences;
+
+  /// No description provided for @createNewTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New task'**
+  String get createNewTaskTitle;
+
+  /// No description provided for @taskNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Task name'**
+  String get taskNameLabel;
+
+  /// No description provided for @taskDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Task description'**
+  String get taskDescriptionLabel;
+
+  /// No description provided for @taskAssigneeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to'**
+  String get taskAssigneeLabel;
+
+  /// No description provided for @taskDueDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get taskDueDateLabel;
+
+  /// No description provided for @taskRewardPointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward points'**
+  String get taskRewardPointsLabel;
+
+  /// No description provided for @taskNameMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must have at least 3 characters'**
+  String get taskNameMinLength;
+
+  /// No description provided for @taskNameMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name can have at most 50 characters'**
+  String get taskNameMaxLength;
+
+  /// No description provided for @taskDescriptionMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name can have at most 250 characters'**
+  String get taskDescriptionMaxLength;
 }
 
 class _AppLocalizationsDelegate

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/header_bar.dart';
 import '../view_models/create_task_viewmodel.dart';
+import 'form.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({super.key, required this.viewModel});
@@ -30,10 +34,25 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
-          child: SafeArea(child: Text('create task')),
+          child: SafeArea(
+            child: Column(
+              children: [
+                HeaderBar(title: context.localization.createNewTaskTitle),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: Dimens.paddingVertical,
+                    left: Dimens.of(context).paddingScreenHorizontal,
+                    right: Dimens.of(context).paddingScreenHorizontal,
+                    bottom: Dimens.paddingVertical,
+                  ),
+                  child: CreateForm(viewModel: widget.viewModel),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -35,5 +35,14 @@
   "appDrawerLeaveWorkspaceSuccess": "Uspješno ste napustili radni prostor",
   "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
   "appDrawerCreateNewWorkspace": "Stvori novi radni prostor",
-  "appDrawerPreferences": "Preference"
+  "appDrawerPreferences": "Preference",
+  "createNewTaskTitle": "Novi zadatak",
+  "taskNameLabel": "Naziv zadatka",
+  "taskDescriptionLabel": "Opis zadatka",
+  "taskAssigneeLabel": "Dodijeli članu",
+  "taskDueDateLabel": "Rok završetka",
+  "taskRewardPointsLabel": "Nagradni bodovi",
+  "taskNameMinLength": "Naziv mora imati minimalno 3 znakova",
+  "taskNameMaxLength": "Naziv može imati najviše 50 znakova",
+  "taskDescriptionMaxLength": "Opis može imati najviše 250 znakova"
 }

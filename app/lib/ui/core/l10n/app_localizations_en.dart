@@ -130,4 +130,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerPreferences => 'Preferences';
+
+  @override
+  String get createNewTaskTitle => 'New task';
+
+  @override
+  String get taskNameLabel => 'Task name';
+
+  @override
+  String get taskDescriptionLabel => 'Task description';
+
+  @override
+  String get taskAssigneeLabel => 'Assign to';
+
+  @override
+  String get taskDueDateLabel => 'Due date';
+
+  @override
+  String get taskRewardPointsLabel => 'Reward points';
+
+  @override
+  String get taskNameMinLength => 'Name must have at least 3 characters';
+
+  @override
+  String get taskNameMaxLength => 'Name can have at most 50 characters';
+
+  @override
+  String get taskDescriptionMaxLength => 'Name can have at most 250 characters';
 }

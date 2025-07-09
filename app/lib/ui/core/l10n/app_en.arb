@@ -35,5 +35,14 @@
   "appDrawerLeaveWorkspaceSuccess": "Successfully left the workspace",
   "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
   "appDrawerCreateNewWorkspace": "Create new workspace",
-  "appDrawerPreferences": "Preferences"
+  "appDrawerPreferences": "Preferences",
+  "createNewTaskTitle": "New task",
+  "taskNameLabel": "Task name",
+  "taskDescriptionLabel": "Task description",
+  "taskAssigneeLabel": "Assign to",
+  "taskDueDateLabel": "Due date",
+  "taskRewardPointsLabel": "Reward points",
+  "taskNameMinLength": "Name must have at least 3 characters",
+  "taskNameMaxLength": "Name can have at most 50 characters",
+  "taskDescriptionMaxLength": "Name can have at most 250 characters"
 }

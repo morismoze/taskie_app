@@ -130,4 +130,31 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerPreferences => 'Preference';
+
+  @override
+  String get createNewTaskTitle => 'Novi zadatak';
+
+  @override
+  String get taskNameLabel => 'Naziv zadatka';
+
+  @override
+  String get taskDescriptionLabel => 'Opis zadatka';
+
+  @override
+  String get taskAssigneeLabel => 'Dodijeli članu';
+
+  @override
+  String get taskDueDateLabel => 'Rok završetka';
+
+  @override
+  String get taskRewardPointsLabel => 'Nagradni bodovi';
+
+  @override
+  String get taskNameMinLength => 'Naziv mora imati minimalno 3 znakova';
+
+  @override
+  String get taskNameMaxLength => 'Naziv može imati najviše 50 znakova';
+
+  @override
+  String get taskDescriptionMaxLength => 'Opis može imati najviše 250 znakova';
 }

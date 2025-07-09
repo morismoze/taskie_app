@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/util/constants.dart';
 import '../view_models/tasks_viewmodel.dart';
 import 'tasks_header.dart';
 
@@ -48,7 +49,7 @@ class _TasksScreenState extends State<TasksScreen> {
             padding: EdgeInsets.only(
               left: Dimens.of(context).paddingScreenHorizontal,
               right: Dimens.of(context).paddingScreenHorizontal,
-              bottom: kBottomNavigationBarHeight + Dimens.paddingVertical,
+              bottom: kAppFloatingActionButtonSize + Dimens.paddingVertical,
             ),
             child: Column(
               children: [

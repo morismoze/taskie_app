@@ -26,12 +26,12 @@ export const IsValidPersonName = () => {
 };
 
 export const IsValidTaskTitle = () => {
-  const decorators = [IsNotEmpty(), IsString()];
+  const decorators = [IsNotEmpty(), IsString(), Length(3, 50)];
   return applyDecorators(...decorators);
 };
 
 export const IsValidTaskDescription = () => {
-  const decorators = [IsNotEmpty(), IsString(), MaxLength(150)];
+  const decorators = [IsNotEmpty(), IsString(), MaxLength(250)];
   return applyDecorators(...decorators);
 };
 
@@ -53,12 +53,12 @@ export const IsValidTaskDueDate = () => {
 };
 
 export const IsValidGoalTitle = () => {
-  const decorators = [IsNotEmpty(), IsString()];
+  const decorators = [IsNotEmpty(), IsString(), Length(3, 50)];
   return applyDecorators(...decorators);
 };
 
 export const IsValidGoalDescription = () => {
-  const decorators = [IsNotEmpty(), IsString(), MaxLength(150)];
+  const decorators = [IsNotEmpty(), IsString(), MaxLength(250)];
   return applyDecorators(...decorators);
 };
 
