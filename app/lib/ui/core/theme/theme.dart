@@ -37,6 +37,10 @@ abstract final class AppTheme {
 
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    splashFactory: NoSplash.splashFactory,
     colorScheme: AppColors.lightColorScheme,
     fontFamily: 'Roboto',
     textTheme: _textTheme,
@@ -50,6 +54,10 @@ abstract final class AppTheme {
 
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    splashFactory: NoSplash.splashFactory,
     colorScheme: AppColors.darkColorScheme,
     fontFamily: 'Roboto',
     textTheme: _textTheme,

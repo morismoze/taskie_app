@@ -42,13 +42,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble loading up your workspaces';
 
   @override
-  String get tasksLabel => 'Tasks';
+  String get bottomNavigationBarTasksLabel => 'Tasks';
 
   @override
-  String get leaderboardLabel => 'Leaderboard';
+  String get bottomNavigationBarLeaderboardLabel => 'Leaderboard';
 
   @override
-  String get goalsLabel => 'Goals';
+  String get bottomNavigationBarGoalsLabel => 'Goals';
+
+  @override
+  String get bottomNavigationBarFabTask => 'Create new task';
+
+  @override
+  String get bottomNavigationBarFabGoal => 'Create new goal';
 
   @override
   String get workspaceNameLabel => 'Workspace name';

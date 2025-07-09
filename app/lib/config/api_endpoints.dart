@@ -17,4 +17,8 @@ abstract final class ApiEndpoints {
       '$_prefix/workspaces/$workspaceId/invites';
   static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/members';
+  static String getTasks(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/tasks';
+  static String getGoals(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/goals';
 }

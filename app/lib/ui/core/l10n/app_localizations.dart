@@ -158,23 +158,35 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble loading up your workspaces'**
   String get errorWhileLoadingWorkspaces;
 
-  /// No description provided for @tasksLabel.
+  /// No description provided for @bottomNavigationBarTasksLabel.
   ///
   /// In en, this message translates to:
   /// **'Tasks'**
-  String get tasksLabel;
+  String get bottomNavigationBarTasksLabel;
 
-  /// No description provided for @leaderboardLabel.
+  /// No description provided for @bottomNavigationBarLeaderboardLabel.
   ///
   /// In en, this message translates to:
   /// **'Leaderboard'**
-  String get leaderboardLabel;
+  String get bottomNavigationBarLeaderboardLabel;
 
-  /// No description provided for @goalsLabel.
+  /// No description provided for @bottomNavigationBarGoalsLabel.
   ///
   /// In en, this message translates to:
   /// **'Goals'**
-  String get goalsLabel;
+  String get bottomNavigationBarGoalsLabel;
+
+  /// No description provided for @bottomNavigationBarFabTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new task'**
+  String get bottomNavigationBarFabTask;
+
+  /// No description provided for @bottomNavigationBarFabGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new goal'**
+  String get bottomNavigationBarFabGoal;
 
   /// No description provided for @workspaceNameLabel.
   ///

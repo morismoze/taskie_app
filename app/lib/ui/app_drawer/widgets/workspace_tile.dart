@@ -13,7 +13,7 @@ import '../../core/ui/app_modal.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_button.dart';
-import '../../core/ui/rbac/rbac.dart';
+import '../../core/ui/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
 
@@ -62,7 +62,6 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       leading: InkWell(
-        splashFactory: NoSplash.splashFactory,
         onTap: () => widget.viewModel.setActiveWorkspace.execute(widget.id),
         child: WorkspaceImage(
           url: widget.pictureUrl,
@@ -70,7 +69,6 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         ),
       ),
       trailing: InkWell(
-        splashFactory: NoSplash.splashFactory,
         onTap: () => _onWorkspaceOptionsTap(context, widget.id),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../domain/models/workspace.dart';
 import '../../../utils/command.dart';
 
 abstract class WorkspaceRepository extends ChangeNotifier {
-  bool get hasNoWorkspaces;
+  bool? get hasNoWorkspaces;
 
   /// Used when changing the current active workspace ID via the
   /// workspaces list in the app drawer.

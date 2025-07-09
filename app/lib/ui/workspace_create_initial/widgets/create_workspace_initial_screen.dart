@@ -121,7 +121,7 @@ class _CreateWorkspaceInitialScreenState
   void _onResult() {
     if (widget.viewModel.createWorkspace.completed) {
       widget.viewModel.createWorkspace.clearResult();
-      GoRouter.of(context).go(Routes.tasks);
+      GoRouter.of(context).go(Routes.tasksRelative);
     }
 
     if (widget.viewModel.createWorkspace.error) {
