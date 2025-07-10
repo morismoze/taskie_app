@@ -1,23 +1,23 @@
 import '../../data/services/api/user/models/response/user_response.dart';
 
 enum RbacPermission {
-  taskCreate,
-  taskDelete,
   workspaceDelete,
   workspaceManageSettings,
   workspaceInviteUsers,
   workspaceRemoveUsers,
+
+  /// `objective` is just a single name for either task or goal
+  objectiveCreate,
 }
 
 abstract final class RbacConfig {
   static const Map<WorkspaceRole, Set<RbacPermission>> rolePermissions = {
     WorkspaceRole.manager: {
-      RbacPermission.taskCreate,
-      RbacPermission.taskDelete,
       RbacPermission.workspaceDelete,
       RbacPermission.workspaceManageSettings,
       RbacPermission.workspaceInviteUsers,
       RbacPermission.workspaceRemoveUsers,
+      RbacPermission.objectiveCreate,
     },
     WorkspaceRole.member: {},
   };

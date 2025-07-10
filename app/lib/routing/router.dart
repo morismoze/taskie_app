@@ -82,56 +82,149 @@ GoRouter router({
         );
       },
     ),
-    ShellRoute(
-      navigatorKey: _shellNavigatorKey,
-      builder: (BuildContext context, GoRouterState state, Widget child) {
-        return AppShellScaffold(child: child);
-      },
+    GoRoute(
+      path: Routes.workspacesRelative,
+      builder: (_, _) => const SizedBox.shrink(),
       routes: [
         GoRoute(
-          path: Routes.tasksRelative,
-          pageBuilder: (context, state) {
-            return NoTransitionPage(
-              child: TasksScreen(
-                viewModel: TasksViewModel(
-                  userRepository: context.read(),
-                  workspaceRepository: context.read(),
-                ),
+          path: Routes.workspaceCreateInitialRelative,
+          builder: (context, state) {
+            return CreateWorkspaceInitialScreen(
+              viewModel: CreateWorkspaceInitialScreenViewModel(
+                workspaceRepository: context.read(),
+                userRepository: context.read(),
+                createWorkspaceUseCase: context.read(),
               ),
             );
           },
+        ),
+        GoRoute(
+          path: Routes.workspaceCreateRelative,
+          builder: (context, state) {
+            return CreateWorkspaceScreen(
+              viewModel: CreateWorkspaceScreenViewModel(
+                userRepository: context.read(),
+                workspaceRepository: context.read(),
+                createWorkspaceUseCase: context.read(),
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          path: ':workspaceId',
+          builder: (_, _) => const SizedBox.shrink(),
+          redirect: (BuildContext context, GoRouterState state) async {
+            final workspaceId = state.pathParameters['workspaceId'];
+
+            if (workspaceId == null) {
+              return Routes.entry;
+            }
+
+            final workspaceRepository = context.read<WorkspaceRepository>();
+            await workspaceRepository.setActiveWorkspaceId(workspaceId);
+
+            return null;
+          },
           routes: [
+            ShellRoute(
+              navigatorKey: _shellNavigatorKey,
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    final workspaceId = state.pathParameters['workspaceId']!;
+
+                    return AppShellScaffold(
+                      key: ValueKey(workspaceId),
+                      workspaceId: workspaceId,
+                      child: child,
+                    );
+                  },
+              routes: [
+                GoRoute(
+                  path: Routes.tasksRelative,
+                  pageBuilder: (context, state) {
+                    final workspaceId = state.pathParameters['workspaceId']!;
+
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: TasksScreen(
+                        viewModel: TasksViewModel(
+                          workspaceId: workspaceId,
+                          userRepository: context.read(),
+                          workspaceRepository: context.read(),
+                        ),
+                      ),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: Routes.taskCreateRelative,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: (context, state) {
+                        return CreateTaskScreen(
+                          viewModel: CreateTaskViewmodel(
+                            workspaceRepository: context.read(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: Routes.leaderboardRelative,
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: const Text('leaderboard'),
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: Routes.goalsRelative,
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(
+                      key: state.pageKey,
+                      child: const Text('goals'),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: Routes.goalCreateRelative,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: (context, state) {
+                        return CreateGoalScreen(
+                          viewModel: CreateGoalViewmodel(
+                            workspaceRepository: context.read(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
             GoRoute(
-              path: 'create',
-              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.workspaceInviteRelative,
               builder: (context, state) {
-                return CreateTaskScreen(
-                  viewModel: CreateTaskViewmodel(
+                final workspaceId = state.pathParameters['workspaceId']!;
+
+                return WorkspaceInviteScreen(
+                  key: ValueKey(state.pageKey),
+                  viewModel: WorkspaceInviteViewModel(
+                    workspaceId: workspaceId,
                     workspaceRepository: context.read(),
                   ),
                 );
               },
             ),
-          ],
-        ),
-        GoRoute(
-          path: Routes.leaderboard,
-          pageBuilder: (context, state) {
-            return const NoTransitionPage(child: Text('leaderboard'));
-          },
-        ),
-        GoRoute(
-          path: Routes.goalsRelative,
-          pageBuilder: (context, state) {
-            return const NoTransitionPage(child: Text('goals'));
-          },
-          routes: [
             GoRoute(
-              path: 'create',
-              parentNavigatorKey: _rootNavigatorKey,
+              path: Routes.workspaceSettingsRelative,
               builder: (context, state) {
-                return CreateGoalScreen(
-                  viewModel: CreateGoalViewmodel(
+                final workspaceId = state.pathParameters['workspaceId']!;
+
+                return WorkspaceSettingsScreen(
+                  key: ValueKey(state.pageKey),
+                  viewModel: WorkspaceSettingsViewmodel(
+                    workspaceId: workspaceId,
                     workspaceRepository: context.read(),
                   ),
                 );
@@ -140,48 +233,6 @@ GoRouter router({
           ],
         ),
       ],
-    ),
-    GoRoute(
-      path: Routes.workspaceCreateInitial,
-      builder: (context, state) {
-        return CreateWorkspaceInitialScreen(
-          viewModel: CreateWorkspaceInitialScreenViewModel(
-            workspaceRepository: context.read(),
-            userRepository: context.read(),
-            createWorkspaceUseCase: context.read(),
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: Routes.workspaceCreate,
-      builder: (context, state) => CreateWorkspaceScreen(
-        viewModel: CreateWorkspaceScreenViewModel(
-          userRepository: context.read(),
-          workspaceRepository: context.read(),
-          createWorkspaceUseCase: context.read(),
-        ),
-      ),
-    ),
-    GoRoute(
-      path: Routes.workspaceInvite,
-      builder: (context, state) {
-        return WorkspaceInviteScreen(
-          viewModel: WorkspaceInviteViewModel(
-            workspaceRepository: context.read(),
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: Routes.workspaceSettings,
-      builder: (context, state) {
-        return WorkspaceSettingsScreen(
-          viewModel: WorkspaceSettingsViewmodel(
-            workspaceRepository: context.read(),
-          ),
-        );
-      },
     ),
     GoRoute(
       path: Routes.preferences,

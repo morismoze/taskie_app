@@ -2,35 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../utils/command.dart';
-import '../../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
-import '../../../domain/constants/rbac.dart';
-import '../../../routing/routes.dart';
-import '../../core/l10n/l10n_extensions.dart';
-import '../../core/theme/colors.dart';
-import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_modal.dart';
-import '../../core/ui/app_modal_bottom_sheet.dart';
-import '../../core/ui/app_snackbar.dart';
-import '../../core/ui/app_text_button.dart';
-import '../../core/ui/rbac.dart';
+import '../../../../../utils/command.dart';
+import '../../../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
+import '../../../../domain/constants/rbac.dart';
+import '../../../../routing/routes.dart';
+import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/theme/colors.dart';
+import '../../../core/ui/app_filled_button.dart';
+import '../../../core/ui/app_modal.dart';
+import '../../../core/ui/app_modal_bottom_sheet.dart';
+import '../../../core/ui/app_snackbar.dart';
+import '../../../core/ui/app_text_button.dart';
+import '../../../core/ui/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
 
 class WorkspaceTile extends StatefulWidget {
   const WorkspaceTile({
     super.key,
-    required this.id,
-    required this.name,
     required this.viewModel,
     required this.isActive,
+    required this.id,
+    required this.name,
     this.pictureUrl,
   });
 
-  final String id;
-  final String name;
   final AppDrawerViewModel viewModel;
   final bool isActive;
+  final String id;
+  final String name;
   final String? pictureUrl;
 
   @override
@@ -41,19 +41,19 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.leaveWorkspace.addListener(_onResult);
+    widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
   }
 
   @override
   void didUpdateWidget(covariant WorkspaceTile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.leaveWorkspace.removeListener(_onResult);
-    widget.viewModel.leaveWorkspace.addListener(_onResult);
+    oldWidget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
+    widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.leaveWorkspace.removeListener(_onResult);
+    widget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
     super.dispose();
   }
 
@@ -62,7 +62,10 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       leading: InkWell(
-        onTap: () => widget.viewModel.setActiveWorkspace.execute(widget.id),
+        onTap: () {
+          Navigator.of(context).pop(); // Close drawer
+          context.go(Routes.tasks(workspaceId: widget.id));
+        },
         child: WorkspaceImage(
           url: widget.pictureUrl,
           isActive: widget.isActive,
@@ -122,7 +125,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
               onPress: () {
                 Navigator.of(context).pop(); // Close bottom sheet
                 Navigator.of(context).pop(); // Close drawer
-                context.push(Routes.workspaceSettings);
+                context.push(Routes.workspaceSettings(workspaceId: widget.id));
               },
               label: context.localization.appDrawerEditWorkspace,
               leadingIcon: FontAwesomeIcons.pencil,
@@ -135,7 +138,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
               onPress: () {
                 Navigator.of(context).pop(); // Close bottom sheet
                 Navigator.of(context).pop(); // Close drawer
-                context.push(Routes.workspaceInvite);
+                context.push(Routes.workspaceInvite(workspaceId: widget.id));
               },
               label: context.localization.appDrawerInviteMembers,
               leadingIcon: FontAwesomeIcons.userPlus,
@@ -169,34 +172,55 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
       actions: [
         ListenableBuilder(
           listenable: widget.viewModel.leaveWorkspace,
-          builder: (_, _) => AppFilledButton(
+          builder: (BuildContext builderContext, _) => AppFilledButton(
             label: context.localization.appDrawerLeaveWorkspaceModalCta,
             onPress: () => widget.viewModel.leaveWorkspace.execute(workspaceId),
-            backgroundColor: Theme.of(context).colorScheme.error,
+            backgroundColor: Theme.of(builderContext).colorScheme.error,
             isLoading: widget.viewModel.leaveWorkspace.running,
           ),
         ),
         ListenableBuilder(
           listenable: widget.viewModel.leaveWorkspace,
-          builder: (_, _) => AppTextButton(
+          builder: (BuildContext builderContext, _) => AppTextButton(
             disabled: widget.viewModel.leaveWorkspace.running,
             label: context.localization.cancel,
-            onPress: () => Navigator.pop(context),
+            onPress: () => Navigator.pop(builderContext),
           ),
         ),
       ],
     );
   }
 
-  void _onResult() {
+  void _onWorkspaceLeaveResult() {
     if (widget.viewModel.leaveWorkspace.completed) {
       widget.viewModel.leaveWorkspace.clearResult();
-      Navigator.of(context).pop(); // Close modal
-      Navigator.of(context).pop(); // Close bottom sheet
+
+      if (widget.viewModel.workspaces.isNotEmpty) {
+        // We can close modal and bottom sheet only if there is at least 1
+        // workspace left in the list. That's because if the list is empty
+        // gorouter redirect will kick in, clear the current stack (and redirect
+        // to the create initial workspace screen) and there won't be no more pages
+        // left, so these pops will result in error.
+        Navigator.of(context).pop(); // Close modal
+        Navigator.of(context).pop(); // Close bottom sheet
+      }
+
       AppSnackbar.showSuccess(
         context: context,
         message: context.localization.appDrawerLeaveWorkspaceSuccess,
       );
+
+      if (widget.viewModel.activeWorkspaceId == widget.id &&
+          widget.viewModel.workspaces.isNotEmpty) {
+        // If the current active workspace ID is equal to the workspace ID
+        // user just left, then we navigate to the workspace ID taken from
+        // the first workspace in the workspaces list. And that is only if
+        // user didn't left the last workspace he was part of - because in that
+        // case gorouter redirect function will kick in and redirect user to
+        // the create initial workspace screen.
+        final firstWorkspaceId = widget.viewModel.workspaces.first.id;
+        context.go(Routes.tasks(workspaceId: firstWorkspaceId));
+      }
     }
 
     if (widget.viewModel.leaveWorkspace.error) {

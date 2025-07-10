@@ -16,9 +16,9 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   }) : _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
        _createWorkspaceUseCase = createWorkspaceUseCase {
-    loadUser = Command0(_loadUser)..execute();
-    loadWorkspaces = Command0(_loadWorkspaces)..execute();
     createWorkspace = Command1(_createWorkspace);
+    _loadUser();
+    _loadWorkspaces();
   }
 
   final WorkspaceRepository _workspaceRepository;
@@ -26,9 +26,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   final CreateWorkspaceUseCase _createWorkspaceUseCase;
   final _log = Logger('CreateWorkspaceScreenViewModel');
 
-  late Command0 loadUser;
-  late Command0 loadWorkspaces;
-  late Command1<void, (String name, String? description)> createWorkspace;
+  late Command1<String, (String name, String? description)> createWorkspace;
 
   User? _user;
 
@@ -67,7 +65,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _createWorkspace((String, String?) details) async {
+  Future<Result<String>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
 
     final resultCreate = await _createWorkspaceUseCase.createWorkspace(

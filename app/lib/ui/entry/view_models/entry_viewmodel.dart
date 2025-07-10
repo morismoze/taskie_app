@@ -14,21 +14,17 @@ class EntryViewModel {
 
   late Command0 loadWorkspaces;
 
-  Future<Result<void>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces();
+  Future<Result<String?>> _loadWorkspaces() async {
+    final resultLoadWorkspaces = await _workspaceRepository.getWorkspaces();
 
-    switch (result) {
+    switch (resultLoadWorkspaces) {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to load workspaces', result.error);
+        _log.warning('Failed to load workspaces', resultLoadWorkspaces.error);
+        return Result.error(Exception(resultLoadWorkspaces.error));
     }
 
-    // After we initially loaded workspaces, we also need to set active workspace ID and
-    // that will be done by calling [getActiveWorkspaceId] method, which will on app launch
-    // read from storage.
-    await _workspaceRepository.getActiveWorkspaceId();
-
-    return result;
+    return await _workspaceRepository.getActiveWorkspaceId();
   }
 }

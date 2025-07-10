@@ -14,8 +14,8 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
     required CreateWorkspaceUseCase createWorkspaceUseCase,
   }) : _userRepository = userRepository,
        _createWorkspaceUseCase = createWorkspaceUseCase {
-    loadUser = Command0(_loadUser)..execute();
     createWorkspace = Command1(_createWorkspace);
+    _loadUser();
   }
 
   final UserRepository _userRepository;

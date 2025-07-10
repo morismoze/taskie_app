@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../app_drawer/view_models/app_drawer_viewmodel.dart';
-import '../app_drawer/widgets/app_drawer.dart';
-import 'app_bottom_app_bar.dart';
-import 'app_floating_action_button.dart';
+import 'app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
+import 'app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
+import 'app_drawer/view_models/app_drawer_viewmodel.dart';
+import 'app_drawer/widgets/app_drawer.dart';
+import 'app_fab/view_models/app_floating_action_button_view_model.dart';
+import 'app_fab/widgets/app_floating_action_button.dart';
 
 class AppShellScaffold extends StatelessWidget {
-  const AppShellScaffold({super.key, required this.child});
+  const AppShellScaffold({
+    super.key,
+    required this.workspaceId,
+    required this.child,
+  });
 
+  final String workspaceId;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    // This is a place which can be optimized - new instances of AppDrawerViewModel
-    // are generated on every navigation inside the ShellRoute.
     final appDrawerViewModel = AppDrawerViewModel(
-      workspaceRepository: context.read(),
+      workspaceId: workspaceId,
       refreshTokenUseCase: context.read(),
+      workspaceRepository: context.read(),
     );
 
     return Scaffold(
@@ -25,13 +31,19 @@ class AppShellScaffold extends StatelessWidget {
       onDrawerChanged: (isOpened) {
         if (isOpened) {
           appDrawerViewModel.loadWorkspaces.execute();
-          appDrawerViewModel.loadActiveWorkspaceId.execute();
         }
       },
       extendBody: true,
-      bottomNavigationBar: const AppBottomAppBar(),
+      bottomNavigationBar: AppBottomNavigationBar(
+        viewModel: AppBottomNavigationBarViewModel(
+          workspaceId: workspaceId,
+          rbacUseCase: context.read(),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      floatingActionButton: const AppFloatingActionButton(),
+      floatingActionButton: AppFloatingActionButton(
+        viewModel: AppFloatingActionButtonViewModel(workspaceId: workspaceId),
+      ),
       body: child,
     );
   }

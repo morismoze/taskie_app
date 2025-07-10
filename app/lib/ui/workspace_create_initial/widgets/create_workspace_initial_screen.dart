@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
@@ -74,9 +75,9 @@ class _CreateWorkspaceInitialScreenState
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             ListenableBuilder(
-                              listenable: widget.viewModel.loadUser,
-                              builder: (context, _) {
-                                if (widget.viewModel.loadUser.completed) {
+                              listenable: widget.viewModel,
+                              builder: (builderContext, _) {
+                                if (widget.viewModel.user != null) {
                                   // This return is not defined inside child property of `ListenableBuilder`
                                   // because child is built only once, when the ListenableBuilder is built. And because
                                   // of that widget.viewModel.user is going to be captured as null.
@@ -92,7 +93,7 @@ class _CreateWorkspaceInitialScreenState
                                               ),
                                           textAlign: TextAlign.center,
                                           style: Theme.of(
-                                            context,
+                                            builderContext,
                                           ).textTheme.bodyMedium,
                                         ),
                                       ),
@@ -120,8 +121,10 @@ class _CreateWorkspaceInitialScreenState
 
   void _onResult() {
     if (widget.viewModel.createWorkspace.completed) {
+      final newWorkspaceId =
+          (widget.viewModel.createWorkspace.result as Ok<String>).value;
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
-      GoRouter.of(context).go(Routes.tasksRelative);
     }
 
     if (widget.viewModel.createWorkspace.error) {

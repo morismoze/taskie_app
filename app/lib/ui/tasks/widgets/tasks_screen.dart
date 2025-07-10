@@ -49,13 +49,13 @@ class _TasksScreenState extends State<TasksScreen> {
             padding: EdgeInsets.only(
               left: Dimens.of(context).paddingScreenHorizontal,
               right: Dimens.of(context).paddingScreenHorizontal,
-              bottom: kAppFloatingActionButtonSize + Dimens.paddingVertical,
+              bottom: kAppBottomNavigationBarHeight + Dimens.paddingVertical,
             ),
             child: Column(
               children: [
                 ListenableBuilder(
                   listenable: widget.viewModel.loadUser,
-                  builder: (context, child) {
+                  builder: (_, _) {
                     if (widget.viewModel.loadUser.completed) {
                       return TasksHeader(viewModel: widget.viewModel);
                     }

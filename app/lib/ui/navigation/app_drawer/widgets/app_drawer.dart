@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/l10n/l10n_extensions.dart';
-import '../../core/theme/dimens.dart';
+import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/theme/dimens.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'footer.dart';
 import 'workspaces_list.dart';

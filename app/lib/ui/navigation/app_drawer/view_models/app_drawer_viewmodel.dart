@@ -1,57 +1,40 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
-import '../../../data/repositories/workspace/workspace_repository.dart';
-import '../../../domain/models/workspace.dart';
-import '../../../domain/use_cases/refresh_token_use_case.dart';
-import '../../../utils/command.dart';
+import '../../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../../domain/models/workspace.dart';
+import '../../../../domain/use_cases/refresh_token_use_case.dart';
+import '../../../../utils/command.dart';
 
 class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({
+    required String workspaceId,
     required WorkspaceRepository workspaceRepository,
     required RefreshTokenUseCase refreshTokenUseCase,
-  }) : _workspaceRepository = workspaceRepository,
+  }) : _activeWorkspaceId = workspaceId,
+       _workspaceRepository = workspaceRepository,
        _refreshTokenUseCase = refreshTokenUseCase {
     loadWorkspaces = Command0(_loadWorkspaces);
-    loadActiveWorkspaceId = Command0(_loadActiveWorkspaceId);
     leaveWorkspace = Command1(_leaveWorkspace);
-    setActiveWorkspace = Command1(_setActiveWorkspace);
   }
 
+  final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final _log = Logger('AppDrawerViewModel');
 
   late Command0 loadWorkspaces;
-  late Command0 loadActiveWorkspaceId;
   late Command1<void, String> leaveWorkspace;
-  late Command1<void, String> setActiveWorkspace;
+
+  String get activeWorkspaceId => _activeWorkspaceId;
 
   List<Workspace> _workspaces = [];
 
   List<Workspace> get workspaces => _workspaces;
 
-  String? _activeWorkspaceId;
-
-  String? get activeWorkspaceId => _activeWorkspaceId;
-
   String? _inviteLink;
 
   String? get inviteLink => _inviteLink;
-
-  Future<Result<void>> _loadActiveWorkspaceId() async {
-    final result = await _workspaceRepository.getActiveWorkspaceId();
-
-    switch (result) {
-      case Ok():
-        _activeWorkspaceId = result.value;
-        notifyListeners();
-      case Error():
-        _log.warning('Failed to load active workspace ID', result.error);
-    }
-
-    return result;
-  }
 
   Future<Result<void>> _loadWorkspaces() async {
     final result = await _workspaceRepository.getWorkspaces();
@@ -62,20 +45,6 @@ class AppDrawerViewModel extends ChangeNotifier {
         notifyListeners();
       case Error():
         _log.warning('Failed to load workspaces', result.error);
-    }
-
-    return result;
-  }
-
-  Future<Result<void>> _setActiveWorkspace(String workspaceId) async {
-    final result = await _workspaceRepository.setActiveWorkspaceId(workspaceId);
-
-    switch (result) {
-      case Ok():
-        _activeWorkspaceId = workspaceId;
-        notifyListeners();
-      case Error():
-        _log.warning('Failed to set active workspace', result.error);
     }
 
     return result;
@@ -108,10 +77,6 @@ class AppDrawerViewModel extends ChangeNotifier {
 
     // We need to load workspaces again - this will load from repository cache, which was updated with the
     // given workspace by removing it from that cache list in WorkspaceRepository.leaveWorkspace function.
-    await _loadWorkspaces();
-
-    final resultSet = _setActiveWorkspace(_workspaces[0].id);
-
-    return resultSet;
+    return await _loadWorkspaces();
   }
 }

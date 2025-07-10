@@ -51,10 +51,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get bottomNavigationBarGoalsLabel => 'Ciljevi';
 
   @override
-  String get bottomNavigationBarFabTask => 'Stvori novi zadatak';
+  String get taskCreateNew => 'Stvori novi zadatak';
 
   @override
-  String get bottomNavigationBarFabGoal => 'Stvori novi cilj';
+  String get goalCreateNew => 'Create new goal';
 
   @override
   String get workspaceNameLabel => 'Naziv radnog prostora';

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../domain/constants/validation_rules.dart';
-import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../../workspace_create/view_models/create_workspace_viewmodel.dart';
 
@@ -24,21 +21,7 @@ class _CreateFormState extends State<CreateForm> {
   final TextEditingController _descriptionController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    widget.viewModel.createWorkspace.addListener(_onResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant CreateForm oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspace.removeListener(_onResult);
-    widget.viewModel.createWorkspace.addListener(_onResult);
-  }
-
-  @override
   void dispose() {
-    widget.viewModel.createWorkspace.removeListener(_onResult);
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
@@ -72,9 +55,9 @@ class _CreateFormState extends State<CreateForm> {
           const SizedBox(height: 30),
           ListenableBuilder(
             listenable: widget.viewModel.createWorkspace,
-            builder: (context, _) => AppFilledButton(
+            builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: context.localization.workspaceCreateLabel,
+              label: builderContext.localization.workspaceCreateLabel,
               isLoading: widget.viewModel.createWorkspace.running,
             ),
           ),
@@ -113,21 +96,6 @@ class _CreateFormState extends State<CreateForm> {
         return context.localization.workspaceCreateDescriptionMaxLength;
       default:
         return null;
-    }
-  }
-
-  void _onResult() {
-    if (widget.viewModel.createWorkspace.completed) {
-      widget.viewModel.createWorkspace.clearResult();
-      context.go(Routes.tasksRelative);
-    }
-
-    if (widget.viewModel.createWorkspace.error) {
-      widget.viewModel.createWorkspace.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.errorWhileCreatingWorkspace,
-      );
     }
   }
 }

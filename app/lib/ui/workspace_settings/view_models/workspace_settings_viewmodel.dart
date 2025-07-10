@@ -3,9 +3,13 @@ import 'package:logging/logging.dart';
 import '../../../data/repositories/workspace/workspace_repository.dart';
 
 class WorkspaceSettingsViewmodel {
-  WorkspaceSettingsViewmodel({required WorkspaceRepository workspaceRepository})
-    : _workspaceRepository = workspaceRepository;
+  WorkspaceSettingsViewmodel({
+    required String workspaceId,
+    required WorkspaceRepository workspaceRepository,
+  }) : _activeWorkspaceId = workspaceId,
+       _workspaceRepository = workspaceRepository;
 
+  final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('WorkspaceSettingsViewmodel');
 }

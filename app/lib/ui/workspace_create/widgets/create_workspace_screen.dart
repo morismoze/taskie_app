@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
+import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
+import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/create_workspace_viewmodel.dart';
 import 'form.dart';
@@ -13,10 +17,29 @@ class CreateWorkspaceScreen extends StatefulWidget {
   final CreateWorkspaceScreenViewModel viewModel;
 
   @override
-  State<StatefulWidget> createState() => _CreateWorkspaceScreenState();
+  State<CreateWorkspaceScreen> createState() => _CreateWorkspaceScreenState();
 }
 
 class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.createWorkspace.addListener(_onResult);
+  }
+
+  @override
+  void didUpdateWidget(covariant CreateWorkspaceScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.createWorkspace.removeListener(_onResult);
+    widget.viewModel.createWorkspace.addListener(_onResult);
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.createWorkspace.removeListener(_onResult);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,9 +67,9 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             ListenableBuilder(
-                              listenable: widget.viewModel.loadUser,
-                              builder: (context, _) {
-                                if (widget.viewModel.loadUser.completed) {
+                              listenable: widget.viewModel,
+                              builder: (builderContext, _) {
+                                if (widget.viewModel.user != null) {
                                   // This return is not defined inside child property of `ListenableBuilder`
                                   // because child is built only once, when the ListenableBuilder is built. And because
                                   // of that widget.viewModel.user is going to be captured as null.
@@ -56,13 +79,13 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                                       FractionallySizedBox(
                                         widthFactor: 0.75,
                                         child: Text(
-                                          context.localization
+                                          builderContext.localization
                                               .workspaceCreateSubtitle(
                                                 widget.viewModel.user!.email!,
                                               ),
                                           textAlign: TextAlign.center,
                                           style: Theme.of(
-                                            context,
+                                            builderContext,
                                           ).textTheme.bodyMedium,
                                         ),
                                       ),
@@ -87,5 +110,22 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
         ),
       ),
     );
+  }
+
+  void _onResult() {
+    if (widget.viewModel.createWorkspace.completed) {
+      final newWorkspaceId =
+          (widget.viewModel.createWorkspace.result as Ok<String>).value;
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
+      widget.viewModel.createWorkspace.clearResult();
+    }
+
+    if (widget.viewModel.createWorkspace.error) {
+      widget.viewModel.createWorkspace.clearResult();
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.errorWhileCreatingWorkspace,
+      );
+    }
   }
 }

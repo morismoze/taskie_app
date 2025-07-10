@@ -37,21 +37,19 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
     return Scaffold(
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
-          child: SafeArea(
-            child: Column(
-              children: [
-                HeaderBar(title: context.localization.createNewTaskTitle),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: Dimens.paddingVertical,
-                    left: Dimens.of(context).paddingScreenHorizontal,
-                    right: Dimens.of(context).paddingScreenHorizontal,
-                    bottom: Dimens.paddingVertical,
-                  ),
-                  child: CreateForm(viewModel: widget.viewModel),
+          child: Column(
+            children: [
+              HeaderBar(title: context.localization.createNewTaskTitle),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: Dimens.paddingVertical,
+                  left: Dimens.of(context).paddingScreenHorizontal,
+                  right: Dimens.of(context).paddingScreenHorizontal,
+                  bottom: Dimens.paddingVertical,
                 ),
-              ],
-            ),
+                child: CreateForm(viewModel: widget.viewModel),
+              ),
+            ],
           ),
         ),
       ),

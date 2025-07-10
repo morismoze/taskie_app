@@ -93,10 +93,12 @@ class _SignInScreenState extends State<SignInScreen> {
                       const SizedBox(height: 50),
                       ListenableBuilder(
                         listenable: widget.viewModel.signInWithGoogle,
-                        builder: (context, _) => AppFilledButton(
-                          onPress: _onSignInStart,
-                          label: context.localization.signInGetStarted,
-                        ),
+                        builder: (BuildContext builderContext, _) =>
+                            AppFilledButton(
+                              onPress: _onSignInStart,
+                              label:
+                                  builderContext.localization.signInGetStarted,
+                            ),
                       ),
                     ],
                   ),
@@ -145,9 +147,9 @@ class _SignInScreenState extends State<SignInScreen> {
       // opened (something like closure). Hence why it also needs to be wrapped inside ListenableBuilder
       child: ListenableBuilder(
         listenable: widget.viewModel.signInWithGoogle,
-        builder: (context, _) => AppFilledButton(
+        builder: (BuildContext builderContext, _) => AppFilledButton(
           onPress: () => widget.viewModel.signInWithGoogle.execute(),
-          label: context.localization.signInViaGoogle,
+          label: builderContext.localization.signInViaGoogle,
           leadingIcon: FontAwesomeIcons.google,
           isLoading: widget.viewModel.signInWithGoogle.running,
           backgroundColor: Colors.red[800],

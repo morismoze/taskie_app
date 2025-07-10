@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
@@ -74,8 +75,14 @@ class _EntryScreenState extends State<EntryScreen> {
 
   void _onLoadWorkspacesResult() {
     if (widget.viewModel.loadWorkspaces.completed) {
+      final activeWorkspaceId =
+          (widget.viewModel.loadWorkspaces.result as Ok<String?>).value;
+      if (activeWorkspaceId == null) {
+        context.go(Routes.login);
+      } else {
+        context.go(Routes.tasks(workspaceId: activeWorkspaceId));
+      }
       widget.viewModel.loadWorkspaces.clearResult();
-      context.go(Routes.tasksRelative);
     }
 
     if (widget.viewModel.loadWorkspaces.error) {

@@ -6,17 +6,17 @@ import '../../../utils/command.dart';
 abstract class WorkspaceRepository extends ChangeNotifier {
   bool? get hasNoWorkspaces;
 
-  /// Used when changing the current active workspace ID via the
-  /// workspaces list in the app drawer.
-  Future<Result<void>> setActiveWorkspaceId(String workspaceId);
-
-  /// Used as the initial load of workspaceId and setting the local
-  /// cached variable which is available via [activeWorkspaceId] getter.
+  /// Reads either from local cache or from storage. When read from storage,
+  /// it also sets the local cache.
   Future<Result<String?>> getActiveWorkspaceId();
+
+  /// This method is invoked only in the gorouter inside the `/workspaces/:id` route redirect.
+  Future<Result<void>> setActiveWorkspaceId(String workspaceId);
 
   Future<Result<List<Workspace>>> getWorkspaces({bool forceFetch = false});
 
-  Future<Result<void>> createWorkspace({
+  /// Returns `workspaceId` of the newly created workspace.
+  Future<Result<String>> createWorkspace({
     required String name,
     String? description,
   });
@@ -24,7 +24,7 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// Reads from the cached Map of invite links per workspace ID or if there is no
   /// cache, then it fires the request. Workspace ID is read from the local
   /// active workspace ID variable.
-  Future<Result<String>> createWorkspaceInviteLink();
+  Future<Result<String>> createWorkspaceInviteLink(String workspaceId);
 
   Future<Result<void>> leaveWorkspace({required String workspaceId});
 }

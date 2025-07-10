@@ -8,14 +8,17 @@ import '../../../utils/command.dart';
 
 class TasksViewModel extends ChangeNotifier {
   TasksViewModel({
+    required String workspaceId,
     required UserRepository userRepository,
     required WorkspaceRepository workspaceRepository,
-  }) : _userRepository = userRepository,
+  }) : _activeWorkspaceId = workspaceId,
+       _userRepository = userRepository,
        _workspaceRepository = workspaceRepository {
     loadUser = Command0(_loadUser)..execute();
     loadWorkspaces = Command0(_loadWorkspaces)..execute();
   }
 
+  final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('TasksViewModel');

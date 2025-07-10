@@ -21,16 +21,6 @@ class _CreateFormInitialState extends State<CreateFormInitial> {
   final TextEditingController _descriptionController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant CreateFormInitial oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
@@ -65,9 +55,9 @@ class _CreateFormInitialState extends State<CreateFormInitial> {
           const SizedBox(height: 30),
           ListenableBuilder(
             listenable: widget.viewModel.createWorkspace,
-            builder: (context, _) => AppFilledButton(
+            builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: context.localization.workspaceCreateLabel,
+              label: builderContext.localization.workspaceCreateLabel,
               isLoading: widget.viewModel.createWorkspace.running,
             ),
           ),

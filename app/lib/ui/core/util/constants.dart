@@ -1,1 +1,1 @@
-const double kAppFloatingActionButtonSize = 56.0;
+const double kAppBottomNavigationBarHeight = 56.0;

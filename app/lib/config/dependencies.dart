@@ -19,6 +19,7 @@ import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
+import '../domain/use_cases/rbac_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
 
@@ -79,6 +80,12 @@ List<SingleChildWidget> get providers {
     Provider(
       create: (context) => CreateWorkspaceUseCase(
         refreshTokenUseCase: context.read(),
+        userRepository: context.read(),
+        workspaceRepository: context.read(),
+      ),
+    ),
+    Provider(
+      create: (context) => RbacUseCase(
         userRepository: context.read(),
         workspaceRepository: context.read(),
       ),

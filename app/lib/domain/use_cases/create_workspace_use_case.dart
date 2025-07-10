@@ -27,7 +27,9 @@ class CreateWorkspaceUseCase {
   ///
   /// This is made into separate use-case because the same logic used on /workspaces/create
   /// and /workspaces/create/initial routes.
-  Future<Result<void>> createWorkspace({
+  ///
+  /// Returns `workspaceId` of the newly created workspace,
+  Future<Result<String>> createWorkspace({
     required String name,
     String? description,
   }) async {
@@ -56,6 +58,19 @@ class CreateWorkspaceUseCase {
         return Result.error(resultRefresh.error);
     }
 
-    return await _userRepository.getUser(forceFetch: true);
+    // We also need to refresh the user since user endpoint also returns
+    // role per each workspace.
+    // TODO: is it maybe better to manually update the user cache?
+    final resultUser = await _userRepository.getUser(forceFetch: true);
+
+    switch (resultUser) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to refresh user', resultUser.error);
+        return Result.error(resultUser.error);
+    }
+
+    return Result.ok(resultCreate.value);
   }
 }

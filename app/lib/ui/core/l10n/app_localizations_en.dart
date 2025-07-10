@@ -51,10 +51,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bottomNavigationBarGoalsLabel => 'Goals';
 
   @override
-  String get bottomNavigationBarFabTask => 'Create new task';
+  String get taskCreateNew => 'Create new task';
 
   @override
-  String get bottomNavigationBarFabGoal => 'Create new goal';
+  String get goalCreateNew => 'Create new goal';
 
   @override
   String get workspaceNameLabel => 'Workspace name';

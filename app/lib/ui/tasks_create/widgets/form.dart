@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../domain/constants/objectives.dart';
+import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -83,18 +83,19 @@ class _CreateFormState extends State<CreateForm> {
             required: false,
             maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
           AppSlider(
             label: context.localization.taskRewardPointsLabel,
             value: _rewardPoints.toDouble(),
             onChanged: _onRewardPointsChanged,
-            divisions: ObjectiveRules.rewardPointsStep,
+            step: ObjectiveRules.rewardPointsStep,
             min: ObjectiveRules.rewardPointsMin.toDouble(),
             max: ObjectiveRules.rewardPointsMax.toDouble(),
           ),
+          const SizedBox(height: 30),
           AppFilledButton(
             onPress: _onSubmit,
-            label: context.localization.workspaceCreateLabel,
+            label: context.localization.taskCreateNew,
           ),
         ],
       ),

@@ -176,17 +176,17 @@ abstract class AppLocalizations {
   /// **'Goals'**
   String get bottomNavigationBarGoalsLabel;
 
-  /// No description provided for @bottomNavigationBarFabTask.
+  /// No description provided for @taskCreateNew.
   ///
   /// In en, this message translates to:
   /// **'Create new task'**
-  String get bottomNavigationBarFabTask;
+  String get taskCreateNew;
 
-  /// No description provided for @bottomNavigationBarFabGoal.
+  /// No description provided for @goalCreateNew.
   ///
   /// In en, this message translates to:
   /// **'Create new goal'**
-  String get bottomNavigationBarFabGoal;
+  String get goalCreateNew;
 
   /// No description provided for @workspaceNameLabel.
   ///
