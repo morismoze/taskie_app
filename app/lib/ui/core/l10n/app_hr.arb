@@ -44,5 +44,7 @@
   "taskRewardPointsLabel": "Nagradni bodovi",
   "taskNameMinLength": "Naziv mora imati minimalno 3 znakova",
   "taskNameMaxLength": "Naziv može imati najviše 50 znakova",
-  "taskDescriptionMaxLength": "Opis može imati najviše 250 znakova"
+  "taskDescriptionMaxLength": "Opis može imati najviše 250 znakova",
+  "submit": "Potvrdi",
+  "close": "Zatvori"
 }

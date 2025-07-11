@@ -44,5 +44,7 @@
   "taskRewardPointsLabel": "Reward points",
   "taskNameMinLength": "Name must have at least 3 characters",
   "taskNameMaxLength": "Name can have at most 50 characters",
-  "taskDescriptionMaxLength": "Name can have at most 250 characters"
+  "taskDescriptionMaxLength": "Name can have at most 250 characters",
+  "submit": "Submit",
+  "close": "Close"
 }

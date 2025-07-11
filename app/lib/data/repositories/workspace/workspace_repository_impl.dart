@@ -1,10 +1,12 @@
 import 'package:logging/logging.dart';
 
 import '../../../domain/models/workspace.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 import '../../services/api/workspace/models/request/create_workspace_request.dart';
 import '../../services/api/workspace/models/response/create_workspace_invite_link_response.dart';
 import '../../services/api/workspace/models/response/workspace_response.dart';
+import '../../services/api/workspace/models/response/workspace_user_response.dart';
 import '../../services/api/workspace/workspace_api_service.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'workspace_repository.dart';
@@ -22,6 +24,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   final _log = Logger('WorkspaceRepository');
   String? _activeWorkspaceId;
   List<Workspace>? _cachedWorkspacesList;
+  List<WorkspaceUser>? _cachedWorkspaceUsersList;
   // Invite links per workspace IDs (workspaceId: inviteLink)
   final Map<String, String> _cachedWorkspaceInviteLinks = {};
 
@@ -186,6 +189,42 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
           return const Result.ok(null);
         case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<List<WorkspaceUser>>> getWorkspaceUsers({
+    required String workspaceId,
+    bool forceFetch = false,
+  }) async {
+    if (!forceFetch && _cachedWorkspaceUsersList != null) {
+      return Result.ok(_cachedWorkspaceUsersList!);
+    }
+
+    try {
+      final result = await _workspaceApiService.getWorkspaceUsers(workspaceId);
+
+      switch (result) {
+        case Ok<List<WorkspaceUserResponse>>():
+          final mappedData = result.value
+              .map(
+                (workspaceUser) => WorkspaceUser(
+                  id: workspaceUser.id,
+                  firstName: workspaceUser.firstName,
+                  lastName: workspaceUser.lastName,
+                  role: workspaceUser.role,
+                  profileImageUrl: workspaceUser.profileImageUrl,
+                ),
+              )
+              .toList();
+          _cachedWorkspaceUsersList = mappedData;
+
+          return Result.ok(mappedData);
+        case Error<List<WorkspaceUserResponse>>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

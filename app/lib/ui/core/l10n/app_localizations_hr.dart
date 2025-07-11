@@ -157,4 +157,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get taskDescriptionMaxLength => 'Opis može imati najviše 250 znakova';
+
+  @override
+  String get submit => 'Potvrdi';
+
+  @override
+  String get close => 'Zatvori';
 }

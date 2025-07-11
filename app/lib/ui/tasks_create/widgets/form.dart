@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
+import '../../core/ui/app_select_field.dart';
 import '../../core/ui/app_slider.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../view_models/create_task_viewmodel.dart';
@@ -21,8 +23,16 @@ class _CreateFormState extends State<CreateForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _assigneeController = TextEditingController();
+  List<String> _selectedAssigneeWorkspaceIds = [];
   int _rewardPoints = ObjectiveRules.rewardPointsMin;
+
+  void _onAssigneesSelected(List<AppSelectFieldOption> selectedOptions) {
+    setState(() {
+      _selectedAssigneeWorkspaceIds = selectedOptions
+          .map((option) => option.value)
+          .toList();
+    });
+  }
 
   void _onRewardPointsChanged(double points) {
     setState(() {
@@ -74,16 +84,30 @@ class _CreateFormState extends State<CreateForm> {
             maxCharacterCount: ValidationRules.taskDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
-          AppTextFormField(
-            controller: _descriptionController,
-            label: context.localization.taskAssigneeLabel,
-            validator: _validateDescription,
-            maxLines: null,
-            textInputAction: TextInputAction.next,
-            required: false,
-            maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
+          ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (builderContext, _) {
+              final options = widget.viewModel.workspaceUsers.map((user) {
+                final fullName = '${user.firstName} ${user.lastName}';
+                return AppSelectFieldOption(
+                  label: fullName,
+                  value: user.id,
+                  leading: AppAvatar(
+                    text: fullName,
+                    imageUrl: user.profileImageUrl,
+                  ),
+                );
+              }).toList();
+
+              return AppSelectField(
+                options: options,
+                onSelected: _onAssigneesSelected,
+                label: context.localization.taskAssigneeLabel,
+                multiple: true,
+              );
+            },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           AppSlider(
             label: context.localization.taskRewardPointsLabel,
             value: _rewardPoints.toDouble(),

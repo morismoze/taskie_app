@@ -6,6 +6,7 @@ import 'models/request/create_workspace_request.dart';
 import 'models/request/workspace_id_path_param.dart';
 import 'models/response/create_workspace_invite_link_response.dart';
 import 'models/response/workspace_response.dart';
+import 'models/response/workspace_user_response.dart';
 
 class WorkspaceApiService {
   WorkspaceApiService({required ApiClient apiClient}) : _apiClient = apiClient;
@@ -19,7 +20,9 @@ class WorkspaceApiService {
       final apiResponse = ApiResponse<List<WorkspaceResponse>>.fromJson(
         response.data,
         (jsonList) => (jsonList as List)
-            .map<WorkspaceResponse>((json) => WorkspaceResponse.fromJson(json))
+            .map<WorkspaceResponse>(
+              (listItem) => WorkspaceResponse.fromJson(listItem),
+            )
             .toList(),
       );
 
@@ -76,6 +79,29 @@ class WorkspaceApiService {
       await _apiClient.client.delete(ApiEndpoints.leaveWorkspace(workspaceId));
 
       return const Result.ok(null);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<List<WorkspaceUserResponse>>> getWorkspaceUsers(
+    WorkspaceIdPathParam workspaceId,
+  ) async {
+    try {
+      final response = await _apiClient.client.get(
+        ApiEndpoints.getWorkspaceUsers(workspaceId),
+      );
+
+      final apiResponse = ApiResponse<List<WorkspaceUserResponse>>.fromJson(
+        response.data,
+        (jsonList) => (jsonList as List)
+            .map<WorkspaceUserResponse>(
+              (listItem) => WorkspaceUserResponse.fromJson(listItem),
+            )
+            .toList(),
+      );
+
+      return Result.ok(apiResponse.data!);
     } on Exception catch (e) {
       return Result.error(e);
     }

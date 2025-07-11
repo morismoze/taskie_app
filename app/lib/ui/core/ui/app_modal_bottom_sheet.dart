@@ -18,6 +18,7 @@ class AppModalBottomSheet {
     bool enableDrag = true,
     bool isDismissable = true,
     bool isDetached = false,
+    bool isScrollControlled = false,
     VoidCallback? onDismiss,
   }) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -31,7 +32,7 @@ class AppModalBottomSheet {
       context: context,
       useSafeArea: true,
       isDismissible: isDismissable,
-      isScrollControlled: isDetached,
+      isScrollControlled: isScrollControlled || isDetached,
       backgroundColor: isDetached ? Colors.transparent : null,
       enableDrag: enableDrag,
       builder: (BuildContext builderContext) {

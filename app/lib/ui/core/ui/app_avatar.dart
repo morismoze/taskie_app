@@ -1,21 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-/// [AppAvatar.imageUrl] takes precedence over text if not null
+import '../util/color.dart';
+
+/// [AppAvatar.imageUrl] takes precedence over text
 class AppAvatar extends StatelessWidget {
-  const AppAvatar({
-    super.key,
-    required this.text,
-    required this.backgroundColor,
-    this.imageUrl,
-  });
+  const AppAvatar({super.key, required this.text, this.imageUrl});
 
   final String text;
-  final Color backgroundColor;
   final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = ColorGenerator.generateColorFromString(text);
+    final firstLetters = text.split(' ').map((word) => word[0]).join(' ');
+
     return CircleAvatar(
       foregroundImage: imageUrl != null
           ? CachedNetworkImageProvider(imageUrl!)
@@ -28,7 +27,7 @@ class AppAvatar extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.center,
                 child: Text(
-                  text,
+                  firstLetters,
                   style: Theme.of(context).textTheme.displayMedium,
                   textAlign: TextAlign.center,
                 ),

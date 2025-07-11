@@ -373,6 +373,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name can have at most 250 characters'**
   String get taskDescriptionMaxLength;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate

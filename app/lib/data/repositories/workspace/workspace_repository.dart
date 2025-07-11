@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../domain/models/workspace.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
 abstract class WorkspaceRepository extends ChangeNotifier {
@@ -13,7 +14,7 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// This method is invoked only in the gorouter inside the `/workspaces/:id` route redirect.
   Future<Result<void>> setActiveWorkspaceId(String workspaceId);
 
-  Future<Result<List<Workspace>>> getWorkspaces({bool forceFetch = false});
+  Future<Result<List<Workspace>>> getWorkspaces({bool forceFetch});
 
   /// Returns `workspaceId` of the newly created workspace.
   Future<Result<String>> createWorkspace({
@@ -27,4 +28,9 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   Future<Result<String>> createWorkspaceInviteLink(String workspaceId);
 
   Future<Result<void>> leaveWorkspace({required String workspaceId});
+
+  Future<Result<List<WorkspaceUser>>> getWorkspaceUsers({
+    required String workspaceId,
+    bool forceFetch,
+  });
 }

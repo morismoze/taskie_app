@@ -157,4 +157,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskDescriptionMaxLength => 'Name can have at most 250 characters';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get close => 'Close';
 }

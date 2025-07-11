@@ -46,13 +46,16 @@ final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
 /// /workspaces
 ///   /create/initial
 ///   /create
-///   /:id
-///     /leaderboard
-///     /invite
-///     /tasks
-///       /:id
-///     /goals
-///       /:id
+///   /:workspaceId
+///     /ShellRoute
+///       /leaderboard
+///       /invite
+///       /tasks
+///         /create (on root navigator)
+///         /:id
+///       /goals
+///         /create (on root navigator)
+///         /:id
 GoRouter router({
   required AuthStateRepository authStateRepository,
   required WorkspaceRepository workspaceRepository,
@@ -160,8 +163,12 @@ GoRouter router({
                       path: Routes.taskCreateRelative,
                       parentNavigatorKey: _rootNavigatorKey,
                       builder: (context, state) {
+                        final workspaceId =
+                            state.pathParameters['workspaceId']!;
+
                         return CreateTaskScreen(
                           viewModel: CreateTaskViewmodel(
+                            workspaceId: workspaceId,
                             workspaceRepository: context.read(),
                           ),
                         );
