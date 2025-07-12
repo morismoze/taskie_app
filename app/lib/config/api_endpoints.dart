@@ -16,11 +16,11 @@ abstract final class ApiEndpoints {
   static String createWorkspaceInviteLink(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/invites';
   static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
-      '$_prefix/workspaces/$workspaceId/members';
+      '$_prefix/workspaces/$workspaceId/users/me';
   static String getTasks(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/tasks';
   static String getGoals(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/goals';
   static String getWorkspaceUsers(WorkspaceIdPathParam workspaceId) =>
-      '$_prefix/workspaces/$workspaceId/members';
+      '$_prefix/workspaces/$workspaceId/users';
 }

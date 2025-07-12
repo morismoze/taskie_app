@@ -75,7 +75,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceCreateNameMinLength =>
-      'Naziv mora imati minimalno 3 znakova';
+      'Naziv mora imati najmanje 3 znaka';
 
   @override
   String get workspaceCreateNameMaxLength =>
@@ -150,13 +150,17 @@ class AppLocalizationsHr extends AppLocalizations {
   String get taskRewardPointsLabel => 'Nagradni bodovi';
 
   @override
-  String get taskNameMinLength => 'Naziv mora imati minimalno 3 znakova';
+  String get taskNameMinLength => 'Naziv mora imati najmanje 3 znaka';
 
   @override
   String get taskNameMaxLength => 'Naziv može imati najviše 50 znakova';
 
   @override
   String get taskDescriptionMaxLength => 'Opis može imati najviše 250 znakova';
+
+  @override
+  String get taskAssigneesMinLength =>
+      'Zadatak mora biti dodijeljen barem 1 članu';
 
   @override
   String get submit => 'Potvrdi';

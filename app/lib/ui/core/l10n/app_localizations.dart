@@ -374,6 +374,12 @@ abstract class AppLocalizations {
   /// **'Name can have at most 250 characters'**
   String get taskDescriptionMaxLength;
 
+  /// No description provided for @taskAssigneesMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Task must have at least 1 assignee'**
+  String get taskAssigneesMinLength;
+
   /// No description provided for @submit.
   ///
   /// In en, this message translates to:

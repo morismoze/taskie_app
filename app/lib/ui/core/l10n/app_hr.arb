@@ -19,7 +19,7 @@
   "workspaceCreateTitle": "Stvorimo novi radni prostor",
   "workspaceCreateSubtitle": "Nismo pronašli postojeće radne prostore za {email}. Ako je to greška, pokušajte zamoliti vlasnika radnog prostora za pozivni link.",
   "workspaceCreateLabel": "Stvori radni prostor",
-  "workspaceCreateNameMinLength": "Naziv mora imati minimalno 3 znakova",
+  "workspaceCreateNameMinLength": "Naziv mora imati najmanje 3 znaka",
   "workspaceCreateNameMaxLength": "Naziv može imati najviše 50 znakova",
   "workspaceCreateDescriptionMaxLength": "Opis može imati najviše 250 znakova",
   "requiredField": "Ovo polje je obvezno",
@@ -42,9 +42,10 @@
   "taskAssigneeLabel": "Dodijeli članu",
   "taskDueDateLabel": "Rok završetka",
   "taskRewardPointsLabel": "Nagradni bodovi",
-  "taskNameMinLength": "Naziv mora imati minimalno 3 znakova",
+  "taskNameMinLength": "Naziv mora imati najmanje 3 znaka",
   "taskNameMaxLength": "Naziv može imati najviše 50 znakova",
   "taskDescriptionMaxLength": "Opis može imati najviše 250 znakova",
+  "taskAssigneesMinLength": "Zadatak mora biti dodijeljen barem 1 članu",
   "submit": "Potvrdi",
   "close": "Zatvori"
 }

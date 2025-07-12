@@ -33,6 +33,12 @@ class AppDatePickerField extends StatefulWidget {
 class _AppDatePickerFieldState extends State<AppDatePickerField> {
   DateTime? _selectedDate;
 
+  void _clearSelections() {
+    setState(() {
+      _selectedDate = null;
+    });
+  }
+
   void _onSubmit(DateTime date) {
     setState(() {
       _selectedDate = date;
@@ -49,10 +55,11 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
           ? widget.label
           : '${widget.label} (${context.localization.optional})',
       isFieldFocused: isDateSelected,
-      onTap: () {
-        _openDatePicker(context);
-      },
-      trailingIcon: FontAwesomeIcons.solidCircleXmark,
+      onTap: () => _openDatePicker(context),
+      trailingIcon: _selectedDate != null
+          ? FontAwesomeIcons.solidCircleXmark
+          : null,
+      onTrailingIconPress: _clearSelections,
       child: _selectedDate != null
           ? Text(DateFormat.yMd().format(_selectedDate!))
           : const SizedBox.shrink(),
@@ -93,7 +100,12 @@ class _AppDatePicker extends StatefulWidget {
 }
 
 class _AppDatePickerState extends State<_AppDatePicker> {
-  DateTime? _selectedDate;
+  DateTime _selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _onDateTimeChanged(DateTime newDate) {
     setState(() {
@@ -106,10 +118,8 @@ class _AppDatePickerState extends State<_AppDatePicker> {
   }
 
   void _onSubmit() {
-    if (_selectedDate != null) {
-      widget.onSubmit(_selectedDate!);
-      Navigator.of(context).pop();
-    }
+    widget.onSubmit(_selectedDate);
+    Navigator.of(context).pop();
   }
 
   @override

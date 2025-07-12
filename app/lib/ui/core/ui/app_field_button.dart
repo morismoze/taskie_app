@@ -8,6 +8,9 @@ import '../theme/theme.dart';
 /// invokes an action through provided [onTap] (e.g. onTap
 /// can open a modal bottom sheet).
 ///
+/// Both [trailingIcon] and [onTrailingIconPress] need to
+/// be passed when using trailing element.
+///
 /// This is normally used to showcase custom widgets
 /// inside the field, rather than plain text.
 class AppFieldButton extends StatelessWidget {
@@ -18,6 +21,7 @@ class AppFieldButton extends StatelessWidget {
     required this.onTap,
     required this.child,
     this.trailingIcon,
+    this.onTrailingIconPress,
   });
 
   final String label;
@@ -25,6 +29,7 @@ class AppFieldButton extends StatelessWidget {
   final Function() onTap;
   final Widget child;
   final IconData? trailingIcon;
+  final void Function()? onTrailingIconPress;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +38,13 @@ class AppFieldButton extends StatelessWidget {
         -(AppTheme.fieldInnerPadding +
             AppTheme.fieldUnfocusedLabelFontSize / 1.5);
 
-    return Material(
-      borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
-      color: AppColors.fieldFillColor,
-      child: InkWell(
+    return Container(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
+        color: AppColors.fieldFillColor,
+      ),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: onTap,
         child: ConstrainedBox(
           constraints: const BoxConstraints(
@@ -54,14 +61,18 @@ class AppFieldButton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(child: child),
-                    if (trailingIcon != null) ...[
+                    if (trailingIcon != null &&
+                        onTrailingIconPress != null) ...[
                       const SizedBox(width: 4),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: FaIcon(
-                          trailingIcon,
-                          color: AppColors.black1,
-                          size: 15,
+                        child: InkWell(
+                          onTap: onTrailingIconPress,
+                          child: FaIcon(
+                            trailingIcon,
+                            color: AppColors.black1,
+                            size: 15,
+                          ),
                         ),
                       ),
                     ],
@@ -70,7 +81,7 @@ class AppFieldButton extends StatelessWidget {
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOut,
-                  top: isFieldFocused ? fieldFocusedlabelTopPosition : null,
+                  top: isFieldFocused ? fieldFocusedlabelTopPosition : 0,
                   child: IgnorePointer(
                     child: Text(
                       label,

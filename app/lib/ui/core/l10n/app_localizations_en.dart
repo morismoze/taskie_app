@@ -159,6 +159,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskDescriptionMaxLength => 'Name can have at most 250 characters';
 
   @override
+  String get taskAssigneesMinLength => 'Task must have at least 1 assignee';
+
+  @override
   String get submit => 'Submit';
 
   @override

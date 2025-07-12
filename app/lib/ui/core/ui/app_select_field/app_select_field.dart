@@ -39,11 +39,13 @@ class AppSelectField extends StatefulWidget {
     required this.onSelected,
     required this.label,
     this.multiple = false,
+    this.validator,
   });
 
   final List<AppSelectFieldOption> options;
   final void Function(List<AppSelectFieldOption> selectedOptions) onSelected;
   final String label;
+  final void Function(List<AppSelectFieldOption> selectedOptions)? validator;
 
   /// Defines if this a multiple option selection field.
   final bool multiple;
@@ -54,6 +56,12 @@ class AppSelectField extends StatefulWidget {
 
 class _AppSelectFieldState extends State<AppSelectField> {
   List<AppSelectFieldOption> _selectedOptions = [];
+
+  void _clearSelections() {
+    setState(() {
+      _selectedOptions.clear();
+    });
+  }
 
   void _onSubmit(List<AppSelectFieldOption> options) {
     setState(() {
@@ -72,7 +80,8 @@ class _AppSelectFieldState extends State<AppSelectField> {
       onTap: () {
         _openOptions(context);
       },
-      trailingIcon: FontAwesomeIcons.solidCircleXmark,
+      trailingIcon: hasSelection ? FontAwesomeIcons.solidCircleXmark : null,
+      onTrailingIconPress: _clearSelections,
       child: Wrap(
         spacing: 4,
         runSpacing: 4,

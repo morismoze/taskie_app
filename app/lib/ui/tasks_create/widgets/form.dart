@@ -113,6 +113,7 @@ class _CreateFormState extends State<CreateForm> {
                 onSelected: _onAssigneesSelected,
                 label: context.localization.taskAssigneeLabel,
                 multiple: true,
+                validator: _validateAssignees,
               );
             },
           ),
@@ -146,6 +147,15 @@ class _CreateFormState extends State<CreateForm> {
     if (_formKey.currentState!.validate()) {
       final name = _nameController.text;
       final description = _descriptionController.text;
+      final iso8601DateString = _dueDate?.toIso8601String();
+
+      widget.viewModel.createTask.execute((
+        name,
+        description,
+        _selectedAssigneeWorkspaceIds,
+        iso8601DateString,
+        _rewardPoints,
+      ));
     }
   }
 
@@ -169,6 +179,16 @@ class _CreateFormState extends State<CreateForm> {
       case final String value
           when value.length > ValidationRules.taskDescriptionMaxLength:
         return context.localization.taskDescriptionMaxLength;
+      default:
+        return null;
+    }
+  }
+
+  String? _validateAssignees(List<AppSelectFieldOption> assignees) {
+    switch (assignees) {
+      case final List<AppSelectFieldOption> value
+          when value.length < ValidationRules.taskMinAssigneesCount:
+        return context.localization.taskAssigneesMinLength;
       default:
         return null;
     }

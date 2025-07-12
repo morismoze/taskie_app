@@ -45,6 +45,7 @@
   "taskNameMinLength": "Name must have at least 3 characters",
   "taskNameMaxLength": "Name can have at most 50 characters",
   "taskDescriptionMaxLength": "Name can have at most 250 characters",
+  "taskAssigneesMinLength": "Task must have at least 1 assignee",
   "submit": "Submit",
   "close": "Close"
 }
