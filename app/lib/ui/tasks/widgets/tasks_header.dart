@@ -45,7 +45,7 @@ class TasksHeader extends StatelessWidget {
                     context.localization.tasksHello,
                     style: Theme.of(
                       context,
-                    ).textTheme.labelMedium!.copyWith(fontSize: 14),
+                    ).textTheme.labelLarge!.copyWith(fontSize: 14),
                   ),
                   Text(
                     fullName,

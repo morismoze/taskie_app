@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/l10n_extensions.dart';
 import '../theme/colors.dart';
+import '../theme/theme.dart';
 
 class AppTextFormField extends StatelessWidget {
   const AppTextFormField({
@@ -49,42 +50,41 @@ class AppTextFormField extends StatelessWidget {
           cursorErrorColor: AppColors.black1,
           style: const TextStyle(fontSize: 16),
           decoration: InputDecoration(
-            // Content padding is used to remove padding from the error message
-            contentPadding: const EdgeInsets.only(
-              left: 16,
-              top: 16,
-              bottom: 16,
+            contentPadding: EdgeInsets.only(
+              left: AppTheme.fieldInnerPadding,
+              top: AppTheme.fieldInnerPadding,
+              bottom: AppTheme.fieldInnerPadding,
             ),
             hintText: hint,
             labelText: required
                 ? label
                 : '$label (${context.localization.optional})',
             filled: true,
-            floatingLabelStyle: const TextStyle(
-              fontSize: 18,
-              color: AppColors.grey2,
-              fontWeight: FontWeight.bold,
+            floatingLabelStyle: Theme.of(context).textTheme.labelMedium!
+                .copyWith(
+                  fontSize:
+                      AppTheme.fieldUnfocusedLabelFontSize +
+                      (AppTheme.fieldUnfocusedLabelFontSize * 0.25).round(),
+                ),
+            labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: AppColors.fieldUnfocusedLabelColor,
+              fontSize: AppTheme.fieldLabelFontSize,
             ),
-            labelStyle: TextStyle(
-              color: AppColors.grey2.withValues(alpha: 0.5),
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-            fillColor: AppColors.grey2.withValues(alpha: 0.075),
+            fillColor: AppColors.fieldFillColor,
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
               borderSide: BorderSide.none,
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
               borderSide: BorderSide.none,
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
               borderSide: BorderSide.none,
             ),
             counter: ListenableBuilder(

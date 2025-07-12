@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../theme/colors.dart';
 import '../util/color.dart';
 
 /// [AppAvatar.imageUrl] takes precedence over text
@@ -13,7 +14,7 @@ class AppAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ColorGenerator.generateColorFromString(text);
-    final firstLetters = text.split(' ').map((word) => word[0]).join(' ');
+    final firstNameFirstLetter = text.split(' ')[0][0];
 
     return CircleAvatar(
       foregroundImage: imageUrl != null
@@ -27,8 +28,10 @@ class AppAvatar extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.center,
                 child: Text(
-                  firstLetters,
-                  style: Theme.of(context).textTheme.displayMedium,
+                  firstNameFirstLetter,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.displayMedium!.copyWith(color: AppColors.white1),
                   textAlign: TextAlign.center,
                 ),
               ),

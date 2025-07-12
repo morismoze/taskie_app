@@ -4,8 +4,9 @@ import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
+import '../../core/ui/app_date_picker_field.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_select_field.dart';
+import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_slider.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../view_models/create_task_viewmodel.dart';
@@ -25,9 +26,11 @@ class _CreateFormState extends State<CreateForm> {
   final TextEditingController _descriptionController = TextEditingController();
   List<String> _selectedAssigneeWorkspaceIds = [];
   int _rewardPoints = ObjectiveRules.rewardPointsMin;
+  DateTime? _dueDate;
 
   void _onAssigneesSelected(List<AppSelectFieldOption> selectedOptions) {
     setState(() {
+      // Take selected workspace IDs
       _selectedAssigneeWorkspaceIds = selectedOptions
           .map((option) => option.value)
           .toList();
@@ -37,6 +40,12 @@ class _CreateFormState extends State<CreateForm> {
   void _onRewardPointsChanged(double points) {
     setState(() {
       _rewardPoints = points.toInt();
+    });
+  }
+
+  void _onDueDateSelected(DateTime date) {
+    setState(() {
+      _dueDate = date;
     });
   }
 
@@ -106,6 +115,13 @@ class _CreateFormState extends State<CreateForm> {
                 multiple: true,
               );
             },
+          ),
+          const SizedBox(height: 30),
+          AppDatePickerField(
+            onSelected: _onDueDateSelected,
+            label: context.localization.taskDueDateLabel,
+            required: false,
+            minimumDate: DateTime.now(),
           ),
           const SizedBox(height: 20),
           AppSlider(

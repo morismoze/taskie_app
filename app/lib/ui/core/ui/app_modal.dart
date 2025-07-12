@@ -37,16 +37,8 @@ class AppDialog {
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: () {
-                          final separatedActions = <Widget>[];
-                          for (var i = 0; i < actions.length; i++) {
-                            separatedActions.add(actions[i]);
-                            if (i < actions.length - 1) {
-                              separatedActions.add(const SizedBox(height: 8));
-                            }
-                          }
-                          return separatedActions;
-                        }(),
+                        spacing: 4,
+                        children: actions,
                       ),
                     ),
                   ],

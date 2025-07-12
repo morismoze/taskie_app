@@ -14,15 +14,20 @@ abstract final class AppTheme {
       fontWeight: FontWeight.w400,
       color: AppColors.grey3,
     ),
+    labelLarge: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: AppColors.grey2,
+    ),
+    labelMedium: TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      color: AppColors.grey2,
+    ),
     labelSmall: TextStyle(
       fontSize: 10,
       fontWeight: FontWeight.w500,
-      color: AppColors.grey3,
-    ),
-    labelLarge: TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.w500,
-      color: AppColors.grey3,
+      color: AppColors.grey2,
     ),
   );
 
@@ -68,4 +73,9 @@ abstract final class AppTheme {
       ),
     ),
   );
+
+  static double fieldBorderRadius = 10.0;
+  static double fieldInnerPadding = 16.0;
+  static double fieldLabelFontSize = 15.0;
+  static double fieldUnfocusedLabelFontSize = 14.0;
 }
