@@ -37,7 +37,10 @@ import {
   WorkspaceGoalsResponse,
 } from './dto/response/workspace-goals-response.dto';
 import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
-import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
+import {
+  WorkspaceTaskResponse,
+  WorkspaceTasksResponse,
+} from './dto/response/workspace-tasks-response.dto';
 import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
@@ -443,7 +446,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     createdById: JwtPayload['sub'];
     data: CreateTaskRequest;
-  }): Promise<void> {
+  }): Promise<WorkspaceTaskResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -457,22 +460,48 @@ export class WorkspaceService {
       );
     }
 
-    await this.unitOfWorkService.withTransaction(async () => {
+    const workspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: createdById,
+        workspaceId,
+      });
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return await this.unitOfWorkService.withTransaction(async () => {
       // Create new concrete task
       const newTask = await this.taskService.create({
         workspaceId,
-        createdById,
+        createdById: workspaceUser.id,
         data,
       });
 
+      let response: WorkspaceTaskResponse = { ...newTask, assignees: [] };
+
       // Create new task assignment for each given assignee
       for (const assigneeId of data.assignees) {
-        this.taskAssignmentService.create({
+        const newTaskAssignment = await this.taskAssignmentService.create({
           workspaceUserId: assigneeId,
           taskId: newTask.id,
           status: ProgressStatus.IN_PROGRESS,
         });
+        response.assignees.push({
+          id: newTaskAssignment.id,
+          firstName: newTaskAssignment.assignee.user.firstName,
+          lastName: newTaskAssignment.assignee.user.lastName,
+          status: newTaskAssignment.status,
+          profileImageUrl: newTaskAssignment.assignee.user.profileImageUrl,
+        });
       }
+
+      return response;
     });
   }
 

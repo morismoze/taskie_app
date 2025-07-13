@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
-import '../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../domain/use_cases/create_workspace_use_case.dart';

@@ -9,12 +9,21 @@ import '../data/repositories/preferences/preferences_repository.dart';
 import '../data/repositories/preferences/preferences_repository_impl.dart';
 import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/user/user_repository_impl.dart';
-import '../data/repositories/workspace/workspace_repository.dart';
-import '../data/repositories/workspace/workspace_repository_impl.dart';
+import '../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../data/repositories/workspace/workspace/workspace_repository_impl.dart';
+import '../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
+import '../data/repositories/workspace/workspace_invite/workspace_invite_repository_impl.dart';
+import '../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
+import '../data/repositories/workspace/workspace_task/workspace_task_repository_impl.dart';
+import '../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
+import '../data/repositories/workspace/workspace_user/workspace_user_repository_impl.dart';
 import '../data/services/api/api_client.dart';
 import '../data/services/api/auth/auth_api_service.dart';
 import '../data/services/api/user/user_api_service.dart';
-import '../data/services/api/workspace/workspace_api_service.dart';
+import '../data/services/api/workspace/workspace/workspace_api_service.dart';
+import '../data/services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
+import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
+import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
@@ -67,6 +76,32 @@ List<SingleChildWidget> get providers {
                 sharedPreferencesService: context.read(),
               )
               as WorkspaceRepository,
+    ),
+    Provider(
+      create: (context) => WorkspaceTaskApiService(apiClient: context.read()),
+    ),
+    Provider(
+      create: (context) =>
+          WorkspaceTaskRepositoryImpl(workspaceTaskApiService: context.read())
+              as WorkspaceTaskRepository,
+    ),
+    Provider(
+      create: (context) => WorkspaceUserApiService(apiClient: context.read()),
+    ),
+    Provider(
+      create: (context) =>
+          WorkspaceUserRepositoryImpl(workspaceUserApiService: context.read())
+              as WorkspaceUserRepository,
+    ),
+    Provider(
+      create: (context) => WorkspaceInviteApiService(apiClient: context.read()),
+    ),
+    Provider(
+      create: (context) =>
+          WorkspaceInviteRepositoryImpl(
+                workspaceInviteApiService: context.read(),
+              )
+              as WorkspaceInviteRepository,
     ),
     Provider(
       create: (context) => PreferencesRepositoryImpl() as PreferencesRepository,

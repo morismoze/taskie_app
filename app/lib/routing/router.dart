@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/repositories/auth/auth_state_repository.dart';
-import '../data/repositories/workspace/workspace_repository.dart';
+import '../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_viewmodel.dart';
@@ -117,11 +117,7 @@ GoRouter router({
           path: ':workspaceId',
           builder: (_, _) => const SizedBox.shrink(),
           redirect: (BuildContext context, GoRouterState state) async {
-            final workspaceId = state.pathParameters['workspaceId'];
-
-            if (workspaceId == null) {
-              return Routes.entry;
-            }
+            final workspaceId = state.pathParameters['workspaceId']!;
 
             final workspaceRepository = context.read<WorkspaceRepository>();
             await workspaceRepository.setActiveWorkspaceId(workspaceId);
@@ -153,7 +149,7 @@ GoRouter router({
                         viewModel: TasksViewModel(
                           workspaceId: workspaceId,
                           userRepository: context.read(),
-                          workspaceRepository: context.read(),
+                          workspaceTaskRepository: context.read(),
                         ),
                       ),
                     );
@@ -169,7 +165,8 @@ GoRouter router({
                         return CreateTaskScreen(
                           viewModel: CreateTaskViewmodel(
                             workspaceId: workspaceId,
-                            workspaceRepository: context.read(),
+                            workspaceTaskRepository: context.read(),
+                            workspaceUserRepository: context.read(),
                           ),
                         );
                       },
@@ -218,7 +215,7 @@ GoRouter router({
                   key: ValueKey(state.pageKey),
                   viewModel: WorkspaceInviteViewModel(
                     workspaceId: workspaceId,
-                    workspaceRepository: context.read(),
+                    workspaceInviteRepository: context.read(),
                   ),
                 );
               },

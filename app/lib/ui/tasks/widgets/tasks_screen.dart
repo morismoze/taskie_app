@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../../core/util/constants.dart';
+import '../../core/utils/constants.dart';
 import '../view_models/tasks_viewmodel.dart';
 import 'tasks_header.dart';
 

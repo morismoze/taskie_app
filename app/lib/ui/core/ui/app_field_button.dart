@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../l10n/l10n_extensions.dart';
 import '../theme/colors.dart';
 import '../theme/theme.dart';
 
@@ -20,6 +21,7 @@ class AppFieldButton extends StatelessWidget {
     required this.isFieldFocused,
     required this.onTap,
     required this.child,
+    this.required = true,
     this.trailingIcon,
     this.onTrailingIconPress,
   });
@@ -28,6 +30,7 @@ class AppFieldButton extends StatelessWidget {
   final bool isFieldFocused;
   final Function() onTap;
   final Widget child;
+  final bool required;
   final IconData? trailingIcon;
   final void Function()? onTrailingIconPress;
 
@@ -37,6 +40,9 @@ class AppFieldButton extends StatelessWidget {
     final fieldFocusedlabelTopPosition =
         -(AppTheme.fieldInnerPadding +
             AppTheme.fieldUnfocusedLabelFontSize / 1.5);
+    final mappedLabel = required
+        ? label
+        : '$label (${context.localization.optional})';
 
     return Container(
       decoration: BoxDecoration(
@@ -81,10 +87,10 @@ class AppFieldButton extends StatelessWidget {
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOut,
-                  top: isFieldFocused ? fieldFocusedlabelTopPosition : 0,
+                  top: isFieldFocused ? fieldFocusedlabelTopPosition : 1,
                   child: IgnorePointer(
                     child: Text(
-                      label,
+                      mappedLabel,
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         color: isFieldFocused
                             ? Theme.of(context).textTheme.labelMedium!.color

@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 
 import '../../data/repositories/user/user_repository.dart';
-import '../../data/repositories/workspace/workspace_repository.dart';
+import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../utils/command.dart';
 import '../constants/rbac.dart';
 import '../models/user.dart';

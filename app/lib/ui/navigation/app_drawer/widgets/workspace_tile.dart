@@ -63,7 +63,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
       contentPadding: const EdgeInsets.all(0),
       leading: InkWell(
         onTap: () {
-          Navigator.of(context).pop(); // Close drawer
+          context.pop(); // Close drawer
           context.go(Routes.tasks(workspaceId: widget.id));
         },
         child: WorkspaceImage(
@@ -123,8 +123,8 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
             workspaceId: widget.id,
             child: AppTextButton(
               onPress: () {
-                Navigator.of(context).pop(); // Close bottom sheet
-                Navigator.of(context).pop(); // Close drawer
+                context.pop(); // Close bottom sheet
+                context.pop(); // Close drawer
                 context.push(Routes.workspaceSettings(workspaceId: widget.id));
               },
               label: context.localization.appDrawerEditWorkspace,
@@ -136,8 +136,8 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
             workspaceId: widget.id,
             child: AppTextButton(
               onPress: () {
-                Navigator.of(context).pop(); // Close bottom sheet
-                Navigator.of(context).pop(); // Close drawer
+                context.pop(); // Close bottom sheet
+                context.pop(); // Close drawer
                 context.push(Routes.workspaceInvite(workspaceId: widget.id));
               },
               label: context.localization.appDrawerInviteMembers,
@@ -201,8 +201,8 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         // gorouter redirect will kick in, clear the current stack (and redirect
         // to the create initial workspace screen) and there won't be no more pages
         // left, so these pops will result in error.
-        Navigator.of(context).pop(); // Close modal
-        Navigator.of(context).pop(); // Close bottom sheet
+        context.pop(); // Close modal
+        context.pop(); // Close bottom sheet
       }
 
       AppSnackbar.showSuccess(
@@ -229,7 +229,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
       switch (errorResult.error) {
         case RefreshTokenFailedException():
           widget.viewModel.leaveWorkspace.clearResult();
-          Navigator.of(context).pop(); // Close modal
+          context.pop(); // Close modal
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
@@ -237,7 +237,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
           break;
         default:
           widget.viewModel.leaveWorkspace.clearResult();
-          Navigator.of(context).pop(); // Close modal
+          context.pop(); // Close modal
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
-import '../util/color.dart';
+import '../utils/color.dart';
 
 /// [AppAvatar.imageUrl] takes precedence over text
 class AppAvatar extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../l10n/l10n_extensions.dart';
 import '../../theme/colors.dart';
@@ -39,16 +40,16 @@ class AppSelectField extends StatefulWidget {
     required this.onSelected,
     required this.label,
     this.multiple = false,
-    this.validator,
+    this.required = true,
   });
 
   final List<AppSelectFieldOption> options;
   final void Function(List<AppSelectFieldOption> selectedOptions) onSelected;
   final String label;
-  final void Function(List<AppSelectFieldOption> selectedOptions)? validator;
 
   /// Defines if this a multiple option selection field.
   final bool multiple;
+  final bool required;
 
   @override
   State<AppSelectField> createState() => _AppSelectFieldState();
@@ -76,6 +77,7 @@ class _AppSelectFieldState extends State<AppSelectField> {
 
     return AppFieldButton(
       label: widget.label,
+      required: widget.required,
       isFieldFocused: hasSelection,
       onTap: () {
         _openOptions(context);
@@ -153,12 +155,12 @@ class _AppSelectFieldOptionsState extends State<_AppSelectFieldOptions> {
   }
 
   void _onClose() {
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   void _onSubmit() {
     widget.onSubmit(_selectedOptions);
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   @override

@@ -1,6 +1,6 @@
 import 'package:logging/logging.dart';
 
-import '../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 
 class WorkspaceSettingsViewmodel {
   WorkspaceSettingsViewmodel({

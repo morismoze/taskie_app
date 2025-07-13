@@ -50,11 +50,16 @@ export class TaskAssignmentService {
     workspaceUserId: TaskAssignment['assignee']['id'];
     taskId: TaskAssignment['task']['id'];
     status: TaskAssignment['status'];
-  }): Promise<TaskAssignmentCore> {
+  }): Promise<TaskAssignmentWithAssigneeUser> {
     const newTaskAssignment = await this.taskAssignmentRepository.create({
       workspaceUserId,
       taskId,
       status,
+      relations: {
+        assignee: {
+          user: true,
+        },
+      },
     });
 
     if (!newTaskAssignment) {

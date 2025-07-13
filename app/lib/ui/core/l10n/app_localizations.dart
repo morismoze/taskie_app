@@ -326,11 +326,11 @@ abstract class AppLocalizations {
   /// **'New task'**
   String get createNewTaskTitle;
 
-  /// No description provided for @taskNameLabel.
+  /// No description provided for @taskTitleLabel.
   ///
   /// In en, this message translates to:
-  /// **'Task name'**
-  String get taskNameLabel;
+  /// **'Task title'**
+  String get taskTitleLabel;
 
   /// No description provided for @taskDescriptionLabel.
   ///
@@ -356,17 +356,17 @@ abstract class AppLocalizations {
   /// **'Reward points'**
   String get taskRewardPointsLabel;
 
-  /// No description provided for @taskNameMinLength.
+  /// No description provided for @taskTitleMinLength.
   ///
   /// In en, this message translates to:
   /// **'Name must have at least 3 characters'**
-  String get taskNameMinLength;
+  String get taskTitleMinLength;
 
-  /// No description provided for @taskNameMaxLength.
+  /// No description provided for @taskTitleMaxLength.
   ///
   /// In en, this message translates to:
   /// **'Name can have at most 50 characters'**
-  String get taskNameMaxLength;
+  String get taskTitleMaxLength;
 
   /// No description provided for @taskDescriptionMaxLength.
   ///

@@ -135,7 +135,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createNewTaskTitle => 'New task';
 
   @override
-  String get taskNameLabel => 'Task name';
+  String get taskTitleLabel => 'Task title';
 
   @override
   String get taskDescriptionLabel => 'Task description';
@@ -150,10 +150,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskRewardPointsLabel => 'Reward points';
 
   @override
-  String get taskNameMinLength => 'Name must have at least 3 characters';
+  String get taskTitleMinLength => 'Name must have at least 3 characters';
 
   @override
-  String get taskNameMaxLength => 'Name can have at most 50 characters';
+  String get taskTitleMaxLength => 'Name can have at most 50 characters';
 
   @override
   String get taskDescriptionMaxLength => 'Name can have at most 250 characters';

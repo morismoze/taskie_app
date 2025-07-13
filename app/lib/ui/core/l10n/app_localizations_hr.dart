@@ -54,7 +54,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get taskCreateNew => 'Stvori novi zadatak';
 
   @override
-  String get goalCreateNew => 'Create new goal';
+  String get goalCreateNew => 'Stvori novi cilj';
 
   @override
   String get workspaceNameLabel => 'Naziv radnog prostora';
@@ -135,7 +135,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get createNewTaskTitle => 'Novi zadatak';
 
   @override
-  String get taskNameLabel => 'Naziv zadatka';
+  String get taskTitleLabel => 'Naslov zadatka';
 
   @override
   String get taskDescriptionLabel => 'Opis zadatka';
@@ -150,10 +150,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get taskRewardPointsLabel => 'Nagradni bodovi';
 
   @override
-  String get taskNameMinLength => 'Naziv mora imati najmanje 3 znaka';
+  String get taskTitleMinLength => 'Naziv mora imati najmanje 3 znaka';
 
   @override
-  String get taskNameMaxLength => 'Naziv može imati najviše 50 znakova';
+  String get taskTitleMaxLength => 'Naziv može imati najviše 50 znakova';
 
   @override
   String get taskDescriptionMaxLength => 'Opis može imati najviše 250 znakova';

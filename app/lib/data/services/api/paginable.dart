@@ -16,13 +16,9 @@ class PaginableResponse<D> {
 }
 
 class PaginableRequestQueryParams {
-  PaginableRequestQueryParams({
-    required this.page,
-    required this.limit,
-    required this.search,
-  });
+  PaginableRequestQueryParams({this.page = 1, this.limit, this.search});
 
-  final int page;
-  final int limit;
+  final int? page;
+  final int? limit;
   final String? search;
 }

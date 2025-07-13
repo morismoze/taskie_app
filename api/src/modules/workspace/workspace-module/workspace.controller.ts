@@ -39,7 +39,10 @@ import {
   WorkspaceGoalsResponse,
 } from './dto/response/workspace-goals-response.dto';
 import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
-import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
+import {
+  WorkspaceTaskResponse,
+  WorkspaceTasksResponse,
+} from './dto/response/workspace-tasks-response.dto';
 import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
@@ -186,25 +189,6 @@ export class WorkspaceController {
     });
   }
 
-  @Post(':workspaceId/tasks')
-  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
-  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  createTask(
-    @Param() params: WorkspaceIdRequestPathParam,
-    @Req() request: RequestWithUser,
-    @Body() data: CreateTaskRequest,
-  ): Promise<void> {
-    // Returning nothing in the response because tasks are paginable and sortable by
-    // different query params, so it doesn't make sense to return a newly created task
-    // in the response if it won't be usable for task list state update in the app
-    return this.workspaceService.createTask({
-      workspaceId: params.workspaceId,
-      createdById: request.user.sub,
-      data,
-    });
-  }
-
   @Get(':workspaceId/tasks')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
@@ -215,6 +199,25 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspaceTasks({
       workspaceId: params.workspaceId,
       query,
+    });
+  }
+
+  @Post(':workspaceId/tasks')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  createTask(
+    @Param() params: WorkspaceIdRequestPathParam,
+    @Req() request: RequestWithUser,
+    @Body() data: CreateTaskRequest,
+  ): Promise<WorkspaceTaskResponse> {
+    // Returning nothing in the response because tasks are paginable and sortable by
+    // different query params, so it doesn't make sense to return a newly created task
+    // in the response if it won't be usable for task list state update in the app
+    return this.workspaceService.createTask({
+      workspaceId: params.workspaceId,
+      createdById: request.user.sub,
+      data,
     });
   }
 

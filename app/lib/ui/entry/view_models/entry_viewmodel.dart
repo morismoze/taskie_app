@@ -1,6 +1,6 @@
 import 'package:logging/logging.dart';
 
-import '../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
 
 class EntryViewModel {
@@ -25,6 +25,37 @@ class EntryViewModel {
         return Result.error(Exception(resultLoadWorkspaces.error));
     }
 
-    return await _workspaceRepository.getActiveWorkspaceId();
+    final activeWorkspaceIdResult = await _workspaceRepository
+        .getActiveWorkspaceId();
+
+    if (activeWorkspaceIdResult is Error<String?>) {
+      _log.warning(
+        'Failed to get active workspace ID',
+        activeWorkspaceIdResult.error,
+      );
+      return Result.error(Exception(activeWorkspaceIdResult.error));
+    }
+
+    final activeWorkspaceId = (activeWorkspaceIdResult as Ok<String?>).value;
+    if (activeWorkspaceId != null) {
+      return Result.ok(activeWorkspaceIdResult.value);
+    } else {
+      // User has created his first workspace so we will
+      // set active workspace ID to that workspace ID.
+      final firstWorkspaceId = resultLoadWorkspaces.value.first.id;
+      final resultSetActiveWorkspaceId = await _workspaceRepository
+          .setActiveWorkspaceId(firstWorkspaceId);
+
+      switch (resultSetActiveWorkspaceId) {
+        case Ok():
+          return Result.ok(firstWorkspaceId);
+        case Error():
+          _log.warning(
+            'Failed to load workspaces',
+            resultSetActiveWorkspaceId.error,
+          );
+          return Result.error(Exception(resultSetActiveWorkspaceId.error));
+      }
+    }
   }
 }

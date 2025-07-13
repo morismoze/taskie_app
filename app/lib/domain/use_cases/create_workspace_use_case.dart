@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 
 import '../../data/repositories/user/user_repository.dart';
-import '../../data/repositories/workspace/workspace_repository.dart';
+import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../utils/command.dart';
 import 'refresh_token_use_case.dart';
 

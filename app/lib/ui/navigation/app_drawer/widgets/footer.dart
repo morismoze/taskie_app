@@ -33,7 +33,7 @@ class Footer extends StatelessWidget {
             children: [
               AppTextButton(
                 onPress: () {
-                  Navigator.of(context).pop(); // Close drawer
+                  context.pop(); // Close drawer
                   context.push(Routes.workspaceCreate);
                 },
                 label: context.localization.appDrawerCreateNewWorkspace,
@@ -41,7 +41,7 @@ class Footer extends StatelessWidget {
               ),
               AppTextButton(
                 onPress: () {
-                  Navigator.of(context).pop(); // Close drawer
+                  context.pop(); // Close drawer
                   context.push(Routes.preferences);
                 },
                 label: context.localization.appDrawerPreferences,

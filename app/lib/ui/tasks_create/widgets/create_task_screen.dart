@@ -5,7 +5,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar.dart';
 import '../view_models/create_task_viewmodel.dart';
-import 'form.dart';
+import 'create_task_form.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({super.key, required this.viewModel});
@@ -47,7 +47,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                   right: Dimens.of(context).paddingScreenHorizontal,
                   bottom: Dimens.paddingVertical,
                 ),
-                child: CreateForm(viewModel: widget.viewModel),
+                child: CreateTaskForm(viewModel: widget.viewModel),
               ),
             ],
           ),

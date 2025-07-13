@@ -55,6 +55,9 @@ class AppTextFormField extends StatelessWidget {
               top: AppTheme.fieldInnerPadding,
               bottom: AppTheme.fieldInnerPadding,
             ),
+            // This is used for the sole purpose of error text not
+            // directly changing field height.
+            helperText: '',
             hintText: hint,
             labelText: required
                 ? label

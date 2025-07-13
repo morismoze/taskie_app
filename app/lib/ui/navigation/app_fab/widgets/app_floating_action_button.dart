@@ -8,7 +8,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/app_filled_button.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/rbac.dart';
-import '../../../core/util/constants.dart';
+import '../../../core/utils/constants.dart';
 import '../view_models/app_floating_action_button_view_model.dart';
 
 class AppFloatingActionButton extends StatelessWidget {
@@ -44,7 +44,7 @@ class AppFloatingActionButton extends StatelessWidget {
           AppFilledButton(
             label: context.localization.taskCreateNew,
             onPress: () {
-              Navigator.of(context).pop(); // Close bottom sheet
+              context.pop(); // Close bottom sheet
               context.push(
                 Routes.taskCreate(workspaceId: viewModel.activeWorkspaceId),
               );
@@ -54,7 +54,7 @@ class AppFloatingActionButton extends StatelessWidget {
           AppFilledButton(
             label: context.localization.goalCreateNew,
             onPress: () {
-              Navigator.of(context).pop(); // Close bottom sheet
+              context.pop(); // Close bottom sheet
               context.push(
                 Routes.goalCreate(workspaceId: viewModel.activeWorkspaceId),
               );
