@@ -3,8 +3,8 @@ import 'package:logging/logging.dart';
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
 
-class EntryViewModel {
-  EntryViewModel({required WorkspaceRepository workspaceRepository})
+class EntryScreenViewModel {
+  EntryScreenViewModel({required WorkspaceRepository workspaceRepository})
     : _workspaceRepository = workspaceRepository {
     loadWorkspaces = Command0(_loadWorkspaces)..execute();
   }

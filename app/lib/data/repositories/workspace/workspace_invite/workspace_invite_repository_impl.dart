@@ -18,6 +18,7 @@ class WorkspaceInviteRepositoryImpl extends WorkspaceInviteRepository {
 
   @override
   Future<Result<String>> createWorkspaceInviteLink(String workspaceId) async {
+    // TODO: when backend endpoint is updated by responding with expiresAt as well, expiresAt needs to be checked as well
     if (_cachedWorkspaceInviteLinks[workspaceId] != null) {
       return Result.ok(_cachedWorkspaceInviteLinks[workspaceId]!);
     }

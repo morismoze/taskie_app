@@ -27,6 +27,7 @@
   "errorWhileCreatingWorkspace": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora",
   "tasksHello": "Pozdrav!",
   "appDrawerTitle": "Radni prostori",
+  "appDrawerChangeActiveWorkspaceError": "Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora",
   "appDrawerEditWorkspace": "Uredi postavke radnog prostora",
   "appDrawerInviteMembers": "Pozovi nove članove",
   "appDrawerLeaveWorkspace": "Napusti radni prostor",

@@ -41,18 +41,30 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
   @override
   void initState() {
     super.initState();
+    widget.viewModel.changeActiveWorkspace.addListener(
+      _onActiveWorkspaceChangeResult,
+    );
     widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
   }
 
   @override
   void didUpdateWidget(covariant WorkspaceTile oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.changeActiveWorkspace.removeListener(
+      _onActiveWorkspaceChangeResult,
+    );
     oldWidget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
+    widget.viewModel.changeActiveWorkspace.addListener(
+      _onActiveWorkspaceChangeResult,
+    );
     widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
   }
 
   @override
   void dispose() {
+    widget.viewModel.changeActiveWorkspace.removeListener(
+      _onActiveWorkspaceChangeResult,
+    );
     widget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
     super.dispose();
   }
@@ -63,8 +75,11 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
       contentPadding: const EdgeInsets.all(0),
       leading: InkWell(
         onTap: () {
-          context.pop(); // Close drawer
-          context.go(Routes.tasks(workspaceId: widget.id));
+          if (widget.viewModel.activeWorkspaceId != widget.id) {
+            // We want to execute workspace change flow only if the
+            // selected workspace is different than the current one.
+            widget.viewModel.changeActiveWorkspace.execute(widget.id);
+          }
         },
         child: WorkspaceImage(
           url: widget.pictureUrl,
@@ -83,12 +98,86 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         ),
       ),
       title: Text(
-        widget.name,
+        widget.id,
         style: Theme.of(
           context,
         ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
       ),
     );
+  }
+
+  void _onActiveWorkspaceChangeResult() {
+    if (widget.viewModel.changeActiveWorkspace.completed) {
+      // Re-navigate to the same screen, but with different workspaceId path param.
+      // That re-navigation will cause UI rebuild.
+      final newActiveWorkspaceId =
+          (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
+      widget.viewModel.changeActiveWorkspace.clearResult();
+      context.go(Routes.tasks(workspaceId: newActiveWorkspaceId));
+    }
+
+    if (widget.viewModel.changeActiveWorkspace.error) {
+      widget.viewModel.changeActiveWorkspace.clearResult();
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.appDrawerChangeActiveWorkspaceError,
+      );
+    }
+  }
+
+  void _onWorkspaceLeaveResult() {
+    if (widget.viewModel.leaveWorkspace.completed) {
+      widget.viewModel.leaveWorkspace.clearResult();
+
+      if (widget.viewModel.workspaces.isNotEmpty) {
+        // We can close modal and bottom sheet only if there is at least 1
+        // workspace left in the list. That's because if the list is empty
+        // gorouter redirect will kick in, clear the current stack (and redirect
+        // to the create initial workspace screen) and there won't be no more pages
+        // left, so these pops will result in error.
+        context.pop(); // Close modal
+        context.pop(); // Close bottom sheet
+      }
+
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.appDrawerLeaveWorkspaceSuccess,
+      );
+
+      if (widget.viewModel.activeWorkspaceId == widget.id &&
+          widget.viewModel.workspaces.isNotEmpty) {
+        // If the current active workspace ID is equal to the workspace ID
+        // user just left, then we navigate to the workspace ID taken from
+        // the first workspace in the workspaces list. And that is only if
+        // user didn't left the last workspace he was part of - because in that
+        // case gorouter redirect function will kick in and redirect user to
+        // the create initial workspace screen.
+        final firstWorkspaceId = widget.viewModel.workspaces.first.id;
+        context.go(Routes.tasks(workspaceId: firstWorkspaceId));
+      }
+    }
+
+    if (widget.viewModel.leaveWorkspace.error) {
+      final errorResult = widget.viewModel.leaveWorkspace.result as Error;
+
+      switch (errorResult.error) {
+        case RefreshTokenFailedException():
+          widget.viewModel.leaveWorkspace.clearResult();
+          context.pop(); // Close modal
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.appDrawerLeaveWorkspaceError,
+          );
+          break;
+        default:
+          widget.viewModel.leaveWorkspace.clearResult();
+          context.pop(); // Close modal
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.appDrawerLeaveWorkspaceError,
+          );
+      }
+    }
   }
 
   void _onWorkspaceOptionsTap(BuildContext context, String workspaceId) {
@@ -189,60 +278,5 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         ),
       ],
     );
-  }
-
-  void _onWorkspaceLeaveResult() {
-    if (widget.viewModel.leaveWorkspace.completed) {
-      widget.viewModel.leaveWorkspace.clearResult();
-
-      if (widget.viewModel.workspaces.isNotEmpty) {
-        // We can close modal and bottom sheet only if there is at least 1
-        // workspace left in the list. That's because if the list is empty
-        // gorouter redirect will kick in, clear the current stack (and redirect
-        // to the create initial workspace screen) and there won't be no more pages
-        // left, so these pops will result in error.
-        context.pop(); // Close modal
-        context.pop(); // Close bottom sheet
-      }
-
-      AppSnackbar.showSuccess(
-        context: context,
-        message: context.localization.appDrawerLeaveWorkspaceSuccess,
-      );
-
-      if (widget.viewModel.activeWorkspaceId == widget.id &&
-          widget.viewModel.workspaces.isNotEmpty) {
-        // If the current active workspace ID is equal to the workspace ID
-        // user just left, then we navigate to the workspace ID taken from
-        // the first workspace in the workspaces list. And that is only if
-        // user didn't left the last workspace he was part of - because in that
-        // case gorouter redirect function will kick in and redirect user to
-        // the create initial workspace screen.
-        final firstWorkspaceId = widget.viewModel.workspaces.first.id;
-        context.go(Routes.tasks(workspaceId: firstWorkspaceId));
-      }
-    }
-
-    if (widget.viewModel.leaveWorkspace.error) {
-      final errorResult = widget.viewModel.leaveWorkspace.result as Error;
-
-      switch (errorResult.error) {
-        case RefreshTokenFailedException():
-          widget.viewModel.leaveWorkspace.clearResult();
-          context.pop(); // Close modal
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.appDrawerLeaveWorkspaceError,
-          );
-          break;
-        default:
-          widget.viewModel.leaveWorkspace.clearResult();
-          context.pop(); // Close modal
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.appDrawerLeaveWorkspaceError,
-          );
-      }
-    }
   }
 }

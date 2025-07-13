@@ -10,7 +10,7 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// it also sets the local cache.
   Future<Result<String?>> getActiveWorkspaceId();
 
-  /// This method is invoked only in the gorouter inside the `/workspaces/:id` route redirect.
+  /// This method is invoked in AppDrawer and EntryScreen.
   Future<Result<void>> setActiveWorkspaceId(String workspaceId);
 
   Future<Result<List<Workspace>>> getWorkspaces({bool forceFetch});

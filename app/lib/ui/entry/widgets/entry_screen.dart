@@ -9,12 +9,12 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/entry_viewmodel.dart';
+import '../view_models/entry_screen_viewmodel.dart';
 
 class EntryScreen extends StatefulWidget {
   const EntryScreen({super.key, required this.viewModel});
 
-  final EntryViewModel viewModel;
+  final EntryScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _EntryScreenState();

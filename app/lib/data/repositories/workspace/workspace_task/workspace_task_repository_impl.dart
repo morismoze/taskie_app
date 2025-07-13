@@ -91,8 +91,6 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
       switch (result) {
         case Ok<WorkspaceTaskResponse>():
-          final workspaceTask = result.value;
-
           return const Result.ok(null);
         case Error<WorkspaceTaskResponse>():
           return Result.error(result.error);
@@ -100,5 +98,10 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     } on Exception catch (e) {
       return Result.error(e);
     }
+  }
+
+  @override
+  void purgeTasksCache() {
+    _cachedTasks = null;
   }
 }

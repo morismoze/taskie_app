@@ -102,6 +102,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerTitle => 'Workspaces';
 
   @override
+  String get appDrawerChangeActiveWorkspaceError =>
+      'Uh-oh! We\'ve had some trouble changing workspace';
+
+  @override
   String get appDrawerEditWorkspace => 'Edit workspace setttings';
 
   @override

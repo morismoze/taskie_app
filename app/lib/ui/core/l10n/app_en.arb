@@ -27,6 +27,7 @@
   "errorWhileCreatingWorkspace": "Uh-oh! We've had some trouble creating your workspace",
   "tasksHello": "Hello!",
   "appDrawerTitle": "Workspaces",
+  "appDrawerChangeActiveWorkspaceError": "Uh-oh! We've had some trouble changing workspace",
   "appDrawerEditWorkspace": "Edit workspace setttings",
   "appDrawerInviteMembers": "Invite new members",
   "appDrawerLeaveWorkspace": "Leave workspace",

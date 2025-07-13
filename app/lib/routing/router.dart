@@ -6,7 +6,7 @@ import '../data/repositories/auth/auth_state_repository.dart';
 import '../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
-import '../ui/entry/view_models/entry_viewmodel.dart';
+import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
 import '../ui/goals_create/view_models/create_goal_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
@@ -73,7 +73,7 @@ GoRouter router({
       path: Routes.entry,
       builder: (context, state) {
         return EntryScreen(
-          viewModel: EntryViewModel(workspaceRepository: context.read()),
+          viewModel: EntryScreenViewModel(workspaceRepository: context.read()),
         );
       },
     ),
@@ -116,14 +116,6 @@ GoRouter router({
         GoRoute(
           path: ':workspaceId',
           builder: (_, _) => const SizedBox.shrink(),
-          redirect: (BuildContext context, GoRouterState state) async {
-            final workspaceId = state.pathParameters['workspaceId']!;
-
-            final workspaceRepository = context.read<WorkspaceRepository>();
-            await workspaceRepository.setActiveWorkspaceId(workspaceId);
-
-            return null;
-          },
           routes: [
             ShellRoute(
               navigatorKey: _shellNavigatorKey,

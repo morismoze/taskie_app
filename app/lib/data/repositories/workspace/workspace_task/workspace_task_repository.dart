@@ -17,4 +17,6 @@ abstract class WorkspaceTaskRepository {
     String? description,
     String? dueData,
   });
+
+  void purgeTasksCache();
 }

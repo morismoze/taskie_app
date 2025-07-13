@@ -60,6 +60,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     final result = await _sharedPreferencesService.getActiveWorkspaceId();
     switch (result) {
       case Ok<String?>():
+        _activeWorkspaceId ??= result.value;
         return Result.ok(result.value);
       case Error<String?>():
         _log.severe('Failed to read active workspace ID', result.error);

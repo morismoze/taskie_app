@@ -22,8 +22,9 @@ class AppShellScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final appDrawerViewModel = AppDrawerViewModel(
       workspaceId: workspaceId,
-      refreshTokenUseCase: context.read(),
       workspaceRepository: context.read(),
+      workspaceTaskRepository: context.read(),
+      refreshTokenUseCase: context.read(),
     );
 
     return Scaffold(
@@ -35,6 +36,7 @@ class AppShellScaffold extends StatelessWidget {
       },
       extendBody: true,
       bottomNavigationBar: AppBottomNavigationBar(
+        key: ValueKey(workspaceId),
         viewModel: AppBottomNavigationBarViewModel(
           workspaceId: workspaceId,
           rbacUseCase: context.read(),
@@ -42,6 +44,7 @@ class AppShellScaffold extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: AppFloatingActionButton(
+        key: ValueKey(workspaceId),
         viewModel: AppFloatingActionButtonViewModel(workspaceId: workspaceId),
       ),
       body: child,

@@ -102,6 +102,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerTitle => 'Radni prostori';
 
   @override
+  String get appDrawerChangeActiveWorkspaceError =>
+      'Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora';
+
+  @override
   String get appDrawerEditWorkspace => 'Uredi postavke radnog prostora';
 
   @override

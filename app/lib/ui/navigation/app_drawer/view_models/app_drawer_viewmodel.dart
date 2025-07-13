@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../domain/use_cases/refresh_token_use_case.dart';
 import '../../../../utils/command.dart';
@@ -10,21 +11,28 @@ class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({
     required String workspaceId,
     required WorkspaceRepository workspaceRepository,
+    required WorkspaceTaskRepository workspaceTaskRepository,
     required RefreshTokenUseCase refreshTokenUseCase,
+    // TODO: update when WorkspaceLeaderboardRepository is added: required WorkspaceLeaderboardRepository workspaceLeaderboardRepository,
+    // TODO: update when WorkspaceGoalRepository is added: required WorkspaceGoalRepository workspaceGoalRepository,
   }) : _activeWorkspaceId = workspaceId,
        _workspaceRepository = workspaceRepository,
+       _workspaceTaskRepository = workspaceTaskRepository,
        _refreshTokenUseCase = refreshTokenUseCase {
     loadWorkspaces = Command0(_loadWorkspaces);
     leaveWorkspace = Command1(_leaveWorkspace);
+    changeActiveWorkspace = Command1(_changeActiveWorkspace);
   }
 
   final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
+  final WorkspaceTaskRepository _workspaceTaskRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final _log = Logger('AppDrawerViewModel');
 
   late Command0 loadWorkspaces;
   late Command1<void, String> leaveWorkspace;
+  late Command1<String, String> changeActiveWorkspace;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -48,6 +56,27 @@ class AppDrawerViewModel extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  Future<Result<String>> _changeActiveWorkspace(String workspaceId) async {
+    // When a workspace is selected as active we need to:
+    // 1. clear the cache for all contexts which depend on currently selected workspace.
+    // This includes resetting tasks/leaderboard/goals caches.
+    // 2. set the selected workspace as active, so it is saved in storage
+
+    _workspaceTaskRepository.purgeTasksCache();
+    // _workspaceLeaderboardRepository.purgeLeaderboardCache();
+    // _workspaceGoalRepository.purgeGoalsCache();
+
+    final result = await _workspaceRepository.setActiveWorkspaceId(workspaceId);
+
+    switch (result) {
+      case Ok():
+        return Result.ok(workspaceId);
+      case Error():
+        _log.warning('Failed to set active workspace ID', result.error);
+        return Result.error(result.error);
+    }
   }
 
   Future<Result<void>> _leaveWorkspace(String workspaceId) async {
