@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
@@ -10,7 +9,6 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
-import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../view_models/create_task_viewmodel.dart';
 
@@ -30,25 +28,6 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   List<String> _selectedAssigneeWorkspaceIds = [];
   int _rewardPoints = ObjectiveRules.rewardPointsMin;
   DateTime? _dueDate;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.viewModel.createTask.addListener(_onResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant CreateTaskForm oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createTask.removeListener(_onResult);
-    widget.viewModel.createTask.addListener(_onResult);
-  }
-
-  @override
-  void dispose() {
-    widget.viewModel.createTask.removeListener(_onResult);
-    super.dispose();
-  }
 
   void _onAssigneesSelected(List<AppSelectFieldOption> selectedOptions) {
     setState(() {
@@ -116,9 +95,10 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
               return AppSelectFormField(
                 options: options,
                 onSelected: _onAssigneesSelected,
-                label: context.localization.taskAssigneeLabel,
+                label: builderContext.localization.taskAssigneeLabel,
                 multiple: true,
-                validator: _validateAssignees,
+                validator: (assignees) =>
+                    _validateAssignees(builderContext, assignees),
               );
             },
           ),
@@ -143,7 +123,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             listenable: widget.viewModel.createTask,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: context.localization.taskCreateNew,
+              label: builderContext.localization.taskCreateNew,
               isLoading: widget.viewModel.createTask.running,
             ),
           ),
@@ -193,7 +173,10 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     }
   }
 
-  String? _validateAssignees(List<AppSelectFieldOption>? assignees) {
+  String? _validateAssignees(
+    BuildContext context,
+    List<AppSelectFieldOption>? assignees,
+  ) {
     switch (assignees) {
       case final String? value when value == null:
         return context.localization.requiredField;
@@ -202,22 +185,6 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         return context.localization.taskAssigneesMinLength;
       default:
         return null;
-    }
-  }
-
-  void _onResult() {
-    if (widget.viewModel.createTask.completed) {
-      widget.viewModel.createTask.clearResult();
-      context.pop();
-    }
-
-    if (widget.viewModel.createTask.error) {
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.somethingWentWrong,
-      );
-
-      widget.viewModel.createTask.clearResult();
     }
   }
 }

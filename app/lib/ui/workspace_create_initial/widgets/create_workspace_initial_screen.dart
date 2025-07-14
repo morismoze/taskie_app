@@ -9,8 +9,8 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../../workspace_create_initial/widgets/form.dart';
 import '../view_models/create_workspace_initial_viewmodel.dart';
+import 'workspace_create_form_initial.dart';
 
 class CreateWorkspaceInitialScreen extends StatefulWidget {
   const CreateWorkspaceInitialScreen({super.key, required this.viewModel});
@@ -87,7 +87,7 @@ class _CreateWorkspaceInitialScreenState
                                       FractionallySizedBox(
                                         widthFactor: 0.75,
                                         child: Text(
-                                          context.localization
+                                          builderContext.localization
                                               .workspaceCreateSubtitle(
                                                 widget.viewModel.user!.email!,
                                               ),
@@ -106,7 +106,7 @@ class _CreateWorkspaceInitialScreenState
                           ],
                         ),
                         const SizedBox(height: 60),
-                        CreateFormInitial(viewModel: widget.viewModel),
+                        WorkspaceCreateFormInitial(viewModel: widget.viewModel),
                       ],
                     ),
                   ),

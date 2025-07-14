@@ -27,6 +27,7 @@ import '../data/services/api/workspace/workspace_user/workspace_user_api_service
 import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
+import '../domain/use_cases/active_workspace_change_use_case.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
 import '../domain/use_cases/rbac_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
@@ -113,10 +114,17 @@ List<SingleChildWidget> get providers {
       ),
     ),
     Provider(
-      create: (context) => CreateWorkspaceUseCase(
-        refreshTokenUseCase: context.read(),
-        userRepository: context.read(),
+      create: (context) => ActiveWorkspaceChangeUseCase(
         workspaceRepository: context.read(),
+        userRepository: context.read(),
+        workspaceTaskRepository: context.read(),
+      ),
+    ),
+    Provider(
+      create: (context) => CreateWorkspaceUseCase(
+        workspaceRepository: context.read(),
+        refreshTokenUseCase: context.read(),
+        activeWorkspaceChangeUseCase: context.read(),
       ),
     ),
     Provider(

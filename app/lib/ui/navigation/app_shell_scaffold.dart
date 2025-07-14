@@ -23,8 +23,8 @@ class AppShellScaffold extends StatelessWidget {
     final appDrawerViewModel = AppDrawerViewModel(
       workspaceId: workspaceId,
       workspaceRepository: context.read(),
-      workspaceTaskRepository: context.read(),
       refreshTokenUseCase: context.read(),
+      activeWorkspaceChangeUseCase: context.read(),
     );
 
     return Scaffold(

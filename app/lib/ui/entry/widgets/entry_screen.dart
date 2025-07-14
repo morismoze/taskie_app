@@ -77,9 +77,7 @@ class _EntryScreenState extends State<EntryScreen> {
     if (widget.viewModel.loadWorkspaces.completed) {
       final activeWorkspaceId =
           (widget.viewModel.loadWorkspaces.result as Ok<String?>).value;
-      if (activeWorkspaceId == null) {
-        context.go(Routes.login);
-      } else {
+      if (activeWorkspaceId != null) {
         context.go(Routes.tasks(workspaceId: activeWorkspaceId));
       }
       widget.viewModel.loadWorkspaces.clearResult();

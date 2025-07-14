@@ -9,7 +9,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/create_workspace_viewmodel.dart';
-import 'form.dart';
+import 'workspace_create_form.dart';
 
 class CreateWorkspaceScreen extends StatefulWidget {
   const CreateWorkspaceScreen({super.key, required this.viewModel});
@@ -98,7 +98,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                           ],
                         ),
                         const SizedBox(height: 60),
-                        CreateForm(viewModel: widget.viewModel),
+                        WorkspaceCreateForm(viewModel: widget.viewModel),
                         const Text('this is not initial create'),
                       ],
                     ),

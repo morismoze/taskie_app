@@ -23,6 +23,8 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
   final _log = Logger('CreateWorkspaceInitialScreenViewModel');
 
   late Command0 loadUser;
+
+  /// Returns ID of the newly created workspace
   late Command1<void, (String name, String? description)> createWorkspace;
 
   User? _user;

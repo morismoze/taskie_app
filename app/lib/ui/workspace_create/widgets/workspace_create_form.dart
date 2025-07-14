@@ -6,16 +6,16 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_form_field.dart';
 import '../../workspace_create/view_models/create_workspace_viewmodel.dart';
 
-class CreateForm extends StatefulWidget {
-  const CreateForm({super.key, required this.viewModel});
+class WorkspaceCreateForm extends StatefulWidget {
+  const WorkspaceCreateForm({super.key, required this.viewModel});
 
   final CreateWorkspaceScreenViewModel viewModel;
 
   @override
-  State<CreateForm> createState() => _CreateFormState();
+  State<WorkspaceCreateForm> createState() => _WorkspaceCreateFormState();
 }
 
-class _CreateFormState extends State<CreateForm> {
+class _WorkspaceCreateFormState extends State<WorkspaceCreateForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();

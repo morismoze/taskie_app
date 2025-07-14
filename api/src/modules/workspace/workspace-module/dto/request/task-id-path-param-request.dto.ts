@@ -2,7 +2,7 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class TaskIdRequestPathParam {
   @IsNotEmpty()
-  @IsUUID()
+  @IsUUID('4')
   taskId: string;
 
   constructor(taskId: string) {

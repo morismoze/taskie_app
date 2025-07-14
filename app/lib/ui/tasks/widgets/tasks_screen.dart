@@ -55,7 +55,7 @@ class _TasksScreenState extends State<TasksScreen> {
               children: [
                 ListenableBuilder(
                   listenable: widget.viewModel.loadUser,
-                  builder: (_, _) {
+                  builder: (builderContext, _) {
                     if (widget.viewModel.loadUser.completed) {
                       return TasksHeader(viewModel: widget.viewModel);
                     }

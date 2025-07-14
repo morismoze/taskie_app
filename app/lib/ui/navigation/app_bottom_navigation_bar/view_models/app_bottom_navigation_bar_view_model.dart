@@ -11,14 +11,15 @@ class AppBottomNavigationBarViewModel extends ChangeNotifier {
     required RbacUseCase rbacUseCase,
   }) : _activeWorkspaceId = workspaceId,
        _rbacUseCase = rbacUseCase {
-    _loadObjectiveCreationPermission();
+    loadObjectiveCreationPermission = Command0(_loadObjectiveCreationPermission)
+      ..execute();
   }
 
   final String _activeWorkspaceId;
   final RbacUseCase _rbacUseCase;
   final _log = Logger('AppBottomNavigationBarViewModel');
 
-  late Command1 loadObjectiveCreationPermission;
+  late Command0 loadObjectiveCreationPermission;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 

@@ -26,6 +26,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   final CreateWorkspaceUseCase _createWorkspaceUseCase;
   final _log = Logger('CreateWorkspaceScreenViewModel');
 
+  /// Returns ID of the newly created workspace
   late Command1<String, (String name, String? description)> createWorkspace;
 
   User? _user;

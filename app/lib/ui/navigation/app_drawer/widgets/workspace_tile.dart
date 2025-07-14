@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../utils/command.dart';
-import '../../../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
 import '../../../../domain/constants/rbac.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
@@ -11,13 +9,12 @@ import '../../../core/theme/colors.dart';
 import '../../../core/ui/app_filled_button.dart';
 import '../../../core/ui/app_modal.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
-import '../../../core/ui/app_snackbar.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
 
-class WorkspaceTile extends StatefulWidget {
+class WorkspaceTile extends StatelessWidget {
   const WorkspaceTile({
     super.key,
     required this.viewModel,
@@ -34,60 +31,21 @@ class WorkspaceTile extends StatefulWidget {
   final String? pictureUrl;
 
   @override
-  State<WorkspaceTile> createState() => _WorkspaceTileState();
-}
-
-class _WorkspaceTileState extends State<WorkspaceTile> {
-  @override
-  void initState() {
-    super.initState();
-    widget.viewModel.changeActiveWorkspace.addListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant WorkspaceTile oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.changeActiveWorkspace.removeListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    oldWidget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
-    widget.viewModel.changeActiveWorkspace.addListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
-  }
-
-  @override
-  void dispose() {
-    widget.viewModel.changeActiveWorkspace.removeListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    widget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       leading: InkWell(
         onTap: () {
-          if (widget.viewModel.activeWorkspaceId != widget.id) {
+          if (viewModel.activeWorkspaceId != id) {
             // We want to execute workspace change flow only if the
             // selected workspace is different than the current one.
-            widget.viewModel.changeActiveWorkspace.execute(widget.id);
+            viewModel.changeActiveWorkspace.execute(id);
           }
         },
-        child: WorkspaceImage(
-          url: widget.pictureUrl,
-          isActive: widget.isActive,
-        ),
+        child: WorkspaceImage(url: pictureUrl, isActive: isActive),
       ),
       trailing: InkWell(
-        onTap: () => _onWorkspaceOptionsTap(context, widget.id),
+        onTap: () => _onWorkspaceOptionsTap(context, id),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           child: FaIcon(
@@ -98,7 +56,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
         ),
       ),
       title: Text(
-        widget.id,
+        name,
         style: Theme.of(
           context,
         ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
@@ -106,99 +64,21 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
     );
   }
 
-  void _onActiveWorkspaceChangeResult() {
-    if (widget.viewModel.changeActiveWorkspace.completed) {
-      // Re-navigate to the same screen, but with different workspaceId path param.
-      // That re-navigation will cause UI rebuild.
-      final newActiveWorkspaceId =
-          (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
-      widget.viewModel.changeActiveWorkspace.clearResult();
-      context.go(Routes.tasks(workspaceId: newActiveWorkspaceId));
-    }
-
-    if (widget.viewModel.changeActiveWorkspace.error) {
-      widget.viewModel.changeActiveWorkspace.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.appDrawerChangeActiveWorkspaceError,
-      );
-    }
-  }
-
-  void _onWorkspaceLeaveResult() {
-    if (widget.viewModel.leaveWorkspace.completed) {
-      widget.viewModel.leaveWorkspace.clearResult();
-
-      if (widget.viewModel.workspaces.isNotEmpty) {
-        // We can close modal and bottom sheet only if there is at least 1
-        // workspace left in the list. That's because if the list is empty
-        // gorouter redirect will kick in, clear the current stack (and redirect
-        // to the create initial workspace screen) and there won't be no more pages
-        // left, so these pops will result in error.
-        context.pop(); // Close modal
-        context.pop(); // Close bottom sheet
-      }
-
-      AppSnackbar.showSuccess(
-        context: context,
-        message: context.localization.appDrawerLeaveWorkspaceSuccess,
-      );
-
-      if (widget.viewModel.activeWorkspaceId == widget.id &&
-          widget.viewModel.workspaces.isNotEmpty) {
-        // If the current active workspace ID is equal to the workspace ID
-        // user just left, then we navigate to the workspace ID taken from
-        // the first workspace in the workspaces list. And that is only if
-        // user didn't left the last workspace he was part of - because in that
-        // case gorouter redirect function will kick in and redirect user to
-        // the create initial workspace screen.
-        final firstWorkspaceId = widget.viewModel.workspaces.first.id;
-        context.go(Routes.tasks(workspaceId: firstWorkspaceId));
-      }
-    }
-
-    if (widget.viewModel.leaveWorkspace.error) {
-      final errorResult = widget.viewModel.leaveWorkspace.result as Error;
-
-      switch (errorResult.error) {
-        case RefreshTokenFailedException():
-          widget.viewModel.leaveWorkspace.clearResult();
-          context.pop(); // Close modal
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.appDrawerLeaveWorkspaceError,
-          );
-          break;
-        default:
-          widget.viewModel.leaveWorkspace.clearResult();
-          context.pop(); // Close modal
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.appDrawerLeaveWorkspaceError,
-          );
-      }
-    }
-  }
-
   void _onWorkspaceOptionsTap(BuildContext context, String workspaceId) {
     AppModalBottomSheet.show(
       context: context,
-      enableDrag: !widget.viewModel.leaveWorkspace.running,
-      isDismissable: !widget.viewModel.leaveWorkspace.running,
+      enableDrag: !viewModel.leaveWorkspace.running,
+      isDismissable: !viewModel.leaveWorkspace.running,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              WorkspaceImage(
-                url: widget.pictureUrl,
-                size: 50,
-                isActive: widget.isActive,
-              ),
+              WorkspaceImage(url: pictureUrl, size: 50, isActive: isActive),
               const SizedBox(width: 12),
               Flexible(
                 child: Text(
-                  widget.name,
+                  name,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
@@ -209,12 +89,12 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
           const SizedBox(height: 20),
           Rbac(
             permission: RbacPermission.workspaceManageSettings,
-            workspaceId: widget.id,
+            workspaceId: id,
             child: AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
                 context.pop(); // Close drawer
-                context.push(Routes.workspaceSettings(workspaceId: widget.id));
+                context.push(Routes.workspaceSettings(workspaceId: id));
               },
               label: context.localization.appDrawerEditWorkspace,
               leadingIcon: FontAwesomeIcons.pencil,
@@ -222,12 +102,12 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
           ),
           Rbac(
             permission: RbacPermission.workspaceInviteUsers,
-            workspaceId: widget.id,
+            workspaceId: id,
             child: AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
                 context.pop(); // Close drawer
-                context.push(Routes.workspaceInvite(workspaceId: widget.id));
+                context.push(Routes.workspaceInvite(workspaceId: id));
               },
               label: context.localization.appDrawerInviteMembers,
               leadingIcon: FontAwesomeIcons.userPlus,
@@ -247,7 +127,7 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
   void _confirmWorkspaceLeave(BuildContext context, String workspaceId) {
     AppDialog.show(
       context: context,
-      canPop: widget.viewModel.leaveWorkspace.running,
+      canPop: viewModel.leaveWorkspace.running,
       title: FaIcon(
         FontAwesomeIcons.circleExclamation,
         color: Theme.of(context).colorScheme.error,
@@ -260,19 +140,19 @@ class _WorkspaceTileState extends State<WorkspaceTile> {
       ),
       actions: [
         ListenableBuilder(
-          listenable: widget.viewModel.leaveWorkspace,
+          listenable: viewModel.leaveWorkspace,
           builder: (BuildContext builderContext, _) => AppFilledButton(
-            label: context.localization.appDrawerLeaveWorkspaceModalCta,
-            onPress: () => widget.viewModel.leaveWorkspace.execute(workspaceId),
+            label: builderContext.localization.appDrawerLeaveWorkspaceModalCta,
+            onPress: () => viewModel.leaveWorkspace.execute(workspaceId),
             backgroundColor: Theme.of(builderContext).colorScheme.error,
-            isLoading: widget.viewModel.leaveWorkspace.running,
+            isLoading: viewModel.leaveWorkspace.running,
           ),
         ),
         ListenableBuilder(
-          listenable: widget.viewModel.leaveWorkspace,
+          listenable: viewModel.leaveWorkspace,
           builder: (BuildContext builderContext, _) => AppTextButton(
-            disabled: widget.viewModel.leaveWorkspace.running,
-            label: context.localization.cancel,
+            disabled: viewModel.leaveWorkspace.running,
+            label: builderContext.localization.cancel,
             onPress: () => Navigator.pop(builderContext),
           ),
         ),

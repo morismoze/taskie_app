@@ -162,6 +162,21 @@ export class WorkspaceController {
     });
   }
 
+  // This endpoint needs to be before the one below
+  // because of path param pattern recognition
+  @Delete(':workspaceId/users/me')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  leaveWorkspace(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Req() request: RequestWithUser,
+  ): Promise<void> {
+    return this.workspaceService.leaveWorkspace({
+      workspaceId,
+      userId: request.user.sub,
+    });
+  }
+
   @Delete(':workspaceId/users/:workspaceUserId')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
@@ -173,19 +188,6 @@ export class WorkspaceController {
     return this.workspaceService.removeUserFromWorkspace({
       workspaceId,
       workspaceUserId,
-    });
-  }
-
-  @Delete(':workspaceId/users/me')
-  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  leaveWorkspace(
-    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
-    @Req() request: RequestWithUser,
-  ): Promise<void> {
-    return this.workspaceService.leaveWorkspace({
-      workspaceId,
-      userId: request.user.sub,
     });
   }
 

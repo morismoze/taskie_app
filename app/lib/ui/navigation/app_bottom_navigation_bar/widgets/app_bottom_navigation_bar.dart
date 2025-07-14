@@ -18,8 +18,12 @@ class AppBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: ListenableBuilder(
-        listenable: viewModel,
+        listenable: viewModel.loadObjectiveCreationPermission,
         builder: (builderContext, child) {
+          if (!viewModel.loadObjectiveCreationPermission.completed) {
+            return const SizedBox.shrink();
+          }
+
           final rightPadding = viewModel.canPerformObjectiveCreation
               ? Dimens.paddingHorizontal * 1.75 + kAppBottomNavigationBarHeight
               : Dimens.paddingHorizontal;
@@ -36,17 +40,19 @@ class AppBottomNavigationBar extends StatelessWidget {
                 showUnselectedLabels: false,
                 backgroundColor: AppColors.purple1Light,
                 unselectedItemColor: Theme.of(
-                  context,
+                  builderContext,
                 ).colorScheme.primary.withValues(alpha: 0.4),
                 selectedFontSize: 10,
-                currentIndex: _calculateSelectedIndex(context),
-                onTap: (int idx) => _onItemTapped(idx, context),
-                items: _getItems(context)
+                currentIndex: _calculateSelectedIndex(builderContext),
+                onTap: (int idx) => _onItemTapped(idx, builderContext),
+                items: _getItems(builderContext)
                     .map(
                       (item) => BottomNavigationBarItem(
                         icon: FaIcon(item.$1, size: 18),
                         label: item.$2,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Theme.of(
+                          builderContext,
+                        ).colorScheme.primary,
                       ),
                     )
                     .toList(),

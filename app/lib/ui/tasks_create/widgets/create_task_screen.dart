@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
+import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar.dart';
 import '../view_models/create_task_viewmodel.dart';
@@ -20,15 +22,19 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   void initState() {
     super.initState();
+    widget.viewModel.createTask.addListener(_onResult);
   }
 
   @override
   void didUpdateWidget(covariant CreateTaskScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.createTask.removeListener(_onResult);
+    widget.viewModel.createTask.addListener(_onResult);
   }
 
   @override
   void dispose() {
+    widget.viewModel.createTask.removeListener(_onResult);
     super.dispose();
   }
 
@@ -54,5 +60,21 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
         ),
       ),
     );
+  }
+
+  void _onResult() {
+    if (widget.viewModel.createTask.completed) {
+      widget.viewModel.createTask.clearResult();
+      context.pop();
+    }
+
+    if (widget.viewModel.createTask.error) {
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.somethingWentWrong,
+      );
+
+      widget.viewModel.createTask.clearResult();
+    }
   }
 }

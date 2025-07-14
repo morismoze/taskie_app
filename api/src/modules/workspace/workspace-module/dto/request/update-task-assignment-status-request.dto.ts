@@ -13,7 +13,7 @@ import { TASK_MAXIMUM_ASSIGNEES_COUNT } from 'src/modules/task/task-module/domai
 
 export class TaskAssignmentUpdate {
   @IsNotEmpty()
-  @IsUUID()
+  @IsUUID('4')
   assigneeId: string;
 
   @IsNotEmpty()
