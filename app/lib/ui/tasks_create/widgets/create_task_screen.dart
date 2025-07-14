@@ -46,14 +46,23 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
           child: Column(
             children: [
               HeaderBar(title: context.localization.createNewTaskTitle),
-              Padding(
-                padding: EdgeInsets.only(
-                  top: Dimens.paddingVertical,
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
+              // Wrapped in Expanded because SingleChildScrollView is unbounded,
+              // so Column doesn't know how share the space between HeaderBar and
+              // SingleChildScrollView, so we need to explicitly tell Column that
+              // SingleChildScrollView is the widget which should take the most entire
+              // space left after HeaderBar is painted.
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: Dimens.paddingVertical,
+                      left: Dimens.of(context).paddingScreenHorizontal,
+                      right: Dimens.of(context).paddingScreenHorizontal,
+                      bottom: Dimens.paddingVertical,
+                    ),
+                    child: CreateTaskForm(viewModel: widget.viewModel),
+                  ),
                 ),
-                child: CreateTaskForm(viewModel: widget.viewModel),
               ),
             ],
           ),
