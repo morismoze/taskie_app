@@ -10,6 +10,8 @@ import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
 import '../ui/goals_create/view_models/create_goal_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
+import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
+import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/navigation/combined_listeable.dart';
 import '../ui/preferences/view_models/preferences_viewmodel.dart';
@@ -123,10 +125,30 @@ GoRouter router({
                   (BuildContext context, GoRouterState state, Widget child) {
                     final workspaceId = state.pathParameters['workspaceId']!;
 
-                    return AppShellScaffold(
-                      key: ValueKey(workspaceId),
-                      workspaceId: workspaceId,
-                      child: child,
+                    return MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(
+                          key: ValueKey(workspaceId),
+                          create: (notifierContext) =>
+                              AppBottomNavigationBarViewModel(
+                                workspaceId: workspaceId,
+                                rbacUseCase: notifierContext.read(),
+                              ),
+                        ),
+                        ChangeNotifierProvider(
+                          key: ValueKey(workspaceId),
+                          create: (notifierContext) => AppDrawerViewModel(
+                            workspaceId: workspaceId,
+                            workspaceRepository: context.read(),
+                            refreshTokenUseCase: context.read(),
+                            activeWorkspaceChangeUseCase: context.read(),
+                          ),
+                        ),
+                      ],
+                      child: AppShellScaffold(
+                        workspaceId: workspaceId,
+                        child: child,
+                      ),
                     );
                   },
               routes: [

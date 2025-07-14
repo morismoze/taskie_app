@@ -93,7 +93,6 @@ class WorkspaceTile extends StatelessWidget {
             child: AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
-                context.pop(); // Close drawer
                 context.push(Routes.workspaceSettings(workspaceId: id));
               },
               label: context.localization.appDrawerEditWorkspace,
@@ -106,7 +105,6 @@ class WorkspaceTile extends StatelessWidget {
             child: AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
-                context.pop(); // Close drawer
                 context.push(Routes.workspaceInvite(workspaceId: id));
               },
               label: context.localization.appDrawerInviteMembers,
