@@ -38,8 +38,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Try again';
 
   @override
-  String get errorWhileLoadingWorkspaces =>
-      'Uh-oh! We\'ve had some trouble loading up your workspaces';
+  String get errorOnInitialLoad =>
+      'Uh-oh! We\'ve had some trouble loading up your workspace';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Tasks';

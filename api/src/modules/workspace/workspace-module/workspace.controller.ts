@@ -30,7 +30,7 @@ import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
-import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace_user-id-path-param-request.dto';
+import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace-user-id-path-param-request.dto';
 import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';

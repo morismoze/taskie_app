@@ -21,13 +21,16 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   List<WorkspaceTask>? _cachedTasks;
 
   @override
-  Future<Result<List<WorkspaceTask>>> getTasks({
+  List<WorkspaceTask>? get tasks => _cachedTasks;
+
+  @override
+  Future<Result<void>> getTasks({
     required String workspaceId,
     required PaginableObjectivesRequestQueryParams paginable,
     bool forceFetch = false,
   }) async {
     if (!forceFetch && _cachedTasks != null) {
-      return Result.ok(_cachedTasks!);
+      return const Result.ok(null);
     }
 
     try {
@@ -56,9 +59,11 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
                 ),
               )
               .toList();
-          _cachedTasks = mappedData;
 
-          return Result.ok(mappedData);
+          _cachedTasks = mappedData;
+          notifyListeners();
+
+          return const Result.ok(null);
         case Error<PaginableResponse<WorkspaceTaskResponse>>():
           return Result.error(result.error);
       }
@@ -91,6 +96,31 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
       switch (result) {
         case Ok<WorkspaceTaskResponse>():
+          final newTaskResultValue = result.value;
+          final newTask = WorkspaceTask(
+            id: newTaskResultValue.id,
+            title: newTaskResultValue.title,
+            rewardPoints: newTaskResultValue.rewardPoints,
+            assignees: newTaskResultValue.assignees
+                .map(
+                  (assignee) => Assignee(
+                    id: assignee.id,
+                    firstName: assignee.firstName,
+                    lastName: assignee.lastName,
+                    status: assignee.status,
+                  ),
+                )
+                .toList(),
+            isNew: true,
+          );
+
+          // Add the new task with the `new` flag to the start index, so additional
+          // UI styles are applied to it in the current tasks paginable page
+          if (_cachedTasks != null) {
+            _cachedTasks!.insert(0, newTask);
+            notifyListeners();
+          }
+
           return const Result.ok(null);
         case Error<WorkspaceTaskResponse>():
           return Result.error(result.error);

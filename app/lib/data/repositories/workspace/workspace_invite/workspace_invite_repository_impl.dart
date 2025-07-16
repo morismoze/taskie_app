@@ -5,7 +5,7 @@ import '../../../services/api/workspace/workspace_invite/models/response/create_
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
 import 'workspace_invite_repository.dart';
 
-class WorkspaceInviteRepositoryImpl extends WorkspaceInviteRepository {
+class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
   WorkspaceInviteRepositoryImpl({
     required WorkspaceInviteApiService workspaceInviteApiService,
   }) : _workspaceInviteApiService = workspaceInviteApiService;

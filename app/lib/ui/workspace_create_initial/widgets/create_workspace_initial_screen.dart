@@ -123,6 +123,7 @@ class _CreateWorkspaceInitialScreenState
     if (widget.viewModel.createWorkspace.completed) {
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<String>).value;
+      print('UWT $newWorkspaceId');
       context.go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
     }

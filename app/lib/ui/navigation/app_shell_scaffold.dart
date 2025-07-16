@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
@@ -12,11 +13,11 @@ class AppShellScaffold extends StatelessWidget {
   const AppShellScaffold({
     super.key,
     required this.workspaceId,
-    required this.child,
+    required this.navigationShell,
   });
 
   final String workspaceId;
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +33,13 @@ class AppShellScaffold extends StatelessWidget {
       extendBody: true,
       bottomNavigationBar: AppBottomNavigationBar(
         viewModel: context.read<AppBottomNavigationBarViewModel>(),
+        navigationShell: navigationShell,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: AppFloatingActionButton(
         viewModel: AppFloatingActionButtonViewModel(workspaceId: workspaceId),
       ),
-      body: child,
+      body: navigationShell,
     );
   }
 }

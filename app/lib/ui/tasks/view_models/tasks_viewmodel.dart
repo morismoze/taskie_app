@@ -16,7 +16,8 @@ class TasksViewModel extends ChangeNotifier {
   }) : _activeWorkspaceId = workspaceId,
        _userRepository = userRepository,
        _workspaceTaskRepository = workspaceTaskRepository {
-    loadUser = Command0(_loadUser)..execute();
+    _workspaceTaskRepository.addListener(_onTasksChanged);
+    _userRepository.addListener(_onUserChanged);
     loadTasks = Command1(_loadTasks)..execute(workspaceId);
   }
 
@@ -25,29 +26,20 @@ class TasksViewModel extends ChangeNotifier {
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('TasksViewModel');
 
-  late Command0 loadUser;
   late Command1<void, String> loadTasks;
 
-  User? _user;
+  List<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
 
-  User? get user => _user;
+  User? get user => _userRepository.user;
 
-  List<WorkspaceTask>? _tasks;
+  void _onTasksChanged() {
+    // Forward the change notification from repository to the viewmodel
+    notifyListeners();
+  }
 
-  List<WorkspaceTask>? get tasks => _tasks;
-
-  Future<Result<void>> _loadUser() async {
-    final result = await _userRepository.getUser();
-
-    switch (result) {
-      case Ok():
-        _user = result.value;
-        notifyListeners();
-      case Error():
-        _log.warning('Failed to load user', result.error);
-    }
-
-    return result;
+  void _onUserChanged() {
+    // Forward the change notification from repository to the viewmodel
+    notifyListeners();
   }
 
   Future<Result<void>> _loadTasks(String workspaceId) async {
@@ -57,13 +49,19 @@ class TasksViewModel extends ChangeNotifier {
     );
 
     switch (result) {
-      case Ok<List<WorkspaceTask>>():
-        _tasks = result.value;
-        notifyListeners();
-      case Error<List<WorkspaceTask>>():
+      case Ok():
+        break;
+      case Error():
         _log.warning('Failed to load tasks', result.error);
     }
 
     return result;
+  }
+
+  @override
+  void dispose() {
+    _workspaceTaskRepository.removeListener(_onTasksChanged);
+    _userRepository.removeListener(_onUserChanged);
+    super.dispose();
   }
 }

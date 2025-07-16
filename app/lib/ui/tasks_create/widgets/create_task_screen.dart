@@ -45,7 +45,10 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
         child: BlurredCirclesBackground(
           child: Column(
             children: [
-              HeaderBar(title: context.localization.createNewTaskTitle),
+              HeaderBar(
+                title: context.localization.createNewTaskTitle,
+                activeWorkspaceId: widget.viewModel.activeWorkspaceId,
+              ),
               // Wrapped in Expanded because SingleChildScrollView is unbounded,
               // so Column doesn't know how share the space between HeaderBar and
               // SingleChildScrollView, so we need to explicitly tell Column that

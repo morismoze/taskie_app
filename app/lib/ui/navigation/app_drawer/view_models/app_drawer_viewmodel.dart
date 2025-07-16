@@ -71,7 +71,7 @@ class AppDrawerViewModel extends ChangeNotifier {
   String? get inviteLink => _inviteLink;
 
   Future<Result<List<Workspace>>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces();
+    final result = await _workspaceRepository.loadWorkspaces();
 
     switch (result) {
       case Ok():
@@ -153,7 +153,7 @@ class AppDrawerViewModel extends ChangeNotifier {
           return Result.ok(
             LeaveWorkspaceResultNavigateTo(newActiveWorkspaceId),
           );
-        } else {}
+        }
 
         return const Result.ok(LeaveWorkspaceResultCloseOverlays());
       case Error():

@@ -19,12 +19,15 @@ class CreateTaskViewmodel extends ChangeNotifier {
     createTask = Command1(_createTask);
   }
 
-  final String _activeWorkspaceId;
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('CreateTaskViewmodel');
 
   late Command1<void, (String, String, List<String>, int, String?)> createTask;
+
+  final String _activeWorkspaceId;
+
+  String get activeWorkspaceId => _activeWorkspaceId;
 
   List<WorkspaceUser> _workspaceUsers = [];
 

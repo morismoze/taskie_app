@@ -16,9 +16,9 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   }) : _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
        _createWorkspaceUseCase = createWorkspaceUseCase {
-    createWorkspace = Command1(_createWorkspace);
     _loadUser();
     _loadWorkspaces();
+    createWorkspace = Command1(_createWorkspace);
   }
 
   final WorkspaceRepository _workspaceRepository;
@@ -38,7 +38,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   List<Workspace> get workspaces => _workspaces;
 
   Future<Result<void>> _loadUser() async {
-    final result = await _userRepository.getUser();
+    final result = await _userRepository.loadUser();
 
     switch (result) {
       case Ok():
@@ -53,7 +53,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces();
+    final result = await _workspaceRepository.loadWorkspaces();
 
     switch (result) {
       case Ok():

@@ -23,19 +23,15 @@ class _TasksScreenState extends State<TasksScreen> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark),
     );
-    widget.viewModel.loadUser.addListener(_onResult);
   }
 
   @override
   void didUpdateWidget(covariant TasksScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadUser.removeListener(_onResult);
-    widget.viewModel.loadUser.addListener(_onResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.loadUser.removeListener(_onResult);
     super.dispose();
   }
 
@@ -54,11 +50,18 @@ class _TasksScreenState extends State<TasksScreen> {
             child: Column(
               children: [
                 ListenableBuilder(
-                  listenable: widget.viewModel.loadUser,
+                  listenable: widget.viewModel,
                   builder: (builderContext, _) {
-                    if (widget.viewModel.loadUser.completed) {
+                    if (widget.viewModel.user != null) {
                       return TasksHeader(viewModel: widget.viewModel);
                     }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                ListenableBuilder(
+                  listenable: widget.viewModel,
+                  builder: (builderContext, _) {
+                    print('ALOO ${widget.viewModel.tasks}');
                     return const SizedBox.shrink();
                   },
                 ),
@@ -69,6 +72,4 @@ class _TasksScreenState extends State<TasksScreen> {
       ),
     );
   }
-
-  void _onResult() {}
 }

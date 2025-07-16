@@ -19,8 +19,12 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   final SharedPreferencesService _sharedPreferencesService;
 
   final _log = Logger('WorkspaceRepository');
-  String? _activeWorkspaceId;
   List<Workspace>? _cachedWorkspacesList;
+
+  String? _activeWorkspaceId;
+
+  @override
+  String? get activeWorkspaceId => _activeWorkspaceId;
 
   // This is listenable used for redirection to workspace creation
   // screen in case user is not part of any workspace.
@@ -52,7 +56,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Future<Result<String?>> getActiveWorkspaceId() async {
+  Future<Result<String?>> loadActiveWorkspaceId() async {
     if (_activeWorkspaceId != null) {
       return Result.ok(_activeWorkspaceId);
     }
@@ -69,7 +73,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Future<Result<List<Workspace>>> getWorkspaces({
+  Future<Result<List<Workspace>>> loadWorkspaces({
     bool forceFetch = false,
   }) async {
     if (!forceFetch && _cachedWorkspacesList != null) {

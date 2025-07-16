@@ -38,8 +38,8 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tryAgain => 'Pokušajte ponovno';
 
   @override
-  String get errorWhileLoadingWorkspaces =>
-      'Uh-oh! Došlo je do problema prilikom učitavanja vaših radnih prostora';
+  String get errorOnInitialLoad =>
+      'Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Zadatci';

@@ -8,7 +8,7 @@
   "signInGoogleCanceled": "Google prijava otkazana. Molimo pokušajte ponovno.",
   "somethingWentWrong": "Uh-oh! Nešto je pošlo po zlu",
   "tryAgain": "Pokušajte ponovno",
-  "errorWhileLoadingWorkspaces": "Uh-oh! Došlo je do problema prilikom učitavanja vaših radnih prostora",
+  "errorOnInitialLoad": "Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora",
   "bottomNavigationBarTasksLabel": "Zadatci",
   "bottomNavigationBarLeaderboardLabel": "Ljestvica",
   "bottomNavigationBarGoalsLabel": "Ciljevi",

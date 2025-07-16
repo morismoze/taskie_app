@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../domain/constants/rbac.dart';
-import '../../../domain/use_cases/rbac_use_case.dart';
-import '../../../utils/command.dart';
+import '../services/rbac_service.dart';
 
 class Rbac extends StatelessWidget {
   const Rbac({
@@ -24,19 +24,22 @@ class Rbac extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rbacUseCase = context.read<RbacUseCase>();
-
-    return FutureBuilder(
-      future: rbacUseCase.canPerformAction(
-        permission: permission,
-        workspaceId: workspaceId,
-      ),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const SizedBox.shrink();
-
-        final hasAccess = (snapshot.data! as Ok<bool?>).value;
-
-        return hasAccess != null && hasAccess ? child : const SizedBox.shrink();
+    return Selector<RbacService, bool>(
+      selector: (context, rbacService) {
+        final activeWorkspaceId = context
+            .read<WorkspaceRepository>()
+            .activeWorkspaceId;
+        return rbacService.hasPermission(
+          permission: permission,
+          workspaceId: workspaceId ?? activeWorkspaceId,
+        );
+      },
+      builder: (context, hasAccess, _) {
+        if (hasAccess) {
+          return child;
+        } else {
+          return fallback ?? const SizedBox.shrink();
+        }
       },
     );
   }

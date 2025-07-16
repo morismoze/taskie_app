@@ -8,7 +8,7 @@
   "signInGoogleCanceled": "Google sign-in cancelled. Please try again.",
   "somethingWentWrong": "Uh-oh! Something went wrong",
   "tryAgain": "Try again",
-  "errorWhileLoadingWorkspaces": "Uh-oh! We've had some trouble loading up your workspaces",
+  "errorOnInitialLoad": "Uh-oh! We've had some trouble loading up your workspace",
   "bottomNavigationBarTasksLabel": "Tasks",
   "bottomNavigationBarLeaderboardLabel": "Leaderboard",
   "bottomNavigationBarGoalsLabel": "Goals",

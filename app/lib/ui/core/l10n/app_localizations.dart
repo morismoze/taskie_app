@@ -152,11 +152,11 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get tryAgain;
 
-  /// No description provided for @errorWhileLoadingWorkspaces.
+  /// No description provided for @errorOnInitialLoad.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble loading up your workspaces'**
-  String get errorWhileLoadingWorkspaces;
+  /// **'Uh-oh! We\'ve had some trouble loading up your workspace'**
+  String get errorOnInitialLoad;
 
   /// No description provided for @bottomNavigationBarTasksLabel.
   ///

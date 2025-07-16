@@ -4,7 +4,7 @@ import '../../services/api/user/models/response/user_response.dart';
 import '../../services/api/user/user_api_service.dart';
 import 'user_repository.dart';
 
-class UserRepositoryImpl implements UserRepository {
+class UserRepositoryImpl extends UserRepository {
   UserRepositoryImpl({required UserApiService userApiService})
     : _userApiService = userApiService;
 
@@ -13,12 +13,16 @@ class UserRepositoryImpl implements UserRepository {
   User? _cachedUser;
 
   @override
+  User? get user => _cachedUser;
+
+  @override
   void setUser(User user) {
     _cachedUser = user;
+    notifyListeners();
   }
 
   @override
-  Future<Result<User>> getUser({bool forceFetch = false}) async {
+  Future<Result<User>> loadUser({bool forceFetch = false}) async {
     if (!forceFetch && _cachedUser != null) {
       return Result.ok(_cachedUser!);
     }
@@ -37,8 +41,9 @@ class UserRepositoryImpl implements UserRepository {
         );
 
         _cachedUser = user;
+        notifyListeners();
 
-        return Result.ok(user);
+        return Result.ok(_cachedUser!);
       case Error<UserResponse>():
         return Result.error(result.error);
     }

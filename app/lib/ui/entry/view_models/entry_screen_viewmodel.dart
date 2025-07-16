@@ -1,25 +1,42 @@
 import 'package:logging/logging.dart';
 
+import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
 
 class EntryScreenViewModel {
-  EntryScreenViewModel({required WorkspaceRepository workspaceRepository})
-    : _workspaceRepository = workspaceRepository {
-    loadWorkspaces = Command0(_loadWorkspaces)..execute();
+  EntryScreenViewModel({
+    required UserRepository userRepository,
+    required WorkspaceRepository workspaceRepository,
+  }) : _userRepository = userRepository,
+       _workspaceRepository = workspaceRepository {
+    loadInitial = Command0(_loadInitial)..execute();
   }
 
+  final UserRepository _userRepository;
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('EntryViewModel');
 
+  /// Initial load of needed data.
+  ///
   /// Returns workspaceId of the workspace to navigate to or null
   /// if the loaded workspaces list is empty.
-  late Command0 loadWorkspaces;
+  late Command0 loadInitial;
 
-  Future<Result<String?>> _loadWorkspaces() async {
+  Future<Result<String?>> _loadInitial() async {
+    final resultLoadUser = await _userRepository.loadUser();
+
+    switch (resultLoadUser) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to load user', resultLoadUser.error);
+        return Result.error(Exception(resultLoadUser.error));
+    }
+
     // getWorkspaces repository function implementation also
     // notifies when there is zero workspaces fetched from origin.
-    final resultLoadWorkspaces = await _workspaceRepository.getWorkspaces();
+    final resultLoadWorkspaces = await _workspaceRepository.loadWorkspaces();
 
     switch (resultLoadWorkspaces) {
       case Ok():
@@ -37,7 +54,7 @@ class EntryScreenViewModel {
     }
 
     final activeWorkspaceIdResult = await _workspaceRepository
-        .getActiveWorkspaceId();
+        .loadActiveWorkspaceId();
 
     if (activeWorkspaceIdResult is Error<String?>) {
       _log.warning(

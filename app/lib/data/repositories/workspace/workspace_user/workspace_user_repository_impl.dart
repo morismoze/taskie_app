@@ -6,7 +6,7 @@ import '../../../services/api/workspace/workspace_user/models/response/workspace
 import '../../../services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import 'workspace_user_repository.dart';
 
-class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
+class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
   WorkspaceUserRepositoryImpl({
     required WorkspaceUserApiService workspaceUserApiService,
   }) : _workspaceUserApiService = workspaceUserApiService;

@@ -13,7 +13,6 @@ import '../ui/goals_create/widgets/create_goal_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
-import '../ui/navigation/combined_listeable.dart';
 import '../ui/preferences/view_models/preferences_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_viewmodel.dart';
@@ -33,9 +32,8 @@ import 'routes.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'shell',
-);
+final GlobalKey<StatefulNavigationShellState> _shellNavigatorKey =
+    GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
 
 /// Top go_router entry point.
 ///
@@ -65,7 +63,7 @@ GoRouter router({
   initialLocation: Routes.entry,
   debugLogDiagnostics: true,
   redirect: _redirect,
-  refreshListenable: CombinedListenable([
+  refreshListenable: Listenable.merge([
     authStateRepository,
     workspaceRepository,
   ]),
@@ -75,7 +73,10 @@ GoRouter router({
       path: Routes.entry,
       builder: (context, state) {
         return EntryScreen(
-          viewModel: EntryScreenViewModel(workspaceRepository: context.read()),
+          viewModel: EntryScreenViewModel(
+            userRepository: context.read(),
+            workspaceRepository: context.read(),
+          ),
         );
       },
     ),
@@ -119,102 +120,134 @@ GoRouter router({
           path: ':workspaceId',
           builder: (_, _) => const SizedBox.shrink(),
           routes: [
-            ShellRoute(
-              navigatorKey: _shellNavigatorKey,
+            StatefulShellRoute(
+              key: _shellNavigatorKey,
+              navigatorContainerBuilder: (context, navigationShell, children) {
+                // IndexedStack is basically a stack which has all the StatefulShellBranch
+                // and their subroutes in it, and on top of the stack will be a route defined
+                // by navigationShell.currentIndex. Or to be more correct, IndexedStack holds
+                // all Navigators represented by different StatefulShellBranches.
+                return IndexedStack(
+                  index: navigationShell.currentIndex,
+                  children: children,
+                );
+              },
               builder:
-                  (BuildContext context, GoRouterState state, Widget child) {
+                  (
+                    BuildContext context,
+                    GoRouterState state,
+                    StatefulNavigationShell navigationShell,
+                  ) {
                     final workspaceId = state.pathParameters['workspaceId']!;
 
                     return MultiProvider(
+                      // Both of these view models are wrapped in providers, because we want to limit
+                      // reinstantianting them on every navigation inside the shell route. Same keys for
+                      // both ChangeNotifierProvider is okay since they are different due to the different
+                      // generic type.
                       providers: [
                         ChangeNotifierProvider(
                           key: ValueKey(workspaceId),
                           create: (notifierContext) =>
                               AppBottomNavigationBarViewModel(
                                 workspaceId: workspaceId,
-                                rbacUseCase: notifierContext.read(),
+                                rbacService: notifierContext.read(),
                               ),
                         ),
                         ChangeNotifierProvider(
                           key: ValueKey(workspaceId),
                           create: (notifierContext) => AppDrawerViewModel(
                             workspaceId: workspaceId,
-                            workspaceRepository: context.read(),
-                            refreshTokenUseCase: context.read(),
-                            activeWorkspaceChangeUseCase: context.read(),
+                            workspaceRepository: notifierContext.read(),
+                            refreshTokenUseCase: notifierContext.read(),
+                            activeWorkspaceChangeUseCase: notifierContext
+                                .read(),
                           ),
                         ),
                       ],
                       child: AppShellScaffold(
                         workspaceId: workspaceId,
-                        child: child,
+                        navigationShell: navigationShell,
                       ),
                     );
                   },
-              routes: [
-                GoRoute(
-                  path: Routes.tasksRelative,
-                  pageBuilder: (context, state) {
-                    final workspaceId = state.pathParameters['workspaceId']!;
-
-                    return NoTransitionPage(
-                      key: state.pageKey,
-                      child: TasksScreen(
-                        viewModel: TasksViewModel(
-                          workspaceId: workspaceId,
-                          userRepository: context.read(),
-                          workspaceTaskRepository: context.read(),
-                        ),
-                      ),
-                    );
-                  },
+              branches: [
+                StatefulShellBranch(
                   routes: [
                     GoRoute(
-                      path: Routes.taskCreateRelative,
-                      parentNavigatorKey: _rootNavigatorKey,
-                      builder: (context, state) {
+                      path: Routes.tasksRelative,
+                      pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
 
-                        return CreateTaskScreen(
-                          viewModel: CreateTaskViewmodel(
-                            workspaceId: workspaceId,
-                            workspaceTaskRepository: context.read(),
-                            workspaceUserRepository: context.read(),
+                        return NoTransitionPage(
+                          key: state.pageKey,
+                          child: TasksScreen(
+                            viewModel: TasksViewModel(
+                              workspaceId: workspaceId,
+                              userRepository: context.read(),
+                              workspaceTaskRepository: context.read(),
+                            ),
                           ),
+                        );
+                      },
+                      routes: [
+                        GoRoute(
+                          path: Routes.taskCreateRelative,
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+
+                            return CreateTaskScreen(
+                              viewModel: CreateTaskViewmodel(
+                                workspaceId: workspaceId,
+                                workspaceTaskRepository: context.read(),
+                                workspaceUserRepository: context.read(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  routes: [
+                    GoRoute(
+                      path: Routes.leaderboardRelative,
+                      pageBuilder: (context, state) {
+                        return NoTransitionPage(
+                          key: state.pageKey,
+                          child: const Text('leaderboard'),
                         );
                       },
                     ),
                   ],
                 ),
-                GoRoute(
-                  path: Routes.leaderboardRelative,
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                      key: state.pageKey,
-                      child: const Text('leaderboard'),
-                    );
-                  },
-                ),
-                GoRoute(
-                  path: Routes.goalsRelative,
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                      key: state.pageKey,
-                      child: const Text('goals'),
-                    );
-                  },
+                StatefulShellBranch(
                   routes: [
                     GoRoute(
-                      path: Routes.goalCreateRelative,
-                      parentNavigatorKey: _rootNavigatorKey,
-                      builder: (context, state) {
-                        return CreateGoalScreen(
-                          viewModel: CreateGoalViewmodel(
-                            workspaceRepository: context.read(),
-                          ),
+                      path: Routes.goalsRelative,
+                      pageBuilder: (context, state) {
+                        return NoTransitionPage(
+                          key: state.pageKey,
+                          child: const Text('goals'),
                         );
                       },
+                      routes: [
+                        GoRoute(
+                          path: Routes.goalCreateRelative,
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) {
+                            return CreateGoalScreen(
+                              viewModel: CreateGoalViewmodel(
+                                workspaceRepository: context.read(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),

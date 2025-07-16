@@ -29,9 +29,9 @@ import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
-import '../domain/use_cases/rbac_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
+import '../ui/core/services/rbac_service.dart';
 
 List<SingleChildWidget> get providers {
   return [
@@ -56,7 +56,7 @@ List<SingleChildWidget> get providers {
               as AuthRepository,
     ),
     Provider(create: (context) => UserApiService(apiClient: context.read())),
-    Provider(
+    ChangeNotifierProvider(
       create: (context) =>
           UserRepositoryImpl(userApiService: context.read()) as UserRepository,
     ),
@@ -81,7 +81,7 @@ List<SingleChildWidget> get providers {
     Provider(
       create: (context) => WorkspaceTaskApiService(apiClient: context.read()),
     ),
-    Provider(
+    ChangeNotifierProvider(
       create: (context) =>
           WorkspaceTaskRepositoryImpl(workspaceTaskApiService: context.read())
               as WorkspaceTaskRepository,
@@ -127,11 +127,8 @@ List<SingleChildWidget> get providers {
         activeWorkspaceChangeUseCase: context.read(),
       ),
     ),
-    Provider(
-      create: (context) => RbacUseCase(
-        userRepository: context.read(),
-        workspaceRepository: context.read(),
-      ),
+    ChangeNotifierProvider(
+      create: (context) => RbacService(userRepository: context.read()),
     ),
   ];
 }

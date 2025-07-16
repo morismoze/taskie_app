@@ -7,9 +7,14 @@ import '../theme/dimens.dart';
 import 'app_header_action_button.dart';
 
 class HeaderBar extends StatelessWidget {
-  const HeaderBar({super.key, required this.title});
+  const HeaderBar({
+    super.key,
+    required this.title,
+    required this.activeWorkspaceId,
+  });
 
   final String title;
+  final String activeWorkspaceId;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,7 @@ class HeaderBar extends StatelessWidget {
             AppHeaderActionButton(
               iconData: FontAwesomeIcons.house,
               onTap: () {
-                context.go(Routes.tasksRelative);
+                context.go(Routes.tasks(workspaceId: activeWorkspaceId));
               },
             ),
           ],
