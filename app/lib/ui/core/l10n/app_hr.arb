@@ -37,7 +37,7 @@
   "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
   "appDrawerCreateNewWorkspace": "Stvori novi radni prostor",
   "appDrawerPreferences": "Preference",
-  "createNewTaskNoMembers": "Čini se da vaš radni prostor još nema nijednog člana. Pokušajte pozvati nekoga ili stvoriti virtualne članove.",
+  "createNewTaskNoMembers": "Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili stvoriti virtualne članove.",
   "createNewTaskNoMembersCta": "Dodajmo članove",
   "createNewTaskTitle": "Novi zadatak",
   "taskTitleLabel": "Naslov zadatka",

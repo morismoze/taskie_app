@@ -89,7 +89,7 @@ List<SingleChildWidget> get providers {
     Provider(
       create: (context) => WorkspaceUserApiService(apiClient: context.read()),
     ),
-    Provider(
+    ChangeNotifierProvider(
       create: (context) =>
           WorkspaceUserRepositoryImpl(workspaceUserApiService: context.read())
               as WorkspaceUserRepository,

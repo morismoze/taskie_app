@@ -37,7 +37,7 @@
   "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
   "appDrawerCreateNewWorkspace": "Create new workspace",
   "appDrawerPreferences": "Preferences",
-  "createNewTaskNoMembers": "It looks like your workspace doesn't have any members yet. Try inviting some people or creating virtual members.",
+  "createNewTaskNoMembers": "It looks like your workspace doesn't have any members to assign a task to yet. Try inviting someone or creating virtual members.",
   "createNewTaskNoMembersCta": "Let's add members",
   "createNewTaskTitle": "New task",
   "taskTitleLabel": "Task title",

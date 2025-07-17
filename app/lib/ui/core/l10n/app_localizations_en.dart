@@ -137,7 +137,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createNewTaskNoMembers =>
-      'It looks like your workspace doesn\'t have any members yet. Try inviting some people or creating virtual members.';
+      'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.';
 
   @override
   String get createNewTaskNoMembersCta => 'Let\'s add members';

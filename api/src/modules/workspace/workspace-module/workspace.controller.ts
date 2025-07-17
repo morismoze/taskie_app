@@ -207,7 +207,7 @@ export class WorkspaceController {
   @Post(':workspaceId/tasks')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   createTask(
     @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
@@ -260,7 +260,7 @@ export class WorkspaceController {
   @Post(':workspaceId/goals')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.CREATED)
   createGoal(
     @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,

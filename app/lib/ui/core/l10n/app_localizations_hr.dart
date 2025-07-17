@@ -137,7 +137,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get createNewTaskNoMembers =>
-      'Čini se da vaš radni prostor još nema nijednog člana. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
+      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
 
   @override
   String get createNewTaskNoMembersCta => 'Dodajmo članove';

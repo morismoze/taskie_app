@@ -31,9 +31,11 @@ class CreateTaskViewmodel extends ChangeNotifier {
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  List<WorkspaceUser> _workspaceMembers = [];
-
-  List<WorkspaceUser> get workspaceMembers => _workspaceMembers;
+  List<WorkspaceUser> get workspaceMembers =>
+      _workspaceUserRepository.users
+          ?.where((user) => user.role == WorkspaceRole.member)
+          .toList() ??
+      [];
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
@@ -42,10 +44,7 @@ class CreateTaskViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _workspaceMembers = result.value
-            .where((user) => user.role == WorkspaceRole.member)
-            .toList();
-        notifyListeners();
+        break;
       case Error():
         _log.warning('Failed to load workspace users', result.error);
     }
