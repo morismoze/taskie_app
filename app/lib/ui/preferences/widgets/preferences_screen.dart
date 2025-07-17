@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/preferences_viewmodel.dart';
+import '../view_models/preferences_screen_viewmodel.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.viewModel});
 
-  final PreferencesViewModel viewModel;
+  final PreferencesScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _PreferencesScreenState();

@@ -8,25 +8,27 @@ import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
-import '../ui/goals_create/view_models/create_goal_viewmodel.dart';
+import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
-import '../ui/preferences/view_models/preferences_viewmodel.dart';
+import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
-import '../ui/task_create/view_models/create_task_viewmodel.dart';
+import '../ui/task_create/view_models/create_task_screen_viewmodel.dart';
 import '../ui/task_create/widgets/create_task_screen.dart';
-import '../ui/tasks/view_models/tasks_viewmodel.dart';
+import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
-import '../ui/workspace_create/view_models/create_workspace_viewmodel.dart';
+import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
-import '../ui/workspace_create_initial/view_models/create_workspace_initial_viewmodel.dart';
+import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
-import '../ui/workspace_settings/view_models/workspace_settings_viewmodel.dart';
+import '../ui/workspace_settings/view_models/workspace_settings_screen_viewmodel.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
-import '../ui/workspace_users/view_models/workspace_users_viewmodel.dart';
-import '../ui/workspace_users/widgets/workspace_users_screen.dart';
+import '../ui/workspace_users_create/view_models/create_workspace_user_screen_viewmodel.dart';
+import '../ui/workspace_users_create/widgets/create_workspace_user_screen.dart';
+import '../ui/workspace_users_management/view_models/workspace_users_management_screen_viewmodel.dart';
+import '../ui/workspace_users_management/widgets/workspace_users_management_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -183,7 +185,7 @@ GoRouter router({
                         return NoTransitionPage(
                           key: state.pageKey,
                           child: TasksScreen(
-                            viewModel: TasksViewModel(
+                            viewModel: TasksScreenViewModel(
                               workspaceId: workspaceId,
                               userRepository: context.read(),
                               workspaceTaskRepository: context.read(),
@@ -200,7 +202,7 @@ GoRouter router({
                                 state.pathParameters['workspaceId']!;
 
                             return CreateTaskScreen(
-                              viewModel: CreateTaskViewmodel(
+                              viewModel: CreateTaskScreenViewmodel(
                                 workspaceId: workspaceId,
                                 workspaceTaskRepository: context.read(),
                                 workspaceUserRepository: context.read(),
@@ -241,7 +243,7 @@ GoRouter router({
                           parentNavigatorKey: _rootNavigatorKey,
                           builder: (context, state) {
                             return CreateGoalScreen(
-                              viewModel: CreateGoalViewmodel(
+                              viewModel: CreateGoalScreenViewmodel(
                                 workspaceRepository: context.read(),
                               ),
                             );
@@ -258,13 +260,29 @@ GoRouter router({
               builder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
-                return WorkspaceUsersScreen(
-                  viewModel: WorkspaceUsersViewModel(
+                return WorkspaceUsersManagementScreen(
+                  viewModel: WorkspaceUsersScreenManagementViewModel(
                     workspaceId: workspaceId,
-                    workspaceInviteRepository: context.read(),
+                    workspaceUserRepository: context.read(),
                   ),
                 );
               },
+              routes: [
+                GoRoute(
+                  path: Routes.workspaceUsersCreateRelative,
+                  builder: (context, state) {
+                    final workspaceId = state.pathParameters['workspaceId']!;
+
+                    return CreateWorkspaceUserScreen(
+                      viewModel: CreateWorkspaceUserScreenViewModel(
+                        workspaceId: workspaceId,
+                        workspaceInviteRepository: context.read(),
+                        workspaceUserRepository: context.read(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             GoRoute(
               path: Routes.workspaceSettingsRelative,
@@ -272,7 +290,7 @@ GoRouter router({
                 final workspaceId = state.pathParameters['workspaceId']!;
 
                 return WorkspaceSettingsScreen(
-                  viewModel: WorkspaceSettingsViewmodel(
+                  viewModel: WorkspaceSettingsScreenViewmodel(
                     workspaceId: workspaceId,
                     workspaceRepository: context.read(),
                   ),
@@ -287,7 +305,7 @@ GoRouter router({
       path: Routes.preferences,
       builder: (context, state) {
         return PreferencesScreen(
-          viewModel: PreferencesViewModel(
+          viewModel: PreferencesScreenViewModel(
             preferencesRepository: context.read(),
           ),
         );

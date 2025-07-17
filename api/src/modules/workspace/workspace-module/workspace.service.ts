@@ -261,6 +261,7 @@ export class WorkspaceService {
       id: newWorkspaceUser.id,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
+      email: null,
       // Currently uploading images while creating virtual users is not supported
       profileImageUrl: null,
       role: newWorkspaceUser.workspaceRole,
@@ -310,6 +311,7 @@ export class WorkspaceService {
         id: member.id,
         firstName: member.user.firstName,
         lastName: member.user.lastName,
+        email: member.user.email,
         profileImageUrl: member.user.profileImageUrl,
         role: member.workspaceRole,
       }))
@@ -607,6 +609,7 @@ export class WorkspaceService {
       id: updatedWorkspaceUser.id,
       firstName: updatedWorkspaceUser.user.firstName,
       lastName: updatedWorkspaceUser.user.lastName,
+      email: updatedWorkspaceUser.user.email,
       profileImageUrl: updatedWorkspaceUser.user.profileImageUrl,
       role: updatedWorkspaceUser.workspaceRole,
     };

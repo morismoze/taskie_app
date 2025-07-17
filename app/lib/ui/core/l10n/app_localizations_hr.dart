@@ -178,4 +178,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get close => 'Zatvori';
+
+  @override
+  String get workspaceUsersManagement => 'Upravljanje korisnicima';
+
+  @override
+  String get workspaceUsersManagementCreate => 'Novi korisnik radnog prostora';
 }

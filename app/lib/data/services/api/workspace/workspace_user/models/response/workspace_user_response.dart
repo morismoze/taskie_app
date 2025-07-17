@@ -11,6 +11,7 @@ class WorkspaceUserResponse {
     required this.firstName,
     required this.lastName,
     required this.role,
+    this.email,
     this.profileImageUrl,
   });
 
@@ -19,6 +20,7 @@ class WorkspaceUserResponse {
   final String firstName;
   final String lastName;
   final WorkspaceRole role;
+  final String? email;
   final String? profileImageUrl;
 
   factory WorkspaceUserResponse.fromJson(Map<String, dynamic> json) =>

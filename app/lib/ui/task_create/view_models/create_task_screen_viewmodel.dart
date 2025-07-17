@@ -7,14 +7,15 @@ import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
-class CreateTaskViewmodel extends ChangeNotifier {
-  CreateTaskViewmodel({
+class CreateTaskScreenViewmodel extends ChangeNotifier {
+  CreateTaskScreenViewmodel({
     required String workspaceId,
     required WorkspaceUserRepository workspaceUserRepository,
     required WorkspaceTaskRepository workspaceTaskRepository,
   }) : _activeWorkspaceId = workspaceId,
        _workspaceUserRepository = workspaceUserRepository,
        _workspaceTaskRepository = workspaceTaskRepository {
+    _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
     createTask = Command1(_createTask);
@@ -22,7 +23,7 @@ class CreateTaskViewmodel extends ChangeNotifier {
 
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('CreateTaskViewmodel');
+  final _log = Logger('CreateTaskScreenViewmodel');
 
   late Command1<void, String> loadWorkspaceMembers;
   late Command1<void, (String, String, List<String>, int, String?)> createTask;
@@ -30,6 +31,10 @@ class CreateTaskViewmodel extends ChangeNotifier {
   final String _activeWorkspaceId;
 
   String get activeWorkspaceId => _activeWorkspaceId;
+
+  void _onWorkspaceUsersChanged() {
+    notifyListeners();
+  }
 
   List<WorkspaceUser> get workspaceMembers =>
       _workspaceUserRepository.users
@@ -73,5 +78,11 @@ class CreateTaskViewmodel extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  @override
+  void dispose() {
+    _workspaceUserRepository.removeListener(_onWorkspaceUsersChanged);
+    super.dispose();
   }
 }

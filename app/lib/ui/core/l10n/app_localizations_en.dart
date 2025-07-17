@@ -177,4 +177,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get workspaceUsersManagement => 'Users management';
+
+  @override
+  String get workspaceUsersManagementCreate => 'New workspace user';
 }

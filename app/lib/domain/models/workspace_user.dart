@@ -6,6 +6,7 @@ class WorkspaceUser {
     required this.firstName,
     required this.lastName,
     required this.role,
+    this.email,
     this.profileImageUrl,
   });
 
@@ -13,5 +14,6 @@ class WorkspaceUser {
   final String firstName;
   final String lastName;
   final WorkspaceRole role;
+  final String? email;
   final String? profileImageUrl;
 }

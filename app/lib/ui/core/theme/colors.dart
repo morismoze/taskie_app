@@ -4,6 +4,8 @@ abstract final class AppColors {
   static const black1 = Color(0xFF101010);
   static const purple1 = Color(0xFF5F34E2);
   static const purple1Light = Color(0xFFEEE9FF);
+  static Color green1 = Colors.green[800]!;
+  static Color green1Light = Colors.green.shade50;
   static const white1 = Color(0xFFFFFFFF);
   static const grey1 = Color.fromARGB(255, 225, 225, 225);
   static const grey2 = Color(0xFF4D4D4D);

@@ -50,5 +50,7 @@
   "taskDescriptionMaxLength": "Opis može imati najviše 250 znakova",
   "taskAssigneesMinLength": "Zadatak mora biti dodijeljen barem 1 članu",
   "submit": "Potvrdi",
-  "close": "Zatvori"
+  "close": "Zatvori",
+  "workspaceUsersManagement": "Upravljanje korisnicima",
+  "workspaceUsersManagementCreate": "Novi korisnik radnog prostora"
 }

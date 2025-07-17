@@ -10,12 +10,12 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_form_field.dart';
-import '../view_models/create_task_viewmodel.dart';
+import '../view_models/create_task_screen_viewmodel.dart';
 
 class CreateTaskForm extends StatefulWidget {
   const CreateTaskForm({super.key, required this.viewModel});
 
-  final CreateTaskViewmodel viewModel;
+  final CreateTaskScreenViewmodel viewModel;
 
   @override
   State<CreateTaskForm> createState() => _CreateTaskFormState();

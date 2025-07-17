@@ -9,8 +9,8 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/create_workspace_initial_viewmodel.dart';
-import 'workspace_create_form_initial.dart';
+import '../view_models/create_workspace_initial_screen_viewmodel.dart';
+import 'create_workspace_initial_form.dart';
 
 class CreateWorkspaceInitialScreen extends StatefulWidget {
   const CreateWorkspaceInitialScreen({super.key, required this.viewModel});
@@ -106,7 +106,7 @@ class _CreateWorkspaceInitialScreenState
                           ],
                         ),
                         const SizedBox(height: 60),
-                        WorkspaceCreateFormInitial(viewModel: widget.viewModel),
+                        CreateWorkspaceInitialForm(viewModel: widget.viewModel),
                       ],
                     ),
                   ),
@@ -123,7 +123,6 @@ class _CreateWorkspaceInitialScreenState
     if (widget.viewModel.createWorkspace.completed) {
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<String>).value;
-      print('UWT $newWorkspaceId');
       context.go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
     }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/workspace_settings_viewmodel.dart';
+import '../view_models/workspace_settings_screen_viewmodel.dart';
 
 class WorkspaceSettingsScreen extends StatefulWidget {
   const WorkspaceSettingsScreen({super.key, required this.viewModel});
 
-  final WorkspaceSettingsViewmodel viewModel;
+  final WorkspaceSettingsScreenViewmodel viewModel;
 
   @override
   State<StatefulWidget> createState() => _WorkspaceSettingsScreenState();

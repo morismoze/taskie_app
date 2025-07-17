@@ -50,5 +50,7 @@
   "taskDescriptionMaxLength": "Name can have at most 250 characters",
   "taskAssigneesMinLength": "Task must have at least 1 assignee",
   "submit": "Submit",
-  "close": "Close"
+  "close": "Close",
+  "workspaceUsersManagement": "Users management",
+  "workspaceUsersManagementCreate": "New workspace user"
 }

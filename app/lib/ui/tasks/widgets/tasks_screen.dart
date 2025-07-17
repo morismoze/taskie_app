@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/utils/constants.dart';
-import '../view_models/tasks_viewmodel.dart';
+import '../view_models/tasks_screen_viewmodel.dart';
 import 'tasks_header.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key, required this.viewModel});
 
-  final TasksViewModel viewModel;
+  final TasksScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _TasksScreenState();
@@ -61,7 +61,6 @@ class _TasksScreenState extends State<TasksScreen> {
                 ListenableBuilder(
                   listenable: widget.viewModel,
                   builder: (builderContext, _) {
-                    print('ALOO ${widget.viewModel.tasks}');
                     return const SizedBox.shrink();
                   },
                 ),

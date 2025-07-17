@@ -11,13 +11,13 @@ import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/create_task_viewmodel.dart';
+import '../view_models/create_task_screen_viewmodel.dart';
 import 'create_task_form.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({super.key, required this.viewModel});
 
-  final CreateTaskViewmodel viewModel;
+  final CreateTaskScreenViewmodel viewModel;
 
   @override
   State<StatefulWidget> createState() => _WorkspaceSettingsScreenState();

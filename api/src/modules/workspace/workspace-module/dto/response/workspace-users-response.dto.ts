@@ -4,6 +4,7 @@ export interface WorkspaceUserResponse {
   id: string; // WorkspaceUser ID
   firstName: string;
   lastName: string;
+  email: string | null;
   profileImageUrl: string | null;
   role: WorkspaceUserRole;
 }

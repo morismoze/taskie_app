@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
-import '../view_models/tasks_viewmodel.dart';
+import '../view_models/tasks_screen_viewmodel.dart';
 import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {
   const TasksHeader({super.key, required this.viewModel});
 
-  final TasksViewModel viewModel;
+  final TasksScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

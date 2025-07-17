@@ -18,9 +18,9 @@ abstract final class Routes {
   static const workspaceUsersRelative = 'users';
   static String workspaceUsers({required String workspaceId}) =>
       '$workspacesRelative/$workspaceId/$workspaceUsersRelative';
-  static const workspaceUsersSearchRelative = 'search';
-  static String workspaceUsersSearch({required String workspaceId}) =>
-      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersSearchRelative';
+  static const workspaceUsersCreateRelative = 'create';
+  static String workspaceUsersCreate({required String workspaceId}) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersCreateRelative';
 
   static const workspaceSettingsRelative = 'settings';
   static String workspaceSettings({required String workspaceId}) =>

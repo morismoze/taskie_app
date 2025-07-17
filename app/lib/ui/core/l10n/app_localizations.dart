@@ -409,6 +409,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// No description provided for @workspaceUsersManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Users management'**
+  String get workspaceUsersManagement;
+
+  /// No description provided for @workspaceUsersManagementCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'New workspace user'**
+  String get workspaceUsersManagementCreate;
 }
 
 class _AppLocalizationsDelegate

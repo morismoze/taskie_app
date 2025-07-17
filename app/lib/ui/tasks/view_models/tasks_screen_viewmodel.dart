@@ -8,8 +8,8 @@ import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
 
-class TasksViewModel extends ChangeNotifier {
-  TasksViewModel({
+class TasksScreenViewModel extends ChangeNotifier {
+  TasksScreenViewModel({
     required String workspaceId,
     required UserRepository userRepository,
     required WorkspaceTaskRepository workspaceTaskRepository,
@@ -25,7 +25,7 @@ class TasksViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('TasksViewModel');
+  final _log = Logger('TasksScreenViewModel');
 
   late Command1<
     void,

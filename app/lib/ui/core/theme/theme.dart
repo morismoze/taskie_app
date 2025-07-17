@@ -6,6 +6,7 @@ abstract final class AppTheme {
   static const _textTheme = TextTheme(
     headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
     headlineSmall: TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
+    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
     titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
     bodyLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
     bodyMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),

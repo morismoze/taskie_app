@@ -4,20 +4,18 @@ import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_form_field.dart';
-import '../view_models/create_workspace_initial_viewmodel.dart';
+import '../view_models/create_workspace_screen_viewmodel.dart';
 
-class WorkspaceCreateFormInitial extends StatefulWidget {
-  const WorkspaceCreateFormInitial({super.key, required this.viewModel});
+class CreateWorkspaceForm extends StatefulWidget {
+  const CreateWorkspaceForm({super.key, required this.viewModel});
 
-  final CreateWorkspaceInitialScreenViewModel viewModel;
+  final CreateWorkspaceScreenViewModel viewModel;
 
   @override
-  State<WorkspaceCreateFormInitial> createState() =>
-      _WorkspaceCreateFormInitialState();
+  State<CreateWorkspaceForm> createState() => _CreateWorkspaceFormState();
 }
 
-class _WorkspaceCreateFormInitialState
-    extends State<WorkspaceCreateFormInitial> {
+class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();

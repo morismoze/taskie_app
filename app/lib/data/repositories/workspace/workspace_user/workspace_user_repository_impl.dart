@@ -43,6 +43,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
                   firstName: workspaceUser.firstName,
                   lastName: workspaceUser.lastName,
                   role: workspaceUser.role,
+                  email: workspaceUser.email,
                   profileImageUrl: workspaceUser.profileImageUrl,
                 ),
               )
@@ -84,6 +85,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
                   firstName: workspaceUser.firstName,
                   lastName: workspaceUser.lastName,
                   role: workspaceUser.role,
+                  email: workspaceUser.email,
                   profileImageUrl: workspaceUser.profileImageUrl,
                 ),
               )
