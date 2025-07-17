@@ -7,14 +7,21 @@ abstract final class Routes {
 
   // Private routes
   static const workspacesRelative = '/workspaces';
+
   static const workspaceCreateInitialRelative = 'create/initial';
   static const workspaceCreateInitial =
       '$workspacesRelative/$workspaceCreateInitialRelative';
+
   static const workspaceCreateRelative = 'create';
   static const workspaceCreate = '$workspacesRelative/$workspaceCreateRelative';
-  static const workspaceInviteRelative = 'invite';
-  static String workspaceInvite({required String workspaceId}) =>
-      '$workspacesRelative/$workspaceId/$workspaceInviteRelative';
+
+  static const workspaceUsersRelative = 'users';
+  static String workspaceUsers({required String workspaceId}) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative';
+  static const workspaceUsersSearchRelative = 'search';
+  static String workspaceUsersSearch({required String workspaceId}) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersSearchRelative';
+
   static const workspaceSettingsRelative = 'settings';
   static String workspaceSettings({required String workspaceId}) =>
       '$workspacesRelative/$workspaceId/$workspaceSettingsRelative';

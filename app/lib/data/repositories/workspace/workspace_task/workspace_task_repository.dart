@@ -14,7 +14,7 @@ import '../../../services/api/workspace/paginable_objectives.dart';
 abstract class WorkspaceTaskRepository extends ChangeNotifier {
   List<WorkspaceTask>? get tasks;
 
-  Future<Result<void>> getTasks({
+  Future<Result<void>> loadTasks({
     required String workspaceId,
     required PaginableObjectivesRequestQueryParams paginable,
     bool forceFetch,

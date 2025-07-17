@@ -23,7 +23,7 @@ class CreateWorkspaceUseCase {
   /// On workspace creation we need to do two things:
   /// 1. Create the workspace,
   /// 2. Refresh the access token, since we keep role per workspace in it,
-  /// 4. Do post workspace change flow ([ActiveWorkspaceChangeUseCase]).
+  /// 3. Do post workspace change flow ([ActiveWorkspaceChangeUseCase]).
   ///
   /// This is made into separate use-case because the same logic used on /workspaces/create
   /// and /workspaces/create/initial routes.
@@ -60,16 +60,18 @@ class CreateWorkspaceUseCase {
 
     final newWorkspaceId = resultCreate.value;
 
-    final result = await _activeWorkspaceChangeUseCase.handleWorkspaceChange(
-      newWorkspaceId,
-    );
+    final resultWorkspaceChange = await _activeWorkspaceChangeUseCase
+        .handleWorkspaceChange(newWorkspaceId);
 
-    switch (result) {
+    switch (resultWorkspaceChange) {
       case Ok():
         return resultCreate;
       case Error():
-        _log.warning('Failed to change active workspace', result.error);
-        return Result.error(result.error);
+        _log.warning(
+          'Failed to change active workspace',
+          resultWorkspaceChange.error,
+        );
+        return Result.error(resultWorkspaceChange.error);
     }
   }
 }

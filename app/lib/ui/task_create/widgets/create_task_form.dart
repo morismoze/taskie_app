@@ -80,7 +80,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           ListenableBuilder(
             listenable: widget.viewModel,
             builder: (builderContext, _) {
-              final options = widget.viewModel.workspaceUsers.map((user) {
+              final options = widget.viewModel.workspaceMembers.map((user) {
                 final fullName = '${user.firstName} ${user.lastName}';
                 return AppSelectFieldOption(
                   label: fullName,

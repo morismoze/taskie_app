@@ -278,11 +278,11 @@ abstract class AppLocalizations {
   /// **'Edit workspace setttings'**
   String get appDrawerEditWorkspace;
 
-  /// No description provided for @appDrawerInviteMembers.
+  /// No description provided for @appDrawerManageUsers.
   ///
   /// In en, this message translates to:
-  /// **'Invite new members'**
-  String get appDrawerInviteMembers;
+  /// **'Manage users'**
+  String get appDrawerManageUsers;
 
   /// No description provided for @appDrawerLeaveWorkspace.
   ///
@@ -325,6 +325,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferences'**
   String get appDrawerPreferences;
+
+  /// No description provided for @createNewTaskNoMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any members yet. Try inviting some people or creating virtual members.'**
+  String get createNewTaskNoMembers;
+
+  /// No description provided for @createNewTaskNoMembersCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s add members'**
+  String get createNewTaskNoMembersCta;
 
   /// No description provided for @createNewTaskTitle.
   ///

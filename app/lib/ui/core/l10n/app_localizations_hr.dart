@@ -109,7 +109,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerEditWorkspace => 'Uredi postavke radnog prostora';
 
   @override
-  String get appDrawerInviteMembers => 'Pozovi nove članove';
+  String get appDrawerManageUsers => 'Upravljaj članovima';
 
   @override
   String get appDrawerLeaveWorkspace => 'Napusti radni prostor';
@@ -134,6 +134,13 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerPreferences => 'Preference';
+
+  @override
+  String get createNewTaskNoMembers =>
+      'Čini se da vaš radni prostor još nema nijednog člana. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
+
+  @override
+  String get createNewTaskNoMembersCta => 'Dodajmo članove';
 
   @override
   String get createNewTaskTitle => 'Novi zadatak';

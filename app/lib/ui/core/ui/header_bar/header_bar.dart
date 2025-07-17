@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../routing/routes.dart';
-import '../theme/dimens.dart';
+import '../../theme/dimens.dart';
 import 'app_header_action_button.dart';
 
 class HeaderBar extends StatelessWidget {
-  const HeaderBar({
-    super.key,
-    required this.title,
-    required this.activeWorkspaceId,
-  });
+  const HeaderBar({super.key, required this.title, required this.actions});
 
   final String title;
-  final String activeWorkspaceId;
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +25,7 @@ class HeaderBar extends StatelessWidget {
           children: [
             const AppHeaderActionButton(iconData: FontAwesomeIcons.arrowLeft),
             Text(title, style: Theme.of(context).textTheme.titleLarge),
-            AppHeaderActionButton(
-              iconData: FontAwesomeIcons.house,
-              onTap: () {
-                context.go(Routes.tasks(workspaceId: activeWorkspaceId));
-              },
-            ),
+            Row(children: actions),
           ],
         ),
       ),

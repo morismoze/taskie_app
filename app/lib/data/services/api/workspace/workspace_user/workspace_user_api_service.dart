@@ -3,6 +3,7 @@ import '../../../../../utils/command.dart';
 import '../../api_client.dart';
 import '../../api_response.dart';
 import '../workspace/models/request/workspace_id_path_param.dart';
+import 'models/request/create_virtual_workspace_user_request.dart';
 import 'models/response/workspace_user_response.dart';
 
 class WorkspaceUserApiService {
@@ -17,6 +18,31 @@ class WorkspaceUserApiService {
     try {
       final response = await _apiClient.client.get(
         ApiEndpoints.getWorkspaceUsers(workspaceId),
+      );
+
+      final apiResponse = ApiResponse<List<WorkspaceUserResponse>>.fromJson(
+        response.data,
+        (jsonList) => (jsonList as List)
+            .map<WorkspaceUserResponse>(
+              (listItem) => WorkspaceUserResponse.fromJson(listItem),
+            )
+            .toList(),
+      );
+
+      return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<List<WorkspaceUserResponse>>> createVirtualUser({
+    required WorkspaceIdPathParam workspaceId,
+    required CreateVirtualWorkspaceUserRequest payload,
+  }) async {
+    try {
+      final response = await _apiClient.client.post(
+        ApiEndpoints.createVirtualUser(workspaceId),
+        data: payload,
       );
 
       final apiResponse = ApiResponse<List<WorkspaceUserResponse>>.fromJson(

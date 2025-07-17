@@ -18,13 +18,14 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   final WorkspaceTaskApiService _workspaceTaskApiService;
 
   final _log = Logger('WorkspaceTaskRepository');
+
   List<WorkspaceTask>? _cachedTasks;
 
   @override
   List<WorkspaceTask>? get tasks => _cachedTasks;
 
   @override
-  Future<Result<void>> getTasks({
+  Future<Result<void>> loadTasks({
     required String workspaceId,
     required PaginableObjectivesRequestQueryParams paginable,
     bool forceFetch = false,

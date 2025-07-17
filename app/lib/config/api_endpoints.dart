@@ -25,4 +25,6 @@ abstract final class ApiEndpoints {
       '$_prefix/workspaces/$workspaceId/goals';
   static String getWorkspaceUsers(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/users';
+  static String createVirtualUser(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/users/virtual';
 }

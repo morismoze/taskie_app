@@ -31,7 +31,7 @@ class EntryScreenViewModel {
         break;
       case Error():
         _log.warning('Failed to load user', resultLoadUser.error);
-        return Result.error(Exception(resultLoadUser.error));
+        return Result.error(resultLoadUser.error);
     }
 
     // getWorkspaces repository function implementation also
@@ -50,7 +50,7 @@ class EntryScreenViewModel {
         break;
       case Error():
         _log.warning('Failed to load workspaces', resultLoadWorkspaces.error);
-        return Result.error(Exception(resultLoadWorkspaces.error));
+        return Result.error(resultLoadWorkspaces.error);
     }
 
     final activeWorkspaceIdResult = await _workspaceRepository
@@ -61,7 +61,7 @@ class EntryScreenViewModel {
         'Failed to get active workspace ID',
         activeWorkspaceIdResult.error,
       );
-      return Result.error(Exception(activeWorkspaceIdResult.error));
+      return Result.error(activeWorkspaceIdResult.error);
     }
 
     final activeWorkspaceId = (activeWorkspaceIdResult as Ok<String?>).value;
@@ -83,7 +83,7 @@ class EntryScreenViewModel {
             'Failed to load workspaces',
             resultSetActiveWorkspaceId.error,
           );
-          return Result.error(Exception(resultSetActiveWorkspaceId.error));
+          return Result.error(resultSetActiveWorkspaceId.error);
       }
     }
   }

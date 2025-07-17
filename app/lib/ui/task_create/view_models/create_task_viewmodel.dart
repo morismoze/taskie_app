@@ -15,7 +15,8 @@ class CreateTaskViewmodel extends ChangeNotifier {
   }) : _activeWorkspaceId = workspaceId,
        _workspaceUserRepository = workspaceUserRepository,
        _workspaceTaskRepository = workspaceTaskRepository {
-    _loadWorkspaceUsers(workspaceId);
+    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
+      ..execute(workspaceId);
     createTask = Command1(_createTask);
   }
 
@@ -23,24 +24,25 @@ class CreateTaskViewmodel extends ChangeNotifier {
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('CreateTaskViewmodel');
 
+  late Command1<void, String> loadWorkspaceMembers;
   late Command1<void, (String, String, List<String>, int, String?)> createTask;
 
   final String _activeWorkspaceId;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  List<WorkspaceUser> _workspaceUsers = [];
+  List<WorkspaceUser> _workspaceMembers = [];
 
-  List<WorkspaceUser> get workspaceUsers => _workspaceUsers;
+  List<WorkspaceUser> get workspaceMembers => _workspaceMembers;
 
-  Future<Result<void>> _loadWorkspaceUsers(String workspaceId) async {
-    final result = await _workspaceUserRepository.getWorkspaceUsers(
+  Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
+    final result = await _workspaceUserRepository.loadWorkspaceUsers(
       workspaceId: workspaceId,
     );
 
     switch (result) {
       case Ok():
-        _workspaceUsers = result.value
+        _workspaceMembers = result.value
             .where((user) => user.role == WorkspaceRole.member)
             .toList();
         notifyListeners();

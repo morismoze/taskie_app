@@ -6,13 +6,12 @@ import '../../../../domain/constants/rbac.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
-import '../../../core/ui/app_filled_button.dart';
-import '../../../core/ui/app_modal.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
+import 'workspace_leave_button.dart';
 
 class WorkspaceTile extends StatelessWidget {
   const WorkspaceTile({
@@ -100,61 +99,20 @@ class WorkspaceTile extends StatelessWidget {
             ),
           ),
           Rbac(
-            permission: RbacPermission.workspaceInviteUsers,
+            permission: RbacPermission.workspaceManagerUsers,
             workspaceId: id,
             child: AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
-                context.push(Routes.workspaceInvite(workspaceId: id));
+                context.push(Routes.workspaceUsers(workspaceId: id));
               },
-              label: context.localization.appDrawerInviteMembers,
-              leadingIcon: FontAwesomeIcons.userPlus,
+              label: context.localization.appDrawerManageUsers,
+              leadingIcon: FontAwesomeIcons.solidUser,
             ),
           ),
-          AppTextButton(
-            onPress: () => _confirmWorkspaceLeave(context, workspaceId),
-            label: context.localization.appDrawerLeaveWorkspace,
-            leadingIcon: FontAwesomeIcons.arrowRightFromBracket,
-            color: Theme.of(context).colorScheme.error,
-          ),
+          WorkspaceLeaveButton(viewModel: viewModel, workspaceId: workspaceId),
         ],
       ),
-    );
-  }
-
-  void _confirmWorkspaceLeave(BuildContext context, String workspaceId) {
-    AppDialog.show(
-      context: context,
-      canPop: viewModel.leaveWorkspace.running,
-      title: FaIcon(
-        FontAwesomeIcons.circleExclamation,
-        color: Theme.of(context).colorScheme.error,
-        size: 30,
-      ),
-      message: Text(
-        context.localization.appDrawerLeaveWorkspaceModalMessage,
-        style: Theme.of(context).textTheme.bodyMedium,
-        textAlign: TextAlign.center,
-      ),
-      actions: [
-        ListenableBuilder(
-          listenable: viewModel.leaveWorkspace,
-          builder: (BuildContext builderContext, _) => AppFilledButton(
-            label: builderContext.localization.appDrawerLeaveWorkspaceModalCta,
-            onPress: () => viewModel.leaveWorkspace.execute(workspaceId),
-            backgroundColor: Theme.of(builderContext).colorScheme.error,
-            isLoading: viewModel.leaveWorkspace.running,
-          ),
-        ),
-        ListenableBuilder(
-          listenable: viewModel.leaveWorkspace,
-          builder: (BuildContext builderContext, _) => AppTextButton(
-            disabled: viewModel.leaveWorkspace.running,
-            label: builderContext.localization.cancel,
-            onPress: () => Navigator.pop(builderContext),
-          ),
-        ),
-      ],
     );
   }
 }

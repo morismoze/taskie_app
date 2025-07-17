@@ -18,7 +18,8 @@ class TasksViewModel extends ChangeNotifier {
        _workspaceTaskRepository = workspaceTaskRepository {
     _workspaceTaskRepository.addListener(_onTasksChanged);
     _userRepository.addListener(_onUserChanged);
-    loadTasks = Command1(_loadTasks)..execute(workspaceId);
+    loadTasks = Command1(_loadTasks)
+      ..execute((workspaceId, PaginableObjectivesRequestQueryParams(page: 1)));
   }
 
   final String _activeWorkspaceId;
@@ -26,7 +27,11 @@ class TasksViewModel extends ChangeNotifier {
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('TasksViewModel');
 
-  late Command1<void, String> loadTasks;
+  late Command1<
+    void,
+    (String workspaceId, PaginableObjectivesRequestQueryParams paginable)
+  >
+  loadTasks;
 
   List<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
 
@@ -42,10 +47,14 @@ class TasksViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> _loadTasks(String workspaceId) async {
-    final result = await _workspaceTaskRepository.getTasks(
+  Future<Result<void>> _loadTasks(
+    (String workspaceId, PaginableObjectivesRequestQueryParams paginable)
+    details,
+  ) async {
+    final (workspaceId, paginable) = details;
+    final result = await _workspaceTaskRepository.loadTasks(
       workspaceId: workspaceId,
-      paginable: PaginableObjectivesRequestQueryParams(),
+      paginable: paginable,
     );
 
     switch (result) {

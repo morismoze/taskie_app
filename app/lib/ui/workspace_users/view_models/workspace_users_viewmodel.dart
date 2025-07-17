@@ -4,8 +4,8 @@ import 'package:logging/logging.dart';
 import '../../../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
 import '../../../utils/command.dart';
 
-class WorkspaceInviteViewModel extends ChangeNotifier {
-  WorkspaceInviteViewModel({
+class WorkspaceUsersViewModel extends ChangeNotifier {
+  WorkspaceUsersViewModel({
     required String workspaceId,
     required WorkspaceInviteRepository workspaceInviteRepository,
   }) : _activeWorkspaceId = workspaceId,
@@ -15,7 +15,7 @@ class WorkspaceInviteViewModel extends ChangeNotifier {
 
   final String _activeWorkspaceId;
   final WorkspaceInviteRepository _workspaceInviteRepository;
-  final _log = Logger('WorkspaceInviteViewModel');
+  final _log = Logger('WorkspaceUsersViewModel');
 
   late Command0 createInviteLink;
 

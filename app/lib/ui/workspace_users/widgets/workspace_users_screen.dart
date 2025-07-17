@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/workspace_invite_viewmodel.dart';
+import '../view_models/workspace_users_viewmodel.dart';
 
-class WorkspaceInviteScreen extends StatefulWidget {
-  const WorkspaceInviteScreen({super.key, required this.viewModel});
+class WorkspaceUsersScreen extends StatefulWidget {
+  const WorkspaceUsersScreen({super.key, required this.viewModel});
 
-  final WorkspaceInviteViewModel viewModel;
+  final WorkspaceUsersViewModel viewModel;
 
   @override
-  State<StatefulWidget> createState() => _WorkspaceInviteScreenState();
+  State<StatefulWidget> createState() => _WorkspaceUsersScreenState();
 }
 
-class _WorkspaceInviteScreenState extends State<WorkspaceInviteScreen> {
+class _WorkspaceUsersScreenState extends State<WorkspaceUsersScreen> {
   @override
   void initState() {
     super.initState();
@@ -22,7 +22,7 @@ class _WorkspaceInviteScreenState extends State<WorkspaceInviteScreen> {
   }
 
   @override
-  void didUpdateWidget(covariant WorkspaceInviteScreen oldWidget) {
+  void didUpdateWidget(covariant WorkspaceUsersScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.createInviteLink.removeListener(_onResult);
     widget.viewModel.createInviteLink.addListener(_onResult);
@@ -39,7 +39,7 @@ class _WorkspaceInviteScreenState extends State<WorkspaceInviteScreen> {
     return const Scaffold(
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
-          child: SafeArea(child: Text('workspace invite')),
+          child: SafeArea(child: Text('workspaces users')),
         ),
       ),
     );

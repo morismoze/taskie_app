@@ -109,7 +109,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerEditWorkspace => 'Edit workspace setttings';
 
   @override
-  String get appDrawerInviteMembers => 'Invite new members';
+  String get appDrawerManageUsers => 'Manage users';
 
   @override
   String get appDrawerLeaveWorkspace => 'Leave workspace';
@@ -134,6 +134,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerPreferences => 'Preferences';
+
+  @override
+  String get createNewTaskNoMembers =>
+      'It looks like your workspace doesn\'t have any members yet. Try inviting some people or creating virtual members.';
+
+  @override
+  String get createNewTaskNoMembersCta => 'Let\'s add members';
 
   @override
   String get createNewTaskTitle => 'New task';

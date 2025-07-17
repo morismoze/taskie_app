@@ -15,18 +15,18 @@ import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/preferences/view_models/preferences_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
+import '../ui/task_create/view_models/create_task_viewmodel.dart';
+import '../ui/task_create/widgets/create_task_screen.dart';
 import '../ui/tasks/view_models/tasks_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
-import '../ui/tasks_create/view_models/create_task_viewmodel.dart';
-import '../ui/tasks_create/widgets/create_task_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_viewmodel.dart';
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
-import '../ui/workspace_invite/view_models/workspace_invite_viewmodel.dart';
-import '../ui/workspace_invite/widgets/workspace_invite_screen.dart';
 import '../ui/workspace_settings/view_models/workspace_settings_viewmodel.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
+import '../ui/workspace_users/view_models/workspace_users_viewmodel.dart';
+import '../ui/workspace_users/widgets/workspace_users_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -254,13 +254,12 @@ GoRouter router({
               ],
             ),
             GoRoute(
-              path: Routes.workspaceInviteRelative,
+              path: Routes.workspaceUsersRelative,
               builder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
-                return WorkspaceInviteScreen(
-                  key: ValueKey(state.pageKey),
-                  viewModel: WorkspaceInviteViewModel(
+                return WorkspaceUsersScreen(
+                  viewModel: WorkspaceUsersViewModel(
                     workspaceId: workspaceId,
                     workspaceInviteRepository: context.read(),
                   ),
@@ -273,7 +272,6 @@ GoRouter router({
                 final workspaceId = state.pathParameters['workspaceId']!;
 
                 return WorkspaceSettingsScreen(
-                  key: ValueKey(state.pageKey),
                   viewModel: WorkspaceSettingsViewmodel(
                     workspaceId: workspaceId,
                     workspaceRepository: context.read(),
