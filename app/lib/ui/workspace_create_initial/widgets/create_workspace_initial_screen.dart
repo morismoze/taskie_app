@@ -4,12 +4,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../../workspace_create_initial/widgets/form.dart';
 import '../view_models/create_workspace_initial_viewmodel.dart';
+import 'workspace_create_form_initial.dart';
 
 class CreateWorkspaceInitialScreen extends StatefulWidget {
   const CreateWorkspaceInitialScreen({super.key, required this.viewModel});
@@ -74,9 +75,9 @@ class _CreateWorkspaceInitialScreenState
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             ListenableBuilder(
-                              listenable: widget.viewModel.loadUser,
-                              builder: (context, _) {
-                                if (widget.viewModel.loadUser.completed) {
+                              listenable: widget.viewModel,
+                              builder: (builderContext, _) {
+                                if (widget.viewModel.user != null) {
                                   // This return is not defined inside child property of `ListenableBuilder`
                                   // because child is built only once, when the ListenableBuilder is built. And because
                                   // of that widget.viewModel.user is going to be captured as null.
@@ -86,13 +87,13 @@ class _CreateWorkspaceInitialScreenState
                                       FractionallySizedBox(
                                         widthFactor: 0.75,
                                         child: Text(
-                                          context.localization
+                                          builderContext.localization
                                               .workspaceCreateSubtitle(
                                                 widget.viewModel.user!.email!,
                                               ),
                                           textAlign: TextAlign.center,
                                           style: Theme.of(
-                                            context,
+                                            builderContext,
                                           ).textTheme.bodyMedium,
                                         ),
                                       ),
@@ -105,7 +106,7 @@ class _CreateWorkspaceInitialScreenState
                           ],
                         ),
                         const SizedBox(height: 60),
-                        CreateFormInitial(viewModel: widget.viewModel),
+                        WorkspaceCreateFormInitial(viewModel: widget.viewModel),
                       ],
                     ),
                   ),
@@ -120,8 +121,11 @@ class _CreateWorkspaceInitialScreenState
 
   void _onResult() {
     if (widget.viewModel.createWorkspace.completed) {
+      final newWorkspaceId =
+          (widget.viewModel.createWorkspace.result as Ok<String>).value;
+      print('UWT $newWorkspaceId');
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
-      GoRouter.of(context).go(Routes.tasksRelative);
     }
 
     if (widget.viewModel.createWorkspace.error) {

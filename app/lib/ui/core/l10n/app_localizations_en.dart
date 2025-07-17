@@ -38,8 +38,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Try again';
 
   @override
-  String get errorWhileLoadingWorkspaces =>
-      'Uh-oh! We\'ve had some trouble loading up your workspaces';
+  String get errorOnInitialLoad =>
+      'Uh-oh! We\'ve had some trouble loading up your workspace';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Tasks';
@@ -51,10 +51,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bottomNavigationBarGoalsLabel => 'Goals';
 
   @override
-  String get bottomNavigationBarFabTask => 'Create new task';
+  String get taskCreateNew => 'Create new task';
 
   @override
-  String get bottomNavigationBarFabGoal => 'Create new goal';
+  String get goalCreateNew => 'Create new goal';
 
   @override
   String get workspaceNameLabel => 'Workspace name';
@@ -102,10 +102,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerTitle => 'Workspaces';
 
   @override
+  String get appDrawerChangeActiveWorkspaceError =>
+      'Uh-oh! We\'ve had some trouble changing workspace';
+
+  @override
   String get appDrawerEditWorkspace => 'Edit workspace setttings';
 
   @override
-  String get appDrawerInviteMembers => 'Invite new members';
+  String get appDrawerManageUsers => 'Manage users';
 
   @override
   String get appDrawerLeaveWorkspace => 'Leave workspace';
@@ -130,4 +134,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerPreferences => 'Preferences';
+
+  @override
+  String get createNewTaskNoMembers =>
+      'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.';
+
+  @override
+  String get createNewTaskNoMembersCta => 'Let\'s add members';
+
+  @override
+  String get createNewTaskTitle => 'New task';
+
+  @override
+  String get taskTitleLabel => 'Task title';
+
+  @override
+  String get taskDescriptionLabel => 'Task description';
+
+  @override
+  String get taskAssigneeLabel => 'Assign to';
+
+  @override
+  String get taskDueDateLabel => 'Due date';
+
+  @override
+  String get taskRewardPointsLabel => 'Reward points';
+
+  @override
+  String get taskTitleMinLength => 'Name must have at least 3 characters';
+
+  @override
+  String get taskTitleMaxLength => 'Name can have at most 50 characters';
+
+  @override
+  String get taskDescriptionMaxLength => 'Name can have at most 250 characters';
+
+  @override
+  String get taskAssigneesMinLength => 'Task must have at least 1 assignee';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get close => 'Close';
 }

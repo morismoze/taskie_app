@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/utils/constants.dart';
 import '../view_models/tasks_viewmodel.dart';
 import 'tasks_header.dart';
 
@@ -22,19 +23,15 @@ class _TasksScreenState extends State<TasksScreen> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark),
     );
-    widget.viewModel.loadUser.addListener(_onResult);
   }
 
   @override
   void didUpdateWidget(covariant TasksScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadUser.removeListener(_onResult);
-    widget.viewModel.loadUser.addListener(_onResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.loadUser.removeListener(_onResult);
     super.dispose();
   }
 
@@ -48,16 +45,23 @@ class _TasksScreenState extends State<TasksScreen> {
             padding: EdgeInsets.only(
               left: Dimens.of(context).paddingScreenHorizontal,
               right: Dimens.of(context).paddingScreenHorizontal,
-              bottom: kBottomNavigationBarHeight + Dimens.paddingVertical,
+              bottom: kAppBottomNavigationBarHeight + Dimens.paddingVertical,
             ),
             child: Column(
               children: [
                 ListenableBuilder(
-                  listenable: widget.viewModel.loadUser,
-                  builder: (context, child) {
-                    if (widget.viewModel.loadUser.completed) {
+                  listenable: widget.viewModel,
+                  builder: (builderContext, _) {
+                    if (widget.viewModel.user != null) {
                       return TasksHeader(viewModel: widget.viewModel);
                     }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                ListenableBuilder(
+                  listenable: widget.viewModel,
+                  builder: (builderContext, _) {
+                    print('ALOO ${widget.viewModel.tasks}');
                     return const SizedBox.shrink();
                   },
                 ),
@@ -68,6 +72,4 @@ class _TasksScreenState extends State<TasksScreen> {
       ),
     );
   }
-
-  void _onResult() {}
 }

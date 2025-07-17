@@ -23,7 +23,7 @@ class AppTextButton extends StatelessWidget {
       onPressed: disabled ? () {} : onPress,
       style: TextButton.styleFrom(
         overlayColor: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 0),
+        padding: const EdgeInsets.all(0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

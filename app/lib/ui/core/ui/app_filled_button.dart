@@ -39,12 +39,13 @@ class AppFilledButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (leadingIcon != null)
+                if (leadingIcon != null) ...[
                   FaIcon(
                     leadingIcon,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
-                const SizedBox(width: 8),
+                  const SizedBox(width: 8),
+                ],
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Text(

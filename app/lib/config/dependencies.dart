@@ -9,18 +9,29 @@ import '../data/repositories/preferences/preferences_repository.dart';
 import '../data/repositories/preferences/preferences_repository_impl.dart';
 import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/user/user_repository_impl.dart';
-import '../data/repositories/workspace/workspace_repository.dart';
-import '../data/repositories/workspace/workspace_repository_impl.dart';
+import '../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../data/repositories/workspace/workspace/workspace_repository_impl.dart';
+import '../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
+import '../data/repositories/workspace/workspace_invite/workspace_invite_repository_impl.dart';
+import '../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
+import '../data/repositories/workspace/workspace_task/workspace_task_repository_impl.dart';
+import '../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
+import '../data/repositories/workspace/workspace_user/workspace_user_repository_impl.dart';
 import '../data/services/api/api_client.dart';
 import '../data/services/api/auth/auth_api_service.dart';
 import '../data/services/api/user/user_api_service.dart';
-import '../data/services/api/workspace/workspace_api_service.dart';
+import '../data/services/api/workspace/workspace/workspace_api_service.dart';
+import '../data/services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
+import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
+import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
+import '../domain/use_cases/active_workspace_change_use_case.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
+import '../ui/core/services/rbac_service.dart';
 
 List<SingleChildWidget> get providers {
   return [
@@ -45,7 +56,7 @@ List<SingleChildWidget> get providers {
               as AuthRepository,
     ),
     Provider(create: (context) => UserApiService(apiClient: context.read())),
-    Provider(
+    ChangeNotifierProvider(
       create: (context) =>
           UserRepositoryImpl(userApiService: context.read()) as UserRepository,
     ),
@@ -68,6 +79,32 @@ List<SingleChildWidget> get providers {
               as WorkspaceRepository,
     ),
     Provider(
+      create: (context) => WorkspaceTaskApiService(apiClient: context.read()),
+    ),
+    ChangeNotifierProvider(
+      create: (context) =>
+          WorkspaceTaskRepositoryImpl(workspaceTaskApiService: context.read())
+              as WorkspaceTaskRepository,
+    ),
+    Provider(
+      create: (context) => WorkspaceUserApiService(apiClient: context.read()),
+    ),
+    ChangeNotifierProvider(
+      create: (context) =>
+          WorkspaceUserRepositoryImpl(workspaceUserApiService: context.read())
+              as WorkspaceUserRepository,
+    ),
+    Provider(
+      create: (context) => WorkspaceInviteApiService(apiClient: context.read()),
+    ),
+    Provider(
+      create: (context) =>
+          WorkspaceInviteRepositoryImpl(
+                workspaceInviteApiService: context.read(),
+              )
+              as WorkspaceInviteRepository,
+    ),
+    Provider(
       create: (context) => PreferencesRepositoryImpl() as PreferencesRepository,
     ),
     Provider(
@@ -77,11 +114,21 @@ List<SingleChildWidget> get providers {
       ),
     ),
     Provider(
-      create: (context) => CreateWorkspaceUseCase(
-        refreshTokenUseCase: context.read(),
-        userRepository: context.read(),
+      create: (context) => ActiveWorkspaceChangeUseCase(
         workspaceRepository: context.read(),
+        userRepository: context.read(),
+        workspaceTaskRepository: context.read(),
       ),
+    ),
+    Provider(
+      create: (context) => CreateWorkspaceUseCase(
+        workspaceRepository: context.read(),
+        refreshTokenUseCase: context.read(),
+        activeWorkspaceChangeUseCase: context.read(),
+      ),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => RbacService(userRepository: context.read()),
     ),
   ];
 }

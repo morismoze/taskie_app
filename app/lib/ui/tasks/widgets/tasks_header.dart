@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
-import '../../core/util/color.dart';
 import '../view_models/tasks_viewmodel.dart';
 import 'workspace_switcher.dart';
 
@@ -36,9 +35,6 @@ class TasksHeader extends StatelessWidget {
             children: [
               AppAvatar(
                 text: firstNameFirstLetter,
-                backgroundColor: ColorGenerator.generateColorFromString(
-                  fullName,
-                ),
                 imageUrl: user.profileImageUrl,
               ),
               const SizedBox(width: 13),
@@ -49,7 +45,7 @@ class TasksHeader extends StatelessWidget {
                     context.localization.tasksHello,
                     style: Theme.of(
                       context,
-                    ).textTheme.labelMedium!.copyWith(fontSize: 14),
+                    ).textTheme.labelLarge!.copyWith(fontSize: 14),
                   ),
                   Text(
                     fullName,

@@ -11,6 +11,8 @@ abstract final class AppColors {
   static const whiteTransparent = Color(0x4DFFFFFF);
   static const blackTransparent = Color(0x4D000000);
   static const red1 = Color(0xFFE74C3C);
+  static Color fieldFillColor = grey2.withValues(alpha: 0.075);
+  static Color fieldUnfocusedLabelColor = grey2.withValues(alpha: 0.5);
 
   static const lightColorScheme = ColorScheme(
     brightness: Brightness.light,

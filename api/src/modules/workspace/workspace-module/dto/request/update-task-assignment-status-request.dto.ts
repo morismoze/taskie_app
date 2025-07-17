@@ -9,11 +9,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-import { TASK_MAXIMUM_ASSIGNEES_NUMBER } from 'src/modules/task/task-module/domain/task.constants';
+import { TASK_MAXIMUM_ASSIGNEES_COUNT } from 'src/modules/task/task-module/domain/task.constants';
 
 export class TaskAssignmentUpdate {
   @IsNotEmpty()
-  @IsUUID()
+  @IsUUID('4')
   assigneeId: string;
 
   @IsNotEmpty()
@@ -30,7 +30,7 @@ export class UpdateTaskAssignmentsRequest {
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(1)
-  @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_NUMBER)
+  @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_COUNT)
   @Type(() => TaskAssignmentUpdate)
   assignments: TaskAssignmentUpdate[];
 

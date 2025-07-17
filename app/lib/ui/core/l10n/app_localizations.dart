@@ -152,11 +152,11 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get tryAgain;
 
-  /// No description provided for @errorWhileLoadingWorkspaces.
+  /// No description provided for @errorOnInitialLoad.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble loading up your workspaces'**
-  String get errorWhileLoadingWorkspaces;
+  /// **'Uh-oh! We\'ve had some trouble loading up your workspace'**
+  String get errorOnInitialLoad;
 
   /// No description provided for @bottomNavigationBarTasksLabel.
   ///
@@ -176,17 +176,17 @@ abstract class AppLocalizations {
   /// **'Goals'**
   String get bottomNavigationBarGoalsLabel;
 
-  /// No description provided for @bottomNavigationBarFabTask.
+  /// No description provided for @taskCreateNew.
   ///
   /// In en, this message translates to:
   /// **'Create new task'**
-  String get bottomNavigationBarFabTask;
+  String get taskCreateNew;
 
-  /// No description provided for @bottomNavigationBarFabGoal.
+  /// No description provided for @goalCreateNew.
   ///
   /// In en, this message translates to:
   /// **'Create new goal'**
-  String get bottomNavigationBarFabGoal;
+  String get goalCreateNew;
 
   /// No description provided for @workspaceNameLabel.
   ///
@@ -266,17 +266,23 @@ abstract class AppLocalizations {
   /// **'Workspaces'**
   String get appDrawerTitle;
 
+  /// No description provided for @appDrawerChangeActiveWorkspaceError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble changing workspace'**
+  String get appDrawerChangeActiveWorkspaceError;
+
   /// No description provided for @appDrawerEditWorkspace.
   ///
   /// In en, this message translates to:
   /// **'Edit workspace setttings'**
   String get appDrawerEditWorkspace;
 
-  /// No description provided for @appDrawerInviteMembers.
+  /// No description provided for @appDrawerManageUsers.
   ///
   /// In en, this message translates to:
-  /// **'Invite new members'**
-  String get appDrawerInviteMembers;
+  /// **'Manage users'**
+  String get appDrawerManageUsers;
 
   /// No description provided for @appDrawerLeaveWorkspace.
   ///
@@ -319,6 +325,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferences'**
   String get appDrawerPreferences;
+
+  /// No description provided for @createNewTaskNoMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.'**
+  String get createNewTaskNoMembers;
+
+  /// No description provided for @createNewTaskNoMembersCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s add members'**
+  String get createNewTaskNoMembersCta;
+
+  /// No description provided for @createNewTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New task'**
+  String get createNewTaskTitle;
+
+  /// No description provided for @taskTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Task title'**
+  String get taskTitleLabel;
+
+  /// No description provided for @taskDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Task description'**
+  String get taskDescriptionLabel;
+
+  /// No description provided for @taskAssigneeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to'**
+  String get taskAssigneeLabel;
+
+  /// No description provided for @taskDueDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get taskDueDateLabel;
+
+  /// No description provided for @taskRewardPointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward points'**
+  String get taskRewardPointsLabel;
+
+  /// No description provided for @taskTitleMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must have at least 3 characters'**
+  String get taskTitleMinLength;
+
+  /// No description provided for @taskTitleMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name can have at most 50 characters'**
+  String get taskTitleMaxLength;
+
+  /// No description provided for @taskDescriptionMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Name can have at most 250 characters'**
+  String get taskDescriptionMaxLength;
+
+  /// No description provided for @taskAssigneesMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Task must have at least 1 assignee'**
+  String get taskAssigneesMinLength;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate

@@ -38,8 +38,8 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tryAgain => 'Pokušajte ponovno';
 
   @override
-  String get errorWhileLoadingWorkspaces =>
-      'Uh-oh! Došlo je do problema prilikom učitavanja vaših radnih prostora';
+  String get errorOnInitialLoad =>
+      'Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Zadatci';
@@ -51,10 +51,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get bottomNavigationBarGoalsLabel => 'Ciljevi';
 
   @override
-  String get bottomNavigationBarFabTask => 'Stvori novi zadatak';
+  String get taskCreateNew => 'Stvori novi zadatak';
 
   @override
-  String get bottomNavigationBarFabGoal => 'Stvori novi cilj';
+  String get goalCreateNew => 'Stvori novi cilj';
 
   @override
   String get workspaceNameLabel => 'Naziv radnog prostora';
@@ -75,7 +75,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceCreateNameMinLength =>
-      'Naziv mora imati minimalno 3 znakova';
+      'Naziv mora imati najmanje 3 znaka';
 
   @override
   String get workspaceCreateNameMaxLength =>
@@ -102,10 +102,14 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerTitle => 'Radni prostori';
 
   @override
+  String get appDrawerChangeActiveWorkspaceError =>
+      'Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora';
+
+  @override
   String get appDrawerEditWorkspace => 'Uredi postavke radnog prostora';
 
   @override
-  String get appDrawerInviteMembers => 'Pozovi nove članove';
+  String get appDrawerManageUsers => 'Upravljaj članovima';
 
   @override
   String get appDrawerLeaveWorkspace => 'Napusti radni prostor';
@@ -130,4 +134,48 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerPreferences => 'Preference';
+
+  @override
+  String get createNewTaskNoMembers =>
+      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
+
+  @override
+  String get createNewTaskNoMembersCta => 'Dodajmo članove';
+
+  @override
+  String get createNewTaskTitle => 'Novi zadatak';
+
+  @override
+  String get taskTitleLabel => 'Naslov zadatka';
+
+  @override
+  String get taskDescriptionLabel => 'Opis zadatka';
+
+  @override
+  String get taskAssigneeLabel => 'Dodijeli članu';
+
+  @override
+  String get taskDueDateLabel => 'Rok završetka';
+
+  @override
+  String get taskRewardPointsLabel => 'Nagradni bodovi';
+
+  @override
+  String get taskTitleMinLength => 'Naziv mora imati najmanje 3 znaka';
+
+  @override
+  String get taskTitleMaxLength => 'Naziv može imati najviše 50 znakova';
+
+  @override
+  String get taskDescriptionMaxLength => 'Opis može imati najviše 250 znakova';
+
+  @override
+  String get taskAssigneesMinLength =>
+      'Zadatak mora biti dodijeljen barem 1 članu';
+
+  @override
+  String get submit => 'Potvrdi';
+
+  @override
+  String get close => 'Zatvori';
 }

@@ -38,10 +38,13 @@ import {
 } from './dto/response/workspace-goals-response.dto';
 import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
 import {
+  WorkspaceTaskResponse,
+  WorkspaceTasksResponse,
+} from './dto/response/workspace-tasks-response.dto';
+import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
-} from './dto/response/workspace-members-response.dto';
-import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
+} from './dto/response/workspace-users-response.dto';
 import {
   WorkspaceResponse,
   WorkspacesResponse,
@@ -283,7 +286,7 @@ export class WorkspaceService {
     return response;
   }
 
-  async getWorkspaceMembers(
+  async getWorkspaceUsers(
     workspaceId: Workspace['id'],
   ): Promise<WorkspaceUsersResponse> {
     const workspace = await this.workspaceRepository.findById({
@@ -302,15 +305,27 @@ export class WorkspaceService {
       );
     }
 
-    const response: WorkspaceUsersResponse = workspace.members.map(
-      (member) => ({
+    const response: WorkspaceUsersResponse = workspace.members
+      .map((member) => ({
         id: member.id,
         firstName: member.user.firstName,
         lastName: member.user.lastName,
         profileImageUrl: member.user.profileImageUrl,
         role: member.workspaceRole,
-      }),
-    );
+      }))
+      .sort((wu1, wu2) => {
+        // Sort by full name
+        const wu1FullName = `${wu1.firstName + wu1.lastName}`;
+        const wu2FullName = `${wu2.firstName + wu2.lastName}`;
+
+        if (wu1FullName > wu2FullName) {
+          return 1;
+        } else if (wu1FullName < wu2FullName) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
 
     return response;
   }
@@ -431,7 +446,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     createdById: JwtPayload['sub'];
     data: CreateTaskRequest;
-  }): Promise<void> {
+  }): Promise<WorkspaceTaskResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -445,22 +460,48 @@ export class WorkspaceService {
       );
     }
 
-    await this.unitOfWorkService.withTransaction(async () => {
+    const workspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: createdById,
+        workspaceId,
+      });
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return await this.unitOfWorkService.withTransaction(async () => {
       // Create new concrete task
       const newTask = await this.taskService.create({
         workspaceId,
-        createdById,
+        createdById: workspaceUser.id,
         data,
       });
 
+      let response: WorkspaceTaskResponse = { ...newTask, assignees: [] };
+
       // Create new task assignment for each given assignee
       for (const assigneeId of data.assignees) {
-        this.taskAssignmentService.create({
+        const newTaskAssignment = await this.taskAssignmentService.create({
           workspaceUserId: assigneeId,
           taskId: newTask.id,
           status: ProgressStatus.IN_PROGRESS,
         });
+        response.assignees.push({
+          id: newTaskAssignment.id,
+          firstName: newTaskAssignment.assignee.user.firstName,
+          lastName: newTaskAssignment.assignee.user.lastName,
+          status: newTaskAssignment.status,
+          profileImageUrl: newTaskAssignment.assignee.user.profileImageUrl,
+        });
       }
+
+      return response;
     });
   }
 
@@ -520,11 +561,11 @@ export class WorkspaceService {
 
   async updateWorkspaceUser({
     workspaceId,
-    memberId,
+    workspaceUserId,
     data,
   }: {
     workspaceId: Workspace['id'];
-    memberId: WorkspaceUser['id'];
+    workspaceUserId: WorkspaceUser['id'];
     data: UpdateWorkspaceUserRequest;
   }): Promise<WorkspaceUserResponse> {
     const workspace = await this.workspaceRepository.findById({
@@ -543,7 +584,7 @@ export class WorkspaceService {
     const { updatedWorkspaceUser } =
       await this.unitOfWorkService.withTransaction(async () => {
         const updatedWorkspaceUser = await this.workspaceUserService.update({
-          id: memberId,
+          id: workspaceUserId,
           data: {
             workspaceRole: data.role,
           },
@@ -575,10 +616,10 @@ export class WorkspaceService {
 
   async removeUserFromWorkspace({
     workspaceId,
-    memberId,
+    workspaceUserId,
   }: {
     workspaceId: Workspace['id'];
-    memberId: WorkspaceUser['id'];
+    workspaceUserId: WorkspaceUser['id'];
   }): Promise<void> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -595,21 +636,21 @@ export class WorkspaceService {
 
     await this.workspaceUserService.delete({
       workspaceId,
-      workspaceUserId: memberId,
+      workspaceUserId,
     });
   }
 
   async leaveWorkspace({
     workspaceId,
-    memberId,
+    userId,
   }: {
     workspaceId: Workspace['id'];
-    memberId: JwtPayload['sub'];
+    userId: JwtPayload['sub'];
   }): Promise<void> {
     const workspaceUser =
       await this.workspaceUserService.findByUserIdAndWorkspaceId({
         workspaceId,
-        userId: memberId,
+        userId,
       });
 
     if (!workspaceUser) {

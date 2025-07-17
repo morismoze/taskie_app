@@ -3,7 +3,6 @@ import {
   ArrayMinSize,
   IsArray,
   IsOptional,
-  IsString,
   IsUUID,
 } from 'class-validator';
 import {
@@ -12,7 +11,7 @@ import {
   IsValidTaskRewardPoints,
   IsValidTaskTitle,
 } from 'src/common/decorators/request-validation-decorators';
-import { TASK_MAXIMUM_ASSIGNEES_NUMBER } from 'src/modules/task/task-module/domain/task.constants';
+import { TASK_MAXIMUM_ASSIGNEES_COUNT } from 'src/modules/task/task-module/domain/task.constants';
 
 export class CreateTaskRequest {
   @IsValidTaskTitle()
@@ -32,7 +31,7 @@ export class CreateTaskRequest {
   @IsArray()
   @IsUUID('4', { each: true })
   @ArrayMinSize(1)
-  @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_NUMBER)
+  @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_COUNT)
   assignees: string[]; // Array of WorkspaceUser IDs
 
   constructor(

@@ -22,7 +22,6 @@ import { CreateTaskRequest } from './dto/request/create-task-request.dto';
 import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
 import { GoalIdRequestPathParam } from './dto/request/goal-id-path-param-request.dto';
-import { MemberIdRequestPathParam } from './dto/request/member-id-path-param-request.dto';
 import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
 import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
@@ -31,6 +30,7 @@ import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace-user-id-path-param-request.dto';
 import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
@@ -40,10 +40,13 @@ import {
 } from './dto/response/workspace-goals-response.dto';
 import { WorkspaceLeaderboardResponse } from './dto/response/workspace-leaderboard-response.dto';
 import {
+  WorkspaceTaskResponse,
+  WorkspaceTasksResponse,
+} from './dto/response/workspace-tasks-response.dto';
+import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
-} from './dto/response/workspace-members-response.dto';
-import { WorkspaceTasksResponse } from './dto/response/workspace-tasks-response.dto';
+} from './dto/response/workspace-users-response.dto';
 import {
   WorkspaceResponse,
   WorkspacesResponse,
@@ -118,7 +121,7 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspacesByUser(req.user.sub);
   }
 
-  @Post(':workspaceId/members/virtual')
+  @Post(':workspaceId/users/virtual')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -134,46 +137,34 @@ export class WorkspaceController {
     });
   }
 
-  @Get(':workspaceId/members')
+  @Get(':workspaceId/users')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
-  getWorkspaceMembers(
+  getWorkspaceUsers(
     @Param() params: WorkspaceIdRequestPathParam,
   ): Promise<WorkspaceUsersResponse> {
-    return this.workspaceService.getWorkspaceMembers(params.workspaceId);
+    return this.workspaceService.getWorkspaceUsers(params.workspaceId);
   }
 
-  @Patch(':workspaceId/members/:memberId')
+  @Patch(':workspaceId/users/:workspaceUserId')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
   updateWorkspaceUser(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
-    @Param() { memberId }: MemberIdRequestPathParam,
+    @Param() { workspaceUserId }: WorkspaceUserIdRequestPathParam,
     @Body() data: UpdateWorkspaceUserRequest,
   ): Promise<WorkspaceUserResponse> {
     return this.workspaceService.updateWorkspaceUser({
       workspaceId,
-      memberId,
+      workspaceUserId,
       data,
     });
   }
 
-  @Delete(':workspaceId/members/:memberId')
-  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
-  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  removeUserFromWorkspace(
-    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
-    @Param() { memberId }: MemberIdRequestPathParam,
-  ): Promise<void> {
-    return this.workspaceService.removeUserFromWorkspace({
-      workspaceId,
-      memberId,
-    });
-  }
-
-  @Delete(':workspaceId/members')
+  // This endpoint needs to be before the one below
+  // because of path param pattern recognition
+  @Delete(':workspaceId/users/me')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   leaveWorkspace(
@@ -182,26 +173,21 @@ export class WorkspaceController {
   ): Promise<void> {
     return this.workspaceService.leaveWorkspace({
       workspaceId,
-      memberId: request.user.sub,
+      userId: request.user.sub,
     });
   }
 
-  @Post(':workspaceId/tasks')
+  @Delete(':workspaceId/users/:workspaceUserId')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  createTask(
-    @Param() params: WorkspaceIdRequestPathParam,
-    @Req() request: RequestWithUser,
-    @Body() data: CreateTaskRequest,
+  removeUserFromWorkspace(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { workspaceUserId }: WorkspaceUserIdRequestPathParam,
   ): Promise<void> {
-    // Returning nothing in the response because tasks are paginable and sortable by
-    // different query params, so it doesn't make sense to return a newly created task
-    // in the response if it won't be usable for task list state update in the app
-    return this.workspaceService.createTask({
-      workspaceId: params.workspaceId,
-      createdById: request.user.sub,
-      data,
+    return this.workspaceService.removeUserFromWorkspace({
+      workspaceId,
+      workspaceUserId,
     });
   }
 
@@ -215,6 +201,25 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspaceTasks({
       workspaceId: params.workspaceId,
       query,
+    });
+  }
+
+  @Post(':workspaceId/tasks')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  createTask(
+    @Param() params: WorkspaceIdRequestPathParam,
+    @Req() request: RequestWithUser,
+    @Body() data: CreateTaskRequest,
+  ): Promise<WorkspaceTaskResponse> {
+    // Returning nothing in the response because tasks are paginable and sortable by
+    // different query params, so it doesn't make sense to return a newly created task
+    // in the response if it won't be usable for task list state update in the app
+    return this.workspaceService.createTask({
+      workspaceId: params.workspaceId,
+      createdById: request.user.sub,
+      data,
     });
   }
 
@@ -255,7 +260,7 @@ export class WorkspaceController {
   @Post(':workspaceId/goals')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.CREATED)
   createGoal(
     @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,

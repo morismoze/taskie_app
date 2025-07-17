@@ -17,7 +17,10 @@ class RefreshTokenUseCase {
 
   final _log = Logger('RefreshTokenUseCase');
 
-  /// Refreshes access token via [RefreshTokenRepository] and sets authenticated state in [AuthStateRepository].
+  /// Refreshes access token via [RefreshTokenRepository] and sets authenticated state in [AuthStateRepository],
+  /// meaning it sets the new tokens and, in cases of failure, sets the authenticated state to false for the
+  /// gorouter redirect function to kick in.
+  ///
   /// This is set in the use-case and not in AuthRepository, because repositories shouldn't depend on each other.
   /// And alse because this logic is used in bunch of places, so this acts as a single source of truth.
   Future<Result<void>> refreshAcessToken() async {

@@ -2,55 +2,75 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
-import '../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
+import '../../../data/services/api/workspace/paginable_objectives.dart';
 import '../../../domain/models/user.dart';
+import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
 
 class TasksViewModel extends ChangeNotifier {
   TasksViewModel({
+    required String workspaceId,
     required UserRepository userRepository,
-    required WorkspaceRepository workspaceRepository,
-  }) : _userRepository = userRepository,
-       _workspaceRepository = workspaceRepository {
-    loadUser = Command0(_loadUser)..execute();
-    loadWorkspaces = Command0(_loadWorkspaces)..execute();
+    required WorkspaceTaskRepository workspaceTaskRepository,
+  }) : _activeWorkspaceId = workspaceId,
+       _userRepository = userRepository,
+       _workspaceTaskRepository = workspaceTaskRepository {
+    _workspaceTaskRepository.addListener(_onTasksChanged);
+    _userRepository.addListener(_onUserChanged);
+    loadTasks = Command1(_loadTasks)
+      ..execute((workspaceId, PaginableObjectivesRequestQueryParams(page: 1)));
   }
 
+  final String _activeWorkspaceId;
   final UserRepository _userRepository;
-  final WorkspaceRepository _workspaceRepository;
+  final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('TasksViewModel');
 
-  late Command0 loadUser;
-  late Command0 loadWorkspaces;
+  late Command1<
+    void,
+    (String workspaceId, PaginableObjectivesRequestQueryParams paginable)
+  >
+  loadTasks;
 
-  User? _user;
+  List<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
 
-  User? get user => _user;
+  User? get user => _userRepository.user;
 
-  Future<Result<void>> _loadUser() async {
-    final result = await _userRepository.getUser();
-
-    switch (result) {
-      case Ok():
-        _user = result.value;
-        notifyListeners();
-      case Error():
-        _log.warning('Failed to load user', result.error);
-    }
-
-    return result;
+  void _onTasksChanged() {
+    // Forward the change notification from repository to the viewmodel
+    notifyListeners();
   }
 
-  Future<Result<void>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces();
+  void _onUserChanged() {
+    // Forward the change notification from repository to the viewmodel
+    notifyListeners();
+  }
+
+  Future<Result<void>> _loadTasks(
+    (String workspaceId, PaginableObjectivesRequestQueryParams paginable)
+    details,
+  ) async {
+    final (workspaceId, paginable) = details;
+    final result = await _workspaceTaskRepository.loadTasks(
+      workspaceId: workspaceId,
+      paginable: paginable,
+    );
 
     switch (result) {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to load workspaces', result.error);
+        _log.warning('Failed to load tasks', result.error);
     }
 
     return result;
+  }
+
+  @override
+  void dispose() {
+    _workspaceTaskRepository.removeListener(_onTasksChanged);
+    _userRepository.removeListener(_onUserChanged);
+    super.dispose();
   }
 }

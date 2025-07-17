@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
-import '../../../data/repositories/workspace/workspace_repository.dart';
+import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../domain/use_cases/create_workspace_use_case.dart';
@@ -16,8 +16,8 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   }) : _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
        _createWorkspaceUseCase = createWorkspaceUseCase {
-    loadUser = Command0(_loadUser)..execute();
-    loadWorkspaces = Command0(_loadWorkspaces)..execute();
+    _loadUser();
+    _loadWorkspaces();
     createWorkspace = Command1(_createWorkspace);
   }
 
@@ -26,9 +26,8 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   final CreateWorkspaceUseCase _createWorkspaceUseCase;
   final _log = Logger('CreateWorkspaceScreenViewModel');
 
-  late Command0 loadUser;
-  late Command0 loadWorkspaces;
-  late Command1<void, (String name, String? description)> createWorkspace;
+  /// Returns ID of the newly created workspace
+  late Command1<String, (String name, String? description)> createWorkspace;
 
   User? _user;
 
@@ -39,7 +38,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   List<Workspace> get workspaces => _workspaces;
 
   Future<Result<void>> _loadUser() async {
-    final result = await _userRepository.getUser();
+    final result = await _userRepository.loadUser();
 
     switch (result) {
       case Ok():
@@ -54,7 +53,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.getWorkspaces();
+    final result = await _workspaceRepository.loadWorkspaces();
 
     switch (result) {
       case Ok():
@@ -67,7 +66,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _createWorkspace((String, String?) details) async {
+  Future<Result<String>> _createWorkspace((String, String?) details) async {
     final (name, description) = details;
 
     final resultCreate = await _createWorkspaceUseCase.createWorkspace(

@@ -4,16 +4,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../config/assets.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/entry_viewmodel.dart';
+import '../view_models/entry_screen_viewmodel.dart';
 
 class EntryScreen extends StatefulWidget {
   const EntryScreen({super.key, required this.viewModel});
 
-  final EntryViewModel viewModel;
+  final EntryScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _EntryScreenState();
@@ -29,19 +30,19 @@ class _EntryScreenState extends State<EntryScreen> {
         statusBarColor: Colors.transparent,
       ),
     );
-    widget.viewModel.loadWorkspaces.addListener(_onLoadWorkspacesResult);
+    widget.viewModel.loadInitial.addListener(_onInitialLoad);
   }
 
   @override
   void didUpdateWidget(covariant EntryScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.loadWorkspaces.addListener(_onLoadWorkspacesResult);
-    oldWidget.viewModel.loadWorkspaces.removeListener(_onLoadWorkspacesResult);
+    widget.viewModel.loadInitial.addListener(_onInitialLoad);
+    oldWidget.viewModel.loadInitial.removeListener(_onInitialLoad);
   }
 
   @override
   void dispose() {
-    widget.viewModel.loadWorkspaces.removeListener(_onLoadWorkspacesResult);
+    widget.viewModel.loadInitial.removeListener(_onInitialLoad);
     super.dispose();
   }
 
@@ -72,19 +73,21 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
-  void _onLoadWorkspacesResult() {
-    if (widget.viewModel.loadWorkspaces.completed) {
-      widget.viewModel.loadWorkspaces.clearResult();
-      context.go(Routes.tasksRelative);
+  void _onInitialLoad() {
+    if (widget.viewModel.loadInitial.completed) {
+      final activeWorkspaceId =
+          (widget.viewModel.loadInitial.result as Ok<String?>).value;
+      if (activeWorkspaceId != null) {
+        context.go(Routes.tasks(workspaceId: activeWorkspaceId));
+      }
+      widget.viewModel.loadInitial.clearResult();
     }
 
-    if (widget.viewModel.loadWorkspaces.error) {
-      // If there was an error while loading up workspaces, we show a error
-      // snackbar and redirect user to the login page
-      widget.viewModel.loadWorkspaces.clearResult();
+    if (widget.viewModel.loadInitial.error) {
+      widget.viewModel.loadInitial.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.errorWhileLoadingWorkspaces,
+        message: context.localization.errorOnInitialLoad,
       );
       context.go(Routes.login);
     }

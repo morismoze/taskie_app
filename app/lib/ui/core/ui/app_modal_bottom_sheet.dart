@@ -12,12 +12,16 @@ class AppModalBottomSheet {
   static const _notchLineWidth = 50.0;
   static const _notchLineHeight = 2.0;
 
+  /// The [shrinkWrap] parameter defines if the sheet content should
+  /// take just the needed vertical space. Defaults to true.
   static Future<T?> show<T>({
     required BuildContext context,
     required Widget child,
     bool enableDrag = true,
     bool isDismissable = true,
     bool isDetached = false,
+    bool isScrollControlled = false,
+    bool shrinkWrap = true,
     VoidCallback? onDismiss,
   }) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -31,12 +35,16 @@ class AppModalBottomSheet {
       context: context,
       useSafeArea: true,
       isDismissible: isDismissable,
-      isScrollControlled: isDetached,
+      isScrollControlled: isScrollControlled || isDetached,
       backgroundColor: isDetached ? Colors.transparent : null,
       enableDrag: enableDrag,
       builder: (BuildContext builderContext) {
         return !isDetached
-            ? _createBottomSheetContent(context: builderContext, child: child)
+            ? _createBottomSheetContent(
+                context: builderContext,
+                shrinkWrap: shrinkWrap,
+                child: child,
+              )
             : _createDetachedBottomSheetContent(
                 context: builderContext,
                 child: child,
@@ -47,6 +55,7 @@ class AppModalBottomSheet {
 
   static Widget _createBottomSheetContent({
     required BuildContext context,
+    required bool shrinkWrap,
     required Widget child,
   }) {
     return Container(
@@ -56,7 +65,7 @@ class AppModalBottomSheet {
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
         children: [
           Center(
             child: Padding(
@@ -68,18 +77,32 @@ class AppModalBottomSheet {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              Dimens.paddingHorizontal,
-              Dimens.paddingVertical,
-              Dimens.paddingHorizontal,
-              Platform.isIOS
-                  ? Dimens.paddingVertical
-                  : MediaQuery.of(context).padding.bottom +
-                        Dimens.paddingVertical,
+          if (!shrinkWrap)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  Dimens.paddingHorizontal,
+                  Dimens.paddingVertical / 1.75,
+                  Dimens.paddingHorizontal,
+                  Platform.isIOS
+                      ? Dimens.paddingVertical
+                      : MediaQuery.of(context).padding.bottom,
+                ),
+                child: child,
+              ),
+            )
+          else
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                Dimens.paddingHorizontal,
+                Dimens.paddingVertical / 1.75,
+                Dimens.paddingHorizontal,
+                Platform.isIOS
+                    ? Dimens.paddingVertical
+                    : MediaQuery.of(context).padding.bottom,
+              ),
+              child: child,
             ),
-            child: child,
-          ),
         ],
       ),
     );
