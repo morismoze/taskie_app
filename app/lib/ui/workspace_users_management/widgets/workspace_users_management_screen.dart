@@ -104,6 +104,8 @@ class _WorkspaceUsersManagementScreenState
                         final workspaceUser = widget.viewModel.users[index];
 
                         return WorkspaceUserTile(
+                          activeWorkspaceId: widget.viewModel.activeWorkspaceId,
+                          id: workspaceUser.id,
                           firstName: workspaceUser.firstName,
                           lastName: workspaceUser.lastName,
                           role: workspaceUser.role,

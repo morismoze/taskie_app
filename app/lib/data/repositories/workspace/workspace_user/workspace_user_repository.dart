@@ -16,4 +16,9 @@ abstract class WorkspaceUserRepository extends ChangeNotifier {
     required String firstName,
     required String lastName,
   });
+
+  Result<WorkspaceUser> loadWorkspaceUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+  });
 }

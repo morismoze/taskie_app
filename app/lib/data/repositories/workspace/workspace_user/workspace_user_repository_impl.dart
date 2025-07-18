@@ -100,4 +100,15 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       return Result.error(e);
     }
   }
+
+  @override
+  Result<WorkspaceUser> loadWorkspaceUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) {
+    final workspaceUserDetails = _cachedWorkspaceUsersList!.firstWhere(
+      (user) => user.id == workspaceUserId,
+    );
+    return Result.ok(workspaceUserDetails);
+  }
 }

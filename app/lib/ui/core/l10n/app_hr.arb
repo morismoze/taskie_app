@@ -71,6 +71,7 @@
   "workspaceUsersManagementCreateVirtualUserSubmit": "Kreiraj virtualnog korisnika",
   "workspaceUsersManagementCreateVirtualUserSuccess": "Uspješno ste kreirali virtualnog korisnika",
   "workspaceUsersManagementCreateVirtualUserError": "Uh-oh! Došlo je do problema prilikom kreiranja virtualnog korisnika",
+  "workspaceUsersManagementUserDetails": "Detalji korisnika radnog prostora",
   "workspaceUserFirstNameLabel": "Ime",
   "workspaceUserLastNameLabel": "Prezime",
   "orSeparator": "ILI"

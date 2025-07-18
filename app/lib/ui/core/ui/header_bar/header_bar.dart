@@ -30,7 +30,7 @@ class HeaderBar extends StatelessWidget {
             const AppHeaderActionButton(iconData: FontAwesomeIcons.arrowLeft),
             if (actions == null) const SizedBox(width: 30),
             Text(title, style: Theme.of(context).textTheme.titleLarge),
-            if (actions != null) Row(spacing: 4, children: actions!),
+            if (actions != null) Row(spacing: 8, children: actions!),
           ],
         ),
       ),

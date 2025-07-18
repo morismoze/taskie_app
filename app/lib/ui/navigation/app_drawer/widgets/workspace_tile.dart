@@ -98,7 +98,7 @@ class WorkspaceTile extends StatelessWidget {
               context.push(Routes.workspaceUsers(workspaceId: id));
             },
             label: context.localization.appDrawerManageUsers,
-            leadingIcon: FontAwesomeIcons.solidUser,
+            leadingIcon: FontAwesomeIcons.userGroup,
           ),
           WorkspaceLeaveButton(viewModel: viewModel, workspaceId: workspaceId),
         ],

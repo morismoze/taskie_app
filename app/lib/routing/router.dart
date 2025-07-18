@@ -25,18 +25,20 @@ import '../ui/workspace_create_initial/view_models/create_workspace_initial_scre
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
 import '../ui/workspace_settings/view_models/workspace_settings_screen_viewmodel.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
-import '../ui/workspace_users_create/view_models/create_workspace_user_screen_viewmodel.dart';
-import '../ui/workspace_users_create/widgets/create_workspace_user_screen.dart';
 import '../ui/workspace_users_management/view_models/workspace_users_management_screen_viewmodel.dart';
 import '../ui/workspace_users_management/widgets/workspace_users_management_screen.dart';
+import '../ui/workspace_users_management_create/view_models/create_workspace_user_screen_viewmodel.dart';
+import '../ui/workspace_users_management_create/widgets/create_workspace_user_screen.dart';
 import '../ui/workspace_users_management_guide/widgets/workspace_users_management_guide_screen.dart';
+import '../ui/workspace_users_management_user_details/view_models/workspace_user_details_screen_view_model.dart';
+import '../ui/workspace_users_management_user_details/widgets/workspace_user_details_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
-final GlobalKey<StatefulNavigationShellState> _shellNavigatorKey =
-    GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
+    GlobalKey<StatefulNavigationShellState>(debugLabel: 'workspaceIdshell');
 
 /// Top go_router entry point.
 ///
@@ -50,15 +52,22 @@ final GlobalKey<StatefulNavigationShellState> _shellNavigatorKey =
 ///   /create/initial
 ///   /create
 ///   /:workspaceId
-///     /ShellRoute
-///       /leaderboard
-///       /invite
-///       /tasks
-///         /create (on root navigator)
-///         /:id
-///       /goals
-///         /create (on root navigator)
-///         /:id
+///     /StatefulShellRoute
+///       /StatefulShelBranch
+///         /tasks
+///           /create (on root navigator)
+///           /:id (on root navigator)
+///       /StatefulShelBranch
+///         /leaderboard
+///       /StatefulShelBranch
+///         /goals
+///           /create (on root navigator)
+///           /:id (on root navigator)
+///     /users
+///       /create
+///       /guide
+///     /settings
+/// /preferences
 GoRouter router({
   required AuthStateRepository authStateRepository,
   required WorkspaceRepository workspaceRepository,
@@ -124,7 +133,7 @@ GoRouter router({
           builder: (_, _) => const SizedBox.shrink(),
           routes: [
             StatefulShellRoute(
-              key: _shellNavigatorKey,
+              key: _mainStatefulShellNavigatorKey,
               navigatorContainerBuilder: (context, navigationShell, children) {
                 // IndexedStack is basically a stack which has all the StatefulShellBranch
                 // and their subroutes in it, and on top of the stack will be a route defined
@@ -287,6 +296,22 @@ GoRouter router({
                   path: Routes.workspaceUsersGuideRelative,
                   builder: (context, state) {
                     return const WorkspaceUsersManagementGuideScreen();
+                  },
+                ),
+                GoRoute(
+                  path: ':workspaceUserId',
+                  builder: (context, state) {
+                    final workspaceId = state.pathParameters['workspaceId']!;
+                    final workspaceUserId =
+                        state.pathParameters['workspaceUserId']!;
+
+                    return WorkspaceUserDetailsScreen(
+                      viewModel: WorkspaceUserDetailsScreenViewModel(
+                        workspaceId: workspaceId,
+                        workspaceUserId: workspaceUserId,
+                        workspaceUserRepository: context.read(),
+                      ),
+                    );
                   },
                 ),
               ],

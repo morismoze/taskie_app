@@ -71,6 +71,7 @@
   "workspaceUsersManagementCreateVirtualUserSubmit": "Create virtual user",
   "workspaceUsersManagementCreateVirtualUserSuccess": "Successfully created virtual user",
   "workspaceUsersManagementCreateVirtualUserError": "Uh-oh! We've had some trouble creating virtual user",
+  "workspaceUsersManagementUserDetails": "Workspace user details",
   "workspaceUserFirstNameLabel": "First name",
   "workspaceUserLastNameLabel": "Last name",
   "orSeparator": "OR"

@@ -256,6 +256,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble creating virtual user';
 
   @override
+  String get workspaceUsersManagementUserDetails => 'Workspace user details';
+
+  @override
   String get workspaceUserFirstNameLabel => 'First name';
 
   @override

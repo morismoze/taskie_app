@@ -257,6 +257,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom kreiranja virtualnog korisnika';
 
   @override
+  String get workspaceUsersManagementUserDetails =>
+      'Detalji korisnika radnog prostora';
+
+  @override
   String get workspaceUserFirstNameLabel => 'Ime';
 
   @override

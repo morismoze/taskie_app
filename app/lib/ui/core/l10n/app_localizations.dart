@@ -530,6 +530,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble creating virtual user'**
   String get workspaceUsersManagementCreateVirtualUserError;
 
+  /// No description provided for @workspaceUsersManagementUserDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace user details'**
+  String get workspaceUsersManagementUserDetails;
+
   /// No description provided for @workspaceUserFirstNameLabel.
   ///
   /// In en, this message translates to:

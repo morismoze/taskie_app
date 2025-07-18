@@ -27,7 +27,10 @@ class WorkspaceInviteSection extends StatelessWidget {
           listenable: controller,
           builder: (context, child) {
             if (controller.text.isEmpty) {
-              return const ActivityIndicator(radius: 11);
+              return ActivityIndicator(
+                radius: 11,
+                color: Theme.of(context).colorScheme.primary,
+              );
             } else {
               return AppTextField(
                 controller: controller,
