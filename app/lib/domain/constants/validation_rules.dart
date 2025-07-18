@@ -8,4 +8,7 @@ abstract final class ValidationRules {
   static const int taskDescriptionMaxLength = 250;
   static const int taskMinAssigneesCount = 1;
   static const int taskMaxAssigneesCount = 10;
+
+  static const int workspaceUserNameMinLength = 2;
+  static const int workspaceUserNameMaxLength = 50;
 }

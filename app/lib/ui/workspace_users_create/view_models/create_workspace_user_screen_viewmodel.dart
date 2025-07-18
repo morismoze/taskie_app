@@ -22,7 +22,8 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
   final WorkspaceUserRepository _workspaceUserRepository;
   final _log = Logger('CreateWorkspaceUserScreenViewModel');
 
-  late Command0 createInviteLink;
+  /// Returns invite link
+  late Command0<String> createInviteLink;
   late Command1<void, (String, String)> createVirtualUser;
 
   String get activeWorkspaceId => _activeWorkspaceId;
@@ -31,23 +32,18 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
 
   String? get inviteLink => _inviteLink;
 
-  void _onWorkspaceUsersChanged() {
-    notifyListeners();
-  }
-
-  Future<Result<void>> _createInviteLink() async {
+  Future<Result<String>> _createInviteLink() async {
     final result = await _workspaceInviteRepository.createWorkspaceInviteLink(
       _activeWorkspaceId,
     );
 
     switch (result) {
       case Ok():
-        _inviteLink = result.value;
+        break;
       case Error():
         _log.warning('Failed to create workspace invite link', result.error);
     }
 
-    notifyListeners();
     return result;
   }
 
@@ -69,11 +65,5 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
     }
 
     return result;
-  }
-
-  @override
-  void dispose() {
-    _workspaceUserRepository.removeListener(_onWorkspaceUsersChanged);
-    super.dispose();
   }
 }

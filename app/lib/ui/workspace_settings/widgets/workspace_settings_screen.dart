@@ -31,10 +31,8 @@ class _WorkspaceSettingsScreenState extends State<WorkspaceSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SizedBox.expand(
-        child: BlurredCirclesBackground(
-          child: SafeArea(child: Text('workspace settings')),
-        ),
+      body: BlurredCirclesBackground(
+        child: SafeArea(child: Text('workspace settings')),
       ),
     );
   }

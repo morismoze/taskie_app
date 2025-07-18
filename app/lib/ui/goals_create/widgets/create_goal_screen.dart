@@ -31,10 +31,8 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SizedBox.expand(
-        child: BlurredCirclesBackground(
-          child: SafeArea(child: Text('create goal')),
-        ),
+      body: BlurredCirclesBackground(
+        child: SafeArea(child: Text('create goal')),
       ),
     );
   }

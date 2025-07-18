@@ -37,35 +37,33 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: BlurredCirclesBackground(
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: Dimens.of(context).paddingScreenHorizontal,
-              right: Dimens.of(context).paddingScreenHorizontal,
-              bottom: kAppBottomNavigationBarHeight + Dimens.paddingVertical,
-            ),
-            child: Column(
-              children: [
-                ListenableBuilder(
-                  listenable: widget.viewModel,
-                  builder: (builderContext, _) {
-                    if (widget.viewModel.user != null) {
-                      return TasksHeader(viewModel: widget.viewModel);
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-                ListenableBuilder(
-                  listenable: widget.viewModel,
-                  builder: (builderContext, _) {
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
-            ),
+    return BlurredCirclesBackground(
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: Dimens.of(context).paddingScreenHorizontal,
+            right: Dimens.of(context).paddingScreenHorizontal,
+            bottom: kAppBottomNavigationBarHeight + Dimens.paddingVertical,
+          ),
+          child: Column(
+            children: [
+              ListenableBuilder(
+                listenable: widget.viewModel,
+                builder: (builderContext, _) {
+                  if (widget.viewModel.user != null) {
+                    return TasksHeader(viewModel: widget.viewModel);
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              ListenableBuilder(
+                listenable: widget.viewModel,
+                builder: (builderContext, _) {
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
         ),
       ),

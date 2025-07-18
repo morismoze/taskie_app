@@ -106,10 +106,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble changing workspace';
 
   @override
-  String get appDrawerEditWorkspace => 'Edit workspace setttings';
+  String get appDrawerEditWorkspace => 'Workspace setttings';
 
   @override
-  String get appDrawerManageUsers => 'Manage users';
+  String get appDrawerManageUsers => 'Workspace users';
 
   @override
   String get appDrawerLeaveWorkspace => 'Leave workspace';
@@ -182,5 +182,85 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceUsersManagement => 'Users management';
 
   @override
+  String get workspaceUsersManagementUsersGuideMainTitle =>
+      'About Workspace Users';
+
+  @override
+  String get workspaceUsersManagementUsersGuideIntroBody =>
+      'All participants in a workspace are categorized into two main types: Team Members (who have their own app account) and Virtual Profiles (which are placeholders managed by Managers). Each user is then assigned a role that defines their permissions.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideTeamMembersTitle =>
+      'Team Members (Real Users)';
+
+  @override
+  String get workspaceUsersManagementUsersGuideTeamMembersBody =>
+      'Team Members are users with their own account who can log in to the application. They either create a workspace (becoming a Manager automatically) or join one using an invitation link (becoming a Member automatically). The roles of Team Members can be changed by a Manager.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideVirtualProfilesTitle =>
+      'Virtual Profiles';
+
+  @override
+  String get workspaceUsersManagementUsersGuideVirtualProfilesBody =>
+      'Virtual Profiles are placeholders for individuals who do not have an app account, such as children. They cannot log in. They can only be created by Managers and are always assigned the \'Member\' role, which cannot be changed.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideRolesTitle =>
+      'User Roles: Manager and Member';
+
+  @override
+  String get workspaceUsersManagementUsersGuideRolesBody =>
+      'Each user in the workspace is assigned one of two roles. The user who creates a workspace automatically becomes a Manager. Users who join via an invite link are automatically assigned the Member role.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideManagerRoleTitle =>
+      'Manager Role';
+
+  @override
+  String get workspaceUsersManagementUsersGuideManagerRoleBody =>
+      'Managers have full administrative and management control over everything in the workspace. They can invite Team Members, create Virtual Profiles, remove any user from the workspace, and change the roles of other Team Members (including promoting a Member to a Manager or demoting another Manager).';
+
+  @override
+  String get workspaceUsersManagementUsersGuideMemberRoleTitle => 'Member Role';
+
+  @override
+  String get workspaceUsersManagementUsersGuideMemberRoleBody =>
+      'A Team Member with the \'Member\' role has read-only access, allowing them to view all tasks, goals, and other content, but they cannot manage them. In contrast, a Virtual Profile, which always has this role, cannot log in and serves only as a placeholder for task assignment by a Manager.';
+
+  @override
   String get workspaceUsersManagementCreate => 'New workspace user';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteDescription =>
+      'Invite new users to this workspace by sending them the invite link below:';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteLabel =>
+      'Workspace invite link';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserDescription =>
+      'Create a new virtual user:';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserSubmit =>
+      'Create virtual user';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserSuccess =>
+      'Successfully created virtual user';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserError =>
+      'Uh-oh! We\'ve had some trouble creating virtual user';
+
+  @override
+  String get workspaceUserFirstNameLabel => 'First name';
+
+  @override
+  String get workspaceUserLastNameLabel => 'Last name';
+
+  @override
+  String get orSeparator => 'OR';
 }

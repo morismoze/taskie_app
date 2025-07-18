@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_text_form_field.dart';
+import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../view_models/create_workspace_initial_screen_viewmodel.dart';
 
 class CreateWorkspaceInitialForm extends StatefulWidget {

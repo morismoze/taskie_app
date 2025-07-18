@@ -46,56 +46,57 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox.expand(
-        child: BlurredCirclesBackground(
-          child: Column(
-            children: [
-              HeaderBar(
-                title: context.localization.createNewTaskTitle,
-                actions: [
-                  AppHeaderActionButton(
-                    iconData: FontAwesomeIcons.house,
-                    onTap: () {
-                      context.go(
-                        Routes.tasks(
-                          workspaceId: widget.viewModel.activeWorkspaceId,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              // Wrapped in Expanded because SingleChildScrollView is unbounded,
-              // so Column doesn't know how share the space between HeaderBar and
-              // SingleChildScrollView, so we need to explicitly tell Column that
-              // SingleChildScrollView is the widget which should take the most entire
-              // space left after HeaderBar is painted.
-              ListenableBuilder(
-                listenable: widget.viewModel.loadWorkspaceMembers,
-                builder: (builderContext, _) {
-                  if (widget.viewModel.loadWorkspaceMembers.running) {
-                    return Expanded(
-                      child: ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(context).colorScheme.primary,
+      body: BlurredCirclesBackground(
+        child: Column(
+          children: [
+            HeaderBar(
+              title: context.localization.createNewTaskTitle,
+              actions: [
+                AppHeaderActionButton(
+                  iconData: FontAwesomeIcons.house,
+                  onTap: () {
+                    context.go(
+                      Routes.tasks(
+                        workspaceId: widget.viewModel.activeWorkspaceId,
                       ),
                     );
-                  }
+                  },
+                ),
+              ],
+            ),
+            // Wrapped in Expanded because SingleChildScrollView is unbounded,
+            // so Column doesn't know how share the space between HeaderBar and
+            // SingleChildScrollView, so we need to explicitly tell Column that
+            // SingleChildScrollView is the widget which should take the most entire
+            // space left after HeaderBar is painted.
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: Dimens.of(context).paddingScreenHorizontal,
+                  right: Dimens.of(context).paddingScreenHorizontal,
+                  bottom: Dimens.paddingVertical,
+                ),
+                child: ListenableBuilder(
+                  listenable: widget.viewModel.loadWorkspaceMembers,
+                  builder: (builderContext, child) {
+                    if (widget.viewModel.loadWorkspaceMembers.running) {
+                      return ActivityIndicator(
+                        radius: 16,
+                        color: Theme.of(builderContext).colorScheme.primary,
+                      );
+                    }
 
-                  if (widget.viewModel.loadWorkspaceMembers.error) {
-                    // Usage of a generic error prompt widget
-                  }
+                    if (widget.viewModel.loadWorkspaceMembers.error) {
+                      // Usage of a generic error prompt widget
+                    }
 
-                  if (widget.viewModel.workspaceMembers.isEmpty) {
-                    return Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: Dimens.paddingVertical,
-                          left: Dimens.of(context).paddingScreenHorizontal,
-                          right: Dimens.of(context).paddingScreenHorizontal,
-                          bottom: Dimens.paddingVertical,
-                        ),
-                        child: Column(
+                    return child!;
+                  },
+                  child: ListenableBuilder(
+                    listenable: widget.viewModel,
+                    builder: (inderBuilderContext, _) {
+                      if (widget.viewModel.workspaceMembers.isEmpty) {
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -120,28 +121,21 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    );
-                  }
+                        );
+                      }
 
-                  return Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.only(
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.only(
                           top: Dimens.paddingVertical,
-                          left: Dimens.of(context).paddingScreenHorizontal,
-                          right: Dimens.of(context).paddingScreenHorizontal,
-                          bottom: Dimens.paddingVertical,
                         ),
                         child: CreateTaskForm(viewModel: widget.viewModel),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -15,10 +15,10 @@ import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
-import '../ui/task_create/view_models/create_task_screen_viewmodel.dart';
-import '../ui/task_create/widgets/create_task_screen.dart';
 import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
+import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
+import '../ui/tasks_create/widgets/create_task_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
@@ -29,6 +29,7 @@ import '../ui/workspace_users_create/view_models/create_workspace_user_screen_vi
 import '../ui/workspace_users_create/widgets/create_workspace_user_screen.dart';
 import '../ui/workspace_users_management/view_models/workspace_users_management_screen_viewmodel.dart';
 import '../ui/workspace_users_management/widgets/workspace_users_management_screen.dart';
+import '../ui/workspace_users_management_guide/widgets/workspace_users_management_guide_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -280,6 +281,12 @@ GoRouter router({
                         workspaceUserRepository: context.read(),
                       ),
                     );
+                  },
+                ),
+                GoRoute(
+                  path: Routes.workspaceUsersGuideRelative,
+                  builder: (context, state) {
+                    return const WorkspaceUsersManagementGuideScreen();
                   },
                 ),
               ],

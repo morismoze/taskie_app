@@ -11,7 +11,7 @@ abstract class WorkspaceUserRepository extends ChangeNotifier {
     bool forceFetch,
   });
 
-  Future<Result<List<WorkspaceUser>>> createVirtualMember({
+  Future<Result<WorkspaceUser>> createVirtualMember({
     required String workspaceId,
     required String firstName,
     required String lastName,

@@ -9,7 +9,7 @@ class BlurredCirclesBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (Stack(
+    return Stack(
       children: [
         Positioned(
           top: -50,
@@ -58,6 +58,6 @@ class BlurredCirclesBackground extends StatelessWidget {
         ),
         child,
       ],
-    ));
+    );
   }
 }

@@ -35,7 +35,7 @@ class WorkspaceUserApiService {
     }
   }
 
-  Future<Result<List<WorkspaceUserResponse>>> createVirtualUser({
+  Future<Result<WorkspaceUserResponse>> createVirtualUser({
     required WorkspaceIdPathParam workspaceId,
     required CreateVirtualWorkspaceUserRequest payload,
   }) async {
@@ -45,13 +45,9 @@ class WorkspaceUserApiService {
         data: payload,
       );
 
-      final apiResponse = ApiResponse<List<WorkspaceUserResponse>>.fromJson(
+      final apiResponse = ApiResponse<WorkspaceUserResponse>.fromJson(
         response.data,
-        (jsonList) => (jsonList as List)
-            .map<WorkspaceUserResponse>(
-              (listItem) => WorkspaceUserResponse.fromJson(listItem),
-            )
-            .toList(),
+        (json) => WorkspaceUserResponse.fromJson(json as Map<String, dynamic>),
       );
 
       return Result.ok(apiResponse.data!);

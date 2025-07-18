@@ -22,21 +22,14 @@ class AppAvatar extends StatelessWidget {
           : null,
       backgroundColor: backgroundColor,
       child: imageUrl == null
-          ? Padding(
-              padding: const EdgeInsets.all(4),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
-                child: Text(
-                  firstNameFirstLetter,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.displayMedium!.copyWith(color: AppColors.white1),
-                  textAlign: TextAlign.center,
-                ),
+          ? Text(
+              firstNameFirstLetter,
+              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                color: AppColors.white1,
+                fontWeight: FontWeight.normal,
               ),
             )
-          : const SizedBox.shrink(),
+          : null,
     );
   }
 }

@@ -62,7 +62,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   }
 
   @override
-  Future<Result<List<WorkspaceUser>>> createVirtualMember({
+  Future<Result<WorkspaceUser>> createVirtualMember({
     required String workspaceId,
     required String firstName,
     required String lastName,
@@ -77,25 +77,23 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       );
 
       switch (result) {
-        case Ok<List<WorkspaceUserResponse>>():
-          final mappedData = result.value
-              .map(
-                (workspaceUser) => WorkspaceUser(
-                  id: workspaceUser.id,
-                  firstName: workspaceUser.firstName,
-                  lastName: workspaceUser.lastName,
-                  role: workspaceUser.role,
-                  email: workspaceUser.email,
-                  profileImageUrl: workspaceUser.profileImageUrl,
-                ),
-              )
-              .toList();
+        case Ok<WorkspaceUserResponse>():
+          final workspaceUser = result.value;
 
-          _cachedWorkspaceUsersList = mappedData;
+          final mappedData = WorkspaceUser(
+            id: workspaceUser.id,
+            firstName: workspaceUser.firstName,
+            lastName: workspaceUser.lastName,
+            role: workspaceUser.role,
+            email: workspaceUser.email,
+            profileImageUrl: workspaceUser.profileImageUrl,
+          );
+
+          _cachedWorkspaceUsersList!.add(mappedData);
           notifyListeners();
 
           return Result.ok(mappedData);
-        case Error<List<WorkspaceUserResponse>>():
+        case Error<WorkspaceUserResponse>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

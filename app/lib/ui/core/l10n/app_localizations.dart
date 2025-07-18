@@ -275,13 +275,13 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerEditWorkspace.
   ///
   /// In en, this message translates to:
-  /// **'Edit workspace setttings'**
+  /// **'Workspace setttings'**
   String get appDrawerEditWorkspace;
 
   /// No description provided for @appDrawerManageUsers.
   ///
   /// In en, this message translates to:
-  /// **'Manage users'**
+  /// **'Workspace users'**
   String get appDrawerManageUsers;
 
   /// No description provided for @appDrawerLeaveWorkspace.
@@ -416,11 +416,137 @@ abstract class AppLocalizations {
   /// **'Users management'**
   String get workspaceUsersManagement;
 
+  /// No description provided for @workspaceUsersManagementUsersGuideMainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Workspace Users'**
+  String get workspaceUsersManagementUsersGuideMainTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All participants in a workspace are categorized into two main types: Team Members (who have their own app account) and Virtual Profiles (which are placeholders managed by Managers). Each user is then assigned a role that defines their permissions.'**
+  String get workspaceUsersManagementUsersGuideIntroBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideTeamMembersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Members (Real Users)'**
+  String get workspaceUsersManagementUsersGuideTeamMembersTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideTeamMembersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Members are users with their own account who can log in to the application. They either create a workspace (becoming a Manager automatically) or join one using an invitation link (becoming a Member automatically). The roles of Team Members can be changed by a Manager.'**
+  String get workspaceUsersManagementUsersGuideTeamMembersBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideVirtualProfilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual Profiles'**
+  String get workspaceUsersManagementUsersGuideVirtualProfilesTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideVirtualProfilesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual Profiles are placeholders for individuals who do not have an app account, such as children. They cannot log in. They can only be created by Managers and are always assigned the \'Member\' role, which cannot be changed.'**
+  String get workspaceUsersManagementUsersGuideVirtualProfilesBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideRolesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'User Roles: Manager and Member'**
+  String get workspaceUsersManagementUsersGuideRolesTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideRolesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each user in the workspace is assigned one of two roles. The user who creates a workspace automatically becomes a Manager. Users who join via an invite link are automatically assigned the Member role.'**
+  String get workspaceUsersManagementUsersGuideRolesBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideManagerRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager Role'**
+  String get workspaceUsersManagementUsersGuideManagerRoleTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideManagerRoleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Managers have full administrative and management control over everything in the workspace. They can invite Team Members, create Virtual Profiles, remove any user from the workspace, and change the roles of other Team Members (including promoting a Member to a Manager or demoting another Manager).'**
+  String get workspaceUsersManagementUsersGuideManagerRoleBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideMemberRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Role'**
+  String get workspaceUsersManagementUsersGuideMemberRoleTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideMemberRoleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A Team Member with the \'Member\' role has read-only access, allowing them to view all tasks, goals, and other content, but they cannot manage them. In contrast, a Virtual Profile, which always has this role, cannot log in and serves only as a placeholder for task assignment by a Manager.'**
+  String get workspaceUsersManagementUsersGuideMemberRoleBody;
+
   /// No description provided for @workspaceUsersManagementCreate.
   ///
   /// In en, this message translates to:
   /// **'New workspace user'**
   String get workspaceUsersManagementCreate;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite new users to this workspace by sending them the invite link below:'**
+  String get workspaceUsersManagementCreateWorkspaceInviteDescription;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace invite link'**
+  String get workspaceUsersManagementCreateWorkspaceInviteLabel;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new virtual user:'**
+  String get workspaceUsersManagementCreateVirtualUserDescription;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Create virtual user'**
+  String get workspaceUsersManagementCreateVirtualUserSubmit;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully created virtual user'**
+  String get workspaceUsersManagementCreateVirtualUserSuccess;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble creating virtual user'**
+  String get workspaceUsersManagementCreateVirtualUserError;
+
+  /// No description provided for @workspaceUserFirstNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'First name'**
+  String get workspaceUserFirstNameLabel;
+
+  /// No description provided for @workspaceUserLastNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name'**
+  String get workspaceUserLastNameLabel;
+
+  /// No description provided for @orSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get orSeparator;
 }
 
 class _AppLocalizationsDelegate

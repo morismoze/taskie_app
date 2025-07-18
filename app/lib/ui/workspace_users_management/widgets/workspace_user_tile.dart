@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../core/theme/colors.dart';
-import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
 
 class WorkspaceUserTile extends StatelessWidget {
@@ -32,9 +31,6 @@ class WorkspaceUserTile extends StatelessWidget {
         : AppColors.green1;
 
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: Dimens.of(context).paddingScreenHorizontal,
-      ),
       decoration: BoxDecoration(
         color: AppColors.white1,
         borderRadius: BorderRadius.circular(12),
@@ -53,6 +49,7 @@ class WorkspaceUserTile extends StatelessWidget {
         title: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 4,
           children: [
             if (email != null)
               Text(
@@ -63,9 +60,10 @@ class WorkspaceUserTile extends StatelessWidget {
               ),
             Text(
               fullName,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+                height: 1,
+              ),
             ),
           ],
         ),
