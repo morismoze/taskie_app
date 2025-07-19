@@ -5,41 +5,40 @@ import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../routing/routes.dart';
 import '../../core/theme/colors.dart';
 import '../../core/ui/app_avatar.dart';
+import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import 'workspace_user_tile_trailing.dart';
 
 class WorkspaceUserTile extends StatelessWidget {
   const WorkspaceUserTile({
     super.key,
-    required this.activeWorkspaceId,
+    required this.viewModel,
     required this.id,
     required this.firstName,
     required this.lastName,
     required this.role,
+    required this.isCurrentUser,
     this.email,
     this.profileImageUrl,
   });
 
-  final String activeWorkspaceId;
+  final WorkspaceUsersScreenManagementViewModel viewModel;
   final String id;
   final String firstName;
   final String lastName;
   final WorkspaceRole role;
+  final bool isCurrentUser;
   final String? email;
   final String? profileImageUrl;
 
   @override
   Widget build(BuildContext context) {
     final fullName = '$firstName $lastName';
-    final roleChipBackgroundColor = role == WorkspaceRole.manager
-        ? AppColors.purple1Light
-        : AppColors.green1Light;
-    final roleChipTextColor = role == WorkspaceRole.manager
-        ? AppColors.purple1
-        : AppColors.green1;
 
-    return InkWell(
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () => context.push(
         Routes.workspaceUsersWithId(
-          workspaceId: activeWorkspaceId,
+          workspaceId: viewModel.activeWorkspaceId,
           workspaceUserId: id,
         ),
       ),
@@ -83,17 +82,13 @@ class WorkspaceUserTile extends StatelessWidget {
               ),
             ],
           ),
-          trailing: Chip(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-            side: BorderSide.none,
-            backgroundColor: roleChipBackgroundColor,
-            label: Text(
-              role.value,
-              style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: roleChipTextColor,
-              ),
-            ),
+          trailing: WorkspaceUserTileTrailing(
+            viewModel: viewModel,
+            workspaceUserId: id,
+            role: role,
+            fullName: fullName,
+            profileImageUrl: profileImageUrl,
+            isCurrentUser: isCurrentUser,
           ),
         ),
       ),

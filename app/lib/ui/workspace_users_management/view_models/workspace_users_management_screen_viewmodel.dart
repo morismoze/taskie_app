@@ -1,28 +1,38 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
+import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
 import '../../../data/services/api/user/models/response/user_response.dart';
+import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
 class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
   WorkspaceUsersScreenManagementViewModel({
     required String workspaceId,
+    required UserRepository userRepository,
     required WorkspaceUserRepository workspaceUserRepository,
   }) : _activeWorkspaceId = workspaceId,
+       _userRepository = userRepository,
        _workspaceUserRepository = workspaceUserRepository {
+    _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
+    deleteWorkspaceUser = Command1(_deleteWorkspaceUser);
   }
 
   final String _activeWorkspaceId;
+  final UserRepository _userRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
   final _log = Logger('WorkspaceUsersScreenManagementViewModel');
 
   late Command1<void, String> loadWorkspaceMembers;
+  late Command1<void, (String, String)> deleteWorkspaceUser;
 
   String get activeWorkspaceId => _activeWorkspaceId;
+
+  User get currentUser => _userRepository.user!;
 
   List<WorkspaceUser> get users {
     final workspaceUsers = _workspaceUserRepository.users;
@@ -68,6 +78,10 @@ class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
     return sortedUsers;
   }
 
+  void _onWorkspaceUsersChanged() {
+    notifyListeners();
+  }
+
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
       workspaceId: workspaceId,
@@ -81,5 +95,30 @@ class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  Future<Result<void>> _deleteWorkspaceUser(
+    (String workspaceId, String workspaceUserId) details,
+  ) async {
+    final (String workspaceId, String workspaceUserId) = details;
+    final result = await _workspaceUserRepository.deleteWorkspaceUser(
+      workspaceId: workspaceId,
+      workspaceUserId: workspaceUserId,
+    );
+
+    switch (result) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to delete workspace user', result.error);
+    }
+
+    return result;
+  }
+
+  @override
+  void dispose() {
+    _workspaceUserRepository.removeListener(_onWorkspaceUsersChanged);
+    super.dispose();
   }
 }

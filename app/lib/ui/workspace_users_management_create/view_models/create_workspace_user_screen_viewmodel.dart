@@ -28,10 +28,6 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  String? _inviteLink;
-
-  String? get inviteLink => _inviteLink;
-
   Future<Result<String>> _createInviteLink() async {
     final result = await _workspaceInviteRepository.createWorkspaceInviteLink(
       _activeWorkspaceId,

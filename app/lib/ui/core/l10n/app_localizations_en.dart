@@ -112,6 +112,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerManageUsers => 'Workspace users';
 
   @override
+  String get appDrawerNotActiveWorkspace =>
+      'To see additional options, make this workspace active by clicking on its icon in the top list.';
+
+  @override
   String get appDrawerLeaveWorkspace => 'Leave workspace';
 
   @override
@@ -180,6 +184,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagement => 'Users management';
+
+  @override
+  String get workspaceUsersManagementDeleteUser => 'Remove user from workspace';
+
+  @override
+  String get workspaceUsersManagementDeleteUserModalMessage =>
+      'Are you sure you want to remove this workspace user?';
+
+  @override
+  String get workspaceUsersManagementDeleteUserModalCta => 'Remove';
+
+  @override
+  String get workspaceUsersManagementDeleteUserSuccess =>
+      'Successfully removed user from the workspace';
+
+  @override
+  String get workspaceUsersManagementDeleteUserError =>
+      'Uh-oh! We\'ve had some trouble removing user from the workspace';
 
   @override
   String get workspaceUsersManagementUsersGuideMainTitle =>

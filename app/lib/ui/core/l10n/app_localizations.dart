@@ -284,6 +284,12 @@ abstract class AppLocalizations {
   /// **'Workspace users'**
   String get appDrawerManageUsers;
 
+  /// No description provided for @appDrawerNotActiveWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'To see additional options, make this workspace active by clicking on its icon in the top list.'**
+  String get appDrawerNotActiveWorkspace;
+
   /// No description provided for @appDrawerLeaveWorkspace.
   ///
   /// In en, this message translates to:
@@ -415,6 +421,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Users management'**
   String get workspaceUsersManagement;
+
+  /// No description provided for @workspaceUsersManagementDeleteUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove user from workspace'**
+  String get workspaceUsersManagementDeleteUser;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove this workspace user?'**
+  String get workspaceUsersManagementDeleteUserModalMessage;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserModalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get workspaceUsersManagementDeleteUserModalCta;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully removed user from the workspace'**
+  String get workspaceUsersManagementDeleteUserSuccess;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble removing user from the workspace'**
+  String get workspaceUsersManagementDeleteUserError;
 
   /// No description provided for @workspaceUsersManagementUsersGuideMainTitle.
   ///

@@ -139,14 +139,14 @@ class _AppDrawerState extends State<AppDrawer> {
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          context.pop(); // Close modal
+          context.pop(); // Close dialog
           break;
         default:
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          context.pop(); // Close modal
+          context.pop(); // Close dialog
       }
     }
   }

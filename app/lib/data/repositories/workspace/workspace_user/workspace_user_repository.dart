@@ -21,4 +21,11 @@ abstract class WorkspaceUserRepository extends ChangeNotifier {
     required String workspaceId,
     required String workspaceUserId,
   });
+
+  Future<Result<void>> deleteWorkspaceUser({
+    required String workspaceId,
+    required String workspaceUserId,
+  });
+
+  void purgeWorkspaceUsersCache();
 }

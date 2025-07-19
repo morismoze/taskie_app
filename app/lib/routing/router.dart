@@ -144,45 +144,39 @@ GoRouter router({
                   children: children,
                 );
               },
-              builder:
-                  (
-                    BuildContext context,
-                    GoRouterState state,
-                    StatefulNavigationShell navigationShell,
-                  ) {
-                    final workspaceId = state.pathParameters['workspaceId']!;
+              builder: (context, state, navigationShell) {
+                final workspaceId = state.pathParameters['workspaceId']!;
 
-                    return MultiProvider(
-                      // Both of these view models are wrapped in providers, because we want to limit
-                      // reinstantianting them on every navigation inside the shell route. Same keys for
-                      // both ChangeNotifierProvider is okay since they are different due to the different
-                      // generic type.
-                      providers: [
-                        ChangeNotifierProvider(
-                          key: ValueKey(workspaceId),
-                          create: (notifierContext) =>
-                              AppBottomNavigationBarViewModel(
-                                workspaceId: workspaceId,
-                                rbacService: notifierContext.read(),
-                              ),
-                        ),
-                        ChangeNotifierProvider(
-                          key: ValueKey(workspaceId),
-                          create: (notifierContext) => AppDrawerViewModel(
+                return MultiProvider(
+                  // Both of these view models are wrapped in providers, because we want to limit
+                  // reinstantianting them on every navigation inside the shell route. Same keys for
+                  // both ChangeNotifierProvider is okay since they are different due to the different
+                  // generic type.
+                  providers: [
+                    ChangeNotifierProvider(
+                      key: ValueKey(workspaceId),
+                      create: (notifierContext) =>
+                          AppBottomNavigationBarViewModel(
                             workspaceId: workspaceId,
-                            workspaceRepository: notifierContext.read(),
-                            refreshTokenUseCase: notifierContext.read(),
-                            activeWorkspaceChangeUseCase: notifierContext
-                                .read(),
+                            rbacService: notifierContext.read(),
                           ),
-                        ),
-                      ],
-                      child: AppShellScaffold(
+                    ),
+                    ChangeNotifierProvider(
+                      key: ValueKey(workspaceId),
+                      create: (notifierContext) => AppDrawerViewModel(
                         workspaceId: workspaceId,
-                        navigationShell: navigationShell,
+                        workspaceRepository: notifierContext.read(),
+                        refreshTokenUseCase: notifierContext.read(),
+                        activeWorkspaceChangeUseCase: notifierContext.read(),
                       ),
-                    );
-                  },
+                    ),
+                  ],
+                  child: AppShellScaffold(
+                    workspaceId: workspaceId,
+                    navigationShell: navigationShell,
+                  ),
+                );
+              },
               branches: [
                 StatefulShellBranch(
                   routes: [
@@ -270,10 +264,30 @@ GoRouter router({
               builder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
-                return WorkspaceUsersManagementScreen(
-                  viewModel: WorkspaceUsersScreenManagementViewModel(
+                return ChangeNotifierProvider<
+                  WorkspaceUsersScreenManagementViewModel
+                >(
+                  key: ValueKey(workspaceId),
+                  create: (context) => WorkspaceUsersScreenManagementViewModel(
                     workspaceId: workspaceId,
+                    userRepository: context.read(),
                     workspaceUserRepository: context.read(),
+                  ),
+                  // Without the Builder here, reading `WorkspaceUsersScreenManagementViewModel`
+                  // would result in an error saying its provider is not defined, and that's
+                  // because the used `context` is not yet at that moment defined inside the
+                  // scope of the `ChangeNotifierProvider<WorkspaceUsersScreenManagementViewModel>`
+                  // provider. Builder helps to give a new `context` which at is inside the Provider
+                  // scope. The end goal of this was to memoize the `WorkspaceUsersScreenManagementViewModel`
+                  // view model, as there is no need for it to be instantiated on every route change.
+                  //
+                  // `create` and `child` evaluate at almost the same time, hence why without Builder
+                  // `context` would not yet see the new InheritedWidget (Provider).
+                  child: Builder(
+                    builder: (context) => WorkspaceUsersManagementScreen(
+                      viewModel: context
+                          .watch<WorkspaceUsersScreenManagementViewModel>(),
+                    ),
                   ),
                 );
               },
@@ -283,6 +297,10 @@ GoRouter router({
                   builder: (context, state) {
                     final workspaceId = state.pathParameters['workspaceId']!;
 
+                    // We are not using the view model memoization here because we
+                    // want the workspace invite repository call to fire everytime we
+                    // land on this route, so the repository can check if the cached
+                    // workspace invite is expired.
                     return CreateWorkspaceUserScreen(
                       viewModel: CreateWorkspaceUserScreenViewModel(
                         workspaceId: workspaceId,
@@ -305,6 +323,12 @@ GoRouter router({
                     final workspaceUserId =
                         state.pathParameters['workspaceUserId']!;
 
+                    // We are not using the view model memoization here because we
+                    // want the user details repository call to fire everytime we
+                    // land on this route, so we get fresh data for specific workspace
+                    // user ID - this is important as Managers can edit workspace user
+                    // data, and we are not listening to entire workspace user repository
+                    // `users` listenable value on this route, as that would be unnecessary.
                     return WorkspaceUserDetailsScreen(
                       viewModel: WorkspaceUserDetailsScreenViewModel(
                         workspaceId: workspaceId,
@@ -321,10 +345,17 @@ GoRouter router({
               builder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
-                return WorkspaceSettingsScreen(
-                  viewModel: WorkspaceSettingsScreenViewmodel(
+                return Provider<WorkspaceSettingsScreenViewmodel>(
+                  key: ValueKey(workspaceId),
+                  create: (context) => WorkspaceSettingsScreenViewmodel(
                     workspaceId: workspaceId,
                     workspaceRepository: context.read(),
+                  ),
+                  child: Builder(
+                    builder: (context) => WorkspaceSettingsScreen(
+                      viewModel: context
+                          .watch<WorkspaceSettingsScreenViewmodel>(),
+                    ),
                   ),
                 );
               },

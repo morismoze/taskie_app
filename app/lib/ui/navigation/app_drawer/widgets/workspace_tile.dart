@@ -42,7 +42,8 @@ class WorkspaceTile extends StatelessWidget {
         child: WorkspaceImage(url: pictureUrl, isActive: isActive),
       ),
       trailing: InkWell(
-        onTap: () => _onWorkspaceOptionsTap(context, id),
+        onTap: () =>
+            _onWorkspaceOptionsTap(context, viewModel.activeWorkspaceId, id),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           child: FaIcon(
@@ -61,7 +62,11 @@ class WorkspaceTile extends StatelessWidget {
     );
   }
 
-  void _onWorkspaceOptionsTap(BuildContext context, String workspaceId) {
+  void _onWorkspaceOptionsTap(
+    BuildContext context,
+    String activeWorkspaceId,
+    String workspaceId,
+  ) {
     AppModalBottomSheet.show(
       context: context,
       enableDrag: !viewModel.leaveWorkspace.running,
@@ -84,22 +89,31 @@ class WorkspaceTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          AppTextButton(
-            onPress: () {
-              context.pop(); // Close bottom sheet
-              context.push(Routes.workspaceSettings(workspaceId: id));
-            },
-            label: context.localization.appDrawerEditWorkspace,
-            leadingIcon: FontAwesomeIcons.pencil,
-          ),
-          AppTextButton(
-            onPress: () {
-              context.pop(); // Close bottom sheet
-              context.push(Routes.workspaceUsers(workspaceId: id));
-            },
-            label: context.localization.appDrawerManageUsers,
-            leadingIcon: FontAwesomeIcons.userGroup,
-          ),
+          if (activeWorkspaceId == workspaceId) ...[
+            AppTextButton(
+              onPress: () {
+                context.pop(); // Close bottom sheet
+                context.push(Routes.workspaceSettings(workspaceId: id));
+              },
+              label: context.localization.appDrawerEditWorkspace,
+              leadingIcon: FontAwesomeIcons.pencil,
+            ),
+            AppTextButton(
+              onPress: () {
+                context.pop(); // Close bottom sheet
+                context.push(Routes.workspaceUsers(workspaceId: id));
+              },
+              label: context.localization.appDrawerManageUsers,
+              leadingIcon: FontAwesomeIcons.userGroup,
+            ),
+          ] else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                context.localization.appDrawerNotActiveWorkspace,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
           WorkspaceLeaveButton(viewModel: viewModel, workspaceId: workspaceId),
         ],
       ),

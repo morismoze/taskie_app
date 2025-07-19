@@ -3,6 +3,7 @@ import '../../../../../utils/command.dart';
 import '../../api_client.dart';
 import '../../api_response.dart';
 import '../workspace/models/request/workspace_id_path_param.dart';
+import '../workspace_task/models/request/workspace_user_id_path_param.dart';
 import 'models/request/create_virtual_workspace_user_request.dart';
 import 'models/response/workspace_user_response.dart';
 
@@ -51,6 +52,21 @@ class WorkspaceUserApiService {
       );
 
       return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<void>> deleteWorkspaceUser({
+    required WorkspaceIdPathParam workspaceId,
+    required WorkspaceUserIdPathParam workspaceUserId,
+  }) async {
+    try {
+      await _apiClient.client.delete(
+        ApiEndpoints.deleteWorkspaceUser(workspaceId, workspaceUserId),
+      );
+
+      return const Result.ok(null);
     } on Exception catch (e) {
       return Result.error(e);
     }

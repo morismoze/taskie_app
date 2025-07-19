@@ -117,6 +117,7 @@ List<SingleChildWidget> get providers {
       create: (context) => ActiveWorkspaceChangeUseCase(
         workspaceRepository: context.read(),
         userRepository: context.read(),
+        workspaceUserRepository: context.read(),
         workspaceTaskRepository: context.read(),
       ),
     ),

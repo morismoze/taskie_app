@@ -111,4 +111,36 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
     );
     return Result.ok(workspaceUserDetails);
   }
+
+  @override
+  Future<Result<void>> deleteWorkspaceUser({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) async {
+    try {
+      final result = await _workspaceUserApiService.deleteWorkspaceUser(
+        workspaceId: workspaceId,
+        workspaceUserId: workspaceUserId,
+      );
+
+      switch (result) {
+        case Ok():
+          _cachedWorkspaceUsersList!.removeWhere(
+            (user) => user.id == workspaceUserId,
+          );
+          notifyListeners();
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  void purgeWorkspaceUsersCache() {
+    _cachedWorkspaceUsersList = null;
+  }
 }

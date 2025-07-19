@@ -112,6 +112,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerManageUsers => 'Članovi radnog prostora';
 
   @override
+  String get appDrawerNotActiveWorkspace =>
+      'Ukoliko želite vidjeti ostale opcije, učinite ovaj radni prostor aktivnim klikom na ikonu radnog prostora u gornjoj listi.';
+
+  @override
   String get appDrawerLeaveWorkspace => 'Napusti radni prostor';
 
   @override
@@ -181,6 +185,25 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceUsersManagement => 'Upravljanje korisnicima';
+
+  @override
+  String get workspaceUsersManagementDeleteUser =>
+      'Ukloni korisnika iz radnog prostora';
+
+  @override
+  String get workspaceUsersManagementDeleteUserModalMessage =>
+      'Jeste li sigurni da želite ukloniti ovog korisnika iz radnog prostora?';
+
+  @override
+  String get workspaceUsersManagementDeleteUserModalCta => 'Ukloni';
+
+  @override
+  String get workspaceUsersManagementDeleteUserSuccess =>
+      'Uspješno ste uklonili korisnika iz radnog prostora';
+
+  @override
+  String get workspaceUsersManagementDeleteUserError =>
+      'Uh-oh! Došlo je do problema prilikom uklanjanja korisnika iz radnog prostora';
 
   @override
   String get workspaceUsersManagementUsersGuideMainTitle =>

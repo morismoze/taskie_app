@@ -7,6 +7,7 @@ import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
@@ -28,15 +29,27 @@ class _WorkspaceUsersManagementScreenState
   @override
   void initState() {
     super.initState();
+    widget.viewModel.deleteWorkspaceUser.addListener(
+      _onWorkspaceUserDeleteResult,
+    );
   }
 
   @override
   void didUpdateWidget(covariant WorkspaceUsersManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.deleteWorkspaceUser.removeListener(
+      _onWorkspaceUserDeleteResult,
+    );
+    widget.viewModel.deleteWorkspaceUser.addListener(
+      _onWorkspaceUserDeleteResult,
+    );
   }
 
   @override
   void dispose() {
+    widget.viewModel.deleteWorkspaceUser.removeListener(
+      _onWorkspaceUserDeleteResult,
+    );
     super.dispose();
   }
 
@@ -102,13 +115,20 @@ class _WorkspaceUsersManagementScreenState
                       separatorBuilder: (_, _) => const SizedBox(height: 10),
                       itemBuilder: (_, index) {
                         final workspaceUser = widget.viewModel.users[index];
+                        final currentUser = widget.viewModel.currentUser;
+                        // TODO: this needs to be updated by checking
+                        // workspaceUser.userId == currentUser.id
+                        final isCurrentUser =
+                            currentUser.firstName == workspaceUser.firstName &&
+                            currentUser.lastName == workspaceUser.lastName;
 
                         return WorkspaceUserTile(
-                          activeWorkspaceId: widget.viewModel.activeWorkspaceId,
+                          viewModel: widget.viewModel,
                           id: workspaceUser.id,
                           firstName: workspaceUser.firstName,
                           lastName: workspaceUser.lastName,
                           role: workspaceUser.role,
+                          isCurrentUser: isCurrentUser,
                           email: workspaceUser.email,
                           profileImageUrl: workspaceUser.profileImageUrl,
                         );
@@ -122,5 +142,29 @@ class _WorkspaceUsersManagementScreenState
         ),
       ),
     );
+  }
+
+  void _onWorkspaceUserDeleteResult() {
+    if (widget.viewModel.deleteWorkspaceUser.completed) {
+      widget.viewModel.deleteWorkspaceUser.clearResult();
+      context.pop(); // Close dialog
+      context.pop(); // Close bottom sheet
+
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.workspaceUsersManagementDeleteUserSuccess,
+      );
+    }
+
+    if (widget.viewModel.deleteWorkspaceUser.error) {
+      widget.viewModel.deleteWorkspaceUser.clearResult();
+      context.pop(); // Close dialog
+      context.pop(); // Close bottom sheet
+
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.workspaceUsersManagementDeleteUserError,
+      );
+    }
   }
 }
