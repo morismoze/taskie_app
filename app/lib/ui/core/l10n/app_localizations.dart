@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceCreateDescriptionMaxLength.
   ///
   /// In en, this message translates to:
-  /// **'Description can have at most 250 characters'**
+  /// **'Opis može imati najviše 250 znakova'**
   String get workspaceCreateDescriptionMaxLength;
 
   /// No description provided for @requiredField.
@@ -542,11 +542,41 @@ abstract class AppLocalizations {
   /// **'Workspace invite link'**
   String get workspaceUsersManagementCreateWorkspaceInviteLabel;
 
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully copied to clipboard'**
+  String get workspaceUsersManagementCreateWorkspaceInviteClipboard;
+
   /// No description provided for @workspaceUsersManagementCreateVirtualUserDescription.
   ///
   /// In en, this message translates to:
   /// **'Create a new virtual user:'**
   String get workspaceUsersManagementCreateVirtualUserDescription;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserFirstNameMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'First name must have at least 2 characters'**
+  String get workspaceUsersManagementCreateVirtualUserFirstNameMinLength;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserFirstNameMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'First name can have at most 50 characters'**
+  String get workspaceUsersManagementCreateVirtualUserFirstNameMaxLength;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserLastNameMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name must have at least 2 characters'**
+  String get workspaceUsersManagementCreateVirtualUserLastNameMinLength;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserLastNameMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name can have at most 50 characters'**
+  String get workspaceUsersManagementCreateVirtualUserLastNameMaxLength;
 
   /// No description provided for @workspaceUsersManagementCreateVirtualUserSubmit.
   ///

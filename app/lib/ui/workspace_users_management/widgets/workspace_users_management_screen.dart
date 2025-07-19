@@ -98,7 +98,7 @@ class _WorkspaceUsersManagementScreenState
                     }
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
-                      // Usage of a generic error prompt widget
+                      // TODO: Usage of a generic error prompt widget
                     }
 
                     return child!;
@@ -116,11 +116,10 @@ class _WorkspaceUsersManagementScreenState
                       itemBuilder: (_, index) {
                         final workspaceUser = widget.viewModel.users[index];
                         final currentUser = widget.viewModel.currentUser;
-                        // TODO: this needs to be updated by checking
-                        // workspaceUser.userId == currentUser.id
+
                         final isCurrentUser =
-                            currentUser.firstName == workspaceUser.firstName &&
-                            currentUser.lastName == workspaceUser.lastName;
+                            currentUser.id == workspaceUser.userId &&
+                            currentUser.id == workspaceUser.userId;
 
                         return WorkspaceUserTile(
                           viewModel: widget.viewModel,

@@ -49,7 +49,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
               AppTextFormField(
                 controller: _firstNameController,
                 label: context.localization.workspaceUserFirstNameLabel,
-                validator: _validateName,
+                validator: _validateFirstName,
                 textInputAction: TextInputAction.next,
                 maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
               ),
@@ -57,7 +57,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
               AppTextFormField(
                 controller: _lastNameController,
                 label: context.localization.workspaceUserLastNameLabel,
-                validator: _validateName,
+                validator: _validateLastName,
                 textInputAction: TextInputAction.go,
                 maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
               ),
@@ -87,16 +87,39 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
     }
   }
 
-  String? _validateName(String? value) {
+  String? _validateFirstName(String? value) {
     switch (value) {
       case final String? value when value == null:
         return context.localization.requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
-        return context.localization.workspaceCreateNameMinLength;
+        return context
+            .localization
+            .workspaceUsersManagementCreateVirtualUserFirstNameMinLength;
       case final String value
           when value.length > ValidationRules.workspaceUserNameMaxLength:
-        return context.localization.workspaceCreateNameMaxLength;
+        return context
+            .localization
+            .workspaceUsersManagementCreateVirtualUserFirstNameMaxLength;
+      default:
+        return null;
+    }
+  }
+
+  String? _validateLastName(String? value) {
+    switch (value) {
+      case final String? value when value == null:
+        return context.localization.requiredField;
+      case final String value
+          when value.length < ValidationRules.workspaceUserNameMinLength:
+        return context
+            .localization
+            .workspaceUsersManagementCreateVirtualUserLastNameMinLength;
+      case final String value
+          when value.length > ValidationRules.workspaceUserNameMaxLength:
+        return context
+            .localization
+            .workspaceUsersManagementCreateVirtualUserLastNameMaxLength;
       default:
         return null;
     }

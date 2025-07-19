@@ -83,7 +83,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceCreateDescriptionMaxLength =>
-      'Description can have at most 250 characters';
+      'Opis može imati najviše 250 znakova';
 
   @override
   String get requiredField => 'This field is required';
@@ -262,8 +262,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'Workspace invite link';
 
   @override
+  String get workspaceUsersManagementCreateWorkspaceInviteClipboard =>
+      'Successfully copied to clipboard';
+
+  @override
   String get workspaceUsersManagementCreateVirtualUserDescription =>
       'Create a new virtual user:';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserFirstNameMinLength =>
+      'First name must have at least 2 characters';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserFirstNameMaxLength =>
+      'First name can have at most 50 characters';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserLastNameMinLength =>
+      'Last name must have at least 2 characters';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserLastNameMaxLength =>
+      'Last name can have at most 50 characters';
 
   @override
   String get workspaceUsersManagementCreateVirtualUserSubmit =>

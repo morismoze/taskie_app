@@ -35,12 +35,11 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return Result.ok(result.value.inviteLink);
       case Error():
         _log.warning('Failed to create workspace invite link', result.error);
+        return Result.error(result.error);
     }
-
-    return result;
   }
 
   Future<Result<void>> _createVirtualUser(

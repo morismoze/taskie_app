@@ -8,9 +8,14 @@ part of 'create_workspace_invite_link_response.dart';
 
 CreateWorkspaceInviteLinkResponse _$CreateWorkspaceInviteLinkResponseFromJson(
   Map<String, dynamic> json,
-) =>
-    CreateWorkspaceInviteLinkResponse(inviteLink: json['inviteLink'] as String);
+) => CreateWorkspaceInviteLinkResponse(
+  inviteLink: json['inviteLink'] as String,
+  expiresAt: DateTime.parse(json['expiresAt'] as String),
+);
 
 Map<String, dynamic> _$CreateWorkspaceInviteLinkResponseToJson(
   CreateWorkspaceInviteLinkResponse instance,
-) => <String, dynamic>{'inviteLink': instance.inviteLink};
+) => <String, dynamic>{
+  'inviteLink': instance.inviteLink,
+  'expiresAt': instance.expiresAt.toIso8601String(),
+};

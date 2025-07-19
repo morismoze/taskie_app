@@ -7,6 +7,7 @@ export interface WorkspaceUserResponse {
   email: string | null;
   profileImageUrl: string | null;
   role: WorkspaceUserRole;
+  userId: string; // core User ID
 }
 
 export type WorkspaceUsersResponse = WorkspaceUserResponse[];

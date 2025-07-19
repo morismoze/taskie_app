@@ -1,5 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
+import { AggregatedConfig } from 'src/config/config.type';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
@@ -62,6 +64,7 @@ export class WorkspaceService {
     private readonly taskAssignmentService: TaskAssignmentService,
     private readonly workspaceInviteService: WorkspaceInviteService,
     private readonly unitOfWorkService: UnitOfWorkService,
+    private readonly configService: ConfigService<AggregatedConfig>,
   ) {}
 
   async create({
@@ -146,8 +149,12 @@ export class WorkspaceService {
       createdById,
     });
 
+    const cnameUrl = this.configService.getOrThrow('app.serverCnameUrl', {
+      infer: true,
+    });
     const response: CreateWorkspaceInviteLinkResponse = {
-      inviteLink: getAppWorkspaceJoinDeepLink(invite.token),
+      inviteLink: getAppWorkspaceJoinDeepLink(cnameUrl, invite.token),
+      expiresAt: invite.expiresAt,
     };
 
     return response;
@@ -265,6 +272,7 @@ export class WorkspaceService {
       // Currently uploading images while creating virtual users is not supported
       profileImageUrl: null,
       role: newWorkspaceUser.workspaceRole,
+      userId: newUser.id,
     };
 
     return response;
@@ -314,6 +322,7 @@ export class WorkspaceService {
         email: member.user.email,
         profileImageUrl: member.user.profileImageUrl,
         role: member.workspaceRole,
+        userId: member.user.id,
       }))
       .sort((wu1, wu2) => {
         // Sort by full name
@@ -612,6 +621,7 @@ export class WorkspaceService {
       email: updatedWorkspaceUser.user.email,
       profileImageUrl: updatedWorkspaceUser.user.profileImageUrl,
       role: updatedWorkspaceUser.workspaceRole,
+      userId: updatedWorkspaceUser.user.id,
     };
 
     return response;

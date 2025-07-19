@@ -90,4 +90,5 @@ abstract final class AppTheme {
   static double fieldInnerPadding = 16.0;
   static double fieldLabelFontSize = 15.0;
   static double fieldUnfocusedLabelFontSize = 14.0;
+  static double fieldHeight = 56.0;
 }

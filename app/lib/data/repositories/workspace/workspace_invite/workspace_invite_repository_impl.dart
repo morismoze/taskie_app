@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/workspace_invite.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace_invite/models/response/create_workspace_invite_link_response.dart';
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
@@ -13,13 +14,20 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
   final WorkspaceInviteApiService _workspaceInviteApiService;
 
   final _log = Logger('WorkspaceInviteRepository');
-  // Invite links per workspace IDs (workspaceId: inviteLink)
-  final Map<String, String> _cachedWorkspaceInviteLinks = {};
+  // Invite link per workspace ID (<workspaceId>: WorkspaceInvite)
+  final Map<String, WorkspaceInvite> _cachedWorkspaceInviteLinks = {};
 
   @override
-  Future<Result<String>> createWorkspaceInviteLink(String workspaceId) async {
-    // TODO: when backend endpoint is updated by responding with expiresAt as well, expiresAt needs to be checked as well
-    if (_cachedWorkspaceInviteLinks[workspaceId] != null) {
+  Future<Result<WorkspaceInvite>> createWorkspaceInviteLink(
+    String workspaceId,
+  ) async {
+    if (_cachedWorkspaceInviteLinks[workspaceId] != null &&
+        // We check if the link has expired. If it's not, it is still usable.
+        // Dart will automatically convert `expiresAt` UTC to local timezone since
+        // `DateTime.now()` represents current timestamp in local timezone.
+        _cachedWorkspaceInviteLinks[workspaceId]!.expiresAt.isAfter(
+          DateTime.now(),
+        )) {
       return Result.ok(_cachedWorkspaceInviteLinks[workspaceId]!);
     }
 
@@ -30,9 +38,12 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
 
       switch (result) {
         case Ok<CreateWorkspaceInviteLinkResponse>():
-          final inviteLink = result.value.inviteLink;
-          _cachedWorkspaceInviteLinks[workspaceId] = inviteLink;
-          return Result.ok(inviteLink);
+          final workspaceInvite = WorkspaceInvite(
+            inviteLink: result.value.inviteLink,
+            expiresAt: result.value.expiresAt,
+          );
+          _cachedWorkspaceInviteLinks[workspaceId] = workspaceInvite;
+          return Result.ok(workspaceInvite);
         case Error<CreateWorkspaceInviteLinkResponse>():
           return Result.error(result.error);
       }

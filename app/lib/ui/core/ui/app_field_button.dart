@@ -53,8 +53,8 @@ class AppFieldButton extends StatelessWidget {
         behavior: HitTestBehavior.translucent,
         onTap: onTap,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: 56,
+          constraints: BoxConstraints(
+            minHeight: AppTheme.fieldHeight,
             minWidth: double.infinity,
           ),
           child: Padding(

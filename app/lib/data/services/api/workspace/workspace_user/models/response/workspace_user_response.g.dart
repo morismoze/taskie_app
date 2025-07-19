@@ -13,6 +13,7 @@ WorkspaceUserResponse _$WorkspaceUserResponseFromJson(
   firstName: json['firstName'] as String,
   lastName: json['lastName'] as String,
   role: $enumDecode(_$WorkspaceRoleEnumMap, json['role']),
+  userId: json['userId'] as String,
   email: json['email'] as String?,
   profileImageUrl: json['profileImageUrl'] as String?,
 );
@@ -24,6 +25,7 @@ Map<String, dynamic> _$WorkspaceUserResponseToJson(
   'firstName': instance.firstName,
   'lastName': instance.lastName,
   'role': _$WorkspaceRoleEnumMap[instance.role]!,
+  'userId': instance.userId,
   'email': instance.email,
   'profileImageUrl': instance.profileImageUrl,
 };

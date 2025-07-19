@@ -11,6 +11,7 @@ class WorkspaceUserResponse {
     required this.firstName,
     required this.lastName,
     required this.role,
+    required this.userId,
     this.email,
     this.profileImageUrl,
   });
@@ -20,6 +21,7 @@ class WorkspaceUserResponse {
   final String firstName;
   final String lastName;
   final WorkspaceRole role;
+  final String userId;
   final String? email;
   final String? profileImageUrl;
 

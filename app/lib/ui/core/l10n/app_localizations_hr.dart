@@ -264,8 +264,28 @@ class AppLocalizationsHr extends AppLocalizations {
       'Pozivni link radnog prostora';
 
   @override
+  String get workspaceUsersManagementCreateWorkspaceInviteClipboard =>
+      'Uspješno kopirano u međuspremnik';
+
+  @override
   String get workspaceUsersManagementCreateVirtualUserDescription =>
       'Kreirajte novog virtualnog korisnika:';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserFirstNameMinLength =>
+      'Ime mora imati najmanje 2 znaka';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserFirstNameMaxLength =>
+      'Ime može imati najviše 50 znakova';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserLastNameMinLength =>
+      'Prezime mora imati najmanje 2 znaka';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserLastNameMaxLength =>
+      'Prezime može imati najviše 50 znakova';
 
   @override
   String get workspaceUsersManagementCreateVirtualUserSubmit =>

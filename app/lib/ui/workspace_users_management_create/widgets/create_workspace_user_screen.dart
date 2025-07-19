@@ -99,7 +99,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
     if (widget.viewModel.createInviteLink.error) {
       widget.viewModel.createInviteLink.clearResult();
-      // do something
+      // TODO: do something
     }
   }
 
