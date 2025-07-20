@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'create_workspace_invite_link_response.dart';
+part of 'create_workspace_invite_token_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CreateWorkspaceInviteLinkResponse _$CreateWorkspaceInviteLinkResponseFromJson(
+CreateWorkspaceInviteTokenResponse _$CreateWorkspaceInviteTokenResponseFromJson(
   Map<String, dynamic> json,
-) => CreateWorkspaceInviteLinkResponse(
-  inviteLink: json['inviteLink'] as String,
+) => CreateWorkspaceInviteTokenResponse(
+  token: json['token'] as String,
   expiresAt: DateTime.parse(json['expiresAt'] as String),
 );
 
-Map<String, dynamic> _$CreateWorkspaceInviteLinkResponseToJson(
-  CreateWorkspaceInviteLinkResponse instance,
+Map<String, dynamic> _$CreateWorkspaceInviteTokenResponseToJson(
+  CreateWorkspaceInviteTokenResponse instance,
 ) => <String, dynamic>{
-  'inviteLink': instance.inviteLink,
+  'token': instance.token,
   'expiresAt': instance.expiresAt.toIso8601String(),
 };

@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
 import { AggregatedConfig } from 'src/config/config.type';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
@@ -31,7 +30,7 @@ import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignme
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
-import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
@@ -118,13 +117,13 @@ export class WorkspaceService {
     return response;
   }
 
-  async createInviteLink({
+  async createInviteToken({
     workspaceId,
     createdById,
   }: {
     workspaceId: Workspace['id'];
     createdById: JwtPayload['sub'];
-  }): Promise<CreateWorkspaceInviteLinkResponse> {
+  }): Promise<CreateWorkspaceInviteTokenResponse> {
     // Check if workspace exists
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -144,23 +143,20 @@ export class WorkspaceService {
       );
     }
 
-    const invite = await this.workspaceInviteService.createInviteLink({
+    const invite = await this.workspaceInviteService.createInviteToken({
       workspaceId,
       createdById,
     });
 
-    const cnameUrl = this.configService.getOrThrow('app.serverCnameUrl', {
-      infer: true,
-    });
-    const response: CreateWorkspaceInviteLinkResponse = {
-      inviteLink: getAppWorkspaceJoinDeepLink(cnameUrl, invite.token),
+    const response: CreateWorkspaceInviteTokenResponse = {
+      token: invite.token,
       expiresAt: invite.expiresAt,
     };
 
     return response;
   }
 
-  async getWorkspaceByInviteLinkToken(
+  async getWorkspaceInfoByWorkspaceInviteToken(
     inviteToken: WorkspaceInvite['token'],
   ): Promise<WorkspaceResponse> {
     // Check if user by ID exists

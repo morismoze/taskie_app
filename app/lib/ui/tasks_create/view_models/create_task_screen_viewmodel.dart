@@ -26,7 +26,17 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
   final _log = Logger('CreateTaskScreenViewmodel');
 
   late Command1<void, String> loadWorkspaceMembers;
-  late Command1<void, (String, String, List<String>, int, String?)> createTask;
+  late Command1<
+    void,
+    (
+      String title,
+      String description,
+      List<String> assigneeIds,
+      int rewardPoints,
+      String? dueDate,
+    )
+  >
+  createTask;
 
   final String _activeWorkspaceId;
 

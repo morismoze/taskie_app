@@ -18,6 +18,7 @@ import '../data/repositories/workspace/workspace_task/workspace_task_repository_
 import '../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
 import '../data/repositories/workspace/workspace_user/workspace_user_repository_impl.dart';
 import '../data/services/api/api_client.dart';
+import '../data/services/api/api_deeplink_client.dart';
 import '../data/services/api/auth/auth_api_service.dart';
 import '../data/services/api/user/user_api_service.dart';
 import '../data/services/api/workspace/workspace/workspace_api_service.dart';
@@ -30,6 +31,7 @@ import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
+import '../domain/use_cases/share_workspace_invite_link_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
 import '../ui/core/services/rbac_service.dart';
 
@@ -45,6 +47,10 @@ List<SingleChildWidget> get providers {
     ),
     Provider(
       create: (context) => ApiClient(authStateRepository: context.read()),
+    ),
+    Provider(
+      create: (context) =>
+          ApiDeepLinkClient(authStateRepository: context.read()),
     ),
     Provider(create: (context) => AuthApiService(apiClient: context.read())),
     Provider(
@@ -131,5 +137,6 @@ List<SingleChildWidget> get providers {
     ChangeNotifierProvider(
       create: (context) => RbacService(userRepository: context.read()),
     ),
+    Provider(lazy: true, create: (_) => ShareWorkspaceInviteLinkUseCase()),
   ];
 }

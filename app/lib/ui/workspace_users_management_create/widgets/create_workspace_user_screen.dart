@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -28,27 +29,45 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.createInviteLink.addListener(_onInviteLinkCreateResult);
+    widget.viewModel.createWorkspaceInviteLink.addListener(
+      _onInviteLinkCreateResult,
+    );
+    widget.viewModel.shareWorkspaceInviteLink.addListener(
+      _onInviteLinkShareResult,
+    );
     widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
   }
 
   @override
   void didUpdateWidget(covariant CreateWorkspaceUserScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createInviteLink.removeListener(
+    oldWidget.viewModel.createWorkspaceInviteLink.removeListener(
       _onInviteLinkCreateResult,
+    );
+    oldWidget.viewModel.shareWorkspaceInviteLink.removeListener(
+      _onInviteLinkShareResult,
     );
     oldWidget.viewModel.createVirtualUser.removeListener(
       _onVirtualUserCreateResult,
     );
-    widget.viewModel.createInviteLink.addListener(_onInviteLinkCreateResult);
+    widget.viewModel.createWorkspaceInviteLink.addListener(
+      _onInviteLinkCreateResult,
+    );
+    widget.viewModel.shareWorkspaceInviteLink.addListener(
+      _onInviteLinkShareResult,
+    );
     widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.createInviteLink.removeListener(_onInviteLinkCreateResult);
-    widget.viewModel.createInviteLink.removeListener(
+    widget.viewModel.createWorkspaceInviteLink.removeListener(
+      _onInviteLinkCreateResult,
+    );
+    widget.viewModel.shareWorkspaceInviteLink.removeListener(
+      _onInviteLinkShareResult,
+    );
+    widget.viewModel.createVirtualUser.removeListener(
       _onVirtualUserCreateResult,
     );
     _workspaceInviteLinkController.dispose();
@@ -65,21 +84,25 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
               HeaderBar(
                 title: context.localization.workspaceUsersManagementCreate,
               ),
-              SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  top: Dimens.paddingVertical,
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
-                ),
-                child: Column(
-                  children: [
-                    WorkspaceInviteSection(
-                      controller: _workspaceInviteLinkController,
-                    ),
-                    const OrSeparator(),
-                    CreateVirtualUserForm(viewModel: widget.viewModel),
-                  ],
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    top: Dimens.paddingVertical,
+                    left: Dimens.of(context).paddingScreenHorizontal,
+                    right: Dimens.of(context).paddingScreenHorizontal,
+                    bottom: Dimens.paddingVertical,
+                  ),
+                  child: Column(
+                    spacing: 10,
+                    children: [
+                      WorkspaceInviteSection(
+                        viewModel: widget.viewModel,
+                        controller: _workspaceInviteLinkController,
+                      ),
+                      const OrSeparator(),
+                      CreateVirtualUserForm(viewModel: widget.viewModel),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -90,15 +113,37 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
   }
 
   void _onInviteLinkCreateResult() {
-    if (widget.viewModel.createInviteLink.completed) {
+    if (widget.viewModel.createWorkspaceInviteLink.completed) {
       final inviteLink =
-          (widget.viewModel.createInviteLink.result as Ok<String>).value;
+          (widget.viewModel.createWorkspaceInviteLink.result as Ok<String>)
+              .value;
       _workspaceInviteLinkController.text = inviteLink;
-      widget.viewModel.createInviteLink.clearResult();
+      widget.viewModel.createWorkspaceInviteLink.clearResult();
     }
 
-    if (widget.viewModel.createInviteLink.error) {
-      widget.viewModel.createInviteLink.clearResult();
+    if (widget.viewModel.createWorkspaceInviteLink.error) {
+      widget.viewModel.createWorkspaceInviteLink.clearResult();
+      // TODO: do something
+    }
+  }
+
+  void _onInviteLinkShareResult() {
+    if (widget.viewModel.shareWorkspaceInviteLink.completed) {
+      final shareResult =
+          (widget.viewModel.shareWorkspaceInviteLink.result as Ok<ShareResult>)
+              .value;
+      widget.viewModel.shareWorkspaceInviteLink.clearResult();
+      print('ALOO ${shareResult.status}');
+
+      // Only re-fetch new workspace invite link if the
+      // invite was shared successfully
+      if (shareResult.status == ShareResultStatus.success) {
+        widget.viewModel.createWorkspaceInviteLink.execute(true);
+      }
+    }
+
+    if (widget.viewModel.shareWorkspaceInviteLink.error) {
+      widget.viewModel.shareWorkspaceInviteLink.clearResult();
       // TODO: do something
     }
   }

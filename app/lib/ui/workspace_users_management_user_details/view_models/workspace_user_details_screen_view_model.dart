@@ -22,7 +22,8 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
   final WorkspaceUserRepository _workspaceUserRepository;
   final _log = Logger('WorkspaceUserDetailsScreenViewModel');
 
-  late Command1<void, (String, String)> loadWorkspaceUserDetails;
+  late Command1<void, (String workspaceId, String workspaceUserId)>
+  loadWorkspaceUserDetails;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 

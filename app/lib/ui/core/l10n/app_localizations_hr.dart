@@ -187,6 +187,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get workspaceUsersManagement => 'Upravljanje korisnicima';
 
   @override
+  String get workspaceUsersManagementLoadUsersError =>
+      'Uh-oh! Došlo je do problema prilikom dohvata korisnika radnog prostora';
+
+  @override
   String get workspaceUsersManagementDeleteUser =>
       'Ukloni korisnika iz radnog prostora';
 
@@ -264,6 +268,13 @@ class AppLocalizationsHr extends AppLocalizations {
       'Pozivni link radnog prostora';
 
   @override
+  String get note => 'Napomena';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteNote =>
+      'Svaki link je jednokratan (pošaljite ga samo jednom korisniku). Možete ga kopirati u međuspremnik ili podijeliti. Radi vaše praktičnosti, nakon bilo koje od tih radnji, generira se novi link za iduću upotrebu.';
+
+  @override
   String get workspaceUsersManagementCreateWorkspaceInviteClipboard =>
       'Uspješno kopirano u međuspremnik';
 
@@ -289,7 +300,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementCreateVirtualUserSubmit =>
-      'Kreiraj virtualnog korisnika';
+      'Kreiraj novog virtualnog korisnika';
 
   @override
   String get workspaceUsersManagementCreateVirtualUserSuccess =>

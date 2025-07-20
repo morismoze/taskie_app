@@ -15,6 +15,10 @@ abstract final class Routes {
   static const workspaceCreateRelative = 'create';
   static const workspaceCreate = '$workspacesRelative/$workspaceCreateRelative';
 
+  static const workspaceJoinRelative = 'join';
+  static String workspaceJoin(String inviteToken) =>
+      '$workspacesRelative/$workspaceJoinRelative/$inviteToken';
+
   static const workspaceUsersRelative = 'users';
   static String workspaceUsers({required String workspaceId}) =>
       '$workspacesRelative/$workspaceId/$workspaceUsersRelative';

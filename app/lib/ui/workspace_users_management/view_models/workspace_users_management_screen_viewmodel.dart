@@ -18,7 +18,7 @@ class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
        _workspaceUserRepository = workspaceUserRepository {
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
-      ..execute(workspaceId);
+      ..execute((workspaceId, false));
     deleteWorkspaceUser = Command1(_deleteWorkspaceUser);
   }
 
@@ -27,14 +27,16 @@ class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
   final WorkspaceUserRepository _workspaceUserRepository;
   final _log = Logger('WorkspaceUsersScreenManagementViewModel');
 
-  late Command1<void, String> loadWorkspaceMembers;
-  late Command1<void, (String, String)> deleteWorkspaceUser;
+  late Command1<void, (String workspaceId, bool forceFetch)>
+  loadWorkspaceMembers;
+  late Command1<void, (String workspaceId, String workspaceUserId)>
+  deleteWorkspaceUser;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
   User get currentUser => _userRepository.user!;
 
-  List<WorkspaceUser> get users {
+  List<WorkspaceUser>? get users {
     final workspaceUsers = _workspaceUserRepository.users;
 
     if (workspaceUsers == null) {
@@ -82,9 +84,13 @@ class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
+  Future<Result<void>> _loadWorkspaceMembers(
+    (String workspaceId, bool forceFetch) details,
+  ) async {
+    final (workspaceId, forceFetch) = details;
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
       workspaceId: workspaceId,
+      forceFetch: forceFetch,
     );
 
     switch (result) {

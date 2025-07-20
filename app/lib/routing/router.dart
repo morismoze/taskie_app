@@ -304,8 +304,10 @@ GoRouter router({
                     return CreateWorkspaceUserScreen(
                       viewModel: CreateWorkspaceUserScreenViewModel(
                         workspaceId: workspaceId,
+                        workspaceRepository: context.read(),
                         workspaceInviteRepository: context.read(),
                         workspaceUserRepository: context.read(),
+                        shareWorkspaceInviteLinkUseCase: context.read(),
                       ),
                     );
                   },

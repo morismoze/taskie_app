@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceCreateDescriptionMaxLength.
   ///
   /// In en, this message translates to:
-  /// **'Opis može imati najviše 250 znakova'**
+  /// **'Description can have at most 250 characters'**
   String get workspaceCreateDescriptionMaxLength;
 
   /// No description provided for @requiredField.
@@ -422,6 +422,12 @@ abstract class AppLocalizations {
   /// **'Users management'**
   String get workspaceUsersManagement;
 
+  /// No description provided for @workspaceUsersManagementLoadUsersError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble loading up workspace users'**
+  String get workspaceUsersManagementLoadUsersError;
+
   /// No description provided for @workspaceUsersManagementDeleteUser.
   ///
   /// In en, this message translates to:
@@ -542,6 +548,18 @@ abstract class AppLocalizations {
   /// **'Workspace invite link'**
   String get workspaceUsersManagementCreateWorkspaceInviteLabel;
 
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Each link is single-use (send it to one user only). You can copy it to the clipboard or share it. For your convenience, after either of those two actions, a new link is generated for new usage.'**
+  String get workspaceUsersManagementCreateWorkspaceInviteNote;
+
   /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteClipboard.
   ///
   /// In en, this message translates to:
@@ -581,7 +599,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementCreateVirtualUserSubmit.
   ///
   /// In en, this message translates to:
-  /// **'Create virtual user'**
+  /// **'Create new virtual user'**
   String get workspaceUsersManagementCreateVirtualUserSubmit;
 
   /// No description provided for @workspaceUsersManagementCreateVirtualUserSuccess.

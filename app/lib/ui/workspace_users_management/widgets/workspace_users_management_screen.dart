@@ -29,6 +29,9 @@ class _WorkspaceUsersManagementScreenState
   @override
   void initState() {
     super.initState();
+    widget.viewModel.loadWorkspaceMembers.addListener(
+      _onWorkspaceUsersLoadResult,
+    );
     widget.viewModel.deleteWorkspaceUser.addListener(
       _onWorkspaceUserDeleteResult,
     );
@@ -37,8 +40,14 @@ class _WorkspaceUsersManagementScreenState
   @override
   void didUpdateWidget(covariant WorkspaceUsersManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.loadWorkspaceMembers.removeListener(
+      _onWorkspaceUsersLoadResult,
+    );
     oldWidget.viewModel.deleteWorkspaceUser.removeListener(
       _onWorkspaceUserDeleteResult,
+    );
+    widget.viewModel.loadWorkspaceMembers.addListener(
+      _onWorkspaceUsersLoadResult,
     );
     widget.viewModel.deleteWorkspaceUser.addListener(
       _onWorkspaceUserDeleteResult,
@@ -47,6 +56,9 @@ class _WorkspaceUsersManagementScreenState
 
   @override
   void dispose() {
+    widget.viewModel.loadWorkspaceMembers.removeListener(
+      _onWorkspaceUsersLoadResult,
+    );
     widget.viewModel.deleteWorkspaceUser.removeListener(
       _onWorkspaceUserDeleteResult,
     );
@@ -88,33 +100,43 @@ class _WorkspaceUsersManagementScreenState
               ),
               Expanded(
                 child: ListenableBuilder(
-                  listenable: widget.viewModel.loadWorkspaceMembers,
+                  listenable: widget.viewModel,
                   builder: (builderContext, child) {
-                    if (widget.viewModel.loadWorkspaceMembers.running) {
+                    if (widget.viewModel.users == null) {
                       return ActivityIndicator(
                         radius: 16,
                         color: Theme.of(builderContext).colorScheme.primary,
                       );
                     }
 
-                    if (widget.viewModel.loadWorkspaceMembers.error) {
+                    // If there was an error while fetching from origin, display error prompt
+                    // only on initial load (`widget.viewModel.users will` be `null`). In other
+                    // cases, old list will still be shown, but we will show snackbar.
+                    if (widget.viewModel.loadWorkspaceMembers.error &&
+                        widget.viewModel.users == null) {
                       // TODO: Usage of a generic error prompt widget
                     }
 
                     return child!;
                   },
-                  child: ListenableBuilder(
-                    listenable: widget.viewModel,
-                    builder: (innerBuilderContext, _) => ListView.separated(
+                  child: RefreshIndicator(
+                    displacement: 30,
+                    onRefresh: () async {
+                      widget.viewModel.loadWorkspaceMembers.execute((
+                        widget.viewModel.activeWorkspaceId,
+                        true,
+                      ));
+                    },
+                    child: ListView.separated(
                       padding: EdgeInsets.only(
                         bottom: 20,
                         left: Dimens.of(context).paddingScreenHorizontal,
                         right: Dimens.of(context).paddingScreenHorizontal,
                       ),
-                      itemCount: widget.viewModel.users.length,
+                      itemCount: widget.viewModel.users!.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 10),
                       itemBuilder: (_, index) {
-                        final workspaceUser = widget.viewModel.users[index];
+                        final workspaceUser = widget.viewModel.users![index];
                         final currentUser = widget.viewModel.currentUser;
 
                         final isCurrentUser =
@@ -141,6 +163,24 @@ class _WorkspaceUsersManagementScreenState
         ),
       ),
     );
+  }
+
+  void _onWorkspaceUsersLoadResult() {
+    if (widget.viewModel.loadWorkspaceMembers.completed) {
+      widget.viewModel.loadWorkspaceMembers.clearResult();
+    }
+
+    // Showing snackbar only on subsequest pull-to-refreshes
+    // and not on initial load.
+    if (widget.viewModel.loadWorkspaceMembers.error &&
+        widget.viewModel.users != null) {
+      widget.viewModel.loadWorkspaceMembers.clearResult();
+
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.workspaceUsersManagementLoadUsersError,
+      );
+    }
   }
 
   void _onWorkspaceUserDeleteResult() {
