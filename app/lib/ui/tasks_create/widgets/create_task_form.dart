@@ -33,7 +33,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     setState(() {
       // Take selected workspace IDs
       _selectedAssigneeWorkspaceIds = selectedOptions
-          .map((option) => option.value)
+          .map((option) => option.value as String)
           .toList();
     });
   }

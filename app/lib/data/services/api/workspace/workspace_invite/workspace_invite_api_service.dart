@@ -12,6 +12,7 @@ class WorkspaceInviteApiService {
   // TODO: production). This enables Android to do actual functionalities
   // TODO: behind opening Taslkie app behind the workspace invite URL
   // TODO: (fetching assetLinks.json from the server).
+  // TODO: This ApiService should be used as well for workspace join endpoint.
   WorkspaceInviteApiService({required ApiClient apiClient})
     : _apiClient = apiClient;
 

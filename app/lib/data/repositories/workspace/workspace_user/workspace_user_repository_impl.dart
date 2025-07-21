@@ -44,8 +44,17 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
                   lastName: workspaceUser.lastName,
                   role: workspaceUser.role,
                   userId: workspaceUser.userId,
+                  createdAt: workspaceUser.createdAt,
                   email: workspaceUser.email,
                   profileImageUrl: workspaceUser.profileImageUrl,
+                  createdBy: workspaceUser.createdBy == null
+                      ? null
+                      : WorkspaceUserCreatedBy(
+                          firstName: workspaceUser.createdBy!.firstName,
+                          lastName: workspaceUser.createdBy!.lastName,
+                          profileImageUrl:
+                              workspaceUser.createdBy!.profileImageUrl,
+                        ),
                 ),
               )
               .toList();
@@ -87,8 +96,16 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
             lastName: workspaceUser.lastName,
             role: workspaceUser.role,
             userId: workspaceUser.userId,
+            createdAt: workspaceUser.createdAt,
             email: workspaceUser.email,
             profileImageUrl: workspaceUser.profileImageUrl,
+            createdBy: workspaceUser.createdBy == null
+                ? null
+                : WorkspaceUserCreatedBy(
+                    firstName: workspaceUser.createdBy!.firstName,
+                    lastName: workspaceUser.createdBy!.lastName,
+                    profileImageUrl: workspaceUser.createdBy!.profileImageUrl,
+                  ),
           );
 
           _cachedWorkspaceUsersList!.add(mappedData);

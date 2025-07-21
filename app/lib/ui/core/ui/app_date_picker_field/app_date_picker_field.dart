@@ -61,7 +61,11 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
           : null,
       onTrailingIconPress: _clearSelections,
       child: _selectedDate != null
-          ? Text(DateFormat.yMd().format(_selectedDate!))
+          ? Text(
+              DateFormat.yMd(
+                Localizations.localeOf(context).toString(),
+              ).format(_selectedDate!),
+            )
           : const SizedBox.shrink(),
     );
   }

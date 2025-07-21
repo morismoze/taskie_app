@@ -283,19 +283,19 @@ class AppLocalizationsHr extends AppLocalizations {
       'Kreirajte novog virtualnog korisnika:';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserFirstNameMinLength =>
+  String get workspaceUserFirstNameMinLength =>
       'Ime mora imati najmanje 2 znaka';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserFirstNameMaxLength =>
+  String get workspaceUserFirstNameMaxLength =>
       'Ime može imati najviše 50 znakova';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserLastNameMinLength =>
+  String get workspaceUserLastNameMinLength =>
       'Prezime mora imati najmanje 2 znaka';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserLastNameMaxLength =>
+  String get workspaceUserLastNameMaxLength =>
       'Prezime može imati najviše 50 znakova';
 
   @override
@@ -311,8 +311,21 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom kreiranja virtualnog korisnika';
 
   @override
-  String get workspaceUsersManagementUserDetails =>
-      'Detalji korisnika radnog prostora';
+  String get workspaceUsersManagementUserDetails => 'Korisnički detalji';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEdit =>
+      'Uređivanje korisničkih podataka';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditNote =>
+      'Budite oprezni prilikom izmjene uloge korisnika. Korisnici s ulogom Menadžer imaju potpunu administrativnu i upravljačku kontrolu nad radnim prostorom.';
+
+  @override
+  String get roleLabel => 'Uloga';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditSubmit => 'Uredi podatke';
 
   @override
   String get workspaceUserFirstNameLabel => 'Ime';
@@ -322,4 +335,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get orSeparator => 'ILI';
+
+  @override
+  String get createdBy => 'Korisnika kreirao/la';
+
+  @override
+  String get createdAt => 'Korisnik kreiran';
 }

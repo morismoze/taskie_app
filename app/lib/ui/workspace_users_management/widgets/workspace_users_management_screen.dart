@@ -200,7 +200,7 @@ class _WorkspaceUsersManagementScreenState
       context.pop(); // Close dialog
       context.pop(); // Close bottom sheet
 
-      AppSnackbar.showSuccess(
+      AppSnackbar.showError(
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserError,
       );

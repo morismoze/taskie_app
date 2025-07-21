@@ -8,6 +8,14 @@ export interface WorkspaceUserResponse {
   profileImageUrl: string | null;
   role: WorkspaceUserRole;
   userId: string; // core User ID
+  createdAt: string;
+  // Will be null in the case workspace user was the one
+  // who created the workspace
+  createdBy: {
+    firstName: WorkspaceUserResponse['firstName'];
+    lastName: WorkspaceUserResponse['lastName'];
+    profileImageUrl: WorkspaceUserResponse['profileImageUrl'];
+  } | null;
 }
 
 export type WorkspaceUsersResponse = WorkspaceUserResponse[];

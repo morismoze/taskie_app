@@ -7,6 +7,7 @@ import '../../core/theme/colors.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/rbac.dart';
+import '../../core/ui/role_chip.dart';
 import '../view_models/workspace_users_management_screen_viewmodel.dart';
 import 'delete_workspace_user_button.dart';
 
@@ -30,30 +31,12 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final roleChipBackgroundColor = role == WorkspaceRole.manager
-        ? AppColors.purple1Light
-        : AppColors.green1Light;
-    final roleChipTextColor = role == WorkspaceRole.manager
-        ? AppColors.purple1
-        : AppColors.green1;
-
     return IntrinsicWidth(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         spacing: 10,
         children: [
-          Chip(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-            side: BorderSide.none,
-            backgroundColor: roleChipBackgroundColor,
-            label: Text(
-              role.value,
-              style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: roleChipTextColor,
-              ),
-            ),
-          ),
+          RoleChip(role: role),
           if (!isCurrentUser)
             Rbac(
               permission: RbacPermission.workspaceManageUsers,

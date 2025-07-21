@@ -281,19 +281,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create a new virtual user:';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserFirstNameMinLength =>
+  String get workspaceUserFirstNameMinLength =>
       'First name must have at least 2 characters';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserFirstNameMaxLength =>
+  String get workspaceUserFirstNameMaxLength =>
       'First name can have at most 50 characters';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserLastNameMinLength =>
+  String get workspaceUserLastNameMinLength =>
       'Last name must have at least 2 characters';
 
   @override
-  String get workspaceUsersManagementCreateVirtualUserLastNameMaxLength =>
+  String get workspaceUserLastNameMaxLength =>
       'Last name can have at most 50 characters';
 
   @override
@@ -312,6 +312,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceUsersManagementUserDetails => 'Workspace user details';
 
   @override
+  String get workspaceUsersManagementUserDetailsEdit =>
+      'Edit workspace user details';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditNote =>
+      'Be cautious when changing a user\'s role. Users with the Manager role have full administrative and managerial control over the workspace.';
+
+  @override
+  String get roleLabel => 'Role';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditSubmit => 'Edit details';
+
+  @override
   String get workspaceUserFirstNameLabel => 'First name';
 
   @override
@@ -319,4 +333,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orSeparator => 'OR';
+
+  @override
+  String get createdBy => 'Created by';
+
+  @override
+  String get createdAt => 'Created at';
 }

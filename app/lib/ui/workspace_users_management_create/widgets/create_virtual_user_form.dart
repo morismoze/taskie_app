@@ -93,14 +93,10 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
         return context.localization.requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
-        return context
-            .localization
-            .workspaceUsersManagementCreateVirtualUserFirstNameMinLength;
+        return context.localization.workspaceUserFirstNameMinLength;
       case final String value
           when value.length > ValidationRules.workspaceUserNameMaxLength:
-        return context
-            .localization
-            .workspaceUsersManagementCreateVirtualUserFirstNameMaxLength;
+        return context.localization.workspaceUserFirstNameMaxLength;
       default:
         return null;
     }
@@ -112,14 +108,10 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
         return context.localization.requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
-        return context
-            .localization
-            .workspaceUsersManagementCreateVirtualUserLastNameMinLength;
+        return context.localization.workspaceUserLastNameMinLength;
       case final String value
           when value.length > ValidationRules.workspaceUserNameMaxLength:
-        return context
-            .localization
-            .workspaceUsersManagementCreateVirtualUserLastNameMaxLength;
+        return context.localization.workspaceUserLastNameMaxLength;
       default:
         return null;
     }

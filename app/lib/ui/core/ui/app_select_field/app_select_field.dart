@@ -19,7 +19,7 @@ class AppSelectFieldOption {
   });
 
   final String label;
-  final String value;
+  final Object value;
   final Widget? leading;
 
   @override
@@ -41,6 +41,7 @@ class AppSelectField extends StatefulWidget {
     required this.label,
     this.multiple = false,
     this.required = true,
+    this.initialValue,
   });
 
   final List<AppSelectFieldOption> options;
@@ -50,13 +51,20 @@ class AppSelectField extends StatefulWidget {
   /// Defines if this a multiple option selection field.
   final bool multiple;
   final bool required;
+  final List<AppSelectFieldOption>? initialValue;
 
   @override
   State<AppSelectField> createState() => _AppSelectFieldState();
 }
 
 class _AppSelectFieldState extends State<AppSelectField> {
-  List<AppSelectFieldOption> _selectedOptions = [];
+  late List<AppSelectFieldOption> _selectedOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedOptions = List.from(widget.initialValue ?? []);
+  }
 
   void _clearSelections() {
     setState(() {
@@ -73,7 +81,9 @@ class _AppSelectFieldState extends State<AppSelectField> {
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = _selectedOptions.isNotEmpty;
+    final hasSelection =
+        _selectedOptions.isNotEmpty ||
+        widget.initialValue != null && widget.initialValue!.isNotEmpty;
 
     return AppFieldButton(
       label: widget.label,

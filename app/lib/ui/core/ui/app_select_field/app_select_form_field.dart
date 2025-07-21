@@ -13,9 +13,8 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
     required void Function(List<AppSelectFieldOption>) onSelected,
     bool multiple = false,
     bool required = true,
-    List<AppSelectFieldOption>? initialValue,
+    super.initialValue,
   }) : super(
-         initialValue: initialValue ?? [],
          builder: (FormFieldState<List<AppSelectFieldOption>> state) {
            final context = state.context;
            final errorText = state.errorText;
@@ -32,6 +31,7 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                    state.didChange(selected);
                    onSelected(selected);
                  },
+                 initialValue: initialValue,
                ),
                Padding(
                  padding: EdgeInsets.only(

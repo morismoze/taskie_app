@@ -133,7 +133,6 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
           (widget.viewModel.shareWorkspaceInviteLink.result as Ok<ShareResult>)
               .value;
       widget.viewModel.shareWorkspaceInviteLink.clearResult();
-      print('ALOO ${shareResult.status}');
 
       // Only re-fetch new workspace invite link if the
       // invite was shared successfully
@@ -162,7 +161,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
     if (widget.viewModel.createVirtualUser.error) {
       widget.viewModel.createVirtualUser.clearResult();
-      AppSnackbar.showSuccess(
+      AppSnackbar.showError(
         context: context,
         message:
             context.localization.workspaceUsersManagementCreateVirtualUserError,

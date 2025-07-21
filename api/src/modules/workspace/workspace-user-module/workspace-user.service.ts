@@ -4,6 +4,7 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceLeaderboardResponse } from '../workspace-module/dto/response/workspace-leaderboard-response.dto';
 import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
+import { WorkspaceUserWithCreatedByUser } from './domain/workspace-user-with-created-by.domain';
 import { WorkspaceUserWithUser } from './domain/workspace-user-with-user.domain';
 import { WorkspaceUserWithWorkspaceCore } from './domain/workspace-user-with-workspace.domain';
 import { WorkspaceUser } from './domain/workspace-user.domain';
@@ -27,7 +28,7 @@ export class WorkspaceUserService {
     userId: WorkspaceUser['user']['id'];
     workspaceRole: WorkspaceUser['workspaceRole'];
     status: WorkspaceUser['status'];
-  }): Promise<WorkspaceUserCore> {
+  }): Promise<WorkspaceUserWithCreatedByUser> {
     const workspaceUser = await this.workspaceUserRepository.create({
       data: {
         workspaceId,
@@ -35,6 +36,11 @@ export class WorkspaceUserService {
         userId,
         workspaceRole,
         status,
+      },
+      relations: {
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -47,7 +53,19 @@ export class WorkspaceUserService {
       );
     }
 
-    return workspaceUser;
+    const createdBy =
+      workspaceUser.createdBy === null
+        ? null
+        : {
+            firstName: workspaceUser.createdBy.user.firstName,
+            lastName: workspaceUser.createdBy.user.lastName,
+            profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
+          };
+
+    return {
+      ...workspaceUser,
+      createdBy,
+    };
   }
 
   async findById(
@@ -104,23 +122,13 @@ export class WorkspaceUserService {
   }: {
     id: WorkspaceUser['id'];
     data: Partial<WorkspaceUserCore>;
-  }): Promise<WorkspaceUserWithUser> {
-    const workspaceUser = await this.findById(id);
-
-    if (!workspaceUser) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
+  }): Promise<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser> {
     const updatedWorkspaceUserUser = await this.workspaceUserRepository.update({
       id,
       data,
       relations: {
         user: true,
+        createdBy: true,
       },
     });
 
@@ -133,7 +141,20 @@ export class WorkspaceUserService {
       );
     }
 
-    return updatedWorkspaceUserUser;
+    const createdBy =
+      updatedWorkspaceUserUser.createdBy === null
+        ? null
+        : {
+            firstName: updatedWorkspaceUserUser.createdBy.user.firstName,
+            lastName: updatedWorkspaceUserUser.createdBy.user.lastName,
+            profileImageUrl:
+              updatedWorkspaceUserUser.createdBy.user.profileImageUrl,
+          };
+
+    return {
+      ...updatedWorkspaceUserUser,
+      createdBy,
+    };
   }
 
   async delete({

@@ -32,6 +32,8 @@ import '../ui/workspace_users_management_create/widgets/create_workspace_user_sc
 import '../ui/workspace_users_management_guide/widgets/workspace_users_management_guide_screen.dart';
 import '../ui/workspace_users_management_user_details/view_models/workspace_user_details_screen_view_model.dart';
 import '../ui/workspace_users_management_user_details/widgets/workspace_user_details_screen.dart';
+import '../ui/workspace_users_management_user_details_edit/view_models/workspace_user_details_edit_screen_view_model.dart';
+import '../ui/workspace_users_management_user_details_edit/widgets/workspace_user_details_edit_screen.dart';
 import 'routes.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -339,6 +341,25 @@ GoRouter router({
                       ),
                     );
                   },
+                  routes: [
+                    GoRoute(
+                      path: Routes.workspaceUsersEditUserDetailsRelative,
+                      builder: (context, state) {
+                        final workspaceId =
+                            state.pathParameters['workspaceId']!;
+                        final workspaceUserId =
+                            state.pathParameters['workspaceUserId']!;
+
+                        return WorkspaceUserDetailsEditScreen(
+                          viewModel: WorkspaceUserDetailsEditScreenViewModel(
+                            workspaceId: workspaceId,
+                            workspaceUserId: workspaceUserId,
+                            workspaceUserRepository: context.read(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

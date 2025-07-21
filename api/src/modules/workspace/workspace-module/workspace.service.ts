@@ -269,6 +269,8 @@ export class WorkspaceService {
       profileImageUrl: null,
       role: newWorkspaceUser.workspaceRole,
       userId: newUser.id,
+      createdBy: newWorkspaceUser.createdBy,
+      createdAt: newWorkspaceUser.createdAt,
     };
 
     return response;
@@ -297,7 +299,12 @@ export class WorkspaceService {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
       relations: {
-        members: { user: true },
+        members: {
+          user: true,
+          createdBy: {
+            user: true,
+          },
+        },
       },
     });
 
@@ -309,6 +316,7 @@ export class WorkspaceService {
         HttpStatus.NOT_FOUND,
       );
     }
+    console.log(workspace.members);
 
     const response: WorkspaceUsersResponse = workspace.members
       .map((member) => ({
@@ -319,6 +327,15 @@ export class WorkspaceService {
         profileImageUrl: member.user.profileImageUrl,
         role: member.workspaceRole,
         userId: member.user.id,
+        createdBy:
+          member.createdBy === null
+            ? null
+            : {
+                firstName: member.createdBy.user.firstName,
+                lastName: member.createdBy.user.lastName,
+                profileImageUrl: member.createdBy.user.profileImageUrl,
+              },
+        createdAt: member.createdAt,
       }))
       .sort((wu1, wu2) => {
         // Sort by full name
@@ -618,9 +635,44 @@ export class WorkspaceService {
       profileImageUrl: updatedWorkspaceUser.user.profileImageUrl,
       role: updatedWorkspaceUser.workspaceRole,
       userId: updatedWorkspaceUser.user.id,
+      createdAt: updatedWorkspaceUser.createdAt,
+      createdBy:
+        updatedWorkspaceUser.createdBy === null
+          ? null
+          : {
+              firstName: updatedWorkspaceUser.createdBy.firstName,
+              lastName: updatedWorkspaceUser.createdBy.lastName,
+              profileImageUrl: updatedWorkspaceUser.createdBy.profileImageUrl,
+            },
     };
 
     return response;
+  }
+
+  async getWorkspaceUserAdditionalDetails({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: Workspace['id'];
+    workspaceUserId: WorkspaceUser['id'];
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.workspaceUserService.delete({
+      workspaceId,
+      workspaceUserId,
+    });
   }
 
   async removeUserFromWorkspace({

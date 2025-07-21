@@ -2,11 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
+import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
-class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
-  WorkspaceUserDetailsScreenViewModel({
+class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
+  WorkspaceUserDetailsEditScreenViewModel({
     required String workspaceId,
     required String workspaceUserId,
     required WorkspaceUserRepository workspaceUserRepository,
@@ -17,12 +18,19 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
       workspaceId: workspaceId,
       workspaceUserId: workspaceUserId,
     );
+    editWorkspaceUserDetails = Command1(_editWorkspaceUserDetails);
   }
 
   final String _activeWorkspaceId;
   final String _workspaceUserId;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('WorkspaceUserDetailsScreenViewModel');
+  final _log = Logger('WorkspaceUserDetailsEditScreenViewModel');
+
+  late Command1<
+    void,
+    (String? firstName, String? lastName, WorkspaceRole? role)
+  >
+  editWorkspaceUserDetails;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -48,5 +56,11 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
         _log.warning('Failed to load workspace user details', result.error);
         return result;
     }
+  }
+
+  Future<Result<void>> _editWorkspaceUserDetails(
+    (String? firstName, String? lastName, WorkspaceRole? role) details,
+  ) {
+    return Future.delayed(const Duration(seconds: 3));
   }
 }

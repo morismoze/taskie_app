@@ -572,29 +572,29 @@ abstract class AppLocalizations {
   /// **'Create a new virtual user:'**
   String get workspaceUsersManagementCreateVirtualUserDescription;
 
-  /// No description provided for @workspaceUsersManagementCreateVirtualUserFirstNameMinLength.
+  /// No description provided for @workspaceUserFirstNameMinLength.
   ///
   /// In en, this message translates to:
   /// **'First name must have at least 2 characters'**
-  String get workspaceUsersManagementCreateVirtualUserFirstNameMinLength;
+  String get workspaceUserFirstNameMinLength;
 
-  /// No description provided for @workspaceUsersManagementCreateVirtualUserFirstNameMaxLength.
+  /// No description provided for @workspaceUserFirstNameMaxLength.
   ///
   /// In en, this message translates to:
   /// **'First name can have at most 50 characters'**
-  String get workspaceUsersManagementCreateVirtualUserFirstNameMaxLength;
+  String get workspaceUserFirstNameMaxLength;
 
-  /// No description provided for @workspaceUsersManagementCreateVirtualUserLastNameMinLength.
+  /// No description provided for @workspaceUserLastNameMinLength.
   ///
   /// In en, this message translates to:
   /// **'Last name must have at least 2 characters'**
-  String get workspaceUsersManagementCreateVirtualUserLastNameMinLength;
+  String get workspaceUserLastNameMinLength;
 
-  /// No description provided for @workspaceUsersManagementCreateVirtualUserLastNameMaxLength.
+  /// No description provided for @workspaceUserLastNameMaxLength.
   ///
   /// In en, this message translates to:
   /// **'Last name can have at most 50 characters'**
-  String get workspaceUsersManagementCreateVirtualUserLastNameMaxLength;
+  String get workspaceUserLastNameMaxLength;
 
   /// No description provided for @workspaceUsersManagementCreateVirtualUserSubmit.
   ///
@@ -620,6 +620,30 @@ abstract class AppLocalizations {
   /// **'Workspace user details'**
   String get workspaceUsersManagementUserDetails;
 
+  /// No description provided for @workspaceUsersManagementUserDetailsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit workspace user details'**
+  String get workspaceUsersManagementUserDetailsEdit;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Be cautious when changing a user\'s role. Users with the Manager role have full administrative and managerial control over the workspace.'**
+  String get workspaceUsersManagementUserDetailsEditNote;
+
+  /// No description provided for @roleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get roleLabel;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get workspaceUsersManagementUserDetailsEditSubmit;
+
   /// No description provided for @workspaceUserFirstNameLabel.
   ///
   /// In en, this message translates to:
@@ -637,6 +661,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OR'**
   String get orSeparator;
+
+  /// No description provided for @createdBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by'**
+  String get createdBy;
+
+  /// No description provided for @createdAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created at'**
+  String get createdAt;
 }
 
 class _AppLocalizationsDelegate
