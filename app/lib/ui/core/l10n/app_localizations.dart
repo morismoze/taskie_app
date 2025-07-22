@@ -98,11 +98,71 @@ abstract class AppLocalizations {
     Locale('hr'),
   ];
 
-  /// No description provided for @cancel.
+  /// No description provided for @misc_cancel.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
-  String get cancel;
+  String get misc_cancel;
+
+  /// No description provided for @misc_somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! Something went wrong'**
+  String get misc_somethingWentWrong;
+
+  /// No description provided for @misc_tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get misc_tryAgain;
+
+  /// No description provided for @misc_requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get misc_requiredField;
+
+  /// No description provided for @misc_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get misc_optional;
+
+  /// No description provided for @misc_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get misc_submit;
+
+  /// No description provided for @misc_close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get misc_close;
+
+  /// No description provided for @misc_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get misc_note;
+
+  /// No description provided for @misc_roleManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get misc_roleManager;
+
+  /// No description provided for @misc_roleMember.
+  ///
+  /// In en, this message translates to:
+  /// **'ČlanMember'**
+  String get misc_roleMember;
+
+  /// No description provided for @misc_orSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get misc_orSeparator;
 
   /// No description provided for @signInTitleStart.
   ///
@@ -139,18 +199,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Google sign-in cancelled. Please try again.'**
   String get signInGoogleCanceled;
-
-  /// No description provided for @somethingWentWrong.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! Something went wrong'**
-  String get somethingWentWrong;
-
-  /// No description provided for @tryAgain.
-  ///
-  /// In en, this message translates to:
-  /// **'Try again'**
-  String get tryAgain;
 
   /// No description provided for @errorOnInitialLoad.
   ///
@@ -236,23 +284,11 @@ abstract class AppLocalizations {
   /// **'Description can have at most 250 characters'**
   String get workspaceCreateDescriptionMaxLength;
 
-  /// No description provided for @requiredField.
-  ///
-  /// In en, this message translates to:
-  /// **'This field is required'**
-  String get requiredField;
-
-  /// No description provided for @optional.
-  ///
-  /// In en, this message translates to:
-  /// **'optional'**
-  String get optional;
-
-  /// No description provided for @errorWhileCreatingWorkspace.
+  /// No description provided for @workspaceCreateError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble creating your workspace'**
-  String get errorWhileCreatingWorkspace;
+  String get workspaceCreateError;
 
   /// No description provided for @tasksHello.
   ///
@@ -404,18 +440,6 @@ abstract class AppLocalizations {
   /// **'Task must have at least 1 assignee'**
   String get taskAssigneesMinLength;
 
-  /// No description provided for @submit.
-  ///
-  /// In en, this message translates to:
-  /// **'Submit'**
-  String get submit;
-
-  /// No description provided for @close.
-  ///
-  /// In en, this message translates to:
-  /// **'Close'**
-  String get close;
-
   /// No description provided for @workspaceUsersManagement.
   ///
   /// In en, this message translates to:
@@ -548,12 +572,6 @@ abstract class AppLocalizations {
   /// **'Workspace invite link'**
   String get workspaceUsersManagementCreateWorkspaceInviteLabel;
 
-  /// No description provided for @note.
-  ///
-  /// In en, this message translates to:
-  /// **'Note'**
-  String get note;
-
   /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteNote.
   ///
   /// In en, this message translates to:
@@ -629,20 +647,44 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementUserDetailsEditNote.
   ///
   /// In en, this message translates to:
-  /// **'Be cautious when changing a user\'s role. Users with the Manager role have full administrative and managerial control over the workspace.'**
+  /// **'Be cautious when changing a user\'s role to Manager role. Users with the Manager role have full administrative and managerial control over the workspace.'**
   String get workspaceUsersManagementUserDetailsEditNote;
 
-  /// No description provided for @roleLabel.
+  /// No description provided for @workspaceUsersManagementUserDetailsEditFirstNameBlocked.
   ///
   /// In en, this message translates to:
-  /// **'Role'**
-  String get roleLabel;
+  /// **'Non-virtual users can\'t edit their first name because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
+  String get workspaceUsersManagementUserDetailsEditFirstNameBlocked;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditLastNameBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-virtual users can\'t edit their last name because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
+  String get workspaceUsersManagementUserDetailsEditLastNameBlocked;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditRoleBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual users always have the Member role and cannot be changed.'**
+  String get workspaceUsersManagementUserDetailsEditRoleBlocked;
 
   /// No description provided for @workspaceUsersManagementUserDetailsEditSubmit.
   ///
   /// In en, this message translates to:
   /// **'Edit details'**
   String get workspaceUsersManagementUserDetailsEditSubmit;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited workspace user details'**
+  String get workspaceUsersManagementUserDetailsEditSuccess;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing workspace user details'**
+  String get workspaceUsersManagementUserDetailsEditError;
 
   /// No description provided for @workspaceUserFirstNameLabel.
   ///
@@ -656,11 +698,11 @@ abstract class AppLocalizations {
   /// **'Last name'**
   String get workspaceUserLastNameLabel;
 
-  /// No description provided for @orSeparator.
+  /// No description provided for @roleLabel.
   ///
   /// In en, this message translates to:
-  /// **'OR'**
-  String get orSeparator;
+  /// **'Role'**
+  String get roleLabel;
 
   /// No description provided for @createdBy.
   ///

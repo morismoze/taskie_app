@@ -55,7 +55,7 @@ class AppTextField extends StatelessWidget {
         hintText: hint,
         labelText: required
             ? label
-            : '$label (${context.localization.optional})',
+            : '$label (${context.localization.misc_optional})',
         filled: true,
         floatingLabelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
           fontSize:

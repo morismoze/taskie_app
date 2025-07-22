@@ -9,7 +9,37 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get cancel => 'Cancel';
+  String get misc_cancel => 'Cancel';
+
+  @override
+  String get misc_somethingWentWrong => 'Uh-oh! Something went wrong';
+
+  @override
+  String get misc_tryAgain => 'Try again';
+
+  @override
+  String get misc_requiredField => 'This field is required';
+
+  @override
+  String get misc_optional => 'optional';
+
+  @override
+  String get misc_submit => 'Submit';
+
+  @override
+  String get misc_close => 'Close';
+
+  @override
+  String get misc_note => 'Note';
+
+  @override
+  String get misc_roleManager => 'Manager';
+
+  @override
+  String get misc_roleMember => 'ČlanMember';
+
+  @override
+  String get misc_orSeparator => 'or';
 
   @override
   String get signInTitleStart => 'Happy Chores, Happy Kids.';
@@ -30,12 +60,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get signInGoogleCanceled =>
       'Google sign-in cancelled. Please try again.';
-
-  @override
-  String get somethingWentWrong => 'Uh-oh! Something went wrong';
-
-  @override
-  String get tryAgain => 'Try again';
 
   @override
   String get errorOnInitialLoad =>
@@ -86,13 +110,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Description can have at most 250 characters';
 
   @override
-  String get requiredField => 'This field is required';
-
-  @override
-  String get optional => 'optional';
-
-  @override
-  String get errorWhileCreatingWorkspace =>
+  String get workspaceCreateError =>
       'Uh-oh! We\'ve had some trouble creating your workspace';
 
   @override
@@ -175,12 +193,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskAssigneesMinLength => 'Task must have at least 1 assignee';
-
-  @override
-  String get submit => 'Submit';
-
-  @override
-  String get close => 'Close';
 
   @override
   String get workspaceUsersManagement => 'Users management';
@@ -266,9 +278,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Workspace invite link';
 
   @override
-  String get note => 'Note';
-
-  @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
       'Each link is single-use (send it to one user only). You can copy it to the clipboard or share it. For your convenience, after either of those two actions, a new link is generated for new usage.';
 
@@ -317,13 +326,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUserDetailsEditNote =>
-      'Be cautious when changing a user\'s role. Users with the Manager role have full administrative and managerial control over the workspace.';
+      'Be cautious when changing a user\'s role to Manager role. Users with the Manager role have full administrative and managerial control over the workspace.';
 
   @override
-  String get roleLabel => 'Role';
+  String get workspaceUsersManagementUserDetailsEditFirstNameBlocked =>
+      'Non-virtual users can\'t edit their first name because this field is provided by the sign-up provider (e.g., Google) used for this app.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditLastNameBlocked =>
+      'Non-virtual users can\'t edit their last name because this field is provided by the sign-up provider (e.g., Google) used for this app.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
+      'Virtual users always have the Member role and cannot be changed.';
 
   @override
   String get workspaceUsersManagementUserDetailsEditSubmit => 'Edit details';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditSuccess =>
+      'Successfully edited workspace user details';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditError =>
+      'Uh-oh! We\'ve had some trouble editing workspace user details';
 
   @override
   String get workspaceUserFirstNameLabel => 'First name';
@@ -332,7 +358,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceUserLastNameLabel => 'Last name';
 
   @override
-  String get orSeparator => 'OR';
+  String get roleLabel => 'Role';
 
   @override
   String get createdBy => 'Created by';

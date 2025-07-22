@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../l10n/l10n_extensions.dart';
 import '../theme/colors.dart';
@@ -9,10 +8,7 @@ import '../theme/theme.dart';
 /// invokes an action through provided [onTap] (e.g. onTap
 /// can open a modal bottom sheet).
 ///
-/// Both [trailingIcon] and [onTrailingIconPress] need to
-/// be passed when using trailing element.
-///
-/// This is normally used to showcase custom widgets
+/// This class is normally used to showcase custom widgets
 /// inside the field, rather than plain text.
 class AppFieldButton extends StatelessWidget {
   const AppFieldButton({
@@ -22,8 +18,7 @@ class AppFieldButton extends StatelessWidget {
     required this.onTap,
     required this.child,
     this.required = true,
-    this.trailingIcon,
-    this.onTrailingIconPress,
+    this.trailing,
   });
 
   final String label;
@@ -31,8 +26,7 @@ class AppFieldButton extends StatelessWidget {
   final Function() onTap;
   final Widget child;
   final bool required;
-  final IconData? trailingIcon;
-  final void Function()? onTrailingIconPress;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +36,7 @@ class AppFieldButton extends StatelessWidget {
             AppTheme.fieldUnfocusedLabelFontSize / 1.5);
     final mappedLabel = required
         ? label
-        : '$label (${context.localization.optional})';
+        : '$label (${context.localization.misc_optional})';
 
     return Container(
       decoration: BoxDecoration(
@@ -67,20 +61,9 @@ class AppFieldButton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(child: child),
-                    if (trailingIcon != null &&
-                        onTrailingIconPress != null) ...[
+                    if (trailing != null) ...[
                       const SizedBox(width: 4),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          onTap: onTrailingIconPress,
-                          child: FaIcon(
-                            trailingIcon,
-                            color: AppColors.black1,
-                            size: 15,
-                          ),
-                        ),
-                      ),
+                      Align(alignment: Alignment.centerRight, child: trailing),
                     ],
                   ],
                 ),

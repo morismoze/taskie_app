@@ -10,6 +10,7 @@ import '../app_field_button.dart';
 import '../app_filled_button.dart';
 import '../app_modal_bottom_sheet.dart';
 import '../app_text_button.dart';
+import '../blocked_info_icon.dart';
 
 class AppSelectFieldOption {
   const AppSelectFieldOption({
@@ -33,6 +34,9 @@ class AppSelectFieldOption {
   int get hashCode => value.hashCode;
 }
 
+/// When field is set as disabled ([enabled] = false), a info trailing
+/// icon with tooltip will be added automatically if [disabledWidgetTrailingTooltipMessage]
+/// is passed.
 class AppSelectField extends StatefulWidget {
   const AppSelectField({
     super.key,
@@ -41,7 +45,9 @@ class AppSelectField extends StatefulWidget {
     required this.label,
     this.multiple = false,
     this.required = true,
+    this.enabled = true,
     this.initialValue,
+    this.disabledWidgetTrailingTooltipMessage,
   });
 
   final List<AppSelectFieldOption> options;
@@ -51,7 +57,9 @@ class AppSelectField extends StatefulWidget {
   /// Defines if this a multiple option selection field.
   final bool multiple;
   final bool required;
+  final bool enabled;
   final List<AppSelectFieldOption>? initialValue;
+  final String? disabledWidgetTrailingTooltipMessage;
 
   @override
   State<AppSelectField> createState() => _AppSelectFieldState();
@@ -81,24 +89,48 @@ class _AppSelectFieldState extends State<AppSelectField> {
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection =
-        _selectedOptions.isNotEmpty ||
-        widget.initialValue != null && widget.initialValue!.isNotEmpty;
+    final hasSelection = _selectedOptions.isNotEmpty;
+
+    Widget? trailing;
+    if (!widget.enabled) {
+      trailing = widget.disabledWidgetTrailingTooltipMessage != null
+          ? BlockedInfoIcon(
+              message: widget.disabledWidgetTrailingTooltipMessage!,
+            )
+          : null;
+    } else {
+      if (hasSelection) {
+        trailing = InkWell(
+          onTap: _clearSelections,
+          child: const FaIcon(
+            FontAwesomeIcons.solidCircleXmark,
+            color: AppColors.black1,
+            size: 15,
+          ),
+        );
+      }
+    }
 
     return AppFieldButton(
       label: widget.label,
       required: widget.required,
       isFieldFocused: hasSelection,
       onTap: () {
-        _openOptions(context);
+        if (widget.enabled) {
+          _openOptions(context);
+        }
       },
-      trailingIcon: hasSelection ? FontAwesomeIcons.solidCircleXmark : null,
-      onTrailingIconPress: _clearSelections,
+      trailing: trailing,
       child: Wrap(
         spacing: 4,
         runSpacing: 4,
         children: _selectedOptions
-            .map((option) => _AppSelectFieldSelectedOption(label: option.label))
+            .map(
+              (option) => _AppSelectFieldSelectedOption(
+                label: option.label,
+                isFieldEnabled: widget.enabled,
+              ),
+            )
             .toList(),
       ),
     );
@@ -202,9 +234,12 @@ class _AppSelectFieldOptionsState extends State<_AppSelectFieldOptions> {
           children: [
             AppFilledButton(
               onPress: _onSubmit,
-              label: context.localization.submit,
+              label: context.localization.misc_submit,
             ),
-            AppTextButton(onPress: _onClose, label: context.localization.close),
+            AppTextButton(
+              onPress: _onClose,
+              label: context.localization.misc_close,
+            ),
           ],
         ),
       ],
@@ -213,9 +248,13 @@ class _AppSelectFieldOptionsState extends State<_AppSelectFieldOptions> {
 }
 
 class _AppSelectFieldSelectedOption extends StatelessWidget {
-  const _AppSelectFieldSelectedOption({required this.label});
+  const _AppSelectFieldSelectedOption({
+    required this.label,
+    this.isFieldEnabled = true,
+  });
 
   final String label;
+  final bool isFieldEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +264,9 @@ class _AppSelectFieldSelectedOption extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: AppColors.grey2,
+            color: isFieldEnabled
+                ? AppColors.grey2
+                : Theme.of(context).disabledColor,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../theme/colors.dart';
+import '../utils/role_extension.dart';
 
 class RoleChip extends StatelessWidget {
   const RoleChip({super.key, required this.role});
@@ -22,8 +23,8 @@ class RoleChip extends StatelessWidget {
       side: BorderSide.none,
       backgroundColor: roleChipBackgroundColor,
       label: Text(
-        role.value,
-        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+        role.l10n(context),
+        style: Theme.of(context).textTheme.labelMedium!.copyWith(
           fontWeight: FontWeight.bold,
           color: roleChipTextColor,
         ),

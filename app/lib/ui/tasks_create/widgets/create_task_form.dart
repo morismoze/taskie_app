@@ -86,7 +86,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                   label: fullName,
                   value: user.id,
                   leading: AppAvatar(
-                    text: fullName,
+                    hashString: user.id,
+                    fullName: fullName,
                     imageUrl: user.profileImageUrl,
                   ),
                 );
@@ -151,7 +152,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   String? _validateTitle(String? value) {
     switch (value) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final String value
           when value.length < ValidationRules.taskTitleMinLength:
         return context.localization.taskTitleMinLength;
@@ -179,7 +180,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   ) {
     switch (assignees) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final List<AppSelectFieldOption> value
           when value.length < ValidationRules.taskMinAssigneesCount:
         return context.localization.taskAssigneesMinLength;

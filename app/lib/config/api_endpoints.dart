@@ -32,4 +32,8 @@ abstract final class ApiEndpoints {
     WorkspaceIdPathParam workspaceId,
     WorkspaceUserIdPathParam workspaceUserId,
   ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
+  static String updateWorkspaceUserDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
 }

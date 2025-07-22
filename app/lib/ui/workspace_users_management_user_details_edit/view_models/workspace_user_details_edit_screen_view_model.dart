@@ -60,7 +60,22 @@ class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
 
   Future<Result<void>> _editWorkspaceUserDetails(
     (String? firstName, String? lastName, WorkspaceRole? role) details,
-  ) {
-    return Future.delayed(const Duration(seconds: 3));
+  ) async {
+    final (String? firstName, String? lastName, WorkspaceRole? role) = details;
+    final result = await _workspaceUserRepository.updateWorkspaceUserDetails(
+      workspaceId: _activeWorkspaceId,
+      workspaceUserId: _workspaceUserId,
+      firstName: firstName,
+      lastName: lastName,
+      role: role,
+    );
+
+    switch (result) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        _log.warning('Failed to update workspace user details', result.error);
+        return result;
+    }
   }
 }

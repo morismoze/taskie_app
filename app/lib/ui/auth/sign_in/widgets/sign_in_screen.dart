@@ -130,7 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.somethingWentWrong,
+            message: context.localization.misc_somethingWentWrong,
           );
       }
     }

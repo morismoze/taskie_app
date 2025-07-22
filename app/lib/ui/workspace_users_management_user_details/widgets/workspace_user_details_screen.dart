@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../domain/constants/rbac.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -12,6 +13,7 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
+import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
 import '../view_models/workspace_user_details_screen_view_model.dart';
 
@@ -30,19 +32,39 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
               HeaderBar(
                 title: context.localization.workspaceUsersManagementUserDetails,
                 actions: [
-                  AppHeaderActionButton(
-                    iconData: FontAwesomeIcons.pencil,
-                    onTap: () {
-                      final workspaceUserId = viewModel.details?.id;
+                  ListenableBuilder(
+                    listenable: viewModel,
+                    builder: (builderContext, _) {
+                      final details = viewModel.details;
 
-                      if (workspaceUserId != null) {
-                        context.push(
-                          Routes.workspaceUsersEditUserDetails(
-                            workspaceId: viewModel.activeWorkspaceId,
-                            workspaceUserId: workspaceUserId,
-                          ),
-                        );
+                      if (details == null) {
+                        return const SizedBox.shrink();
                       }
+
+                      // We don't want for the current user to edit
+                      // own details.
+                      if (viewModel.currentUser.id == details.userId) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Rbac(
+                        permission: RbacPermission.workspaceManageUsers,
+                        child: AppHeaderActionButton(
+                          iconData: FontAwesomeIcons.pencil,
+                          onTap: () {
+                            final workspaceUserId = viewModel.details?.id;
+
+                            if (workspaceUserId != null) {
+                              context.push(
+                                Routes.workspaceUsersEditUserDetails(
+                                  workspaceId: viewModel.activeWorkspaceId,
+                                  workspaceUserId: workspaceUserId,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -72,7 +94,8 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                       children: [
                         // First section
                         AppAvatar(
-                          text: fullName,
+                          hashString: details.id,
+                          fullName: fullName,
                           imageUrl: details.profileImageUrl,
                           radius: 50,
                         ),
@@ -80,9 +103,13 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                         // Second section
                         RoleChip(role: details.role),
                         const SizedBox(height: 5),
-                        Text(
-                          fullName,
-                          style: Theme.of(context).textTheme.headlineMedium,
+                        FractionallySizedBox(
+                          widthFactor: 0.8,
+                          child: Text(
+                            fullName,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
                         ),
                         if (details.email != null) ...[
                           const SizedBox(height: 5),
@@ -105,7 +132,8 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                           _LabeledData(
                             label: context.localization.createdBy,
                             leading: AppAvatar(
-                              text: fullName,
+                              hashString: details.id,
+                              fullName: fullName,
                               imageUrl: details.createdBy!.profileImageUrl,
                             ),
                             data:

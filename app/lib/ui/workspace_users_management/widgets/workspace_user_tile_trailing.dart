@@ -81,7 +81,11 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
         children: [
           Row(
             children: [
-              AppAvatar(text: fullName, imageUrl: profileImageUrl),
+              AppAvatar(
+                hashString: workspaceUserId,
+                fullName: fullName,
+                imageUrl: profileImageUrl,
+              ),
               const SizedBox(width: 12),
               Flexible(
                 child: Text(

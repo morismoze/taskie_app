@@ -90,7 +90,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   String? _validateFirstName(String? value) {
     switch (value) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserFirstNameMinLength;
@@ -105,7 +105,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   String? _validateLastName(String? value) {
     switch (value) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserLastNameMinLength;

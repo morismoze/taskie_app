@@ -62,6 +62,12 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     ),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(
+        color: Colors.grey[700],
+        borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(

@@ -77,7 +77,7 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
   String? _validateName(String? value) {
     switch (value) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final String value
           when value.length < ValidationRules.workspaceNameMinLength:
         return context.localization.workspaceCreateNameMinLength;

@@ -150,7 +150,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
     if (widget.viewModel.createTask.error) {
       AppSnackbar.showError(
         context: context,
-        message: context.localization.somethingWentWrong,
+        message: context.localization.misc_somethingWentWrong,
       );
 
       widget.viewModel.createTask.clearResult();

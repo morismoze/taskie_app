@@ -23,7 +23,7 @@ class OrSeparator extends StatelessWidget {
             child: Text(
               label != null
                   ? label!.toUpperCase()
-                  : context.localization.orSeparator,
+                  : context.localization.misc_orSeparator.toUpperCase(),
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
                 color: AppColors.grey2,
                 fontWeight: FontWeight.w600,

@@ -115,7 +115,10 @@ class UnauthorizedInterceptor extends Interceptor {
       return handler.resolve(response);
     } on DioException catch (e) {
       await _authStateRepository.setTokens(null);
-      _authStateRepository.setAuthenticated(false);
+      // Log out the user only if the request failed with 401 again
+      if (e.response?.statusCode != 401) {
+        _authStateRepository.setAuthenticated(false);
+      }
       return handler.reject(e);
     }
   }

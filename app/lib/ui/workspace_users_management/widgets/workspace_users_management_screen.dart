@@ -140,7 +140,6 @@ class _WorkspaceUsersManagementScreenState
                         final currentUser = widget.viewModel.currentUser;
 
                         final isCurrentUser =
-                            currentUser.id == workspaceUser.userId &&
                             currentUser.id == workspaceUser.userId;
 
                         return WorkspaceUserTile(

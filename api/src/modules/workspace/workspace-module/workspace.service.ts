@@ -316,7 +316,6 @@ export class WorkspaceService {
         HttpStatus.NOT_FOUND,
       );
     }
-    console.log(workspace.members);
 
     const response: WorkspaceUsersResponse = workspace.members
       .map((member) => ({
@@ -605,7 +604,7 @@ export class WorkspaceService {
       );
     }
 
-    const { updatedWorkspaceUser } =
+    const { updatedWorkspaceUserId } =
       await this.unitOfWorkService.withTransaction(async () => {
         const updatedWorkspaceUser = await this.workspaceUserService.update({
           id: workspaceUserId,
@@ -624,8 +623,25 @@ export class WorkspaceService {
           });
         }
 
-        return { updatedWorkspaceUser };
+        return { updatedWorkspaceUserId: updatedWorkspaceUser.id };
       });
+
+    // This is freshly updated workspace user because former code is
+    // executed inside a transaction, so doing this find inside would result
+    // in not updated workspace user.
+    const updatedWorkspaceUser =
+      await this.workspaceUserService.findByIdWithUserAndCreatedByUser(
+        updatedWorkspaceUserId,
+      );
+
+    if (updatedWorkspaceUser == null) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     const response: WorkspaceUserResponse = {
       id: updatedWorkspaceUser.id,

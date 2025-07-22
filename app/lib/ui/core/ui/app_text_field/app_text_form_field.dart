@@ -9,33 +9,39 @@ class AppTextFormField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.label,
+    this.readOnly = false,
     this.obscureText = false,
     this.required = true,
     this.maxLines = 1,
     this.minLines,
-    this.hint,
+    this.hintText,
     this.keyboardType,
     this.validator,
     this.textInputAction,
     this.maxCharacterCount,
+    this.suffix,
   });
 
   final TextEditingController controller;
   final String label;
   final bool obscureText;
+  final bool readOnly;
   final bool required;
   final int? maxLines;
   final int? minLines;
-  final String? hint;
+  final String? hintText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final TextInputAction? textInputAction;
   final int? maxCharacterCount;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      readOnly: readOnly,
+      enableInteractiveSelection: !readOnly,
       keyboardType: keyboardType,
       validator: validator,
       obscureText: obscureText,
@@ -44,19 +50,25 @@ class AppTextFormField extends StatelessWidget {
       minLines: minLines,
       maxLength: maxCharacterCount,
       textInputAction: textInputAction,
-      cursorColor: AppColors.black1,
-      cursorErrorColor: AppColors.black1,
-      style: const TextStyle(fontSize: 16),
+      cursorColor: Theme.of(context).colorScheme.secondary,
+      cursorErrorColor: Theme.of(context).colorScheme.secondary,
+      style: TextStyle(
+        fontSize: 16,
+        color: readOnly
+            ? Theme.of(context).disabledColor
+            : Theme.of(context).colorScheme.onSurface,
+      ),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(AppTheme.fieldInnerPadding),
         // This is used for the sole purpose of error text not
         // directly changing field height.
         helperText: '',
-        hintText: hint,
+        hintText: hintText,
         labelText: required
             ? label
-            : '$label (${context.localization.optional})',
+            : '$label (${context.localization.misc_optional})',
         filled: true,
+        suffix: suffix,
         floatingLabelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
           fontSize:
               AppTheme.fieldUnfocusedLabelFontSize +
@@ -80,6 +92,10 @@ class AppTextFormField extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
+          borderSide: BorderSide.none,
+        ),
+        disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
           borderSide: BorderSide.none,
         ),

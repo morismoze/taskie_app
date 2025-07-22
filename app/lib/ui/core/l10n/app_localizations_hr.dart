@@ -9,7 +9,37 @@ class AppLocalizationsHr extends AppLocalizations {
   AppLocalizationsHr([String locale = 'hr']) : super(locale);
 
   @override
-  String get cancel => 'Otkaži';
+  String get misc_cancel => 'Otkaži';
+
+  @override
+  String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
+
+  @override
+  String get misc_tryAgain => 'Pokušajte ponovno';
+
+  @override
+  String get misc_requiredField => 'Ovo polje je obvezno';
+
+  @override
+  String get misc_optional => 'opcionalno';
+
+  @override
+  String get misc_submit => 'Potvrdi';
+
+  @override
+  String get misc_close => 'Zatvori';
+
+  @override
+  String get misc_note => 'Napomena';
+
+  @override
+  String get misc_roleManager => 'Menadžer';
+
+  @override
+  String get misc_roleMember => 'Član';
+
+  @override
+  String get misc_orSeparator => 'ili';
 
   @override
   String get signInTitleStart => 'Učenje odgovornosti.';
@@ -30,12 +60,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get signInGoogleCanceled =>
       'Google prijava otkazana. Molimo pokušajte ponovno.';
-
-  @override
-  String get somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
-
-  @override
-  String get tryAgain => 'Pokušajte ponovno';
 
   @override
   String get errorOnInitialLoad =>
@@ -86,13 +110,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Opis može imati najviše 250 znakova';
 
   @override
-  String get requiredField => 'Ovo polje je obvezno';
-
-  @override
-  String get optional => 'opcionalno';
-
-  @override
-  String get errorWhileCreatingWorkspace =>
+  String get workspaceCreateError =>
       'Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora';
 
   @override
@@ -176,12 +194,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get taskAssigneesMinLength =>
       'Zadatak mora biti dodijeljen barem 1 članu';
-
-  @override
-  String get submit => 'Potvrdi';
-
-  @override
-  String get close => 'Zatvori';
 
   @override
   String get workspaceUsersManagement => 'Upravljanje korisnicima';
@@ -268,9 +280,6 @@ class AppLocalizationsHr extends AppLocalizations {
       'Pozivni link radnog prostora';
 
   @override
-  String get note => 'Napomena';
-
-  @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
       'Svaki link je jednokratan (pošaljite ga samo jednom korisniku). Možete ga kopirati u međuspremnik ili podijeliti. Radi vaše praktičnosti, nakon bilo koje od tih radnji, generira se novi link za iduću upotrebu.';
 
@@ -319,13 +328,30 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUserDetailsEditNote =>
-      'Budite oprezni prilikom izmjene uloge korisnika. Korisnici s ulogom Menadžer imaju potpunu administrativnu i upravljačku kontrolu nad radnim prostorom.';
+      'Budite oprezni prilikom izmjene uloge korisnika u Menadžer ulogu. Korisnici s ulogom Menadžer imaju potpunu administrativnu i upravljačku kontrolu nad radnim prostorom.';
 
   @override
-  String get roleLabel => 'Uloga';
+  String get workspaceUsersManagementUserDetailsEditFirstNameBlocked =>
+      'Ne-virtualni korisnici ne mogu uređivati svoje ime jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditLastNameBlocked =>
+      'Ne-virtualni korisnici ne mogu uređivati svoje prezime jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
+      'Virtualnim korisnicima je uvijek dodijeljena uloga Člana i nije ju moguće promijeniti.';
 
   @override
   String get workspaceUsersManagementUserDetailsEditSubmit => 'Uredi podatke';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditSuccess =>
+      'Uspješno ste uredili podatke korisnika';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja korisničkih podataka';
 
   @override
   String get workspaceUserFirstNameLabel => 'Ime';
@@ -334,7 +360,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get workspaceUserLastNameLabel => 'Prezime';
 
   @override
-  String get orSeparator => 'ILI';
+  String get roleLabel => 'Uloga';
 
   @override
   String get createdBy => 'Korisnika kreirao/la';

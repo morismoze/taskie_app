@@ -79,7 +79,7 @@ class WorkspaceInviteSection extends StatelessWidget {
                   ),
                   Text.rich(
                     TextSpan(
-                      text: '${context.localization.note}: ',
+                      text: '${context.localization.misc_note}: ',
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         fontSize: 13,
                         fontStyle: FontStyle.italic,

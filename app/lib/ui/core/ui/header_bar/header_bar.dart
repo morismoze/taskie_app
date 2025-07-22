@@ -23,13 +23,12 @@ class HeaderBar extends StatelessWidget {
           bottom: Dimens.paddingVertical / 2,
         ),
         child: Row(
-          mainAxisAlignment: actions != null
-              ? MainAxisAlignment.spaceBetween
-              : MainAxisAlignment.start,
           children: [
             const AppHeaderActionButton(iconData: FontAwesomeIcons.arrowLeft),
-            if (actions == null) const SizedBox(width: 30),
+            const SizedBox(width: 30),
             Text(title, style: Theme.of(context).textTheme.titleLarge),
+            // Used to push actions to the right
+            const Spacer(),
             if (actions != null) Row(spacing: 8, children: actions!),
           ],
         ),

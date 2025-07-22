@@ -337,6 +337,7 @@ GoRouter router({
                       viewModel: WorkspaceUserDetailsScreenViewModel(
                         workspaceId: workspaceId,
                         workspaceUserId: workspaceUserId,
+                        userRepository: context.read(),
                         workspaceUserRepository: context.read(),
                       ),
                     );

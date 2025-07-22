@@ -62,7 +62,7 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
           listenable: viewModel.deleteWorkspaceUser,
           builder: (BuildContext builderContext, _) => AppTextButton(
             disabled: viewModel.deleteWorkspaceUser.running,
-            label: builderContext.localization.cancel,
+            label: builderContext.localization.misc_cancel,
             onPress: () => Navigator.pop(builderContext),
           ),
         ),

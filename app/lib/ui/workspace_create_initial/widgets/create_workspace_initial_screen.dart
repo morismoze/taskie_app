@@ -129,7 +129,7 @@ class _CreateWorkspaceInitialScreenState
       widget.viewModel.createWorkspace.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.errorWhileCreatingWorkspace,
+        message: context.localization.workspaceCreateError,
       );
     }
   }

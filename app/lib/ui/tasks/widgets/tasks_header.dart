@@ -20,7 +20,6 @@ class TasksHeader extends StatelessWidget {
       return const SizedBox();
     }
 
-    final firstNameFirstLetter = user.firstName[0];
     final fullName = '${user.firstName} ${user.lastName}';
 
     return Padding(
@@ -34,7 +33,8 @@ class TasksHeader extends StatelessWidget {
           Row(
             children: [
               AppAvatar(
-                text: firstNameFirstLetter,
+                hashString: user.id,
+                fullName: fullName,
                 imageUrl: user.profileImageUrl,
               ),
               const SizedBox(width: 13),

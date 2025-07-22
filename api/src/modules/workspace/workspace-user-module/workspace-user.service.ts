@@ -4,6 +4,7 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { WorkspaceLeaderboardResponse } from '../workspace-module/dto/response/workspace-leaderboard-response.dto';
 import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
+import { WorkspaceUserRole } from './domain/workspace-user-role.enum';
 import { WorkspaceUserWithCreatedByUser } from './domain/workspace-user-with-created-by.domain';
 import { WorkspaceUserWithUser } from './domain/workspace-user-with-user.domain';
 import { WorkspaceUserWithWorkspaceCore } from './domain/workspace-user-with-workspace.domain';
@@ -90,6 +91,38 @@ export class WorkspaceUserService {
     });
   }
 
+  async findByIdWithUserAndCreatedByUser(
+    id: WorkspaceUser['user']['id'],
+  ): Promise<Nullable<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>> {
+    const workspaceUser = await this.workspaceUserRepository.findById({
+      id: id,
+      relations: {
+        user: true,
+        createdBy: {
+          user: true,
+        },
+      },
+    });
+
+    if (workspaceUser == null) {
+      return null;
+    }
+
+    const createdBy =
+      workspaceUser.createdBy === null
+        ? null
+        : {
+            firstName: workspaceUser.createdBy.user.firstName,
+            lastName: workspaceUser.createdBy.user.lastName,
+            profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
+          };
+
+    return {
+      ...workspaceUser,
+      createdBy,
+    };
+  }
+
   /**
    * This function returns workspace user memberships a user has in
    * different workspaces with workspace relation loaded.
@@ -121,18 +154,21 @@ export class WorkspaceUserService {
     data,
   }: {
     id: WorkspaceUser['id'];
-    data: Partial<WorkspaceUserCore>;
-  }): Promise<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser> {
-    const updatedWorkspaceUserUser = await this.workspaceUserRepository.update({
+    data: Partial<{
+      workspaceRole: WorkspaceUserRole;
+      firstName: string;
+      lastName: string;
+    }>;
+  }): Promise<WorkspaceUserWithUser> {
+    const updatedWorkspaceUser = await this.workspaceUserRepository.update({
       id,
       data,
       relations: {
         user: true,
-        createdBy: true,
       },
     });
 
-    if (!updatedWorkspaceUserUser) {
+    if (!updatedWorkspaceUser) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -141,20 +177,7 @@ export class WorkspaceUserService {
       );
     }
 
-    const createdBy =
-      updatedWorkspaceUserUser.createdBy === null
-        ? null
-        : {
-            firstName: updatedWorkspaceUserUser.createdBy.user.firstName,
-            lastName: updatedWorkspaceUserUser.createdBy.user.lastName,
-            profileImageUrl:
-              updatedWorkspaceUserUser.createdBy.user.profileImageUrl,
-          };
-
-    return {
-      ...updatedWorkspaceUserUser,
-      createdBy,
-    };
+    return updatedWorkspaceUser;
   }
 
   async delete({

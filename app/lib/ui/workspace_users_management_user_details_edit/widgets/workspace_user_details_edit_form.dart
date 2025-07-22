@@ -7,6 +7,8 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/ui/blocked_info_icon.dart';
+import '../../core/utils/role_extension.dart';
 import '../view_models/workspace_user_details_edit_screen_view_model.dart';
 
 class WorkspaceUserDetailsEditForm extends StatefulWidget {
@@ -30,6 +32,8 @@ class _WorkspaceUserDetailsEditFormState
   void initState() {
     super.initState();
     _selectedRole = widget.viewModel.details!.role;
+    _firstNameController.text = widget.viewModel.details!.firstName;
+    _lastNameController.text = widget.viewModel.details!.lastName;
   }
 
   @override
@@ -49,18 +53,20 @@ class _WorkspaceUserDetailsEditFormState
   Widget build(BuildContext context) {
     final roles = List<AppSelectFieldOption>.from([
       AppSelectFieldOption(
-        label: WorkspaceRole.manager.value,
+        label: WorkspaceRole.manager.l10n(context),
         value: WorkspaceRole.manager,
       ),
       AppSelectFieldOption(
-        label: WorkspaceRole.member.value,
+        label: WorkspaceRole.member.l10n(context),
         value: WorkspaceRole.member,
       ),
     ]).toList();
     final initialRole = AppSelectFieldOption(
-      label: _selectedRole.value,
+      label: _selectedRole.l10n(context),
       value: _selectedRole,
     );
+    // Virtual users don't have emails, and real users must have emails.
+    final isVirtualUser = widget.viewModel.details!.email == null;
 
     return Form(
       key: _formKey,
@@ -73,6 +79,15 @@ class _WorkspaceUserDetailsEditFormState
             validator: _validateFirstName,
             textInputAction: TextInputAction.next,
             maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
+            // First name is not editable for real users which signed up via a auth provider
+            readOnly: !isVirtualUser,
+            suffix: !isVirtualUser
+                ? BlockedInfoIcon(
+                    message: context
+                        .localization
+                        .workspaceUsersManagementUserDetailsEditFirstNameBlocked,
+                  )
+                : null,
           ),
           const SizedBox(height: 10),
           AppTextFormField(
@@ -81,6 +96,15 @@ class _WorkspaceUserDetailsEditFormState
             validator: _validateLastName,
             textInputAction: TextInputAction.go,
             maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
+            // Last name is not editable for real users which signed up via a auth provider
+            readOnly: !isVirtualUser,
+            suffix: !isVirtualUser
+                ? BlockedInfoIcon(
+                    message: context
+                        .localization
+                        .workspaceUsersManagementUserDetailsEditLastNameBlocked,
+                  )
+                : null,
           ),
           const SizedBox(height: 10),
           AppSelectFormField(
@@ -88,6 +112,11 @@ class _WorkspaceUserDetailsEditFormState
             initialValue: [initialRole],
             onSelected: _onRoleSelected,
             label: context.localization.roleLabel,
+            // Role is not editable for virtual users
+            enabled: !isVirtualUser,
+            disabledWidgetTrailingTooltipMessage: context
+                .localization
+                .workspaceUsersManagementUserDetailsEditRoleBlocked,
           ),
           const SizedBox(height: 30),
           ListenableBuilder(
@@ -109,7 +138,7 @@ class _WorkspaceUserDetailsEditFormState
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text;
       final lastName = _lastNameController.text;
-      final role = WorkspaceRole.manager;
+      final role = _selectedRole;
       widget.viewModel.editWorkspaceUserDetails.execute((
         firstName,
         lastName,
@@ -121,7 +150,7 @@ class _WorkspaceUserDetailsEditFormState
   String? _validateFirstName(String? value) {
     switch (value) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserFirstNameMinLength;
@@ -136,7 +165,7 @@ class _WorkspaceUserDetailsEditFormState
   String? _validateLastName(String? value) {
     switch (value) {
       case final String? value when value == null:
-        return context.localization.requiredField;
+        return context.localization.misc_requiredField;
       case final String value
           when value.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserLastNameMinLength;
