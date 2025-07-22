@@ -37,24 +37,11 @@ class ActiveWorkspaceChangeUseCase {
   ///
   /// we need to:
   ///
-  /// 1. re-fetch user for the updated roles - this is done only on creating new
-  /// workspace or leaving an existing one,
-  ///
-  /// 2. clear the data cache which is relevant to the current active
+  /// 1. clear the data cache which is relevant to the current active
   /// workspace. This data includes: workspace users, tasks, leaderboard, goals,
   ///
-  /// 3. set the new active workspace ID.
+  /// 2. set the new active workspace ID.
   Future<Result<void>> handleWorkspaceChange(String workspaceId) async {
-    final resultUser = await _userRepository.loadUser(forceFetch: true);
-
-    switch (resultUser) {
-      case Ok():
-        break;
-      case Error():
-        _log.warning('Failed to refresh the user', resultUser.error);
-        return Result.error(resultUser.error);
-    }
-
     _workspaceUserRepository.purgeWorkspaceUsersCache();
     _workspaceTaskRepository.purgeTasksCache();
     // _workspaceLeaderboardRepository.purgeLeaderboardCache();
