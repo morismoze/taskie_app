@@ -15,12 +15,30 @@ abstract final class Routes {
   static const workspaceCreateRelative = 'create';
   static const workspaceCreate = '$workspacesRelative/$workspaceCreateRelative';
 
+  static const workspaceJoinRelative = 'join';
+  static String workspaceJoin(String inviteToken) =>
+      '$workspacesRelative/$workspaceJoinRelative/$inviteToken';
+
   static const workspaceUsersRelative = 'users';
   static String workspaceUsers({required String workspaceId}) =>
       '$workspacesRelative/$workspaceId/$workspaceUsersRelative';
-  static const workspaceUsersSearchRelative = 'search';
-  static String workspaceUsersSearch({required String workspaceId}) =>
-      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersSearchRelative';
+  static String workspaceUsersWithId({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUserId';
+  static const workspaceUsersEditUserDetailsRelative = 'edit';
+  static String workspaceUsersEditUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUserId/$workspaceUsersEditUserDetailsRelative';
+  static const workspaceUsersCreateRelative = 'create';
+  static String workspaceUsersCreate({required String workspaceId}) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersCreateRelative';
+  static const workspaceUsersGuideRelative = 'guide';
+  static String workspaceUsersGuide({required String workspaceId}) =>
+      '$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersGuideRelative';
 
   static const workspaceSettingsRelative = 'settings';
   static String workspaceSettings({required String workspaceId}) =>

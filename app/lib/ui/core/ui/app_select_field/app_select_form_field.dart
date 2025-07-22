@@ -8,14 +8,15 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
     super.key,
     super.validator,
     super.autovalidateMode,
+    super.enabled,
+    super.initialValue,
     required List<AppSelectFieldOption> options,
     required String label,
     required void Function(List<AppSelectFieldOption>) onSelected,
     bool multiple = false,
     bool required = true,
-    List<AppSelectFieldOption>? initialValue,
+    String? disabledWidgetTrailingTooltipMessage,
   }) : super(
-         initialValue: initialValue ?? [],
          builder: (FormFieldState<List<AppSelectFieldOption>> state) {
            final context = state.context;
            final errorText = state.errorText;
@@ -32,6 +33,10 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                    state.didChange(selected);
                    onSelected(selected);
                  },
+                 initialValue: initialValue,
+                 enabled: enabled,
+                 disabledWidgetTrailingTooltipMessage:
+                     disabledWidgetTrailingTooltipMessage,
                ),
                Padding(
                  padding: EdgeInsets.only(

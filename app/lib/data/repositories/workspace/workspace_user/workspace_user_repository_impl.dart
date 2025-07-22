@@ -2,7 +2,9 @@ import 'package:logging/logging.dart';
 
 import '../../../../domain/models/workspace_user.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/user/models/response/user_response.dart';
 import '../../../services/api/workspace/workspace_user/models/request/create_virtual_workspace_user_request.dart';
+import '../../../services/api/workspace/workspace_user/models/request/update_workspace_user_details_request.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_response.dart';
 import '../../../services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import 'workspace_user_repository.dart';
@@ -43,7 +45,18 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
                   firstName: workspaceUser.firstName,
                   lastName: workspaceUser.lastName,
                   role: workspaceUser.role,
+                  userId: workspaceUser.userId,
+                  createdAt: workspaceUser.createdAt,
+                  email: workspaceUser.email,
                   profileImageUrl: workspaceUser.profileImageUrl,
+                  createdBy: workspaceUser.createdBy == null
+                      ? null
+                      : WorkspaceUserCreatedBy(
+                          firstName: workspaceUser.createdBy!.firstName,
+                          lastName: workspaceUser.createdBy!.lastName,
+                          profileImageUrl:
+                              workspaceUser.createdBy!.profileImageUrl,
+                        ),
                 ),
               )
               .toList();
@@ -61,7 +74,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   }
 
   @override
-  Future<Result<List<WorkspaceUser>>> createVirtualMember({
+  Future<Result<WorkspaceUser>> createVirtualMember({
     required String workspaceId,
     required String firstName,
     required String lastName,
@@ -76,28 +89,138 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       );
 
       switch (result) {
-        case Ok<List<WorkspaceUserResponse>>():
-          final mappedData = result.value
-              .map(
-                (workspaceUser) => WorkspaceUser(
-                  id: workspaceUser.id,
-                  firstName: workspaceUser.firstName,
-                  lastName: workspaceUser.lastName,
-                  role: workspaceUser.role,
-                  profileImageUrl: workspaceUser.profileImageUrl,
-                ),
-              )
-              .toList();
+        case Ok<WorkspaceUserResponse>():
+          final workspaceUser = result.value;
+          final mappedData = WorkspaceUser(
+            id: workspaceUser.id,
+            firstName: workspaceUser.firstName,
+            lastName: workspaceUser.lastName,
+            role: workspaceUser.role,
+            userId: workspaceUser.userId,
+            createdAt: workspaceUser.createdAt,
+            email: workspaceUser.email,
+            profileImageUrl: workspaceUser.profileImageUrl,
+            createdBy: workspaceUser.createdBy == null
+                ? null
+                : WorkspaceUserCreatedBy(
+                    firstName: workspaceUser.createdBy!.firstName,
+                    lastName: workspaceUser.createdBy!.lastName,
+                    profileImageUrl: workspaceUser.createdBy!.profileImageUrl,
+                  ),
+          );
 
-          _cachedWorkspaceUsersList = mappedData;
+          _cachedWorkspaceUsersList!.add(mappedData);
           notifyListeners();
 
           return Result.ok(mappedData);
-        case Error<List<WorkspaceUserResponse>>():
+        case Error<WorkspaceUserResponse>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {
       return Result.error(e);
     }
+  }
+
+  @override
+  Result<WorkspaceUser> loadWorkspaceUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) {
+    final workspaceUserDetails = _cachedWorkspaceUsersList!.firstWhere(
+      (user) => user.id == workspaceUserId,
+    );
+    return Result.ok(workspaceUserDetails);
+  }
+
+  @override
+  Future<Result<void>> deleteWorkspaceUser({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) async {
+    try {
+      final result = await _workspaceUserApiService.deleteWorkspaceUser(
+        workspaceId: workspaceId,
+        workspaceUserId: workspaceUserId,
+      );
+
+      switch (result) {
+        case Ok():
+          _cachedWorkspaceUsersList!.removeWhere(
+            (user) => user.id == workspaceUserId,
+          );
+          notifyListeners();
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<void>> updateWorkspaceUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+    String? firstName,
+    String? lastName,
+    WorkspaceRole? role,
+  }) async {
+    try {
+      final result = await _workspaceUserApiService.updateWorkspaceUserDetails(
+        workspaceId: workspaceId,
+        workspaceUserId: workspaceUserId,
+        payload: UpdateWorkspaceUserDetailsRequest(
+          firstName: firstName,
+          lastName: lastName,
+          role: role?.value,
+        ),
+      );
+
+      switch (result) {
+        case Ok():
+          final workspaceUser = result.value;
+          final updateWorkspaceUser = WorkspaceUser(
+            id: workspaceUser.id,
+            firstName: workspaceUser.firstName,
+            lastName: workspaceUser.lastName,
+            role: workspaceUser.role,
+            userId: workspaceUser.userId,
+            createdAt: workspaceUser.createdAt,
+            email: workspaceUser.email,
+            profileImageUrl: workspaceUser.profileImageUrl,
+            createdBy: workspaceUser.createdBy == null
+                ? null
+                : WorkspaceUserCreatedBy(
+                    firstName: workspaceUser.createdBy!.firstName,
+                    lastName: workspaceUser.createdBy!.lastName,
+                    profileImageUrl: workspaceUser.createdBy!.profileImageUrl,
+                  ),
+          );
+
+          // Update the existing user in the list by replacing it
+          // with the new updated instance.
+          final userIndex = _cachedWorkspaceUsersList!.indexWhere(
+            (user) => user.id == updateWorkspaceUser.id,
+          );
+
+          if (userIndex != -1) {
+            _cachedWorkspaceUsersList![userIndex] = updateWorkspaceUser;
+            notifyListeners();
+          }
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  void purgeWorkspaceUsersCache() {
+    _cachedWorkspaceUsersList = null;
   }
 }

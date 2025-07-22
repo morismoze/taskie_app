@@ -8,8 +8,8 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/create_workspace_viewmodel.dart';
-import 'workspace_create_form.dart';
+import '../view_models/create_workspace_screen_viewmodel.dart';
+import 'create_workspace_form.dart';
 
 class CreateWorkspaceScreen extends StatefulWidget {
   const CreateWorkspaceScreen({super.key, required this.viewModel});
@@ -43,65 +43,63 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox.expand(
-        child: BlurredCirclesBackground(
-          child: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) => SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Padding(
-                    padding: Dimens.of(context).edgeInsetsScreenSymmetric,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Image(
-                          image: AssetImage(Assets.createWorkspaceIllustration),
-                        ),
-                        const SizedBox(height: 20),
-                        Column(
-                          children: [
-                            Text(
-                              context.localization.workspaceCreateTitle,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            ListenableBuilder(
-                              listenable: widget.viewModel,
-                              builder: (builderContext, _) {
-                                if (widget.viewModel.user != null) {
-                                  // This return is not defined inside child property of `ListenableBuilder`
-                                  // because child is built only once, when the ListenableBuilder is built. And because
-                                  // of that widget.viewModel.user is going to be captured as null.
-                                  return Column(
-                                    children: [
-                                      const SizedBox(height: 12),
-                                      FractionallySizedBox(
-                                        widthFactor: 0.75,
-                                        child: Text(
-                                          builderContext.localization
-                                              .workspaceCreateSubtitle(
-                                                widget.viewModel.user!.email!,
-                                              ),
-                                          textAlign: TextAlign.center,
-                                          style: Theme.of(
-                                            builderContext,
-                                          ).textTheme.bodyMedium,
-                                        ),
+      body: BlurredCirclesBackground(
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: Dimens.of(context).edgeInsetsScreenSymmetric,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Image(
+                        image: AssetImage(Assets.createWorkspaceIllustration),
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        children: [
+                          Text(
+                            context.localization.workspaceCreateTitle,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          ListenableBuilder(
+                            listenable: widget.viewModel,
+                            builder: (builderContext, _) {
+                              if (widget.viewModel.user != null) {
+                                // This return is not defined inside child property of `ListenableBuilder`
+                                // because child is built only once, when the ListenableBuilder is built. And because
+                                // of that widget.viewModel.user is going to be captured as null.
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 12),
+                                    FractionallySizedBox(
+                                      widthFactor: 0.75,
+                                      child: Text(
+                                        builderContext.localization
+                                            .workspaceCreateSubtitle(
+                                              widget.viewModel.user!.email!,
+                                            ),
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(
+                                          builderContext,
+                                        ).textTheme.bodyMedium,
                                       ),
-                                    ],
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 60),
-                        WorkspaceCreateForm(viewModel: widget.viewModel),
-                        const Text('this is not initial create'),
-                      ],
-                    ),
+                                    ),
+                                  ],
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 60),
+                      CreateWorkspaceForm(viewModel: widget.viewModel),
+                      const Text('this is not initial create'),
+                    ],
                   ),
                 ),
               ),
@@ -124,7 +122,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
       widget.viewModel.createWorkspace.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.errorWhileCreatingWorkspace,
+        message: context.localization.workspaceCreateError,
       );
     }
   }

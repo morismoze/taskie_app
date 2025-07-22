@@ -6,37 +6,49 @@ import '../utils/color.dart';
 
 /// [AppAvatar.imageUrl] takes precedence over text
 class AppAvatar extends StatelessWidget {
-  const AppAvatar({super.key, required this.text, this.imageUrl});
+  const AppAvatar({
+    super.key,
+    required this.hashString,
+    required this.fullName,
+    this.imageUrl,
+    this.radius = 20,
+  });
 
-  final String text;
+  /// This is used for generating unique color out of a string, in
+  /// most cases this will be user's ID (workspace user ID).
+  final String hashString;
+  final String fullName;
+  final double radius;
   final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = ColorGenerator.generateColorFromString(text);
-    final firstNameFirstLetter = text.split(' ')[0][0];
+    final backgroundColor = ColorGenerator.generateColorFromString(hashString);
+    final firstNameFirstLetter = fullName.split(' ')[0][0];
+    final textFontSize = radius <= 20 ? radius * 1.2 : radius * 0.95;
 
     return CircleAvatar(
+      radius: radius,
       foregroundImage: imageUrl != null
           ? CachedNetworkImageProvider(imageUrl!)
           : null,
       backgroundColor: backgroundColor,
       child: imageUrl == null
-          ? Padding(
-              padding: const EdgeInsets.all(4),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
-                child: Text(
-                  firstNameFirstLetter,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.displayMedium!.copyWith(color: AppColors.white1),
-                  textAlign: TextAlign.center,
-                ),
+          ? Text(
+              firstNameFirstLetter,
+              style: TextStyle(
+                fontSize: textFontSize,
+                color: AppColors.white1,
+                fontWeight: FontWeight.w500,
+                height: 1.0,
+                textBaseline: TextBaseline.alphabetic,
+              ),
+              textHeightBehavior: const TextHeightBehavior(
+                applyHeightToFirstAscent: false,
+                applyHeightToLastDescent: false,
               ),
             )
-          : const SizedBox.shrink(),
+          : null,
     );
   }
 }

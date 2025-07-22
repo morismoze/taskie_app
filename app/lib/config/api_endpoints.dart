@@ -1,4 +1,5 @@
 import '../data/services/api/workspace/workspace/models/request/workspace_id_path_param.dart';
+import '../data/services/api/workspace/workspace_task/models/request/workspace_user_id_path_param.dart';
 
 abstract final class ApiEndpoints {
   static const _prefix = '/api';
@@ -13,7 +14,7 @@ abstract final class ApiEndpoints {
   // Workspaces
   static const getWorkspaces = '$_prefix/workspaces/me';
   static const createWorkspace = '$_prefix/workspaces';
-  static String createWorkspaceInviteLink(WorkspaceIdPathParam workspaceId) =>
+  static String createWorkspaceInviteToken(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/invites';
   static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/users/me';
@@ -27,4 +28,12 @@ abstract final class ApiEndpoints {
       '$_prefix/workspaces/$workspaceId/users';
   static String createVirtualUser(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/users/virtual';
+  static String deleteWorkspaceUser(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
+  static String updateWorkspaceUserDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
 }

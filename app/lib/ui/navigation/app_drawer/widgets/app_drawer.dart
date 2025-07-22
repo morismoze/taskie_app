@@ -110,6 +110,11 @@ class _AppDrawerState extends State<AppDrawer> {
               .value;
       widget.viewModel.leaveWorkspace.clearResult();
 
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.appDrawerLeaveWorkspaceSuccess,
+      );
+
       switch (result) {
         case LeaveWorkspaceResultNoAction():
           break;
@@ -122,32 +127,26 @@ class _AppDrawerState extends State<AppDrawer> {
           Navigator.of(context).pop();
           context.go(Routes.tasks(workspaceId: workspaceId));
       }
-
-      AppSnackbar.showSuccess(
-        context: context,
-        message: context.localization.appDrawerLeaveWorkspaceSuccess,
-      );
     }
 
     if (widget.viewModel.leaveWorkspace.error) {
       final errorResult = widget.viewModel.leaveWorkspace.result as Error;
+      widget.viewModel.leaveWorkspace.clearResult();
 
       switch (errorResult.error) {
         case RefreshTokenFailedException():
-          widget.viewModel.leaveWorkspace.clearResult();
-          context.pop(); // Close modal
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
+          context.pop(); // Close dialog
           break;
         default:
-          widget.viewModel.leaveWorkspace.clearResult();
-          context.pop(); // Close modal
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
+          context.pop(); // Close dialog
       }
     }
   }

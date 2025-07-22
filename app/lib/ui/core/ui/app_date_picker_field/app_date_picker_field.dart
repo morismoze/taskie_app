@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../l10n/l10n_extensions.dart';
+import '../../theme/colors.dart';
 import '../app_field_button.dart';
 import '../app_filled_button.dart';
 import '../app_modal_bottom_sheet.dart';
@@ -56,12 +58,22 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
       label: widget.label,
       isFieldFocused: isDateSelected,
       onTap: () => _openDatePicker(context),
-      trailingIcon: _selectedDate != null
-          ? FontAwesomeIcons.solidCircleXmark
+      trailing: isDateSelected
+          ? InkWell(
+              onTap: _clearSelections,
+              child: const FaIcon(
+                FontAwesomeIcons.solidCircleXmark,
+                color: AppColors.black1,
+                size: 15,
+              ),
+            )
           : null,
-      onTrailingIconPress: _clearSelections,
       child: _selectedDate != null
-          ? Text(DateFormat.yMd().format(_selectedDate!))
+          ? Text(
+              DateFormat.yMd(
+                Localizations.localeOf(context).toString(),
+              ).format(_selectedDate!),
+            )
           : const SizedBox.shrink(),
     );
   }
@@ -143,9 +155,12 @@ class _AppDatePickerState extends State<_AppDatePicker> {
           children: [
             AppFilledButton(
               onPress: _onSubmit,
-              label: context.localization.submit,
+              label: context.localization.misc_submit,
             ),
-            AppTextButton(onPress: _onClose, label: context.localization.close),
+            AppTextButton(
+              onPress: _onClose,
+              label: context.localization.misc_close,
+            ),
           ],
         ),
       ],

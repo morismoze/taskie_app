@@ -11,7 +11,11 @@ class WorkspaceUserResponse {
     required this.firstName,
     required this.lastName,
     required this.role,
+    required this.userId,
+    required this.createdAt,
+    this.email,
     this.profileImageUrl,
+    this.createdBy,
   });
 
   /// WorkspaceUser ID
@@ -19,8 +23,28 @@ class WorkspaceUserResponse {
   final String firstName;
   final String lastName;
   final WorkspaceRole role;
+  final String userId;
+  final DateTime createdAt;
+  final String? email;
   final String? profileImageUrl;
+  final WorkspaceUserCreatedByResponse? createdBy;
 
   factory WorkspaceUserResponse.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceUserResponseFromJson(json);
+}
+
+@JsonSerializable()
+class WorkspaceUserCreatedByResponse {
+  WorkspaceUserCreatedByResponse({
+    required this.firstName,
+    required this.lastName,
+    this.profileImageUrl,
+  });
+
+  final String firstName;
+  final String lastName;
+  final String? profileImageUrl;
+
+  factory WorkspaceUserCreatedByResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkspaceUserCreatedByResponseFromJson(json);
 }

@@ -31,7 +31,7 @@ import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-par
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
 import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace-user-id-path-param-request.dto';
-import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
@@ -80,11 +80,11 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
-  createWorkspaceInviteLink(
+  createWorkspaceInviteToken(
     @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
-  ): Promise<CreateWorkspaceInviteLinkResponse> {
-    return this.workspaceService.createInviteLink({
+  ): Promise<CreateWorkspaceInviteTokenResponse> {
+    return this.workspaceService.createInviteToken({
       workspaceId: params.workspaceId,
       createdById: request.user.sub,
     });
@@ -93,10 +93,10 @@ export class WorkspaceController {
   @Get('invites/:inviteToken')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  getWorkspaceInfoByInviteToken(
+  getWorkspaceInfoByWorkspaceInviteToken(
     @Param() params: WorkspaceInviteTokenRequestPathParam,
   ): Promise<WorkspaceResponse> {
-    return this.workspaceService.getWorkspaceByInviteLinkToken(
+    return this.workspaceService.getWorkspaceInfoByWorkspaceInviteToken(
       params.inviteToken,
     );
   }

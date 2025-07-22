@@ -9,7 +9,7 @@ import { SocialLoginRequest } from '../core/dto/social-login-request.dto';
 export class AuthGoogleService {
   private google: OAuth2Client;
 
-  constructor(private configService: ConfigService<AggregatedConfig>) {
+  constructor(private readonly configService: ConfigService<AggregatedConfig>) {
     this.google = new OAuth2Client(
       configService.get('google.auth.clientId', { infer: true }),
       configService.get('google.auth.clientSecret', { infer: true }),

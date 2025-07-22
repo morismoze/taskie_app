@@ -9,7 +9,37 @@ class AppLocalizationsHr extends AppLocalizations {
   AppLocalizationsHr([String locale = 'hr']) : super(locale);
 
   @override
-  String get cancel => 'Otkaži';
+  String get misc_cancel => 'Otkaži';
+
+  @override
+  String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
+
+  @override
+  String get misc_tryAgain => 'Pokušajte ponovno';
+
+  @override
+  String get misc_requiredField => 'Ovo polje je obvezno';
+
+  @override
+  String get misc_optional => 'opcionalno';
+
+  @override
+  String get misc_submit => 'Potvrdi';
+
+  @override
+  String get misc_close => 'Zatvori';
+
+  @override
+  String get misc_note => 'Napomena';
+
+  @override
+  String get misc_roleManager => 'Menadžer';
+
+  @override
+  String get misc_roleMember => 'Član';
+
+  @override
+  String get misc_orSeparator => 'ili';
 
   @override
   String get signInTitleStart => 'Učenje odgovornosti.';
@@ -30,12 +60,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get signInGoogleCanceled =>
       'Google prijava otkazana. Molimo pokušajte ponovno.';
-
-  @override
-  String get somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
-
-  @override
-  String get tryAgain => 'Pokušajte ponovno';
 
   @override
   String get errorOnInitialLoad =>
@@ -86,13 +110,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Opis može imati najviše 250 znakova';
 
   @override
-  String get requiredField => 'Ovo polje je obvezno';
-
-  @override
-  String get optional => 'opcionalno';
-
-  @override
-  String get errorWhileCreatingWorkspace =>
+  String get workspaceCreateError =>
       'Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora';
 
   @override
@@ -106,10 +124,14 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora';
 
   @override
-  String get appDrawerEditWorkspace => 'Uredi postavke radnog prostora';
+  String get appDrawerEditWorkspace => 'Postavke radnog prostora';
 
   @override
-  String get appDrawerManageUsers => 'Upravljaj članovima';
+  String get appDrawerManageUsers => 'Članovi radnog prostora';
+
+  @override
+  String get appDrawerNotActiveWorkspace =>
+      'Ukoliko želite vidjeti ostale opcije, učinite ovaj radni prostor aktivnim klikom na ikonu radnog prostora u gornjoj listi.';
 
   @override
   String get appDrawerLeaveWorkspace => 'Napusti radni prostor';
@@ -174,8 +196,175 @@ class AppLocalizationsHr extends AppLocalizations {
       'Zadatak mora biti dodijeljen barem 1 članu';
 
   @override
-  String get submit => 'Potvrdi';
+  String get workspaceUsersManagement => 'Upravljanje korisnicima';
 
   @override
-  String get close => 'Zatvori';
+  String get workspaceUsersManagementLoadUsersError =>
+      'Uh-oh! Došlo je do problema prilikom dohvata korisnika radnog prostora';
+
+  @override
+  String get workspaceUsersManagementDeleteUser =>
+      'Ukloni korisnika iz radnog prostora';
+
+  @override
+  String get workspaceUsersManagementDeleteUserModalMessage =>
+      'Jeste li sigurni da želite ukloniti ovog korisnika iz radnog prostora?';
+
+  @override
+  String get workspaceUsersManagementDeleteUserModalCta => 'Ukloni';
+
+  @override
+  String get workspaceUsersManagementDeleteUserSuccess =>
+      'Uspješno ste uklonili korisnika iz radnog prostora';
+
+  @override
+  String get workspaceUsersManagementDeleteUserError =>
+      'Uh-oh! Došlo je do problema prilikom uklanjanja korisnika iz radnog prostora';
+
+  @override
+  String get workspaceUsersManagementUsersGuideMainTitle =>
+      'O korisnicima radnog prostora';
+
+  @override
+  String get workspaceUsersManagementUsersGuideIntroBody =>
+      'Svi sudionici u radnom prostoru dijele se na dva glavna tipa: Članove tima (koji imaju vlastiti korisnički račun) i Virtualne profile (koji su placeholderi kojima upravljaju Menadžeri). Svakom korisniku je zatim dodijeljena uloga koja definira njegove dozvole.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideTeamMembersTitle =>
+      'Članovi tima (Stvarni korisnici)';
+
+  @override
+  String get workspaceUsersManagementUsersGuideTeamMembersBody =>
+      'Članovi tima su korisnici s vlastitim računom koji se mogu prijaviti u aplikaciju. Oni ili stvore radni prostor (čime automatski postaju Menadžeri) ili se pridruže postojećem putem pozivne poveznice (čime automatski postaju Članovi). Uloge Članova tima može mijenjati Menadžer.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideVirtualProfilesTitle =>
+      'Virtualni profili';
+
+  @override
+  String get workspaceUsersManagementUsersGuideVirtualProfilesBody =>
+      'Virtualni profili su placeholderi za osobe koje nemaju korisnički račun, poput djece. Oni se ne mogu prijaviti. Stvaraju ih isključivo Menadžeri i uvijek im se dodjeljuje uloga \'Član\', koja se ne može promijeniti.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideRolesTitle =>
+      'Korisničke uloge: Menadžer i Član';
+
+  @override
+  String get workspaceUsersManagementUsersGuideRolesBody =>
+      'Svakom korisniku u radnom prostoru dodijeljena je jedna od dvije uloge. Korisnik koji stvori radni prostor automatski postaje Menadžer, dok se korisnicima koji se pridruže putem pozivne poveznice automatski dodjeljuje uloga Člana.';
+
+  @override
+  String get workspaceUsersManagementUsersGuideManagerRoleTitle =>
+      'Uloga Menadžera';
+
+  @override
+  String get workspaceUsersManagementUsersGuideManagerRoleBody =>
+      'Menadžer ima potpunu administrativnu i upravljačku kontrolu nad svime u radnom prostoru. Može pozivati Članove tima, stvarati Virtualne profile, uklanjati bilo kojeg korisnika iz radnog prostora te mijenjati uloge drugim Članovima tima (uključujući promicanje Člana u Menadžera ili degradiranje drugog Menadžera).';
+
+  @override
+  String get workspaceUsersManagementUsersGuideMemberRoleTitle => 'Uloga Člana';
+
+  @override
+  String get workspaceUsersManagementUsersGuideMemberRoleBody =>
+      'Član tima s ulogom \'Član\' ima pristup samo za čitanje (\'read-only\'), što mu omogućuje da vidi sve zadatke, ciljeve i ostali sadržaj, ali ne i da njima upravlja. Za razliku od njega, Virtualni profil, koji uvijek ima ovu ulogu, ne može se prijaviti i služi isključivo kao placeholder kojemu Menadžer dodjeljuje zadatke.';
+
+  @override
+  String get workspaceUsersManagementCreate => 'Novi korisnik radnog prostora';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteDescription =>
+      'Pozovite nove korisnike u ovaj radni prostor slanjem donje poveznice za pozivnicu:';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteLabel =>
+      'Pozivni link radnog prostora';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteNote =>
+      'Svaki link je jednokratan (pošaljite ga samo jednom korisniku). Možete ga kopirati u međuspremnik ili podijeliti. Radi vaše praktičnosti, nakon bilo koje od tih radnji, generira se novi link za iduću upotrebu.';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteClipboard =>
+      'Uspješno kopirano u međuspremnik';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserDescription =>
+      'Kreirajte novog virtualnog korisnika:';
+
+  @override
+  String get workspaceUserFirstNameMinLength =>
+      'Ime mora imati najmanje 2 znaka';
+
+  @override
+  String get workspaceUserFirstNameMaxLength =>
+      'Ime može imati najviše 50 znakova';
+
+  @override
+  String get workspaceUserLastNameMinLength =>
+      'Prezime mora imati najmanje 2 znaka';
+
+  @override
+  String get workspaceUserLastNameMaxLength =>
+      'Prezime može imati najviše 50 znakova';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserSubmit =>
+      'Kreiraj novog virtualnog korisnika';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserSuccess =>
+      'Uspješno ste kreirali virtualnog korisnika';
+
+  @override
+  String get workspaceUsersManagementCreateVirtualUserError =>
+      'Uh-oh! Došlo je do problema prilikom kreiranja virtualnog korisnika';
+
+  @override
+  String get workspaceUsersManagementUserDetails => 'Korisnički detalji';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEdit =>
+      'Uređivanje korisničkih podataka';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditNote =>
+      'Budite oprezni prilikom izmjene uloge korisnika u Menadžer ulogu. Korisnici s ulogom Menadžer imaju potpunu administrativnu i upravljačku kontrolu nad radnim prostorom.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditFirstNameBlocked =>
+      'Ne-virtualni korisnici ne mogu uređivati svoje ime jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditLastNameBlocked =>
+      'Ne-virtualni korisnici ne mogu uređivati svoje prezime jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
+      'Virtualnim korisnicima je uvijek dodijeljena uloga Člana i nije ju moguće promijeniti.';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditSubmit => 'Uredi podatke';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditSuccess =>
+      'Uspješno ste uredili podatke korisnika';
+
+  @override
+  String get workspaceUsersManagementUserDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja korisničkih podataka';
+
+  @override
+  String get workspaceUserFirstNameLabel => 'Ime';
+
+  @override
+  String get workspaceUserLastNameLabel => 'Prezime';
+
+  @override
+  String get roleLabel => 'Uloga';
+
+  @override
+  String get createdBy => 'Korisnika kreirao/la';
+
+  @override
+  String get createdAt => 'Korisnik kreiran';
 }

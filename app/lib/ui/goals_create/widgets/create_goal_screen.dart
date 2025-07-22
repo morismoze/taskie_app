@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/create_goal_viewmodel.dart';
+import '../view_models/create_goal_screen_viewmodel.dart';
 
 class CreateGoalScreen extends StatefulWidget {
   const CreateGoalScreen({super.key, required this.viewModel});
 
-  final CreateGoalViewmodel viewModel;
+  final CreateGoalScreenViewmodel viewModel;
 
   @override
   State<StatefulWidget> createState() => _WorkspaceSettingsScreenState();
@@ -31,10 +31,8 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SizedBox.expand(
-        child: BlurredCirclesBackground(
-          child: SafeArea(child: Text('create goal')),
-        ),
+      body: BlurredCirclesBackground(
+        child: SafeArea(child: Text('create goal')),
       ),
     );
   }

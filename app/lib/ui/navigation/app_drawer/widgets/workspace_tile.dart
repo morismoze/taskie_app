@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../domain/constants/rbac.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_text_button.dart';
-import '../../../core/ui/rbac.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'workspace_image.dart';
 import 'workspace_leave_button.dart';
@@ -44,7 +42,8 @@ class WorkspaceTile extends StatelessWidget {
         child: WorkspaceImage(url: pictureUrl, isActive: isActive),
       ),
       trailing: InkWell(
-        onTap: () => _onWorkspaceOptionsTap(context, id),
+        onTap: () =>
+            _onWorkspaceOptionsTap(context, viewModel.activeWorkspaceId, id),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           child: FaIcon(
@@ -63,7 +62,11 @@ class WorkspaceTile extends StatelessWidget {
     );
   }
 
-  void _onWorkspaceOptionsTap(BuildContext context, String workspaceId) {
+  void _onWorkspaceOptionsTap(
+    BuildContext context,
+    String activeWorkspaceId,
+    String workspaceId,
+  ) {
     AppModalBottomSheet.show(
       context: context,
       enableDrag: !viewModel.leaveWorkspace.running,
@@ -86,10 +89,8 @@ class WorkspaceTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Rbac(
-            permission: RbacPermission.workspaceManageSettings,
-            workspaceId: id,
-            child: AppTextButton(
+          if (activeWorkspaceId == workspaceId) ...[
+            AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
                 context.push(Routes.workspaceSettings(workspaceId: id));
@@ -97,19 +98,22 @@ class WorkspaceTile extends StatelessWidget {
               label: context.localization.appDrawerEditWorkspace,
               leadingIcon: FontAwesomeIcons.pencil,
             ),
-          ),
-          Rbac(
-            permission: RbacPermission.workspaceManagerUsers,
-            workspaceId: id,
-            child: AppTextButton(
+            AppTextButton(
               onPress: () {
                 context.pop(); // Close bottom sheet
                 context.push(Routes.workspaceUsers(workspaceId: id));
               },
               label: context.localization.appDrawerManageUsers,
-              leadingIcon: FontAwesomeIcons.solidUser,
+              leadingIcon: FontAwesomeIcons.userGroup,
             ),
-          ),
+          ] else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                context.localization.appDrawerNotActiveWorkspace,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
           WorkspaceLeaveButton(viewModel: viewModel, workspaceId: workspaceId),
         ],
       ),

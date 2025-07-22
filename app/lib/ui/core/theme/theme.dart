@@ -5,7 +5,9 @@ import 'colors.dart';
 abstract final class AppTheme {
   static const _textTheme = TextTheme(
     headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+    headlineMedium: TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
     headlineSmall: TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
+    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
     titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
     bodyLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
     bodyMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
@@ -60,6 +62,12 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     ),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(
+        color: Colors.grey[700],
+        borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -88,4 +96,5 @@ abstract final class AppTheme {
   static double fieldInnerPadding = 16.0;
   static double fieldLabelFontSize = 15.0;
   static double fieldUnfocusedLabelFontSize = 14.0;
+  static double fieldHeight = 56.0;
 }

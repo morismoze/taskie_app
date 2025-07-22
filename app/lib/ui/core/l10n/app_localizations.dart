@@ -98,11 +98,71 @@ abstract class AppLocalizations {
     Locale('hr'),
   ];
 
-  /// No description provided for @cancel.
+  /// No description provided for @misc_cancel.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
-  String get cancel;
+  String get misc_cancel;
+
+  /// No description provided for @misc_somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! Something went wrong'**
+  String get misc_somethingWentWrong;
+
+  /// No description provided for @misc_tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get misc_tryAgain;
+
+  /// No description provided for @misc_requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get misc_requiredField;
+
+  /// No description provided for @misc_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get misc_optional;
+
+  /// No description provided for @misc_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get misc_submit;
+
+  /// No description provided for @misc_close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get misc_close;
+
+  /// No description provided for @misc_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get misc_note;
+
+  /// No description provided for @misc_roleManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get misc_roleManager;
+
+  /// No description provided for @misc_roleMember.
+  ///
+  /// In en, this message translates to:
+  /// **'ČlanMember'**
+  String get misc_roleMember;
+
+  /// No description provided for @misc_orSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get misc_orSeparator;
 
   /// No description provided for @signInTitleStart.
   ///
@@ -139,18 +199,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Google sign-in cancelled. Please try again.'**
   String get signInGoogleCanceled;
-
-  /// No description provided for @somethingWentWrong.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! Something went wrong'**
-  String get somethingWentWrong;
-
-  /// No description provided for @tryAgain.
-  ///
-  /// In en, this message translates to:
-  /// **'Try again'**
-  String get tryAgain;
 
   /// No description provided for @errorOnInitialLoad.
   ///
@@ -236,23 +284,11 @@ abstract class AppLocalizations {
   /// **'Description can have at most 250 characters'**
   String get workspaceCreateDescriptionMaxLength;
 
-  /// No description provided for @requiredField.
-  ///
-  /// In en, this message translates to:
-  /// **'This field is required'**
-  String get requiredField;
-
-  /// No description provided for @optional.
-  ///
-  /// In en, this message translates to:
-  /// **'optional'**
-  String get optional;
-
-  /// No description provided for @errorWhileCreatingWorkspace.
+  /// No description provided for @workspaceCreateError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble creating your workspace'**
-  String get errorWhileCreatingWorkspace;
+  String get workspaceCreateError;
 
   /// No description provided for @tasksHello.
   ///
@@ -275,14 +311,20 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerEditWorkspace.
   ///
   /// In en, this message translates to:
-  /// **'Edit workspace setttings'**
+  /// **'Workspace setttings'**
   String get appDrawerEditWorkspace;
 
   /// No description provided for @appDrawerManageUsers.
   ///
   /// In en, this message translates to:
-  /// **'Manage users'**
+  /// **'Workspace users'**
   String get appDrawerManageUsers;
+
+  /// No description provided for @appDrawerNotActiveWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'To see additional options, make this workspace active by clicking on its icon in the top list.'**
+  String get appDrawerNotActiveWorkspace;
 
   /// No description provided for @appDrawerLeaveWorkspace.
   ///
@@ -398,17 +440,281 @@ abstract class AppLocalizations {
   /// **'Task must have at least 1 assignee'**
   String get taskAssigneesMinLength;
 
-  /// No description provided for @submit.
+  /// No description provided for @workspaceUsersManagement.
   ///
   /// In en, this message translates to:
-  /// **'Submit'**
-  String get submit;
+  /// **'Users management'**
+  String get workspaceUsersManagement;
 
-  /// No description provided for @close.
+  /// No description provided for @workspaceUsersManagementLoadUsersError.
   ///
   /// In en, this message translates to:
-  /// **'Close'**
-  String get close;
+  /// **'Uh-oh! We\'ve had some trouble loading up workspace users'**
+  String get workspaceUsersManagementLoadUsersError;
+
+  /// No description provided for @workspaceUsersManagementDeleteUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove user from workspace'**
+  String get workspaceUsersManagementDeleteUser;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove this workspace user?'**
+  String get workspaceUsersManagementDeleteUserModalMessage;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserModalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get workspaceUsersManagementDeleteUserModalCta;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully removed user from the workspace'**
+  String get workspaceUsersManagementDeleteUserSuccess;
+
+  /// No description provided for @workspaceUsersManagementDeleteUserError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble removing user from the workspace'**
+  String get workspaceUsersManagementDeleteUserError;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideMainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Workspace Users'**
+  String get workspaceUsersManagementUsersGuideMainTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All participants in a workspace are categorized into two main types: Team Members (who have their own app account) and Virtual Profiles (which are placeholders managed by Managers). Each user is then assigned a role that defines their permissions.'**
+  String get workspaceUsersManagementUsersGuideIntroBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideTeamMembersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Members (Real Users)'**
+  String get workspaceUsersManagementUsersGuideTeamMembersTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideTeamMembersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Members are users with their own account who can log in to the application. They either create a workspace (becoming a Manager automatically) or join one using an invitation link (becoming a Member automatically). The roles of Team Members can be changed by a Manager.'**
+  String get workspaceUsersManagementUsersGuideTeamMembersBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideVirtualProfilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual Profiles'**
+  String get workspaceUsersManagementUsersGuideVirtualProfilesTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideVirtualProfilesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual Profiles are placeholders for individuals who do not have an app account, such as children. They cannot log in. They can only be created by Managers and are always assigned the \'Member\' role, which cannot be changed.'**
+  String get workspaceUsersManagementUsersGuideVirtualProfilesBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideRolesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'User Roles: Manager and Member'**
+  String get workspaceUsersManagementUsersGuideRolesTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideRolesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each user in the workspace is assigned one of two roles. The user who creates a workspace automatically becomes a Manager. Users who join via an invite link are automatically assigned the Member role.'**
+  String get workspaceUsersManagementUsersGuideRolesBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideManagerRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager Role'**
+  String get workspaceUsersManagementUsersGuideManagerRoleTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideManagerRoleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Managers have full administrative and management control over everything in the workspace. They can invite Team Members, create Virtual Profiles, remove any user from the workspace, and change the roles of other Team Members (including promoting a Member to a Manager or demoting another Manager).'**
+  String get workspaceUsersManagementUsersGuideManagerRoleBody;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideMemberRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Role'**
+  String get workspaceUsersManagementUsersGuideMemberRoleTitle;
+
+  /// No description provided for @workspaceUsersManagementUsersGuideMemberRoleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A Team Member with the \'Member\' role has read-only access, allowing them to view all tasks, goals, and other content, but they cannot manage them. In contrast, a Virtual Profile, which always has this role, cannot log in and serves only as a placeholder for task assignment by a Manager.'**
+  String get workspaceUsersManagementUsersGuideMemberRoleBody;
+
+  /// No description provided for @workspaceUsersManagementCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'New workspace user'**
+  String get workspaceUsersManagementCreate;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite new users to this workspace by sending them the invite link below:'**
+  String get workspaceUsersManagementCreateWorkspaceInviteDescription;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace invite link'**
+  String get workspaceUsersManagementCreateWorkspaceInviteLabel;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Each link is single-use (send it to one user only). You can copy it to the clipboard or share it. For your convenience, after either of those two actions, a new link is generated for new usage.'**
+  String get workspaceUsersManagementCreateWorkspaceInviteNote;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully copied to clipboard'**
+  String get workspaceUsersManagementCreateWorkspaceInviteClipboard;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new virtual user:'**
+  String get workspaceUsersManagementCreateVirtualUserDescription;
+
+  /// No description provided for @workspaceUserFirstNameMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'First name must have at least 2 characters'**
+  String get workspaceUserFirstNameMinLength;
+
+  /// No description provided for @workspaceUserFirstNameMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'First name can have at most 50 characters'**
+  String get workspaceUserFirstNameMaxLength;
+
+  /// No description provided for @workspaceUserLastNameMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name must have at least 2 characters'**
+  String get workspaceUserLastNameMinLength;
+
+  /// No description provided for @workspaceUserLastNameMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name can have at most 50 characters'**
+  String get workspaceUserLastNameMaxLength;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new virtual user'**
+  String get workspaceUsersManagementCreateVirtualUserSubmit;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully created virtual user'**
+  String get workspaceUsersManagementCreateVirtualUserSuccess;
+
+  /// No description provided for @workspaceUsersManagementCreateVirtualUserError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble creating virtual user'**
+  String get workspaceUsersManagementCreateVirtualUserError;
+
+  /// No description provided for @workspaceUsersManagementUserDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace user details'**
+  String get workspaceUsersManagementUserDetails;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit workspace user details'**
+  String get workspaceUsersManagementUserDetailsEdit;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Be cautious when changing a user\'s role to Manager role. Users with the Manager role have full administrative and managerial control over the workspace.'**
+  String get workspaceUsersManagementUserDetailsEditNote;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditFirstNameBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-virtual users can\'t edit their first name because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
+  String get workspaceUsersManagementUserDetailsEditFirstNameBlocked;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditLastNameBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-virtual users can\'t edit their last name because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
+  String get workspaceUsersManagementUserDetailsEditLastNameBlocked;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditRoleBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual users always have the Member role and cannot be changed.'**
+  String get workspaceUsersManagementUserDetailsEditRoleBlocked;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get workspaceUsersManagementUserDetailsEditSubmit;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited workspace user details'**
+  String get workspaceUsersManagementUserDetailsEditSuccess;
+
+  /// No description provided for @workspaceUsersManagementUserDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing workspace user details'**
+  String get workspaceUsersManagementUserDetailsEditError;
+
+  /// No description provided for @workspaceUserFirstNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'First name'**
+  String get workspaceUserFirstNameLabel;
+
+  /// No description provided for @workspaceUserLastNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name'**
+  String get workspaceUserLastNameLabel;
+
+  /// No description provided for @roleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get roleLabel;
+
+  /// No description provided for @createdBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by'**
+  String get createdBy;
+
+  /// No description provided for @createdAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created at'**
+  String get createdAt;
 }
 
 class _AppLocalizationsDelegate

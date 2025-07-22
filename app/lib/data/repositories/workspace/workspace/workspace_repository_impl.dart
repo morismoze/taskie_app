@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../domain/models/workspace.dart';
@@ -70,6 +71,23 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         _log.severe('Failed to read active workspace ID', result.error);
         return Result.error(result.error);
     }
+  }
+
+  @override
+  Result<Workspace> getActiveWorkspaceDetails() {
+    final activeWorkspace = _cachedWorkspacesList!.firstWhereOrNull(
+      (workspace) => workspace.id == _activeWorkspaceId,
+    );
+
+    if (activeWorkspace == null) {
+      return Result.error(
+        Exception(
+          'Couldn\'t find active workspace in the cached list by the cached active workspace ID.',
+        ),
+      );
+    }
+
+    return Result.ok(activeWorkspace);
   }
 
   @override

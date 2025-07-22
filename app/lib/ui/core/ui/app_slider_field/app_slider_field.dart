@@ -28,7 +28,7 @@ class AppSliderField extends StatelessWidget {
     final divisions = ((max - min) / step).toInt();
     final mappedLabel = required
         ? label
-        : '$label (${context.localization.optional})';
+        : '$label (${context.localization.misc_optional})';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { getAppWorkspaceJoinDeepLink } from 'src/common/helper/util';
+import { ConfigService } from '@nestjs/config';
+import { AggregatedConfig } from 'src/config/config.type';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
@@ -29,7 +30,7 @@ import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignme
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
-import { CreateWorkspaceInviteLinkResponse } from './dto/response/create-workspace-invite-link-response.dto';
+import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
@@ -62,6 +63,7 @@ export class WorkspaceService {
     private readonly taskAssignmentService: TaskAssignmentService,
     private readonly workspaceInviteService: WorkspaceInviteService,
     private readonly unitOfWorkService: UnitOfWorkService,
+    private readonly configService: ConfigService<AggregatedConfig>,
   ) {}
 
   async create({
@@ -115,13 +117,13 @@ export class WorkspaceService {
     return response;
   }
 
-  async createInviteLink({
+  async createInviteToken({
     workspaceId,
     createdById,
   }: {
     workspaceId: Workspace['id'];
     createdById: JwtPayload['sub'];
-  }): Promise<CreateWorkspaceInviteLinkResponse> {
+  }): Promise<CreateWorkspaceInviteTokenResponse> {
     // Check if workspace exists
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -141,19 +143,20 @@ export class WorkspaceService {
       );
     }
 
-    const invite = await this.workspaceInviteService.createInviteLink({
+    const invite = await this.workspaceInviteService.createInviteToken({
       workspaceId,
       createdById,
     });
 
-    const response: CreateWorkspaceInviteLinkResponse = {
-      inviteLink: getAppWorkspaceJoinDeepLink(invite.token),
+    const response: CreateWorkspaceInviteTokenResponse = {
+      token: invite.token,
+      expiresAt: invite.expiresAt,
     };
 
     return response;
   }
 
-  async getWorkspaceByInviteLinkToken(
+  async getWorkspaceInfoByWorkspaceInviteToken(
     inviteToken: WorkspaceInvite['token'],
   ): Promise<WorkspaceResponse> {
     // Check if user by ID exists
@@ -261,9 +264,13 @@ export class WorkspaceService {
       id: newWorkspaceUser.id,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
+      email: null,
       // Currently uploading images while creating virtual users is not supported
       profileImageUrl: null,
       role: newWorkspaceUser.workspaceRole,
+      userId: newUser.id,
+      createdBy: newWorkspaceUser.createdBy,
+      createdAt: newWorkspaceUser.createdAt,
     };
 
     return response;
@@ -292,7 +299,12 @@ export class WorkspaceService {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
       relations: {
-        members: { user: true },
+        members: {
+          user: true,
+          createdBy: {
+            user: true,
+          },
+        },
       },
     });
 
@@ -310,8 +322,19 @@ export class WorkspaceService {
         id: member.id,
         firstName: member.user.firstName,
         lastName: member.user.lastName,
+        email: member.user.email,
         profileImageUrl: member.user.profileImageUrl,
         role: member.workspaceRole,
+        userId: member.user.id,
+        createdBy:
+          member.createdBy === null
+            ? null
+            : {
+                firstName: member.createdBy.user.firstName,
+                lastName: member.createdBy.user.lastName,
+                profileImageUrl: member.createdBy.user.profileImageUrl,
+              },
+        createdAt: member.createdAt,
       }))
       .sort((wu1, wu2) => {
         // Sort by full name
@@ -581,7 +604,7 @@ export class WorkspaceService {
       );
     }
 
-    const { updatedWorkspaceUser } =
+    const { updatedWorkspaceUserId } =
       await this.unitOfWorkService.withTransaction(async () => {
         const updatedWorkspaceUser = await this.workspaceUserService.update({
           id: workspaceUserId,
@@ -600,18 +623,72 @@ export class WorkspaceService {
           });
         }
 
-        return { updatedWorkspaceUser };
+        return { updatedWorkspaceUserId: updatedWorkspaceUser.id };
       });
+
+    // This is freshly updated workspace user because former code is
+    // executed inside a transaction, so doing this find inside would result
+    // in not updated workspace user.
+    const updatedWorkspaceUser =
+      await this.workspaceUserService.findByIdWithUserAndCreatedByUser(
+        updatedWorkspaceUserId,
+      );
+
+    if (updatedWorkspaceUser == null) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     const response: WorkspaceUserResponse = {
       id: updatedWorkspaceUser.id,
       firstName: updatedWorkspaceUser.user.firstName,
       lastName: updatedWorkspaceUser.user.lastName,
+      email: updatedWorkspaceUser.user.email,
       profileImageUrl: updatedWorkspaceUser.user.profileImageUrl,
       role: updatedWorkspaceUser.workspaceRole,
+      userId: updatedWorkspaceUser.user.id,
+      createdAt: updatedWorkspaceUser.createdAt,
+      createdBy:
+        updatedWorkspaceUser.createdBy === null
+          ? null
+          : {
+              firstName: updatedWorkspaceUser.createdBy.firstName,
+              lastName: updatedWorkspaceUser.createdBy.lastName,
+              profileImageUrl: updatedWorkspaceUser.createdBy.profileImageUrl,
+            },
     };
 
     return response;
+  }
+
+  async getWorkspaceUserAdditionalDetails({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: Workspace['id'];
+    workspaceUserId: WorkspaceUser['id'];
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.workspaceUserService.delete({
+      workspaceId,
+      workspaceUserId,
+    });
   }
 
   async removeUserFromWorkspace({

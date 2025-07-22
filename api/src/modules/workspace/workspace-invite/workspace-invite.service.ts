@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { WORKSPACE_INVITE_LINK_LENGTH } from 'src/common/helper/constants';
+import { WORKSPACE_INVITE_TOKEN_LENGTH } from 'src/common/helper/constants';
 import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
@@ -30,7 +30,7 @@ export class WorkspaceInviteService {
    * Invite links will last up to 1 day and be one-time only
    */
 
-  async createInviteLink({
+  async createInviteToken({
     workspaceId,
     createdById,
   }: {
@@ -53,7 +53,7 @@ export class WorkspaceInviteService {
       );
     }
 
-    const token = generateUniqueToken(WORKSPACE_INVITE_LINK_LENGTH);
+    const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
     const now = new Date();
     const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
     const expiresAt = new Date(

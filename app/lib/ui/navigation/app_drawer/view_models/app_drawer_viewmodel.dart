@@ -17,13 +17,13 @@ class LeaveWorkspaceResultNoAction extends LeaveWorkspaceResult {
   const LeaveWorkspaceResultNoAction();
 }
 
-/// Close modal and bottom sheet - active workspace ID was not
+/// Close dialog and bottom sheet - active workspace ID was not
 /// the same as the workspace ID which was left.
 class LeaveWorkspaceResultCloseOverlays extends LeaveWorkspaceResult {
   const LeaveWorkspaceResultCloseOverlays();
 }
 
-/// Close modal and bottom sheet and navigate to the first workspace
+/// Close dialog and bottom sheet and navigate to the first workspace
 /// from the updated workspaces list - active workspace ID was the
 /// same as the workspace ID which was left.
 class LeaveWorkspaceResultNavigateTo extends LeaveWorkspaceResult {

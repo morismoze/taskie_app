@@ -118,6 +118,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     if (widget.viewModel.signInWithGoogle.error) {
       final errorResult = widget.viewModel.signInWithGoogle.result as Error;
+      widget.viewModel.signInWithGoogle.clearResult();
 
       switch (errorResult.error) {
         case GoogleSignInCancelledException():
@@ -129,11 +130,9 @@ class _SignInScreenState extends State<SignInScreen> {
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.somethingWentWrong,
+            message: context.localization.misc_somethingWentWrong,
           );
       }
-
-      widget.viewModel.signInWithGoogle.clearResult();
     }
   }
 

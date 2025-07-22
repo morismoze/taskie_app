@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
-import '../view_models/tasks_viewmodel.dart';
+import '../view_models/tasks_screen_viewmodel.dart';
 import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {
   const TasksHeader({super.key, required this.viewModel});
 
-  final TasksViewModel viewModel;
+  final TasksScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,6 @@ class TasksHeader extends StatelessWidget {
       return const SizedBox();
     }
 
-    final firstNameFirstLetter = user.firstName[0];
     final fullName = '${user.firstName} ${user.lastName}';
 
     return Padding(
@@ -34,7 +33,8 @@ class TasksHeader extends StatelessWidget {
           Row(
             children: [
               AppAvatar(
-                text: firstNameFirstLetter,
+                hashString: user.id,
+                fullName: fullName,
                 imageUrl: user.profileImageUrl,
               ),
               const SizedBox(width: 13),
