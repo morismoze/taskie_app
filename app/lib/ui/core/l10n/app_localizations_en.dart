@@ -162,7 +162,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.';
 
   @override
-  String get createNewTaskNoMembersCta => 'Let\'s add members';
+  String get objectiveNoMembersCta => 'Let\'s add members';
 
   @override
   String get createNewTaskTitle => 'New task';
@@ -174,7 +174,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskDescriptionLabel => 'Task description';
 
   @override
-  String get taskAssigneeLabel => 'Assign to';
+  String get objectiveAssigneeLabel => 'Assign to';
 
   @override
   String get taskDueDateLabel => 'Due date';
@@ -183,13 +183,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskRewardPointsLabel => 'Reward points';
 
   @override
-  String get taskTitleMinLength => 'Name must have at least 3 characters';
+  String get objectiveTitleMinLength => 'Title must have at least 3 characters';
 
   @override
-  String get taskTitleMaxLength => 'Name can have at most 50 characters';
+  String get objectiveTitleMaxLength => 'Title can have at most 50 characters';
 
   @override
-  String get taskDescriptionMaxLength => 'Name can have at most 250 characters';
+  String get objectiveDescriptionMaxLength =>
+      'Description can have at most 250 characters';
 
   @override
   String get taskAssigneesMinLength => 'Task must have at least 1 assignee';
@@ -330,11 +331,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUserDetailsEditFirstNameBlocked =>
-      'Non-virtual users can\'t edit their first name because this field is provided by the sign-up provider (e.g., Google) used for this app.';
+      'Editing first name of non-virtual users is not possible because this field is provided by the sign-up provider (e.g., Google) used for this app.';
 
   @override
   String get workspaceUsersManagementUserDetailsEditLastNameBlocked =>
-      'Non-virtual users can\'t edit their last name because this field is provided by the sign-up provider (e.g., Google) used for this app.';
+      'Editing last name of non-virtual users is not possible because this field is provided by the sign-up provider (e.g., Google) used for this app.';
 
   @override
   String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
@@ -365,4 +366,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createdAt => 'Created at';
+
+  @override
+  String get createNewGoalNoMembers =>
+      'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.';
+
+  @override
+  String get createNewGoalTitle => 'New goal';
+
+  @override
+  String get goalTitleLabel => 'Goal title';
+
+  @override
+  String get goalDescriptionLabel => 'Goal description';
+
+  @override
+  String get goalRequiredPointsLabel => 'Required points';
+
+  @override
+  String get goalRequiredPointsNote =>
+      'Required points represent the total reward points a member needs to collect solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).';
+
+  @override
+  String get createNewGoalRequiredPointsNaN =>
+      'Required points must be a number without characters';
+
+  @override
+  String get createNewGoalRequiredPointsNotMultipleOf10 =>
+      'Required points must be a multiple of 10';
+
+  @override
+  String get goalAssigneesRequired => 'Goal must have 1 assignee';
 }

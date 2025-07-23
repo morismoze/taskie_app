@@ -10,6 +10,7 @@ export interface WorkspaceGoalResponse {
     profileImageUrl: string | null;
   };
   title: string;
+  description: string | null;
   requiredPoints: number;
   status: ProgressStatus;
   accumulatedPoints: number;

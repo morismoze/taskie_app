@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class BlockedInfoIcon extends StatelessWidget {
-  const BlockedInfoIcon({super.key, required this.message});
+class InfoIconWithTooltip extends StatelessWidget {
+  const InfoIconWithTooltip({
+    super.key,
+    required this.message,
+    this.tooltipShowDuration = 4,
+  });
 
   final String message;
+  final int tooltipShowDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +23,12 @@ class BlockedInfoIcon extends StatelessWidget {
           child: Text(message, textAlign: TextAlign.center),
         ),
       ),
-      showDuration: const Duration(seconds: 4),
+      showDuration: Duration(seconds: tooltipShowDuration),
       triggerMode: TooltipTriggerMode.tap,
       child: FaIcon(
         FontAwesomeIcons.circleInfo,
         color: Theme.of(context).colorScheme.secondary,
-        size: 15,
+        size: 17,
       ),
     );
   }

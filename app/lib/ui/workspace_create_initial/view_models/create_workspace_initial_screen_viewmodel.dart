@@ -46,9 +46,10 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _createWorkspace((String, String?) details) async {
+  Future<Result<void>> _createWorkspace(
+    (String name, String? description) details,
+  ) async {
     final (name, description) = details;
-
     final resultCreate = await _createWorkspaceUseCase.createWorkspace(
       name: name,
       description: description,

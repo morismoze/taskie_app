@@ -4,6 +4,7 @@ import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-sta
 export interface WorkspaceTaskResponse {
   id: string;
   title: string;
+  description: string | null;
   rewardPoints: number;
   assignees: {
     id: string;

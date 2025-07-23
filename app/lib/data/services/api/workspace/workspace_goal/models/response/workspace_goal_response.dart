@@ -14,6 +14,7 @@ class WorkspaceGoalResponse {
     required this.accumulatedPoints,
     required this.status,
     required this.assignee,
+    this.description,
   });
 
   final String id;
@@ -22,6 +23,7 @@ class WorkspaceGoalResponse {
   final int accumulatedPoints;
   final AssigneeResponse assignee;
   final ProgressStatus status;
+  final String? description;
 
   factory WorkspaceGoalResponse.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceGoalResponseFromJson(json);

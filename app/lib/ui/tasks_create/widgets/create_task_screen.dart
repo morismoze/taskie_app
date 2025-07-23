@@ -110,9 +110,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                             ),
                             const SizedBox(height: 20),
                             AppOutlinedButton(
-                              label: context
-                                  .localization
-                                  .createNewTaskNoMembersCta,
+                              label: context.localization.objectiveNoMembersCta,
                               onPress: () => context.push(
                                 Routes.workspaceUsers(
                                   workspaceId:

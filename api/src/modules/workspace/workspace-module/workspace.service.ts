@@ -389,6 +389,7 @@ export class WorkspaceService {
       items: tasks.map((task) => ({
         id: task.id,
         title: task.title,
+        description: task.description,
         rewardPoints: task.rewardPoints,
         assignees: task.assignees.map((assignee) => ({
           id: assignee.id,
@@ -447,6 +448,7 @@ export class WorkspaceService {
           profileImageUrl: goal.assignee.profileImageUrl,
         },
         title: goal.title,
+        description: goal.description,
         requiredPoints: goal.requiredPoints,
         status: goal.status,
         accumulatedPoints,
@@ -899,6 +901,7 @@ export class WorkspaceService {
     const response: WorkspaceGoalResponse = {
       id: updatedGoal.id,
       title: updatedGoal.title,
+      description: updatedGoal.description,
       requiredPoints: updatedGoal.requiredPoints,
       assignee: {
         id: updatedGoal.assignee.id,

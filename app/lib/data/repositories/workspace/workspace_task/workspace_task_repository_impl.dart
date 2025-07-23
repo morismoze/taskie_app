@@ -1,6 +1,5 @@
 import 'package:logging/logging.dart';
 
-import '../../../../domain/models/assignee.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
@@ -49,14 +48,16 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
                   rewardPoints: task.rewardPoints,
                   assignees: task.assignees
                       .map(
-                        (assignee) => Assignee(
+                        (assignee) => TaskAssignee(
                           id: assignee.id,
                           firstName: assignee.firstName,
                           lastName: assignee.lastName,
                           status: assignee.status,
+                          profileImageUrl: assignee.profileImageUrl,
                         ),
                       )
                       .toList(),
+                  description: task.description,
                 ),
               )
               .toList();
@@ -78,9 +79,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     String workspaceId, {
     required String title,
     required List<String> assignees,
-    required rewardPoints,
+    required int rewardPoints,
     String? description,
-    String? dueData,
+    DateTime? dueDate,
   }) async {
     try {
       final payload = CreateTaskRequest(
@@ -88,7 +89,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         assignees: assignees,
         rewardPoints: rewardPoints,
         description: description,
-        dueDate: dueData,
+        dueDate: dueDate?.toIso8601String(),
       );
       final result = await _workspaceTaskApiService.createTask(
         workspaceId: workspaceId,
@@ -104,14 +105,16 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
             rewardPoints: newTaskResultValue.rewardPoints,
             assignees: newTaskResultValue.assignees
                 .map(
-                  (assignee) => Assignee(
+                  (assignee) => TaskAssignee(
                     id: assignee.id,
                     firstName: assignee.firstName,
                     lastName: assignee.lastName,
                     status: assignee.status,
+                    profileImageUrl: assignee.profileImageUrl,
                   ),
                 )
                 .toList(),
+            description: newTaskResultValue.description,
             isNew: true,
           );
 

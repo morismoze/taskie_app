@@ -30,10 +30,10 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
     void,
     (
       String title,
-      String description,
+      String? description,
       List<String> assigneeIds,
       int rewardPoints,
-      String? dueDate,
+      DateTime? dueDate,
     )
   >
   createTask;
@@ -68,7 +68,14 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
   }
 
   Future<Result<void>> _createTask(
-    (String, String, List<String>, int, String?) details,
+    (
+      String title,
+      String? description,
+      List<String> assigneeIds,
+      int rewardPoints,
+      DateTime? dueDate,
+    )
+    details,
   ) async {
     final (title, description, assigneeIds, rewardPoints, dueDate) = details;
     final result = await _workspaceTaskRepository.createTask(
@@ -77,7 +84,7 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
       description: description,
       assignees: assigneeIds,
       rewardPoints: rewardPoints,
-      dueData: dueDate,
+      dueDate: dueDate,
     );
 
     switch (result) {

@@ -1,64 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
-import '../../core/ui/app_date_picker_field/app_date_picker_form_field.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
-import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
-import '../view_models/create_task_screen_viewmodel.dart';
+import '../../core/ui/info_icon_with_tooltip.dart';
+import '../view_models/create_goal_screen_viewmodel.dart';
 
-class CreateTaskForm extends StatefulWidget {
-  const CreateTaskForm({super.key, required this.viewModel});
+class CreateGoalForm extends StatefulWidget {
+  const CreateGoalForm({super.key, required this.viewModel});
 
-  final CreateTaskScreenViewmodel viewModel;
+  final CreateGoalScreenViewmodel viewModel;
 
   @override
-  State<CreateTaskForm> createState() => _CreateTaskFormState();
+  State<CreateGoalForm> createState() => _CreateGoalFormState();
 }
 
-class _CreateTaskFormState extends State<CreateTaskForm> {
+class _CreateGoalFormState extends State<CreateGoalForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  List<String> _selectedAssigneeWorkspaceIds = [];
-  int _rewardPoints = ObjectiveRules.rewardPointsMin;
-  DateTime? _dueDate;
+  final TextEditingController _requiredPointsController =
+      TextEditingController();
+  String? _selectedAssigneeWorkspaceId;
 
-  void _onAssigneesSelected(List<AppSelectFieldOption> selectedOptions) {
+  void _onAssigneeSelected(List<AppSelectFieldOption> selectedOptions) {
     setState(() {
-      // Take selected workspace IDs
-      _selectedAssigneeWorkspaceIds = selectedOptions
-          .map((option) => option.value as String)
-          .toList();
+      _selectedAssigneeWorkspaceId = selectedOptions[0].value as String;
     });
   }
 
-  void _onAssigneesCleared() {
+  void _onAssigneeCleared() {
     setState(() {
-      _selectedAssigneeWorkspaceIds = [];
-    });
-  }
-
-  void _onRewardPointsChanged(double points) {
-    setState(() {
-      _rewardPoints = points.toInt();
-    });
-  }
-
-  void _onDueDateSelected(DateTime date) {
-    setState(() {
-      _dueDate = date;
-    });
-  }
-
-  void _onDueDateCleared() {
-    setState(() {
-      _dueDate = null;
+      _selectedAssigneeWorkspaceId = null;
     });
   }
 
@@ -71,7 +50,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         children: [
           AppTextFormField(
             controller: _titleController,
-            label: context.localization.taskTitleLabel,
+            label: context.localization.goalTitleLabel,
             validator: _validateTitle,
             textInputAction: TextInputAction.next,
             maxCharacterCount: ValidationRules.objectiveTitleMaxLength,
@@ -79,7 +58,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           const SizedBox(height: 10),
           AppTextFormField(
             controller: _descriptionController,
-            label: context.localization.taskDescriptionLabel,
+            label: context.localization.goalDescriptionLabel,
             validator: _validateDescription,
             maxLines: null,
             keyboardType: TextInputType.multiline,
@@ -107,39 +86,34 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
               return AppSelectFormField(
                 options: options,
-                onSelected: _onAssigneesSelected,
-                onCleared: _onAssigneesCleared,
+                onSelected: _onAssigneeSelected,
+                onCleared: _onAssigneeCleared,
                 label: builderContext.localization.objectiveAssigneeLabel,
-                multiple: true,
-                validator: (assignees) =>
-                    _validateAssignees(builderContext, assignees),
+                validator: (assignee) =>
+                    _validateAssignee(builderContext, assignee),
               );
             },
           ),
           const SizedBox(height: 10),
-          AppDatePickerFormField(
-            onSelected: _onDueDateSelected,
-            onCleared: _onDueDateCleared,
-            label: context.localization.taskDueDateLabel,
-            required: false,
-            minimumDate: DateTime.now(),
-          ),
-          const SizedBox(height: 20),
-          AppSliderFormField(
-            label: context.localization.taskRewardPointsLabel,
-            value: _rewardPoints.toDouble(),
-            onChanged: _onRewardPointsChanged,
-            step: ObjectiveRules.rewardPointsStep,
-            min: ObjectiveRules.rewardPointsMin.toDouble(),
-            max: ObjectiveRules.rewardPointsMax.toDouble(),
+          AppTextFormField(
+            controller: _requiredPointsController,
+            label: context.localization.goalRequiredPointsLabel,
+            validator: _validateRequiredPoints,
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
+            suffixIcon: InfoIconWithTooltip(
+              message: context.localization.goalRequiredPointsNote,
+              tooltipShowDuration: 8,
+            ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
           const SizedBox(height: 30),
           ListenableBuilder(
-            listenable: widget.viewModel.createTask,
+            listenable: widget.viewModel.createGoal,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: builderContext.localization.taskCreateNew,
-              isLoading: widget.viewModel.createTask.running,
+              label: builderContext.localization.goalCreateNew,
+              isLoading: widget.viewModel.createGoal.running,
             ),
           ),
         ],
@@ -154,13 +128,20 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       final description = trimmedDescription.isNotEmpty
           ? trimmedDescription
           : null;
+      final requiredPoints = int.tryParse(
+        _requiredPointsController.text.trim(),
+      );
 
-      widget.viewModel.createTask.execute((
+      if (requiredPoints == null) {
+        // should be non-triggerable case, do something
+        return;
+      }
+
+      widget.viewModel.createGoal.execute((
         title,
         description,
-        _selectedAssigneeWorkspaceIds,
-        _rewardPoints,
-        _dueDate,
+        _selectedAssigneeWorkspaceId!,
+        requiredPoints,
       ));
     }
   }
@@ -193,15 +174,30 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     }
   }
 
-  String? _validateAssignees(
+  String? _validateAssignee(
     BuildContext context,
-    List<AppSelectFieldOption>? assignees,
+    List<AppSelectFieldOption>? assignee,
   ) {
-    switch (assignees) {
+    switch (assignee) {
       case final List<AppSelectFieldOption>? value when value == null:
-      case final List<AppSelectFieldOption> value
-          when value.length < ValidationRules.objectiveMinAssigneesCount:
-        return context.localization.taskAssigneesMinLength;
+      case final List<AppSelectFieldOption> value when value.isEmpty:
+        return context.localization.goalAssigneesRequired;
+      default:
+        return null;
+    }
+  }
+
+  String? _validateRequiredPoints(String? value) {
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
+        return context.localization.misc_requiredField;
+      case final String trimmedValue when int.tryParse(trimmedValue) == null:
+        return context.localization.createNewGoalRequiredPointsNaN;
+      case final String trimmedValue
+          when int.tryParse(trimmedValue)! % ObjectiveRules.rewardPointsStep !=
+              0:
+        return context.localization.createNewGoalRequiredPointsNotMultipleOf10;
       default:
         return null;
     }

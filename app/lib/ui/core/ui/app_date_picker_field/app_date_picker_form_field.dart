@@ -7,10 +7,10 @@ class AppDatePickerFormField extends FormField<DateTime> {
   AppDatePickerFormField({
     super.key,
     super.validator,
-    super.autovalidateMode,
     super.initialValue,
     required String label,
-    required void Function(DateTime) onSelected,
+    required void Function(DateTime selectedDate) onSelected,
+    required void Function() onCleared,
     bool required = true,
     DateTime? minimumDate,
     DateTime? maximumDate,
@@ -27,6 +27,14 @@ class AppDatePickerFormField extends FormField<DateTime> {
                  onSelected: (selected) {
                    state.didChange(selected);
                    onSelected(selected);
+                   state.validate();
+                 },
+                 onCleared: () {
+                   if (!required) {
+                     state.didChange(null);
+                     onCleared();
+                     state.validate();
+                   }
                  },
                  initialDateTime: initialValue,
                  minimumDate: minimumDate,

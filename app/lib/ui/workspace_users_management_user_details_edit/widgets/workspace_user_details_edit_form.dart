@@ -7,7 +7,7 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
-import '../../core/ui/blocked_info_icon.dart';
+import '../../core/ui/info_icon_with_tooltip.dart';
 import '../../core/utils/role_extension.dart';
 import '../view_models/workspace_user_details_edit_screen_view_model.dart';
 
@@ -49,6 +49,13 @@ class _WorkspaceUserDetailsEditFormState
     });
   }
 
+  void _onRoleCleared() {
+    setState(() {
+      // On clear revert back to original user's role
+      _selectedRole = widget.viewModel.details!.role;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final roles = List<AppSelectFieldOption>.from([
@@ -78,14 +85,17 @@ class _WorkspaceUserDetailsEditFormState
             label: context.localization.workspaceUserFirstNameLabel,
             validator: _validateFirstName,
             textInputAction: TextInputAction.next,
-            maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
+            maxCharacterCount: isVirtualUser
+                ? ValidationRules.workspaceUserNameMaxLength
+                : null,
             // First name is not editable for real users which signed up via a auth provider
             readOnly: !isVirtualUser,
-            suffix: !isVirtualUser
-                ? BlockedInfoIcon(
+            suffixIcon: !isVirtualUser
+                ? InfoIconWithTooltip(
                     message: context
                         .localization
                         .workspaceUsersManagementUserDetailsEditFirstNameBlocked,
+                    tooltipShowDuration: 6,
                   )
                 : null,
           ),
@@ -94,15 +104,18 @@ class _WorkspaceUserDetailsEditFormState
             controller: _lastNameController,
             label: context.localization.workspaceUserLastNameLabel,
             validator: _validateLastName,
-            textInputAction: TextInputAction.go,
-            maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
+            textInputAction: TextInputAction.done,
+            maxCharacterCount: isVirtualUser
+                ? ValidationRules.workspaceUserNameMaxLength
+                : null,
             // Last name is not editable for real users which signed up via a auth provider
             readOnly: !isVirtualUser,
-            suffix: !isVirtualUser
-                ? BlockedInfoIcon(
+            suffixIcon: !isVirtualUser
+                ? InfoIconWithTooltip(
                     message: context
                         .localization
                         .workspaceUsersManagementUserDetailsEditLastNameBlocked,
+                    tooltipShowDuration: 6,
                   )
                 : null,
           ),
@@ -111,6 +124,7 @@ class _WorkspaceUserDetailsEditFormState
             options: roles,
             initialValue: [initialRole],
             onSelected: _onRoleSelected,
+            onCleared: _onRoleCleared,
             label: context.localization.roleLabel,
             // Role is not editable for virtual users
             enabled: !isVirtualUser,
@@ -136,26 +150,34 @@ class _WorkspaceUserDetailsEditFormState
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      final firstName = _firstNameController.text;
-      final lastName = _lastNameController.text;
-      final role = _selectedRole;
+      final firstName = _firstNameController.text.trim();
+      final lastName = _lastNameController.text.trim();
+
+      // Don't invoke API request if the data stayed the same
+      if (firstName == widget.viewModel.details!.firstName &&
+          lastName == widget.viewModel.details!.lastName &&
+          _selectedRole == widget.viewModel.details!.role) {
+        return;
+      }
+
       widget.viewModel.editWorkspaceUserDetails.execute((
         firstName,
         lastName,
-        role,
+        _selectedRole,
       ));
     }
   }
 
   String? _validateFirstName(String? value) {
-    switch (value) {
-      case final String? value when value == null:
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
-      case final String value
-          when value.length < ValidationRules.workspaceUserNameMinLength:
+      case final String trimmedValue
+          when trimmedValue.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserFirstNameMinLength;
-      case final String value
-          when value.length > ValidationRules.workspaceUserNameMaxLength:
+      case final String trimmedValue
+          when trimmedValue.length > ValidationRules.workspaceUserNameMaxLength:
         return context.localization.workspaceUserFirstNameMaxLength;
       default:
         return null;
@@ -163,14 +185,15 @@ class _WorkspaceUserDetailsEditFormState
   }
 
   String? _validateLastName(String? value) {
-    switch (value) {
-      case final String? value when value == null:
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
-      case final String value
-          when value.length < ValidationRules.workspaceUserNameMinLength:
+      case final String trimmedValue
+          when trimmedValue.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserLastNameMinLength;
-      case final String value
-          when value.length > ValidationRules.workspaceUserNameMaxLength:
+      case final String trimmedValue
+          when trimmedValue.length > ValidationRules.workspaceUserNameMaxLength:
         return context.localization.workspaceUserLastNameMaxLength;
       default:
         return null;

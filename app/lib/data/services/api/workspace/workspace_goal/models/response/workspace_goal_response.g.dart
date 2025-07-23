@@ -15,6 +15,7 @@ WorkspaceGoalResponse _$WorkspaceGoalResponseFromJson(
   accumulatedPoints: (json['accumulatedPoints'] as num).toInt(),
   status: $enumDecode(_$ProgressStatusEnumMap, json['status']),
   assignee: AssigneeResponse.fromJson(json['assignee'] as Map<String, dynamic>),
+  description: json['description'] as String?,
 );
 
 Map<String, dynamic> _$WorkspaceGoalResponseToJson(
@@ -26,6 +27,7 @@ Map<String, dynamic> _$WorkspaceGoalResponseToJson(
   'accumulatedPoints': instance.accumulatedPoints,
   'assignee': instance.assignee,
   'status': _$ProgressStatusEnumMap[instance.status]!,
+  'description': instance.description,
 };
 
 const _$ProgressStatusEnumMap = {

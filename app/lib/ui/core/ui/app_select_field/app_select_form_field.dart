@@ -7,12 +7,13 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
   AppSelectFormField({
     super.key,
     super.validator,
-    super.autovalidateMode,
     super.enabled,
     super.initialValue,
     required List<AppSelectFieldOption> options,
     required String label,
-    required void Function(List<AppSelectFieldOption>) onSelected,
+    required void Function(List<AppSelectFieldOption> selectedOptions)
+    onSelected,
+    required final void Function() onCleared,
     bool multiple = false,
     bool required = true,
     String? disabledWidgetTrailingTooltipMessage,
@@ -32,6 +33,12 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                  onSelected: (selected) {
                    state.didChange(selected);
                    onSelected(selected);
+                   state.validate();
+                 },
+                 onCleared: () {
+                   state.didChange([]);
+                   onCleared();
+                   state.validate();
                  },
                  initialValue: initialValue,
                  enabled: enabled,
