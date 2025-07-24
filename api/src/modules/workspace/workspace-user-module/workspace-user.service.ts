@@ -204,6 +204,19 @@ export class WorkspaceUserService {
     });
   }
 
+  async getWorkspaceUserAccumulatedPoints({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId: WorkspaceUser['id'];
+  }): Promise<Nullable<number>> {
+    return this.workspaceUserRepository.getWorkspaceUserAccumulatedPoints({
+      workspaceId,
+      workspaceUserId,
+    });
+  }
+
   async getLeaderboardData(
     workspaceId: WorkspaceUser['workspace']['id'],
   ): Promise<WorkspaceLeaderboardResponse> {

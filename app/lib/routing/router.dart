@@ -248,9 +248,14 @@ GoRouter router({
                           path: Routes.goalCreateRelative,
                           parentNavigatorKey: _rootNavigatorKey,
                           builder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+
                             return CreateGoalScreen(
                               viewModel: CreateGoalScreenViewmodel(
-                                workspaceRepository: context.read(),
+                                workspaceId: workspaceId,
+                                workspaceGoalRepository: context.read(),
+                                workspaceUserRepository: context.read(),
                               ),
                             );
                           },

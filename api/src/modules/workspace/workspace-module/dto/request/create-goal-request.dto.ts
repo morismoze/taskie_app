@@ -12,7 +12,7 @@ export class CreateGoalRequest {
 
   @IsOptional()
   @IsValidGoalDescription()
-  description?: string;
+  description: string | null;
 
   @IsValidGoalRequiredPoints()
   requiredPoints: number;
@@ -24,11 +24,11 @@ export class CreateGoalRequest {
     title: string,
     requiredPoints: number,
     assignee: string,
-    description?: string,
+    description?: string | null,
   ) {
     this.title = title;
     this.requiredPoints = requiredPoints;
     this.assignee = assignee;
-    this.description = description;
+    this.description = description || null;
   }
 }

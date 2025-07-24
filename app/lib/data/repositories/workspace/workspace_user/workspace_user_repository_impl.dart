@@ -5,6 +5,7 @@ import '../../../../utils/command.dart';
 import '../../../services/api/user/models/response/user_response.dart';
 import '../../../services/api/workspace/workspace_user/models/request/create_virtual_workspace_user_request.dart';
 import '../../../services/api/workspace/workspace_user/models/request/update_workspace_user_details_request.dart';
+import '../../../services/api/workspace/workspace_user/models/response/workspace_user_accumulated_points_response.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_response.dart';
 import '../../../services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import 'workspace_user_repository.dart';
@@ -212,6 +213,29 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
 
           return const Result.ok(null);
         case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<int>> getWorkspaceUserAccumulatedPoints({
+    required String workspaceId,
+    required String workspaceUserId,
+  }) async {
+    try {
+      final result = await _workspaceUserApiService
+          .getWorkspaceUserAccumulatedPoints(
+            workspaceId: workspaceId,
+            workspaceUserId: workspaceUserId,
+          );
+
+      switch (result) {
+        case Ok<WorkspaceUserAccumulatedPointsResponse>():
+          return Result.ok(result.value.accumulatedPoints);
+        case Error<WorkspaceUserAccumulatedPointsResponse>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

@@ -374,11 +374,11 @@ abstract class AppLocalizations {
   /// **'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.'**
   String get createNewTaskNoMembers;
 
-  /// No description provided for @createNewTaskNoMembersCta.
+  /// No description provided for @objectiveNoMembersCta.
   ///
   /// In en, this message translates to:
   /// **'Let\'s add members'**
-  String get createNewTaskNoMembersCta;
+  String get objectiveNoMembersCta;
 
   /// No description provided for @createNewTaskTitle.
   ///
@@ -398,11 +398,11 @@ abstract class AppLocalizations {
   /// **'Task description'**
   String get taskDescriptionLabel;
 
-  /// No description provided for @taskAssigneeLabel.
+  /// No description provided for @objectiveAssigneeLabel.
   ///
   /// In en, this message translates to:
   /// **'Assign to'**
-  String get taskAssigneeLabel;
+  String get objectiveAssigneeLabel;
 
   /// No description provided for @taskDueDateLabel.
   ///
@@ -416,23 +416,23 @@ abstract class AppLocalizations {
   /// **'Reward points'**
   String get taskRewardPointsLabel;
 
-  /// No description provided for @taskTitleMinLength.
+  /// No description provided for @objectiveTitleMinLength.
   ///
   /// In en, this message translates to:
-  /// **'Name must have at least 3 characters'**
-  String get taskTitleMinLength;
+  /// **'Title must have at least 3 characters'**
+  String get objectiveTitleMinLength;
 
-  /// No description provided for @taskTitleMaxLength.
+  /// No description provided for @objectiveTitleMaxLength.
   ///
   /// In en, this message translates to:
-  /// **'Name can have at most 50 characters'**
-  String get taskTitleMaxLength;
+  /// **'Title can have at most 50 characters'**
+  String get objectiveTitleMaxLength;
 
-  /// No description provided for @taskDescriptionMaxLength.
+  /// No description provided for @objectiveDescriptionMaxLength.
   ///
   /// In en, this message translates to:
-  /// **'Name can have at most 250 characters'**
-  String get taskDescriptionMaxLength;
+  /// **'Description can have at most 250 characters'**
+  String get objectiveDescriptionMaxLength;
 
   /// No description provided for @taskAssigneesMinLength.
   ///
@@ -653,13 +653,13 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementUserDetailsEditFirstNameBlocked.
   ///
   /// In en, this message translates to:
-  /// **'Non-virtual users can\'t edit their first name because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
+  /// **'Editing first name of non-virtual users is not possible because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
   String get workspaceUsersManagementUserDetailsEditFirstNameBlocked;
 
   /// No description provided for @workspaceUsersManagementUserDetailsEditLastNameBlocked.
   ///
   /// In en, this message translates to:
-  /// **'Non-virtual users can\'t edit their last name because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
+  /// **'Editing last name of non-virtual users is not possible because this field is provided by the sign-up provider (e.g., Google) used for this app.'**
   String get workspaceUsersManagementUserDetailsEditLastNameBlocked;
 
   /// No description provided for @workspaceUsersManagementUserDetailsEditRoleBlocked.
@@ -715,6 +715,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Created at'**
   String get createdAt;
+
+  /// No description provided for @createNewGoalNoMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.'**
+  String get createNewGoalNoMembers;
+
+  /// No description provided for @createNewGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New goal'**
+  String get createNewGoalTitle;
+
+  /// No description provided for @goalTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal title'**
+  String get goalTitleLabel;
+
+  /// No description provided for @goalDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal description'**
+  String get goalDescriptionLabel;
+
+  /// No description provided for @goalRequiredPointsCurrentAccumulatedPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Current accumulated points by the user'**
+  String get goalRequiredPointsCurrentAccumulatedPoints;
+
+  /// No description provided for @goalRequiredPointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points'**
+  String get goalRequiredPointsLabel;
+
+  /// No description provided for @goalRequiredPointsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
+  String get goalRequiredPointsNote;
+
+  /// No description provided for @createNewGoalRequiredPointsNaN.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points must be a number without characters'**
+  String get createNewGoalRequiredPointsNaN;
+
+  /// No description provided for @createNewGoalRequiredPointsNotMultipleOf10.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points must be a multiple of 10'**
+  String get createNewGoalRequiredPointsNotMultipleOf10;
+
+  /// No description provided for @goalAssigneesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal must have 1 assignee'**
+  String get goalAssigneesRequired;
 }
 
 class _AppLocalizationsDelegate

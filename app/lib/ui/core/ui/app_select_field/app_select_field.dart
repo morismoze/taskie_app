@@ -10,7 +10,7 @@ import '../app_field_button.dart';
 import '../app_filled_button.dart';
 import '../app_modal_bottom_sheet.dart';
 import '../app_text_button.dart';
-import '../blocked_info_icon.dart';
+import '../info_icon_with_tooltip.dart';
 
 class AppSelectFieldOption {
   const AppSelectFieldOption({
@@ -42,6 +42,7 @@ class AppSelectField extends StatefulWidget {
     super.key,
     required this.options,
     required this.onSelected,
+    required this.onCleared,
     required this.label,
     this.multiple = false,
     this.required = true,
@@ -52,6 +53,7 @@ class AppSelectField extends StatefulWidget {
 
   final List<AppSelectFieldOption> options;
   final void Function(List<AppSelectFieldOption> selectedOptions) onSelected;
+  final void Function() onCleared;
   final String label;
 
   /// Defines if this a multiple option selection field.
@@ -76,7 +78,10 @@ class _AppSelectFieldState extends State<AppSelectField> {
 
   void _clearSelections() {
     setState(() {
+      // Clear local state
       _selectedOptions.clear();
+      // Clear caller state
+      widget.onCleared();
     });
   }
 
@@ -91,10 +96,14 @@ class _AppSelectFieldState extends State<AppSelectField> {
   Widget build(BuildContext context) {
     final hasSelection = _selectedOptions.isNotEmpty;
 
-    Widget? trailing;
+    Widget? trailing = const FaIcon(
+      FontAwesomeIcons.arrowDown,
+      color: AppColors.black1,
+      size: 17,
+    );
     if (!widget.enabled) {
       trailing = widget.disabledWidgetTrailingTooltipMessage != null
-          ? BlockedInfoIcon(
+          ? InfoIconWithTooltip(
               message: widget.disabledWidgetTrailingTooltipMessage!,
             )
           : null;
@@ -105,7 +114,7 @@ class _AppSelectFieldState extends State<AppSelectField> {
           child: const FaIcon(
             FontAwesomeIcons.solidCircleXmark,
             color: AppColors.black1,
-            size: 15,
+            size: 17,
           ),
         );
       }

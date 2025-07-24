@@ -6,6 +6,7 @@ import '../workspace/models/request/workspace_id_path_param.dart';
 import '../workspace_task/models/request/workspace_user_id_path_param.dart';
 import 'models/request/create_virtual_workspace_user_request.dart';
 import 'models/request/update_workspace_user_details_request.dart';
+import 'models/response/workspace_user_accumulated_points_response.dart';
 import 'models/response/workspace_user_response.dart';
 
 class WorkspaceUserApiService {
@@ -88,6 +89,33 @@ class WorkspaceUserApiService {
         response.data,
         (json) => WorkspaceUserResponse.fromJson(json as Map<String, dynamic>),
       );
+
+      return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<WorkspaceUserAccumulatedPointsResponse>>
+  getWorkspaceUserAccumulatedPoints({
+    required WorkspaceIdPathParam workspaceId,
+    required WorkspaceUserIdPathParam workspaceUserId,
+  }) async {
+    try {
+      final response = await _apiClient.client.get(
+        ApiEndpoints.getWorkspaceUserAccumulatedPoints(
+          workspaceId,
+          workspaceUserId,
+        ),
+      );
+
+      final apiResponse =
+          ApiResponse<WorkspaceUserAccumulatedPointsResponse>.fromJson(
+            response.data,
+            (json) => WorkspaceUserAccumulatedPointsResponse.fromJson(
+              json as Map<String, dynamic>,
+            ),
+          );
 
       return Result.ok(apiResponse.data!);
     } on Exception catch (e) {

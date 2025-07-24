@@ -14,6 +14,8 @@ class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
   }) : _activeWorkspaceId = workspaceId,
        _workspaceUserId = workspaceUserId,
        _workspaceUserRepository = workspaceUserRepository {
+    // This is not wrapped into a command since it is a
+    // synchronous read from the repo cached list.
     loadWorkspaceUserDetails(
       workspaceId: workspaceId,
       workspaceUserId: workspaceUserId,

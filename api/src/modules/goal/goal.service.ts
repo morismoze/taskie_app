@@ -71,7 +71,7 @@ export class GoalService {
     workspaceId: Goal['workspace']['id'];
     createdById: WorkspaceUser['id'];
     data: CreateGoalRequest;
-  }): Promise<GoalCore> {
+  }): Promise<GoalWithAssigneeUserCore> {
     const newGoal = await this.goalRepository.create({
       workspaceId,
       data: {
@@ -81,6 +81,11 @@ export class GoalService {
         assigneeId: data.assignee,
       },
       createdById,
+      relations: {
+        assignee: {
+          user: true,
+        },
+      },
     });
 
     if (!newGoal) {
@@ -92,7 +97,15 @@ export class GoalService {
       );
     }
 
-    return newGoal;
+    return {
+      ...newGoal,
+      assignee: {
+        id: newGoal.assignee.id,
+        firstName: newGoal.assignee.user.firstName,
+        lastName: newGoal.assignee.user.lastName,
+        profileImageUrl: newGoal.assignee.user.profileImageUrl,
+      },
+    };
   }
 
   async findById(id: Goal['id']): Promise<Nullable<GoalCore>> {

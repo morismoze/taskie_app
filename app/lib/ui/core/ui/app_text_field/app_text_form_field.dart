@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../l10n/l10n_extensions.dart';
 import '../../theme/colors.dart';
@@ -19,7 +20,8 @@ class AppTextFormField extends StatelessWidget {
     this.validator,
     this.textInputAction,
     this.maxCharacterCount,
-    this.suffix,
+    this.suffixIcon,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -34,7 +36,8 @@ class AppTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputAction? textInputAction;
   final int? maxCharacterCount;
-  final Widget? suffix;
+  final Widget? suffixIcon;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +47,7 @@ class AppTextFormField extends StatelessWidget {
       enableInteractiveSelection: !readOnly,
       keyboardType: keyboardType,
       validator: validator,
+      inputFormatters: inputFormatters,
       obscureText: obscureText,
       obscuringCharacter: '●',
       maxLines: maxLines,
@@ -68,7 +72,22 @@ class AppTextFormField extends StatelessWidget {
             ? label
             : '$label (${context.localization.misc_optional})',
         filled: true,
-        suffix: suffix,
+
+        // This is some hacky way to
+        // 1. correctly position the icon widget
+        // 2. take minimum space - otherwise, for some reason, it covers
+        // the entire field horizontally.
+        //
+        // Not using `suffix` property because it's shown out-of-the-box for
+        // disabled/read only fields, but for enabled fields it is show only
+        // when the field is focused (possibly due to the floating label functionality).
+        suffixIcon: suffixIcon != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [suffixIcon!],
+              )
+            : null,
         floatingLabelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
           fontSize:
               AppTheme.fieldUnfocusedLabelFontSize +

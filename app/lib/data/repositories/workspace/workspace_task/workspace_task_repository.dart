@@ -24,9 +24,9 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
     String workspaceId, {
     required String title,
     required List<String> assignees,
-    required rewardPoints,
+    required int rewardPoints,
     String? description,
-    String? dueData,
+    DateTime? dueDate,
   });
 
   void purgeTasksCache();

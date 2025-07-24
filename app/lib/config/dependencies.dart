@@ -11,6 +11,8 @@ import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/user/user_repository_impl.dart';
 import '../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../data/repositories/workspace/workspace/workspace_repository_impl.dart';
+import '../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
+import '../data/repositories/workspace/workspace_goal/workspace_goal_repository_impl.dart';
 import '../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
 import '../data/repositories/workspace/workspace_invite/workspace_invite_repository_impl.dart';
 import '../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
@@ -22,6 +24,7 @@ import '../data/services/api/api_deeplink_client.dart';
 import '../data/services/api/auth/auth_api_service.dart';
 import '../data/services/api/user/user_api_service.dart';
 import '../data/services/api/workspace/workspace/workspace_api_service.dart';
+import '../data/services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
 import '../data/services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
@@ -91,6 +94,14 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceTaskRepositoryImpl(workspaceTaskApiService: context.read())
               as WorkspaceTaskRepository,
+    ),
+    Provider(
+      create: (context) => WorkspaceGoalApiService(apiClient: context.read()),
+    ),
+    ChangeNotifierProvider(
+      create: (context) =>
+          WorkspaceGoalRepositoryImpl(workspaceGoalApiService: context.read())
+              as WorkspaceGoalRepository,
     ),
     Provider(
       create: (context) => WorkspaceUserApiService(apiClient: context.read()),

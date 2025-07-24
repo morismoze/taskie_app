@@ -162,7 +162,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
 
   @override
-  String get createNewTaskNoMembersCta => 'Dodajmo članove';
+  String get objectiveNoMembersCta => 'Dodajmo članove';
 
   @override
   String get createNewTaskTitle => 'Novi zadatak';
@@ -174,7 +174,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get taskDescriptionLabel => 'Opis zadatka';
 
   @override
-  String get taskAssigneeLabel => 'Dodijeli članu';
+  String get objectiveAssigneeLabel => 'Dodijeli članu';
 
   @override
   String get taskDueDateLabel => 'Rok završetka';
@@ -183,13 +183,14 @@ class AppLocalizationsHr extends AppLocalizations {
   String get taskRewardPointsLabel => 'Nagradni bodovi';
 
   @override
-  String get taskTitleMinLength => 'Naziv mora imati najmanje 3 znaka';
+  String get objectiveTitleMinLength => 'Naslov mora imati najmanje 3 znaka';
 
   @override
-  String get taskTitleMaxLength => 'Naziv može imati najviše 50 znakova';
+  String get objectiveTitleMaxLength => 'Naslov može imati najviše 50 znakova';
 
   @override
-  String get taskDescriptionMaxLength => 'Opis može imati najviše 250 znakova';
+  String get objectiveDescriptionMaxLength =>
+      'Opis može imati najviše 250 znakova';
 
   @override
   String get taskAssigneesMinLength =>
@@ -332,11 +333,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUserDetailsEditFirstNameBlocked =>
-      'Ne-virtualni korisnici ne mogu uređivati svoje ime jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
+      'Uređivanje imena ne-virtualnih korisnika nije moguće jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
 
   @override
   String get workspaceUsersManagementUserDetailsEditLastNameBlocked =>
-      'Ne-virtualni korisnici ne mogu uređivati svoje prezime jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
+      'Uređivanje prezimena ne-virtualnih korisnika nije moguće jer to polje dolazi od pružatelja prijave (npr. Google) korištenog za ovu aplikaciju.';
 
   @override
   String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
@@ -367,4 +368,39 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get createdAt => 'Korisnik kreiran';
+
+  @override
+  String get createNewGoalNoMembers =>
+      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti cilj. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
+
+  @override
+  String get createNewGoalTitle => 'Novi cilj';
+
+  @override
+  String get goalTitleLabel => 'Naslov cilja';
+
+  @override
+  String get goalDescriptionLabel => 'Opis cilja';
+
+  @override
+  String get goalRequiredPointsCurrentAccumulatedPoints =>
+      'Trenutno akumulirani bodovi korisnika';
+
+  @override
+  String get goalRequiredPointsLabel => 'Potrebni bodovi';
+
+  @override
+  String get goalRequiredPointsNote =>
+      'Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati rješavanjem zadataka kako bi dosegao cilj. Budući da zadaci daju bodove u koracima od 10 (10, 20, 30, 40, 50), potrebni bodovi također moraju biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).';
+
+  @override
+  String get createNewGoalRequiredPointsNaN =>
+      'Potrebni bodovi moraju biti broj bez znakova';
+
+  @override
+  String get createNewGoalRequiredPointsNotMultipleOf10 =>
+      'Potrebni bodovi moraju biti višekratnik broja 10';
+
+  @override
+  String get goalAssigneesRequired => 'Cilj mora biti dodijeljen 1 članu';
 }

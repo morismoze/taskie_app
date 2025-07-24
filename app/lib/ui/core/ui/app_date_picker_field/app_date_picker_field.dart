@@ -15,6 +15,7 @@ class AppDatePickerField extends StatefulWidget {
   const AppDatePickerField({
     super.key,
     required this.onSelected,
+    required this.onCleared,
     required this.label,
     this.required = true,
     this.initialDateTime,
@@ -23,6 +24,7 @@ class AppDatePickerField extends StatefulWidget {
   });
 
   final void Function(DateTime date) onSelected;
+  final void Function() onCleared;
   final String label;
   final bool required;
   final DateTime? initialDateTime;
@@ -38,7 +40,10 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
 
   void _clearSelections() {
     setState(() {
+      // Clear local state
       _selectedDate = null;
+      // Clear caller state
+      widget.onCleared();
     });
   }
 
@@ -53,21 +58,24 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
   Widget build(BuildContext context) {
     final isDateSelected = _selectedDate != null;
 
+    Widget? trailing;
+    if (isDateSelected) {
+      trailing = InkWell(
+        onTap: _clearSelections,
+        child: const FaIcon(
+          FontAwesomeIcons.solidCircleXmark,
+          color: AppColors.black1,
+          size: 17,
+        ),
+      );
+    }
+
     return AppFieldButton(
       required: widget.required,
       label: widget.label,
       isFieldFocused: isDateSelected,
       onTap: () => _openDatePicker(context),
-      trailing: isDateSelected
-          ? InkWell(
-              onTap: _clearSelections,
-              child: const FaIcon(
-                FontAwesomeIcons.solidCircleXmark,
-                color: AppColors.black1,
-                size: 15,
-              ),
-            )
-          : null,
+      trailing: trailing,
       child: _selectedDate != null
           ? Text(
               DateFormat.yMd(

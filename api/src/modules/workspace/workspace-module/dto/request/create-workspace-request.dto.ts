@@ -17,8 +17,8 @@ export class CreateWorkspaceRequest {
   @MaxLength(250)
   description: string | null;
 
-  constructor(name: string, description?: string) {
+  constructor(name: string, description?: string | null) {
     this.name = name;
-    this.description = description !== undefined ? description : null;
+    this.description = description || null;
   }
 }

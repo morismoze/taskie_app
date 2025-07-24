@@ -48,7 +48,7 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
             validator: _validateDescription,
             maxLines: null,
             keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.go,
+            textInputAction: TextInputAction.done,
             required: false,
             maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
           ),
@@ -68,21 +68,25 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      final name = _nameController.text;
-      final description = _descriptionController.text;
+      final name = _nameController.text.trim();
+      final trimmedDescription = _descriptionController.text.trim();
+      final description = trimmedDescription.isNotEmpty
+          ? trimmedDescription
+          : null;
       widget.viewModel.createWorkspace.execute((name, description));
     }
   }
 
   String? _validateName(String? value) {
-    switch (value) {
-      case final String? value when value == null:
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
-      case final String value
-          when value.length < ValidationRules.workspaceNameMinLength:
+      case final String trimmedValue
+          when trimmedValue.length < ValidationRules.workspaceNameMinLength:
         return context.localization.workspaceCreateNameMinLength;
-      case final String value
-          when value.length > ValidationRules.workspaceNameMaxLength:
+      case final String trimmedValue
+          when trimmedValue.length > ValidationRules.workspaceNameMaxLength:
         return context.localization.workspaceCreateNameMaxLength;
       default:
         return null;
@@ -90,9 +94,11 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
   }
 
   String? _validateDescription(String? value) {
-    switch (value) {
-      case final String value
-          when value.length > ValidationRules.workspaceDescriptionMaxLength:
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue
+          when trimmedValue.length >
+              ValidationRules.workspaceDescriptionMaxLength:
         return context.localization.workspaceCreateDescriptionMaxLength;
       default:
         return null;

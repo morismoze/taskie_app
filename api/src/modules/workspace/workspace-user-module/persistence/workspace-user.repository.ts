@@ -73,16 +73,24 @@ export abstract class WorkspaceUserRepository {
     workspaceUserId: WorkspaceUser['user']['id'];
   }): Promise<void>;
 
+  abstract getWorkspaceUserAccumulatedPoints({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId;
+  }): Promise<Nullable<number>>;
+
   abstract getWorkspaceLeaderboard(
     workspaceId: WorkspaceUser['workspace']['id'],
-  ): Promise<
-    {
-      id: string;
-      firstName: string;
-      lastName: string;
-      profileImageUrl: string | null;
-      accumulatedPoints: number;
-      completedTasks: number;
-    }[]
-  >;
+  ): Promise<Array<WorkspaceUserAccumulatedPoints>>;
+}
+
+export interface WorkspaceUserAccumulatedPoints {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profileImageUrl: string | null;
+  accumulatedPoints: number;
+  completedTasks: number;
 }

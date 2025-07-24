@@ -4,12 +4,13 @@ import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-sta
 export interface WorkspaceGoalResponse {
   id: string;
   assignee: {
-    id: string;
+    id: string; // WorkspaceUser ID
     firstName: string;
     lastName: string;
     profileImageUrl: string | null;
   };
   title: string;
+  description: string | null;
   requiredPoints: number;
   status: ProgressStatus;
   accumulatedPoints: number;

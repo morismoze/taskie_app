@@ -42,6 +42,7 @@ import {
   WorkspaceTaskResponse,
   WorkspaceTasksResponse,
 } from './dto/response/workspace-tasks-response.dto';
+import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
 import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
@@ -389,6 +390,7 @@ export class WorkspaceService {
       items: tasks.map((task) => ({
         id: task.id,
         title: task.title,
+        description: task.description,
         rewardPoints: task.rewardPoints,
         assignees: task.assignees.map((assignee) => ({
           id: assignee.id,
@@ -447,6 +449,7 @@ export class WorkspaceService {
           profileImageUrl: goal.assignee.profileImageUrl,
         },
         title: goal.title,
+        description: goal.description,
         requiredPoints: goal.requiredPoints,
         status: goal.status,
         accumulatedPoints,
@@ -483,13 +486,13 @@ export class WorkspaceService {
       );
     }
 
-    const workspaceUser =
+    const createdByWorkspaceUser =
       await this.workspaceUserService.findByUserIdAndWorkspaceId({
         userId: createdById,
         workspaceId,
       });
 
-    if (!workspaceUser) {
+    if (!createdByWorkspaceUser) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -502,7 +505,7 @@ export class WorkspaceService {
       // Create new concrete task
       const newTask = await this.taskService.create({
         workspaceId,
-        createdById: workspaceUser.id,
+        createdById: createdByWorkspaceUser.id,
         data,
       });
 
@@ -536,7 +539,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     createdById: JwtPayload['sub'];
     data: CreateGoalRequest;
-  }): Promise<void> {
+  }): Promise<WorkspaceGoalResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -550,14 +553,102 @@ export class WorkspaceService {
       );
     }
 
-    // Create new goal
-    await this.goalService.create({
+    const createdByWorkspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: createdById,
+        workspaceId,
+      });
+
+    if (!createdByWorkspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const newGoal = await this.goalService.create({
       workspaceId,
-      createdById,
+      createdById: createdByWorkspaceUser.id,
       data,
     });
 
-    return;
+    const workspaceUserAccumulatedPoints =
+      await this.workspaceUserService.getWorkspaceUserAccumulatedPoints({
+        workspaceId,
+        workspaceUserId: data.assignee,
+      });
+
+    // getWorkspaceUserAccumulatedPoints will also in the SQL query check if
+    // the provided workspace user ID exists
+    if (workspaceUserAccumulatedPoints == null) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const response: WorkspaceGoalResponse = {
+      id: newGoal.id,
+      title: newGoal.title,
+      description: newGoal.description,
+      requiredPoints: newGoal.requiredPoints,
+      accumulatedPoints: workspaceUserAccumulatedPoints,
+      assignee: {
+        id: newGoal.assignee.id,
+        firstName: newGoal.assignee.firstName,
+        lastName: newGoal.assignee.lastName,
+        profileImageUrl: newGoal.assignee.profileImageUrl,
+      },
+      status: newGoal.status,
+    };
+
+    return response;
+  }
+
+  async getWorkspaceUserAccumulatedPoints({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId: WorkspaceUser['id'];
+  }): Promise<WorkspaceUserAccumulatedPointsResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const accumulatedPoints =
+      await this.workspaceUserService.getWorkspaceUserAccumulatedPoints({
+        workspaceId,
+        workspaceUserId,
+      });
+
+    // getWorkspaceUserAccumulatedPoints will also in the SQL query check if
+    // the provided workspace user ID exists
+    if (accumulatedPoints == null) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      accumulatedPoints: accumulatedPoints,
+    };
   }
 
   async getWorkspaceLeaderboard(
@@ -899,6 +990,7 @@ export class WorkspaceService {
     const response: WorkspaceGoalResponse = {
       id: updatedGoal.id,
       title: updatedGoal.title,
+      description: updatedGoal.description,
       requiredPoints: updatedGoal.requiredPoints,
       assignee: {
         id: updatedGoal.assignee.id,

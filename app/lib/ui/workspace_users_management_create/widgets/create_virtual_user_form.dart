@@ -58,7 +58,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
                 controller: _lastNameController,
                 label: context.localization.workspaceUserLastNameLabel,
                 validator: _validateLastName,
-                textInputAction: TextInputAction.go,
+                textInputAction: TextInputAction.done,
                 maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
               ),
               const SizedBox(height: 30),
@@ -81,21 +81,22 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      final firstName = _firstNameController.text;
-      final lastName = _lastNameController.text;
+      final firstName = _firstNameController.text.trim();
+      final lastName = _lastNameController.text.trim();
       widget.viewModel.createVirtualUser.execute((firstName, lastName));
     }
   }
 
   String? _validateFirstName(String? value) {
-    switch (value) {
-      case final String? value when value == null:
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
-      case final String value
-          when value.length < ValidationRules.workspaceUserNameMinLength:
+      case final String trimmedValue
+          when trimmedValue.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserFirstNameMinLength;
-      case final String value
-          when value.length > ValidationRules.workspaceUserNameMaxLength:
+      case final String trimmedValue
+          when trimmedValue.length > ValidationRules.workspaceUserNameMaxLength:
         return context.localization.workspaceUserFirstNameMaxLength;
       default:
         return null;
@@ -103,14 +104,15 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   }
 
   String? _validateLastName(String? value) {
-    switch (value) {
-      case final String? value when value == null:
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
-      case final String value
-          when value.length < ValidationRules.workspaceUserNameMinLength:
+      case final String trimmedValue
+          when trimmedValue.length < ValidationRules.workspaceUserNameMinLength:
         return context.localization.workspaceUserLastNameMinLength;
-      case final String value
-          when value.length > ValidationRules.workspaceUserNameMaxLength:
+      case final String trimmedValue
+          when trimmedValue.length > ValidationRules.workspaceUserNameMaxLength:
         return context.localization.workspaceUserLastNameMaxLength;
       default:
         return null;

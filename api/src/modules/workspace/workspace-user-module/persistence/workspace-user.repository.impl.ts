@@ -8,7 +8,10 @@ import { WorkspaceUserCore } from '../domain/workspace-user-core.domain';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
-import { WorkspaceUserRepository } from './workspace-user.repository';
+import {
+  WorkspaceUserAccumulatedPoints,
+  WorkspaceUserRepository,
+} from './workspace-user.repository';
 
 @Injectable()
 export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
@@ -145,18 +148,38 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
+  async getWorkspaceUserAccumulatedPoints({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    workspaceUserId;
+  }): Promise<Nullable<number>> {
+    const result = await this.repo
+      .createQueryBuilder('wu')
+      // Take only completed tasks into context
+      .leftJoin('wu.taskAssignments', 'ta', 'ta.status = :completedStatus', {
+        completedStatus: ProgressStatus.COMPLETED,
+      })
+      .leftJoin('ta.task', 't')
+      .select(['COALESCE(SUM(t.rewardPoints), 0) AS "accumulatedPoints"'])
+      .where('wu.workspace.id = :workspaceId', { workspaceId })
+      .andWhere('wu.id = :workspaceUserId', {
+        workspaceUserId,
+      })
+      .groupBy('wu.id')
+      .getRawOne();
+
+    if (result === undefined) {
+      return null;
+    }
+
+    return parseInt(result.accumulatedPoints);
+  }
+
   async getWorkspaceLeaderboard(
     workspaceId: WorkspaceUser['workspace']['id'],
-  ): Promise<
-    {
-      id: string;
-      firstName: string;
-      lastName: string;
-      profileImageUrl: string | null;
-      accumulatedPoints: number;
-      completedTasks: number;
-    }[]
-  > {
+  ): Promise<Array<WorkspaceUserAccumulatedPoints>> {
     return (
       this.repo
         .createQueryBuilder('wu')
@@ -179,7 +202,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
           memberRole: WorkspaceUserRole.MEMBER,
         })
         .groupBy('wu.id, u.firstName, u.lastName, u.profileImageUrl')
-        // Leaderboard start with the best score
+        // Leaderboard starts with the best score
         .orderBy('"accumulatedPoints"', 'DESC')
         .addOrderBy('"completedTasks"', 'DESC')
         .addOrderBy('u.firstName', 'ASC')
