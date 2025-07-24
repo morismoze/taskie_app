@@ -43,6 +43,7 @@ import {
   WorkspaceTaskResponse,
   WorkspaceTasksResponse,
 } from './dto/response/workspace-tasks-response.dto';
+import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
 import {
   WorkspaceUserResponse,
   WorkspaceUsersResponse,
@@ -162,6 +163,19 @@ export class WorkspaceController {
     });
   }
 
+  @Get(':workspaceId/users/:workspaceUserId/points')
+  @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
+  @HttpCode(HttpStatus.OK)
+  getWorkspaceUserAccumulatedPoints(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { workspaceUserId }: WorkspaceUserIdRequestPathParam,
+  ): Promise<WorkspaceUserAccumulatedPointsResponse> {
+    return this.workspaceService.getWorkspaceUserAccumulatedPoints({
+      workspaceId,
+      workspaceUserId,
+    });
+  }
+
   // This endpoint needs to be before the one below
   // because of path param pattern recognition
   @Delete(':workspaceId/users/me')
@@ -265,10 +279,7 @@ export class WorkspaceController {
     @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
     @Body() data: CreateGoalRequest,
-  ): Promise<void> {
-    // Returning nothing in the response because goals are paginable and sortable by
-    // different query params, so it doesn't make sense to return a newly created goal
-    // in the response if it won't be usable for goal list state update in the app
+  ): Promise<WorkspaceGoalResponse> {
     return this.workspaceService.createGoal({
       workspaceId: params.workspaceId,
       createdById: request.user.sub,

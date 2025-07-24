@@ -383,11 +383,15 @@ class AppLocalizationsHr extends AppLocalizations {
   String get goalDescriptionLabel => 'Opis cilja';
 
   @override
+  String get goalRequiredPointsCurrentAccumulatedPoints =>
+      'Trenutno akumulirani bodovi korisnika';
+
+  @override
   String get goalRequiredPointsLabel => 'Potrebni bodovi';
 
   @override
   String get goalRequiredPointsNote =>
-      'Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba sakupiti rješavanjem zadataka kako bi dosegao cilj. Budući da zadaci daju bodove u koracima od 10 (10, 20, 30, 40, 50), potrebni bodovi također moraju biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).';
+      'Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati rješavanjem zadataka kako bi dosegao cilj. Budući da zadaci daju bodove u koracima od 10 (10, 20, 30, 40, 50), potrebni bodovi također moraju biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).';
 
   @override
   String get createNewGoalRequiredPointsNaN =>

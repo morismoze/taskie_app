@@ -740,6 +740,12 @@ abstract class AppLocalizations {
   /// **'Goal description'**
   String get goalDescriptionLabel;
 
+  /// No description provided for @goalRequiredPointsCurrentAccumulatedPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Current accumulated points by the user'**
+  String get goalRequiredPointsCurrentAccumulatedPoints;
+
   /// No description provided for @goalRequiredPointsLabel.
   ///
   /// In en, this message translates to:
@@ -749,7 +755,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalRequiredPointsNote.
   ///
   /// In en, this message translates to:
-  /// **'Required points represent the total reward points a member needs to collect solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
+  /// **'Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
   String get goalRequiredPointsNote;
 
   /// No description provided for @createNewGoalRequiredPointsNaN.

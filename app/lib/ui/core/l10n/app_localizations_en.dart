@@ -381,11 +381,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goalDescriptionLabel => 'Goal description';
 
   @override
+  String get goalRequiredPointsCurrentAccumulatedPoints =>
+      'Current accumulated points by the user';
+
+  @override
   String get goalRequiredPointsLabel => 'Required points';
 
   @override
   String get goalRequiredPointsNote =>
-      'Required points represent the total reward points a member needs to collect solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).';
+      'Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).';
 
   @override
   String get createNewGoalRequiredPointsNaN =>

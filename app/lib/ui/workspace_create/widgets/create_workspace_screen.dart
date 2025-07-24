@@ -69,9 +69,6 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                             listenable: widget.viewModel,
                             builder: (builderContext, _) {
                               if (widget.viewModel.user != null) {
-                                // This return is not defined inside child property of `ListenableBuilder`
-                                // because child is built only once, when the ListenableBuilder is built. And because
-                                // of that widget.viewModel.user is going to be captured as null.
                                 return Column(
                                   children: [
                                     const SizedBox(height: 12),

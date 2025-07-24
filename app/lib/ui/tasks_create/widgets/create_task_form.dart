@@ -64,6 +64,19 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
   @override
   Widget build(BuildContext context) {
+    final options = widget.viewModel.workspaceMembers.map((user) {
+      final fullName = '${user.firstName} ${user.lastName}';
+      return AppSelectFieldOption(
+        label: fullName,
+        value: user.id,
+        leading: AppAvatar(
+          hashString: user.id,
+          fullName: fullName,
+          imageUrl: user.profileImageUrl,
+        ),
+      );
+    }).toList();
+
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUnfocus,
@@ -89,32 +102,13 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
-          ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (builderContext, _) {
-              final options = widget.viewModel.workspaceMembers.map((user) {
-                final fullName = '${user.firstName} ${user.lastName}';
-                return AppSelectFieldOption(
-                  label: fullName,
-                  value: user.id,
-                  leading: AppAvatar(
-                    hashString: user.id,
-                    fullName: fullName,
-                    imageUrl: user.profileImageUrl,
-                  ),
-                );
-              }).toList();
-
-              return AppSelectFormField(
-                options: options,
-                onSelected: _onAssigneesSelected,
-                onCleared: _onAssigneesCleared,
-                label: builderContext.localization.objectiveAssigneeLabel,
-                multiple: true,
-                validator: (assignees) =>
-                    _validateAssignees(builderContext, assignees),
-              );
-            },
+          AppSelectFormField(
+            options: options,
+            onSelected: _onAssigneesSelected,
+            onCleared: _onAssigneesCleared,
+            label: context.localization.objectiveAssigneeLabel,
+            multiple: true,
+            validator: (assignees) => _validateAssignees(context, assignees),
           ),
           const SizedBox(height: 10),
           AppDatePickerFormField(

@@ -19,6 +19,9 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
     createGoal = Command1(_createGoal);
+    loadWorkspaceUserAccumulatedPoints = Command1(
+      _loadWorkspaceUserAccumulatedPoints,
+    );
   }
 
   final WorkspaceUserRepository _workspaceUserRepository;
@@ -26,6 +29,7 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
   final _log = Logger('CreateGoalScreenViewmodel');
 
   late Command1<void, String> loadWorkspaceMembers;
+  late Command1<void, String> loadWorkspaceUserAccumulatedPoints;
   late Command1<
     void,
     (String title, String? description, String assigneeId, int requiredPoints)
@@ -35,6 +39,10 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
   final String _activeWorkspaceId;
 
   String get activeWorkspaceId => _activeWorkspaceId;
+
+  int? _workspaceUserAccumulatedPoints;
+
+  int? get workspaceUserAccumulatedPoints => _workspaceUserAccumulatedPoints;
 
   void _onWorkspaceUsersChanged() {
     notifyListeners();
@@ -59,6 +67,26 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  Future<Result<void>> _loadWorkspaceUserAccumulatedPoints(
+    String workspaceUserId,
+  ) async {
+    final result = await _workspaceUserRepository
+        .getWorkspaceUserAccumulatedPoints(
+          workspaceId: _activeWorkspaceId,
+          workspaceUserId: workspaceUserId,
+        );
+
+    switch (result) {
+      case Ok():
+        _workspaceUserAccumulatedPoints = result.value;
+        notifyListeners();
+        return const Result.ok(null);
+      case Error():
+        _log.warning('Failed to load workspace users', result.error);
+        return result;
+    }
   }
 
   Future<Result<void>> _createGoal(

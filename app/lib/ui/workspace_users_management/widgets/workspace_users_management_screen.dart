@@ -115,10 +115,17 @@ class _WorkspaceUsersManagementScreenState
                     if (widget.viewModel.loadWorkspaceMembers.error &&
                         widget.viewModel.users == null) {
                       // TODO: Usage of a generic error prompt widget
+                      return const SizedBox.shrink();
                     }
 
                     return child!;
                   },
+                  // We don't have the standard 'First ListenableBuilder listening to a command
+                  // and its child is the second ListenableBuilder listening to viewModel' because
+                  // we want to show [ActivityIndicator] only on the initial load. All other loads
+                  // after that will happen when user pulls-to-refresh (and if the app process was not
+                  // killed by the underlying OS). And in that case we want to show the existing
+                  // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
                   child: RefreshIndicator(
                     displacement: 30,
                     onRefresh: () async {

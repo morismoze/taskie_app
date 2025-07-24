@@ -8,24 +8,30 @@ abstract final class ApiEndpoints {
   static const logout = '$_prefix/auth/logout';
   static const refreshToken = '$_prefix/auth/refresh';
 
-  // Users
-  static const getCurrentUser = '$_prefix/users/me';
-
   // Workspaces
   static const getWorkspaces = '$_prefix/workspaces/me';
   static const createWorkspace = '$_prefix/workspaces';
+
+  // Workspace invites
   static String createWorkspaceInviteToken(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/invites';
-  static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
-      '$_prefix/workspaces/$workspaceId/users/me';
+
+  // Tasks
   static String getTasks(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/tasks';
   static String createTask(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/tasks';
+
+  // Goals
   static String getGoals(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/goals';
   static String createGoal(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/goals';
+
+  // Users
+  static const getCurrentUser = '$_prefix/users/me';
+  static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/users/me';
   static String getWorkspaceUsers(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/users';
   static String createVirtualUser(WorkspaceIdPathParam workspaceId) =>
@@ -38,4 +44,8 @@ abstract final class ApiEndpoints {
     WorkspaceIdPathParam workspaceId,
     WorkspaceUserIdPathParam workspaceUserId,
   ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
+  static String getWorkspaceUserAccumulatedPoints(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId/points';
 }

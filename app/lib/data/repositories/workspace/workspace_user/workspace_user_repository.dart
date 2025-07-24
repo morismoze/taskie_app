@@ -36,5 +36,10 @@ abstract class WorkspaceUserRepository extends ChangeNotifier {
     WorkspaceRole? role,
   });
 
+  Future<Result<int>> getWorkspaceUserAccumulatedPoints({
+    required String workspaceId,
+    required String workspaceUserId,
+  });
+
   void purgeWorkspaceUsersCache();
 }

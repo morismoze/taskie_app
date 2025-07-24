@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -11,6 +12,7 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/info_icon_with_tooltip.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
+import 'workspace_user_accumulated_points.dart';
 
 class CreateGoalForm extends StatefulWidget {
   const CreateGoalForm({super.key, required this.viewModel});
@@ -27,22 +29,38 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _requiredPointsController =
       TextEditingController();
-  String? _selectedAssigneeWorkspaceId;
+  WorkspaceUser? _selectedAssignee;
 
   void _onAssigneeSelected(List<AppSelectFieldOption> selectedOptions) {
     setState(() {
-      _selectedAssigneeWorkspaceId = selectedOptions[0].value as String;
+      _selectedAssignee = selectedOptions[0].value as WorkspaceUser;
     });
+    widget.viewModel.loadWorkspaceUserAccumulatedPoints.execute(
+      _selectedAssignee!.id,
+    );
   }
 
   void _onAssigneeCleared() {
     setState(() {
-      _selectedAssigneeWorkspaceId = null;
+      _selectedAssignee = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final options = widget.viewModel.workspaceMembers.map((user) {
+      final fullName = '${user.firstName} ${user.lastName}';
+      return AppSelectFieldOption(
+        label: fullName,
+        value: user,
+        leading: AppAvatar(
+          hashString: user.id,
+          fullName: fullName,
+          imageUrl: user.profileImageUrl,
+        ),
+      );
+    }).toList();
+
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUnfocus,
@@ -68,32 +86,20 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
-          ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (builderContext, _) {
-              final options = widget.viewModel.workspaceMembers.map((user) {
-                final fullName = '${user.firstName} ${user.lastName}';
-                return AppSelectFieldOption(
-                  label: fullName,
-                  value: user.id,
-                  leading: AppAvatar(
-                    hashString: user.id,
-                    fullName: fullName,
-                    imageUrl: user.profileImageUrl,
-                  ),
-                );
-              }).toList();
-
-              return AppSelectFormField(
-                options: options,
-                onSelected: _onAssigneeSelected,
-                onCleared: _onAssigneeCleared,
-                label: builderContext.localization.objectiveAssigneeLabel,
-                validator: (assignee) =>
-                    _validateAssignee(builderContext, assignee),
-              );
-            },
+          AppSelectFormField(
+            options: options,
+            onSelected: _onAssigneeSelected,
+            onCleared: _onAssigneeCleared,
+            label: context.localization.objectiveAssigneeLabel,
+            validator: (assignee) => _validateAssignee(context, assignee),
           ),
+          if (_selectedAssignee != null) ...[
+            WorkspaceUserAccumulatedPoints(
+              viewModel: widget.viewModel,
+              selectedAssignee: _selectedAssignee!,
+            ),
+            const SizedBox(height: 10),
+          ],
           const SizedBox(height: 10),
           AppTextFormField(
             controller: _requiredPointsController,
@@ -140,7 +146,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
       widget.viewModel.createGoal.execute((
         title,
         description,
-        _selectedAssigneeWorkspaceId!,
+        _selectedAssignee!.id,
         requiredPoints,
       ));
     }

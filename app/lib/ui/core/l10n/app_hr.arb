@@ -108,8 +108,9 @@
   "createNewGoalTitle": "Novi cilj",
   "goalTitleLabel": "Naslov cilja",
   "goalDescriptionLabel": "Opis cilja",
+  "goalRequiredPointsCurrentAccumulatedPoints": "Trenutno akumulirani bodovi korisnika",
   "goalRequiredPointsLabel": "Potrebni bodovi",
-  "goalRequiredPointsNote": "Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba sakupiti rješavanjem zadataka kako bi dosegao cilj. Budući da zadaci daju bodove u koracima od 10 (10, 20, 30, 40, 50), potrebni bodovi također moraju biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).",
+  "goalRequiredPointsNote": "Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati rješavanjem zadataka kako bi dosegao cilj. Budući da zadaci daju bodove u koracima od 10 (10, 20, 30, 40, 50), potrebni bodovi također moraju biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).",
   "createNewGoalRequiredPointsNaN": "Potrebni bodovi moraju biti broj bez znakova",
   "createNewGoalRequiredPointsNotMultipleOf10": "Potrebni bodovi moraju biti višekratnik broja 10",
   "goalAssigneesRequired": "Cilj mora biti dodijeljen 1 članu"

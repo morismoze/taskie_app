@@ -88,6 +88,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
                       // TODO: Usage of a generic error prompt widget
+                      return const SizedBox.shrink();
                     }
 
                     return child!;
@@ -103,15 +104,21 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                             FractionallySizedBox(
                               widthFactor: 0.9,
                               child: Text(
-                                context.localization.createNewTaskNoMembers,
+                                inderBuilderContext
+                                    .localization
+                                    .createNewTaskNoMembers,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(
+                                  inderBuilderContext,
+                                ).textTheme.bodyMedium,
                               ),
                             ),
                             const SizedBox(height: 20),
                             AppOutlinedButton(
-                              label: context.localization.objectiveNoMembersCta,
-                              onPress: () => context.push(
+                              label: inderBuilderContext
+                                  .localization
+                                  .objectiveNoMembersCta,
+                              onPress: () => inderBuilderContext.push(
                                 Routes.workspaceUsers(
                                   workspaceId:
                                       widget.viewModel.activeWorkspaceId,
@@ -123,8 +130,9 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: const EdgeInsets.only(
+                        padding: EdgeInsets.only(
                           top: Dimens.paddingVertical,
+                          bottom: MediaQuery.of(context).padding.bottom,
                         ),
                         child: CreateTaskForm(viewModel: widget.viewModel),
                       );

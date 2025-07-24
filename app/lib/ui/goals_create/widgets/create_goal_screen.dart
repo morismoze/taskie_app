@@ -83,6 +83,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
                       // TODO: Usage of a generic error prompt widget
+                      return const SizedBox.shrink();
                     }
 
                     return child!;
@@ -98,15 +99,21 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                             FractionallySizedBox(
                               widthFactor: 0.9,
                               child: Text(
-                                context.localization.createNewGoalNoMembers,
+                                inderBuilderContext
+                                    .localization
+                                    .createNewGoalNoMembers,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(
+                                  inderBuilderContext,
+                                ).textTheme.bodyMedium,
                               ),
                             ),
                             const SizedBox(height: 20),
                             AppOutlinedButton(
-                              label: context.localization.objectiveNoMembersCta,
-                              onPress: () => context.push(
+                              label: inderBuilderContext
+                                  .localization
+                                  .objectiveNoMembersCta,
+                              onPress: () => inderBuilderContext.push(
                                 Routes.workspaceUsers(
                                   workspaceId:
                                       widget.viewModel.activeWorkspaceId,
@@ -118,8 +125,9 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: const EdgeInsets.only(
+                        padding: EdgeInsets.only(
                           top: Dimens.paddingVertical,
+                          bottom: MediaQuery.of(context).padding.bottom,
                         ),
                         child: CreateGoalForm(viewModel: widget.viewModel),
                       );
@@ -141,12 +149,11 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
     }
 
     if (widget.viewModel.createGoal.error) {
+      widget.viewModel.createGoal.clearResult();
       AppSnackbar.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );
-
-      widget.viewModel.createGoal.clearResult();
     }
   }
 }
