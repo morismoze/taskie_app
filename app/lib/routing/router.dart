@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -108,24 +109,48 @@ GoRouter router({
       routes: [
         GoRoute(
           path: Routes.workspaceCreateInitialRelative,
-          builder: (context, state) {
-            return CreateWorkspaceInitialScreen(
-              viewModel: CreateWorkspaceInitialScreenViewModel(
-                workspaceRepository: context.read(),
-                userRepository: context.read(),
-                createWorkspaceUseCase: context.read(),
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              transitionDuration: const Duration(milliseconds: 250),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return SharedAxisTransition(
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: SharedAxisTransitionType.scaled,
+                      child: child,
+                    );
+                  },
+              child: CreateWorkspaceInitialScreen(
+                viewModel: CreateWorkspaceInitialScreenViewModel(
+                  workspaceRepository: context.read(),
+                  userRepository: context.read(),
+                  createWorkspaceUseCase: context.read(),
+                ),
               ),
             );
           },
         ),
         GoRoute(
           path: Routes.workspaceCreateRelative,
-          builder: (context, state) {
-            return CreateWorkspaceScreen(
-              viewModel: CreateWorkspaceScreenViewModel(
-                userRepository: context.read(),
-                workspaceRepository: context.read(),
-                createWorkspaceUseCase: context.read(),
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              transitionDuration: const Duration(milliseconds: 250),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return SharedAxisTransition(
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: SharedAxisTransitionType.scaled,
+                      child: child,
+                    );
+                  },
+              child: CreateWorkspaceScreen(
+                viewModel: CreateWorkspaceScreenViewModel(
+                  userRepository: context.read(),
+                  workspaceRepository: context.read(),
+                  createWorkspaceUseCase: context.read(),
+                ),
               ),
             );
           },
@@ -203,15 +228,35 @@ GoRouter router({
                         GoRoute(
                           path: Routes.taskCreateRelative,
                           parentNavigatorKey: _rootNavigatorKey,
-                          builder: (context, state) {
+                          pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
 
-                            return CreateTaskScreen(
-                              viewModel: CreateTaskScreenViewmodel(
-                                workspaceId: workspaceId,
-                                workspaceTaskRepository: context.read(),
-                                workspaceUserRepository: context.read(),
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: CreateTaskScreen(
+                                viewModel: CreateTaskScreenViewmodel(
+                                  workspaceId: workspaceId,
+                                  workspaceTaskRepository: context.read(),
+                                  workspaceUserRepository: context.read(),
+                                ),
                               ),
                             );
                           },
@@ -247,15 +292,35 @@ GoRouter router({
                         GoRoute(
                           path: Routes.goalCreateRelative,
                           parentNavigatorKey: _rootNavigatorKey,
-                          builder: (context, state) {
+                          pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
 
-                            return CreateGoalScreen(
-                              viewModel: CreateGoalScreenViewmodel(
-                                workspaceId: workspaceId,
-                                workspaceGoalRepository: context.read(),
-                                workspaceUserRepository: context.read(),
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: CreateGoalScreen(
+                                viewModel: CreateGoalScreenViewmodel(
+                                  workspaceId: workspaceId,
+                                  workspaceGoalRepository: context.read(),
+                                  workspaceUserRepository: context.read(),
+                                ),
                               ),
                             );
                           },
@@ -268,32 +333,43 @@ GoRouter router({
             ),
             GoRoute(
               path: Routes.workspaceUsersRelative,
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
-                return ChangeNotifierProvider<
-                  WorkspaceUsersScreenManagementViewModel
-                >(
-                  key: ValueKey(workspaceId),
-                  create: (context) => WorkspaceUsersScreenManagementViewModel(
-                    workspaceId: workspaceId,
-                    userRepository: context.read(),
-                    workspaceUserRepository: context.read(),
-                  ),
-                  // Without the Builder here, reading `WorkspaceUsersScreenManagementViewModel`
-                  // would result in an error saying its provider is not defined, and that's
-                  // because the used `context` is not yet at that moment defined inside the
-                  // scope of the `ChangeNotifierProvider<WorkspaceUsersScreenManagementViewModel>`
-                  // provider. Builder helps to give a new `context` which at is inside the Provider
-                  // scope. The end goal of this was to memoize the `WorkspaceUsersScreenManagementViewModel`
-                  // view model, as there is no need for it to be instantiated on every route change.
-                  //
-                  // `create` and `child` evaluate at almost the same time, hence why without Builder
-                  // `context` would not yet see the new InheritedWidget (Provider).
-                  child: Builder(
-                    builder: (context) => WorkspaceUsersManagementScreen(
-                      viewModel: context
-                          .watch<WorkspaceUsersScreenManagementViewModel>(),
+                return CustomTransitionPage(
+                  transitionDuration: const Duration(milliseconds: 250),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                        return SharedAxisTransition(
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                          transitionType: SharedAxisTransitionType.scaled,
+                          child: child,
+                        );
+                      },
+                  child: ChangeNotifierProvider<WorkspaceUsersManagementScreenViewModel>(
+                    key: ValueKey(workspaceId),
+                    create: (context) =>
+                        WorkspaceUsersManagementScreenViewModel(
+                          workspaceId: workspaceId,
+                          userRepository: context.read(),
+                          workspaceUserRepository: context.read(),
+                        ),
+                    // Without the Builder here, reading `WorkspaceUsersScreenManagementViewModel`
+                    // would result in an error saying its provider is not defined, and that's
+                    // because the used `context` is not yet at that moment defined inside the
+                    // scope of the `ChangeNotifierProvider<WorkspaceUsersScreenManagementViewModel>`
+                    // provider. Builder helps to give a new `context` which is inside the Provider
+                    // scope. The end goal of this was to memoize the `WorkspaceUsersScreenManagementViewModel`
+                    // view model, as there is no need for it to be instantiated on every route change.
+                    //
+                    // `create` and `child` evaluate at almost the same time, hence why without Builder
+                    // `context` would not yet see the new InheritedWidget (Provider).
+                    child: Builder(
+                      builder: (context) => WorkspaceUsersManagementScreen(
+                        viewModel: context
+                            .watch<WorkspaceUsersManagementScreenViewModel>(),
+                      ),
                     ),
                   ),
                 );
@@ -301,33 +377,59 @@ GoRouter router({
               routes: [
                 GoRoute(
                   path: Routes.workspaceUsersCreateRelative,
-                  builder: (context, state) {
+                  pageBuilder: (context, state) {
                     final workspaceId = state.pathParameters['workspaceId']!;
 
                     // We are not using the view model memoization here because we
                     // want the workspace invite repository call to fire everytime we
                     // land on this route, so the repository can check if the cached
                     // workspace invite is expired.
-                    return CreateWorkspaceUserScreen(
-                      viewModel: CreateWorkspaceUserScreenViewModel(
-                        workspaceId: workspaceId,
-                        workspaceRepository: context.read(),
-                        workspaceInviteRepository: context.read(),
-                        workspaceUserRepository: context.read(),
-                        shareWorkspaceInviteLinkUseCase: context.read(),
+                    return CustomTransitionPage(
+                      transitionDuration: const Duration(milliseconds: 400),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return SharedAxisTransition(
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType:
+                                  SharedAxisTransitionType.horizontal,
+                              child: child,
+                            );
+                          },
+                      child: CreateWorkspaceUserScreen(
+                        viewModel: CreateWorkspaceUserScreenViewModel(
+                          workspaceId: workspaceId,
+                          workspaceRepository: context.read(),
+                          workspaceInviteRepository: context.read(),
+                          workspaceUserRepository: context.read(),
+                          shareWorkspaceInviteLinkUseCase: context.read(),
+                        ),
                       ),
                     );
                   },
                 ),
                 GoRoute(
                   path: Routes.workspaceUsersGuideRelative,
-                  builder: (context, state) {
-                    return const WorkspaceUsersManagementGuideScreen();
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      transitionDuration: const Duration(milliseconds: 400),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return SharedAxisTransition(
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType:
+                                  SharedAxisTransitionType.horizontal,
+                              child: child,
+                            );
+                          },
+                      child: const WorkspaceUsersManagementGuideScreen(),
+                    );
                   },
                 ),
                 GoRoute(
                   path: ':workspaceUserId',
-                  builder: (context, state) {
+                  pageBuilder: (context, state) {
                     final workspaceId = state.pathParameters['workspaceId']!;
                     final workspaceUserId =
                         state.pathParameters['workspaceUserId']!;
@@ -338,29 +440,54 @@ GoRouter router({
                     // user ID - this is important as Managers can edit workspace user
                     // data, and we are not listening to entire workspace user repository
                     // `users` listenable value on this route, as that would be unnecessary.
-                    return WorkspaceUserDetailsScreen(
-                      viewModel: WorkspaceUserDetailsScreenViewModel(
-                        workspaceId: workspaceId,
-                        workspaceUserId: workspaceUserId,
-                        userRepository: context.read(),
-                        workspaceUserRepository: context.read(),
+                    return CustomTransitionPage(
+                      transitionDuration: const Duration(milliseconds: 250),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return SharedAxisTransition(
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: SharedAxisTransitionType.scaled,
+                              child: child,
+                            );
+                          },
+                      child: WorkspaceUserDetailsScreen(
+                        viewModel: WorkspaceUserDetailsScreenViewModel(
+                          workspaceId: workspaceId,
+                          workspaceUserId: workspaceUserId,
+                          userRepository: context.read(),
+                          workspaceUserRepository: context.read(),
+                        ),
                       ),
                     );
                   },
                   routes: [
                     GoRoute(
                       path: Routes.workspaceUsersEditUserDetailsRelative,
-                      builder: (context, state) {
+                      pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
                         final workspaceUserId =
                             state.pathParameters['workspaceUserId']!;
 
-                        return WorkspaceUserDetailsEditScreen(
-                          viewModel: WorkspaceUserDetailsEditScreenViewModel(
-                            workspaceId: workspaceId,
-                            workspaceUserId: workspaceUserId,
-                            workspaceUserRepository: context.read(),
+                        return CustomTransitionPage(
+                          transitionDuration: const Duration(milliseconds: 400),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                return SharedAxisTransition(
+                                  animation: animation,
+                                  secondaryAnimation: secondaryAnimation,
+                                  transitionType:
+                                      SharedAxisTransitionType.horizontal,
+                                  child: child,
+                                );
+                              },
+                          child: WorkspaceUserDetailsEditScreen(
+                            viewModel: WorkspaceUserDetailsEditScreenViewModel(
+                              workspaceId: workspaceId,
+                              workspaceUserId: workspaceUserId,
+                              workspaceUserRepository: context.read(),
+                            ),
                           ),
                         );
                       },
@@ -371,19 +498,31 @@ GoRouter router({
             ),
             GoRoute(
               path: Routes.workspaceSettingsRelative,
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
-                return Provider<WorkspaceSettingsScreenViewmodel>(
-                  key: ValueKey(workspaceId),
-                  create: (context) => WorkspaceSettingsScreenViewmodel(
-                    workspaceId: workspaceId,
-                    workspaceRepository: context.read(),
-                  ),
-                  child: Builder(
-                    builder: (context) => WorkspaceSettingsScreen(
-                      viewModel: context
-                          .watch<WorkspaceSettingsScreenViewmodel>(),
+                return CustomTransitionPage(
+                  transitionDuration: const Duration(milliseconds: 250),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                        return SharedAxisTransition(
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                          transitionType: SharedAxisTransitionType.scaled,
+                          child: child,
+                        );
+                      },
+                  child: Provider<WorkspaceSettingsScreenViewmodel>(
+                    key: ValueKey(workspaceId),
+                    create: (context) => WorkspaceSettingsScreenViewmodel(
+                      workspaceId: workspaceId,
+                      workspaceRepository: context.read(),
+                    ),
+                    child: Builder(
+                      builder: (context) => WorkspaceSettingsScreen(
+                        viewModel: context
+                            .watch<WorkspaceSettingsScreenViewmodel>(),
+                      ),
                     ),
                   ),
                 );
@@ -395,10 +534,21 @@ GoRouter router({
     ),
     GoRoute(
       path: Routes.preferences,
-      builder: (context, state) {
-        return PreferencesScreen(
-          viewModel: PreferencesScreenViewModel(
-            preferencesRepository: context.read(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          transitionDuration: const Duration(milliseconds: 250),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.scaled,
+              child: child,
+            );
+          },
+          child: PreferencesScreen(
+            viewModel: PreferencesScreenViewModel(
+              preferencesRepository: context.read(),
+            ),
           ),
         );
       },

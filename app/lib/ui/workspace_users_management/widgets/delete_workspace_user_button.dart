@@ -15,7 +15,7 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
     required this.workspaceUserId,
   });
 
-  final WorkspaceUsersScreenManagementViewModel viewModel;
+  final WorkspaceUsersManagementScreenViewModel viewModel;
   final String workspaceId;
   final String workspaceUserId;
 

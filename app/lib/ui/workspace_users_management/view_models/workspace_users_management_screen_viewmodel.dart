@@ -8,8 +8,8 @@ import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
-class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
-  WorkspaceUsersScreenManagementViewModel({
+class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
+  WorkspaceUsersManagementScreenViewModel({
     required String workspaceId,
     required UserRepository userRepository,
     required WorkspaceUserRepository workspaceUserRepository,
@@ -25,7 +25,7 @@ class WorkspaceUsersScreenManagementViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('WorkspaceUsersScreenManagementViewModel');
+  final _log = Logger('WorkspaceUsersManagementScreenViewModel');
 
   late Command1<void, (String workspaceId, bool forceFetch)>
   loadWorkspaceMembers;
