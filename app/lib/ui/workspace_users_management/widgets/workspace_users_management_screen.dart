@@ -18,7 +18,7 @@ import 'workspace_user_tile.dart';
 class WorkspaceUsersManagementScreen extends StatefulWidget {
   const WorkspaceUsersManagementScreen({super.key, required this.viewModel});
 
-  final WorkspaceUsersScreenManagementViewModel viewModel;
+  final WorkspaceUsersManagementScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _WorkspaceUsersManagementScreenState();

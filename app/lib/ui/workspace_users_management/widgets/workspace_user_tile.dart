@@ -21,7 +21,7 @@ class WorkspaceUserTile extends StatelessWidget {
     this.profileImageUrl,
   });
 
-  final WorkspaceUsersScreenManagementViewModel viewModel;
+  final WorkspaceUsersManagementScreenViewModel viewModel;
   final String id;
   final String firstName;
   final String lastName;

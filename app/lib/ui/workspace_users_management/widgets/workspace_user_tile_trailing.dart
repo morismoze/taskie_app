@@ -22,7 +22,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
     this.profileImageUrl,
   });
 
-  final WorkspaceUsersScreenManagementViewModel viewModel;
+  final WorkspaceUsersManagementScreenViewModel viewModel;
   final String workspaceUserId;
   final WorkspaceRole role;
   final String fullName;
@@ -66,7 +66,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
 
   void _userOptionsTap(
     BuildContext context,
-    WorkspaceUsersScreenManagementViewModel viewModel,
+    WorkspaceUsersManagementScreenViewModel viewModel,
     String fullName,
     String workspaceId,
     String workspaceUserId,
