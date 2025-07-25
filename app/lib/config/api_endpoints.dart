@@ -11,6 +11,8 @@ abstract final class ApiEndpoints {
   // Workspaces
   static const getWorkspaces = '$_prefix/workspaces/me';
   static const createWorkspace = '$_prefix/workspaces';
+  static String updateWorkspaceDetails(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId';
 
   // Workspace invites
   static String createWorkspaceInviteToken(WorkspaceIdPathParam workspaceId) =>

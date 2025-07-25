@@ -42,6 +42,7 @@ class AppDrawerViewModel extends ChangeNotifier {
        _workspaceRepository = workspaceRepository,
        _refreshTokenUseCase = refreshTokenUseCase,
        _activeWorkspaceChangeUseCase = activeWorkspaceChangeUseCase {
+    _workspaceRepository.addListener(_onWorkspacesChanged);
     loadWorkspaces = Command0(_loadWorkspaces);
     leaveWorkspace = Command1(_leaveWorkspace);
     changeActiveWorkspace = Command1(_changeActiveWorkspace);
@@ -62,21 +63,46 @@ class AppDrawerViewModel extends ChangeNotifier {
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  List<Workspace> _workspaces = [];
+  List<Workspace> get workspaces {
+    final workspaces = _workspaceRepository.workspaces;
 
-  List<Workspace> get workspaces => _workspaces;
+    if (workspaces == null) {
+      return [];
+    }
+
+    final sortedWorkspaces = List<Workspace>.from(workspaces);
+    sortedWorkspaces.sort((w1, w2) {
+      // Check if workspace is the active one - if it is
+      // push it first
+      if (w1.id == _activeWorkspaceId) {
+        return -1;
+      }
+
+      if (w2.id == _activeWorkspaceId) {
+        return 1;
+      }
+
+      // Second sort by workspace names ASC
+      return w1.name.compareTo(w2.name);
+    });
+
+    return sortedWorkspaces;
+  }
 
   String? _inviteLink;
 
   String? get inviteLink => _inviteLink;
+
+  void _onWorkspacesChanged() {
+    notifyListeners();
+  }
 
   Future<Result<List<Workspace>>> _loadWorkspaces() async {
     final result = await _workspaceRepository.loadWorkspaces();
 
     switch (result) {
       case Ok():
-        _workspaces = result.value;
-        notifyListeners();
+        break;
       case Error():
         _log.warning('Failed to load workspaces', result.error);
     }
@@ -160,5 +186,11 @@ class AppDrawerViewModel extends ChangeNotifier {
         _log.warning('Failed to load workspaces', resultLoad.error);
         return Result.error(resultLoad.error);
     }
+  }
+
+  @override
+  void dispose() {
+    _workspaceRepository.removeListener(_onWorkspacesChanged);
+    super.dispose();
   }
 }

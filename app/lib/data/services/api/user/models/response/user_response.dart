@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class UserResponse {
   UserResponse({
     required this.id,
@@ -26,7 +26,7 @@ class UserResponse {
       _$UserResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class RolePerWorkspace {
   RolePerWorkspace({required this.workspaceId, required this.role});
 

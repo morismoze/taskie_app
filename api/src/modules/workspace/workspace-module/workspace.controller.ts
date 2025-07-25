@@ -26,6 +26,7 @@ import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
 import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
+import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
@@ -73,6 +74,20 @@ export class WorkspaceController {
     // with the path to the newly created resource
     return this.workspaceService.create({
       createdById: request.user.sub,
+      data: payload,
+    });
+  }
+
+  @Patch(':workspaceId')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  updateWorkspace(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Body() payload: UpdateWorkspaceRequest,
+  ): Promise<WorkspaceResponse> {
+    return this.workspaceService.updateWorkspace({
+      workspaceId,
       data: payload,
     });
   }

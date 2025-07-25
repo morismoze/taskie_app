@@ -1,10 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'progress_status.dart';
-
 part 'assignee_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class AssigneeResponse {
   AssigneeResponse({
     required this.id,

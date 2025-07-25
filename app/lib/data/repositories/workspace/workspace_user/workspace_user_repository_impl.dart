@@ -182,7 +182,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       switch (result) {
         case Ok():
           final workspaceUser = result.value;
-          final updateWorkspaceUser = WorkspaceUser(
+          final updatedWorkspaceUser = WorkspaceUser(
             id: workspaceUser.id,
             firstName: workspaceUser.firstName,
             lastName: workspaceUser.lastName,
@@ -203,11 +203,11 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           // Update the existing user in the list by replacing it
           // with the new updated instance.
           final userIndex = _cachedWorkspaceUsersList!.indexWhere(
-            (user) => user.id == updateWorkspaceUser.id,
+            (user) => user.id == updatedWorkspaceUser.id,
           );
 
           if (userIndex != -1) {
-            _cachedWorkspaceUsersList![userIndex] = updateWorkspaceUser;
+            _cachedWorkspaceUsersList![userIndex] = updatedWorkspaceUser;
             notifyListeners();
           }
 

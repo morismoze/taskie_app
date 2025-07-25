@@ -13,6 +13,7 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
+import '../../core/ui/labeled_data.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
 import '../view_models/workspace_user_details_screen_view_model.dart';
@@ -41,8 +42,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                         return const SizedBox.shrink();
                       }
 
-                      // We don't want for the current user to edit
-                      // own details.
+                      // We don't want for the current user to edit own details.
                       if (viewModel.currentUser.id == details.userId) {
                         return const SizedBox.shrink();
                       }
@@ -121,16 +121,20 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                         ],
                         const SizedBox(height: 30),
                         // Third section
-                        _LabeledData(
-                          label: context.localization.createdAt,
+                        LabeledData(
+                          label: context
+                              .localization
+                              .workspaceUsersManagementUserDetailsCreatedAt,
                           data: DateFormat.yMd(
                             Localizations.localeOf(context).toString(),
                           ).format(details.createdAt),
                         ),
                         if (details.createdBy != null) ...[
                           const SizedBox(height: 15),
-                          _LabeledData(
-                            label: context.localization.createdBy,
+                          LabeledData(
+                            label: context
+                                .localization
+                                .workspaceUsersManagementUserDetailsCreatedBy,
                             leading: AppAvatar(
                               hashString: details.id,
                               fullName: fullName,
@@ -149,47 +153,6 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _LabeledData extends StatelessWidget {
-  const _LabeledData({
-    super.key,
-    required this.label,
-    required this.data,
-    this.leading,
-  });
-
-  final String label;
-  final String data;
-  final Widget? leading;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      spacing: 8,
-      children: [
-        Text(
-          '$label: ',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (leading != null) ...[leading!, const SizedBox(width: 8)],
-            Text(
-              data,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.normal),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

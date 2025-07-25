@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'paginable.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class PaginableResponse<D> {
   PaginableResponse({required this.items, required this.total});
 

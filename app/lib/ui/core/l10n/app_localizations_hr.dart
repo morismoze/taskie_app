@@ -364,10 +364,11 @@ class AppLocalizationsHr extends AppLocalizations {
   String get roleLabel => 'Uloga';
 
   @override
-  String get createdBy => 'Korisnika kreirao/la';
+  String get workspaceUsersManagementUserDetailsCreatedBy =>
+      'Korisnika kreirao/la';
 
   @override
-  String get createdAt => 'Korisnik kreiran';
+  String get workspaceUsersManagementUserDetailsCreatedAt => 'Korisnik kreiran';
 
   @override
   String get createNewGoalNoMembers =>
@@ -403,4 +404,31 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalAssigneesRequired => 'Cilj mora biti dodijeljen 1 članu';
+
+  @override
+  String get workspaceSettings => 'Postavke radnog prostora';
+
+  @override
+  String get workspaceSettingsOwnerDeletedAccount =>
+      'Vlasnik je izbrisao račun';
+
+  @override
+  String get workspaceSettingsCreatedBy => 'Radni prostor kreirao/la';
+
+  @override
+  String get workspaceSettingsCreatedAt => 'Radni prostor kreiran';
+
+  @override
+  String get workspaceSettingsEdit => 'Uređivanje podataka radnog prostora';
+
+  @override
+  String get workspaceSettingsEditSubmit => 'Uredi podatke';
+
+  @override
+  String get workspaceSettingsEditSuccess =>
+      'Uspješno ste uredili podatke radnog prostora';
+
+  @override
+  String get workspaceSettingsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja podataka radnog prostora';
 }

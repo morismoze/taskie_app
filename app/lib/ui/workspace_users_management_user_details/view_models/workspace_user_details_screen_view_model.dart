@@ -17,10 +17,7 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
        _workspaceUserId = workspaceUserId,
        _userRepository = userRepository,
        _workspaceUserRepository = workspaceUserRepository {
-    loadWorkspaceUserDetails(
-      workspaceId: workspaceId,
-      workspaceUserId: workspaceUserId,
-    );
+    _loadWorkspaceUserDetails();
   }
 
   final String _activeWorkspaceId;
@@ -37,13 +34,10 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
 
   WorkspaceUser? get details => _details;
 
-  Result<void> loadWorkspaceUserDetails({
-    required String workspaceId,
-    required String workspaceUserId,
-  }) {
+  Result<void> _loadWorkspaceUserDetails() {
     final result = _workspaceUserRepository.loadWorkspaceUserDetails(
-      workspaceId: workspaceId,
-      workspaceUserId: workspaceUserId,
+      workspaceId: _activeWorkspaceId,
+      workspaceUserId: _workspaceUserId,
     );
 
     switch (result) {

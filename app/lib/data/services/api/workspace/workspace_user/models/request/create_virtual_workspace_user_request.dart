@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'create_virtual_workspace_user_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class CreateVirtualWorkspaceUserRequest {
   CreateVirtualWorkspaceUserRequest({
     required this.firstName,

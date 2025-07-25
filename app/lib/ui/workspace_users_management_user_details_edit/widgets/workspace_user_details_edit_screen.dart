@@ -128,18 +128,16 @@ class _WorkspaceUserDetailsEditScreenState
   void _onWorkspaceUserDetailsEditResult() {
     if (widget.viewModel.editWorkspaceUserDetails.completed) {
       widget.viewModel.editWorkspaceUserDetails.clearResult();
-      context.pop(); // Navigate back to details page
-
       AppSnackbar.showSuccess(
         context: context,
         message:
             context.localization.workspaceUsersManagementUserDetailsEditSuccess,
       );
+      context.pop(); // Navigate back to details page
     }
 
     if (widget.viewModel.editWorkspaceUserDetails.error) {
       widget.viewModel.editWorkspaceUserDetails.clearResult();
-
       AppSnackbar.showError(
         context: context,
         message:

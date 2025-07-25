@@ -1,9 +1,10 @@
-import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../domain/models/workspace.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/request/create_workspace_request.dart';
+import '../../../services/api/workspace/workspace/models/request/update_workspace_details_request.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace/workspace_api_service.dart';
 import '../../../services/local/shared_preferences_service.dart';
@@ -22,15 +23,20 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   final _log = Logger('WorkspaceRepository');
   List<Workspace>? _cachedWorkspacesList;
 
+  @override
+  List<Workspace>? get workspaces => _cachedWorkspacesList;
+
   String? _activeWorkspaceId;
 
   @override
   String? get activeWorkspaceId => _activeWorkspaceId;
 
+  final ValueNotifier<bool?> _hasNoWorkspacesNotifier = ValueNotifier(null);
+
   // This is listenable used for redirection to workspace creation
   // screen in case user is not part of any workspace.
   @override
-  bool? get hasNoWorkspaces => _cachedWorkspacesList?.isEmpty;
+  ValueNotifier<bool?> get hasNoWorkspacesNotifier => _hasNoWorkspacesNotifier;
 
   @override
   Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
@@ -74,23 +80,6 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Result<Workspace> getActiveWorkspaceDetails() {
-    final activeWorkspace = _cachedWorkspacesList!.firstWhereOrNull(
-      (workspace) => workspace.id == _activeWorkspaceId,
-    );
-
-    if (activeWorkspace == null) {
-      return Result.error(
-        Exception(
-          'Couldn\'t find active workspace in the cached list by the cached active workspace ID.',
-        ),
-      );
-    }
-
-    return Result.ok(activeWorkspace);
-  }
-
-  @override
   Future<Result<List<Workspace>>> loadWorkspaces({
     bool forceFetch = false,
   }) async {
@@ -107,16 +96,26 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
                 (workspace) => Workspace(
                   id: workspace.id,
                   name: workspace.name,
+                  createdAt: workspace.createdAt,
                   description: workspace.description,
                   pictureUrl: workspace.pictureUrl,
+                  createdBy: workspace.createdBy == null
+                      ? null
+                      : WorkspaceCreatedBy(
+                          firstName: workspace.createdBy!.firstName,
+                          lastName: workspace.createdBy!.lastName,
+                          profileImageUrl: workspace.createdBy!.profileImageUrl,
+                        ),
                 ),
               )
               .toList();
+
           _cachedWorkspacesList = mappedData;
+          notifyListeners();
 
           // If user is not part of any workspace, notify the navigation redirection listener
           if (_cachedWorkspacesList!.isEmpty) {
-            notifyListeners();
+            _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
           }
 
           return Result.ok(mappedData);
@@ -146,12 +145,21 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           final newWorkspace = Workspace(
             id: workspace.id,
             name: workspace.name,
+            createdAt: workspace.createdAt,
             description: workspace.description,
             pictureUrl: workspace.pictureUrl,
+            createdBy: workspace.createdBy == null
+                ? null
+                : WorkspaceCreatedBy(
+                    firstName: workspace.createdBy!.firstName,
+                    lastName: workspace.createdBy!.lastName,
+                    profileImageUrl: workspace.createdBy!.profileImageUrl,
+                  ),
           );
 
           // Add the new workspace to the local list (cache)
           _cachedWorkspacesList?.add(newWorkspace);
+          notifyListeners();
 
           return Result.ok(workspace.id);
         case Error<WorkspaceResponse>():
@@ -174,9 +182,71 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         case Ok():
           // Remove the leaving workspace from the local list (cache)
           _cachedWorkspacesList!.remove(leavingWorkspace);
+          notifyListeners();
 
           // If user is no more part of any workspace, notify the navigation redirection listener
           if (_cachedWorkspacesList!.isEmpty) {
+            _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
+          }
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Result<Workspace> loadWorkspaceDetails(String workspaceId) {
+    final workspaceDetails = _cachedWorkspacesList!.firstWhere(
+      (workspace) => workspace.id == workspaceId,
+    );
+    return Result.ok(workspaceDetails);
+  }
+
+  @override
+  Future<Result<void>> updateWorkspaceDetails(
+    String workspaceId, {
+    String? name,
+    String? description,
+  }) async {
+    try {
+      final result = await _workspaceApiService.updateWorkspaceDetails(
+        workspaceId: workspaceId,
+        payload: UpdateWorkspaceDetailsRequest(
+          name: name,
+          description: description,
+        ),
+      );
+
+      switch (result) {
+        case Ok():
+          final workspace = result.value;
+          final updatedWorkspace = Workspace(
+            id: workspace.id,
+            name: workspace.name,
+            createdAt: workspace.createdAt,
+            description: workspace.description,
+            pictureUrl: workspace.pictureUrl,
+            createdBy: workspace.createdBy == null
+                ? null
+                : WorkspaceCreatedBy(
+                    firstName: workspace.createdBy!.firstName,
+                    lastName: workspace.createdBy!.lastName,
+                    profileImageUrl: workspace.createdBy!.profileImageUrl,
+                  ),
+          );
+
+          // Update the existing workspace in the list by replacing it
+          // with the new updated instance.
+          final workspaceIndex = _cachedWorkspacesList!.indexWhere(
+            (workspace) => workspace.id == updatedWorkspace.id,
+          );
+
+          if (workspaceIndex != -1) {
+            _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
             notifyListeners();
           }
 

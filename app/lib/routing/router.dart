@@ -26,6 +26,8 @@ import '../ui/workspace_create_initial/view_models/create_workspace_initial_scre
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
 import '../ui/workspace_settings/view_models/workspace_settings_screen_viewmodel.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
+import '../ui/workspace_settings_edit/view_models/workspace_settings_edit_screen_view_model.dart';
+import '../ui/workspace_settings_edit/widgets/workspace_settings_edit_screen.dart';
 import '../ui/workspace_users_management/view_models/workspace_users_management_screen_viewmodel.dart';
 import '../ui/workspace_users_management/widgets/workspace_users_management_screen.dart';
 import '../ui/workspace_users_management_create/view_models/create_workspace_user_screen_viewmodel.dart';
@@ -80,7 +82,7 @@ GoRouter router({
   redirect: _redirect,
   refreshListenable: Listenable.merge([
     authStateRepository,
-    workspaceRepository,
+    workspaceRepository.hasNoWorkspacesNotifier,
   ]),
   navigatorKey: _rootNavigatorKey,
   routes: [
@@ -367,8 +369,7 @@ GoRouter router({
                     // `context` would not yet see the new InheritedWidget (Provider).
                     child: Builder(
                       builder: (context) => WorkspaceUsersManagementScreen(
-                        viewModel: context
-                            .watch<WorkspaceUsersManagementScreenViewModel>(),
+                        viewModel: context.read(),
                       ),
                     ),
                   ),
@@ -501,6 +502,12 @@ GoRouter router({
               pageBuilder: (context, state) {
                 final workspaceId = state.pathParameters['workspaceId']!;
 
+                // We are not using the view model memoization here because we
+                // want the workspace details repository call to fire everytime we
+                // land on this route, so we get fresh data for specific workspace
+                // ID - this is important as Managers can edit workspace data
+                // and we are not listening to entire workspace repository
+                // `workspaces` listenable value on this route, as that would be unnecessary.
                 return CustomTransitionPage(
                   transitionDuration: const Duration(milliseconds: 250),
                   transitionsBuilder:
@@ -512,21 +519,42 @@ GoRouter router({
                           child: child,
                         );
                       },
-                  child: Provider<WorkspaceSettingsScreenViewmodel>(
-                    key: ValueKey(workspaceId),
-                    create: (context) => WorkspaceSettingsScreenViewmodel(
+                  child: WorkspaceSettingsScreen(
+                    viewModel: WorkspaceSettingsScreenViewModel(
                       workspaceId: workspaceId,
                       workspaceRepository: context.read(),
-                    ),
-                    child: Builder(
-                      builder: (context) => WorkspaceSettingsScreen(
-                        viewModel: context
-                            .watch<WorkspaceSettingsScreenViewmodel>(),
-                      ),
                     ),
                   ),
                 );
               },
+              routes: [
+                GoRoute(
+                  path: Routes.workspaceSettingsEditWorkspaceSettingsRelative,
+                  pageBuilder: (context, state) {
+                    final workspaceId = state.pathParameters['workspaceId']!;
+
+                    return CustomTransitionPage(
+                      transitionDuration: const Duration(milliseconds: 400),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return SharedAxisTransition(
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType:
+                                  SharedAxisTransitionType.horizontal,
+                              child: child,
+                            );
+                          },
+                      child: WorkspaceSettingsEditScreen(
+                        viewModel: WorkspaceSettingsEditScreenViewModel(
+                          workspaceId: workspaceId,
+                          workspaceRepository: context.read(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -559,7 +587,10 @@ GoRouter router({
 Future<String?> _redirect(BuildContext context, GoRouterState state) async {
   // if the user is not part of any workspace anymore (e.g. left all workspaces),
   // we need to redirect the user to workspace initial creation screen
-  final hasNoWorkspaces = context.read<WorkspaceRepository>().hasNoWorkspaces;
+  final hasNoWorkspaces = context
+      .read<WorkspaceRepository>()
+      .hasNoWorkspacesNotifier
+      .value;
   // if the user is not logged in, they need to login
   final loggedIn = await context.read<AuthStateRepository>().isAuthenticated;
   final loggingIn = state.matchedLocation == Routes.login;

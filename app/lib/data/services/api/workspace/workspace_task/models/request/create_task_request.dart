@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'create_task_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class CreateTaskRequest {
   CreateTaskRequest({
     required this.title,

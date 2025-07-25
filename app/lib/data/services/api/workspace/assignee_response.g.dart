@@ -13,11 +13,3 @@ AssigneeResponse _$AssigneeResponseFromJson(Map<String, dynamic> json) =>
       lastName: json['lastName'] as String,
       profileImageUrl: json['profileImageUrl'] as String?,
     );
-
-Map<String, dynamic> _$AssigneeResponseToJson(AssigneeResponse instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
-      'profileImageUrl': instance.profileImageUrl,
-    };

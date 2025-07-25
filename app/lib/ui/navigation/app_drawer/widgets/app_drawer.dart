@@ -119,12 +119,12 @@ class _AppDrawerState extends State<AppDrawer> {
         case LeaveWorkspaceResultNoAction():
           break;
         case LeaveWorkspaceResultCloseOverlays():
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
+          context.pop();
+          context.pop();
           break;
         case LeaveWorkspaceResultNavigateTo(workspaceId: final workspaceId):
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
+          context.pop();
+          context.pop();
           context.go(Routes.tasks(workspaceId: workspaceId));
       }
     }

@@ -704,17 +704,17 @@ abstract class AppLocalizations {
   /// **'Role'**
   String get roleLabel;
 
-  /// No description provided for @createdBy.
+  /// No description provided for @workspaceUsersManagementUserDetailsCreatedBy.
   ///
   /// In en, this message translates to:
-  /// **'Created by'**
-  String get createdBy;
+  /// **'User created by'**
+  String get workspaceUsersManagementUserDetailsCreatedBy;
 
-  /// No description provided for @createdAt.
+  /// No description provided for @workspaceUsersManagementUserDetailsCreatedAt.
   ///
   /// In en, this message translates to:
-  /// **'Created at'**
-  String get createdAt;
+  /// **'User created at'**
+  String get workspaceUsersManagementUserDetailsCreatedAt;
 
   /// No description provided for @createNewGoalNoMembers.
   ///
@@ -775,6 +775,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goal must have 1 assignee'**
   String get goalAssigneesRequired;
+
+  /// No description provided for @workspaceSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace settings'**
+  String get workspaceSettings;
+
+  /// No description provided for @workspaceSettingsOwnerDeletedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner deleted their account'**
+  String get workspaceSettingsOwnerDeletedAccount;
+
+  /// No description provided for @workspaceSettingsCreatedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace created by'**
+  String get workspaceSettingsCreatedBy;
+
+  /// No description provided for @workspaceSettingsCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace created at'**
+  String get workspaceSettingsCreatedAt;
+
+  /// No description provided for @workspaceSettingsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit workspace details'**
+  String get workspaceSettingsEdit;
+
+  /// No description provided for @workspaceSettingsEditSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get workspaceSettingsEditSubmit;
+
+  /// No description provided for @workspaceSettingsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited workspace details'**
+  String get workspaceSettingsEditSuccess;
+
+  /// No description provided for @workspaceSettingsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing workspace details'**
+  String get workspaceSettingsEditError;
 }
 
 class _AppLocalizationsDelegate

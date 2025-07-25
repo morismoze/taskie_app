@@ -5,6 +5,7 @@ import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/tr
 import { User } from 'src/modules/user/domain/user.domain';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user.domain';
+import { WorkspaceCore } from '../domain/workspace-core.domain';
 import { Workspace } from '../domain/workspace.domain';
 import { WorkspaceEntity } from './workspace.entity';
 import { WorkspaceRepository } from './workspace.repository';
@@ -45,6 +46,25 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
       relations,
     });
     return newEntity;
+  }
+
+  async update({
+    id,
+    data,
+    relations,
+  }: {
+    id: Workspace['id'];
+    data: Partial<WorkspaceCore>;
+    relations?: FindOptionsRelations<WorkspaceEntity>;
+  }): Promise<Nullable<WorkspaceEntity>> {
+    await this.repo.update(id, data);
+
+    const updatedEntity = await this.repo.findOne({
+      where: { id },
+      relations,
+    });
+
+    return updatedEntity;
   }
 
   async findById({

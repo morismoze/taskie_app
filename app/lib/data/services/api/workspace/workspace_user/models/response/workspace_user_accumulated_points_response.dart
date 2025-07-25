@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'workspace_user_accumulated_points_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkspaceUserAccumulatedPointsResponse {
   WorkspaceUserAccumulatedPointsResponse({required this.accumulatedPoints});
 

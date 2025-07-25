@@ -7,6 +7,8 @@ import { WorkspaceUserEntity } from '../../workspace-user-module/persistence/wor
 
 /**
  * Represents a workspace that contains members, goals, and standalone tasks.
+ * `createdBy` can be null in the case owner deleted account and the workspace
+ * doesn't have any more Manager users.
  */
 @Entity({ name: 'workspace' })
 export class WorkspaceEntity extends RootBaseEntity {

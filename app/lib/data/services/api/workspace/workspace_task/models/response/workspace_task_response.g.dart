@@ -18,16 +18,6 @@ WorkspaceTaskResponse _$WorkspaceTaskResponseFromJson(
   description: json['description'] as String?,
 );
 
-Map<String, dynamic> _$WorkspaceTaskResponseToJson(
-  WorkspaceTaskResponse instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'title': instance.title,
-  'rewardPoints': instance.rewardPoints,
-  'assignees': instance.assignees,
-  'description': instance.description,
-};
-
 TaskAssigneeResponse _$TaskAssigneeResponseFromJson(
   Map<String, dynamic> json,
 ) => TaskAssigneeResponse(
@@ -37,16 +27,6 @@ TaskAssigneeResponse _$TaskAssigneeResponseFromJson(
   profileImageUrl: json['profileImageUrl'] as String?,
   status: $enumDecode(_$ProgressStatusEnumMap, json['status']),
 );
-
-Map<String, dynamic> _$TaskAssigneeResponseToJson(
-  TaskAssigneeResponse instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'firstName': instance.firstName,
-  'lastName': instance.lastName,
-  'profileImageUrl': instance.profileImageUrl,
-  'status': _$ProgressStatusEnumMap[instance.status]!,
-};
 
 const _$ProgressStatusEnumMap = {
   ProgressStatus.inProgress: 'IN_PROGRESS',

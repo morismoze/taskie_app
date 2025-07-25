@@ -4,7 +4,7 @@ import '../../../../user/models/response/user_response.dart';
 
 part 'workspace_user_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkspaceUserResponse {
   WorkspaceUserResponse({
     required this.id,
@@ -33,7 +33,7 @@ class WorkspaceUserResponse {
       _$WorkspaceUserResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkspaceUserCreatedByResponse {
   WorkspaceUserCreatedByResponse({
     required this.firstName,

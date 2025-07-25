@@ -5,7 +5,7 @@ import '../../../progress_status.dart';
 
 part 'workspace_task_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkspaceTaskResponse {
   WorkspaceTaskResponse({
     required this.id,
@@ -25,7 +25,7 @@ class WorkspaceTaskResponse {
       _$WorkspaceTaskResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class TaskAssigneeResponse extends AssigneeResponse {
   TaskAssigneeResponse({
     required super.id,
