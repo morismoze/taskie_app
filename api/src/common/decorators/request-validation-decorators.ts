@@ -20,6 +20,16 @@ import {
 } from 'src/modules/task/task-module/domain/task.constants';
 import { IsMultipleOfConstraint } from '../validators/is-multiple-of.validator';
 
+export const IsValidWorkspaceName = () => {
+  const decorators = [IsNotEmpty(), IsString(), Length(3, 50)];
+  return applyDecorators(...decorators);
+};
+
+export const IsValidWorkspaceDescription = () => {
+  const decorators = [IsNotEmpty(), IsString(), MaxLength(250)];
+  return applyDecorators(...decorators);
+};
+
 export const IsValidPersonName = () => {
   const decorators = [IsNotEmpty(), IsString(), Length(2, 50)];
   return applyDecorators(...decorators);

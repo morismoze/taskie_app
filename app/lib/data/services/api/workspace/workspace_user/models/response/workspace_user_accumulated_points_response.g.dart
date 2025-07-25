@@ -11,7 +11,3 @@ _$WorkspaceUserAccumulatedPointsResponseFromJson(Map<String, dynamic> json) =>
     WorkspaceUserAccumulatedPointsResponse(
       accumulatedPoints: (json['accumulatedPoints'] as num).toInt(),
     );
-
-Map<String, dynamic> _$WorkspaceUserAccumulatedPointsResponseToJson(
-  WorkspaceUserAccumulatedPointsResponse instance,
-) => <String, dynamic>{'accumulatedPoints': instance.accumulatedPoints};

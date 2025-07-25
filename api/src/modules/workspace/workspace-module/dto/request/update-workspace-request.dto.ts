@@ -4,16 +4,17 @@ import {
   IsValidWorkspaceName,
 } from 'src/common/decorators/request-validation-decorators';
 
-export class CreateWorkspaceRequest {
+export class UpdateWorkspaceRequest {
+  @IsOptional()
   @IsValidWorkspaceName()
-  name: string;
+  name?: string;
 
   @IsOptional()
   @IsValidWorkspaceDescription()
-  description: string | null;
+  description?: string;
 
-  constructor(name: string, description?: string | null) {
+  constructor(name?: string, description?: string) {
     this.name = name;
-    this.description = description || null;
+    this.description = description;
   }
 }

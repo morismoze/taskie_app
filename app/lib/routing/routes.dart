@@ -43,6 +43,11 @@ abstract final class Routes {
   static const workspaceSettingsRelative = 'settings';
   static String workspaceSettings({required String workspaceId}) =>
       '$workspacesRelative/$workspaceId/$workspaceSettingsRelative';
+  static const workspaceSettingsEditWorkspaceSettingsRelative = 'edit';
+  static String workspaceSettingsEditWorkspaceSettings({
+    required String workspaceId,
+  }) =>
+      '$workspacesRelative/$workspaceId/$workspaceSettingsRelative/$workspaceSettingsEditWorkspaceSettingsRelative';
 
   static const tasksRelative = 'tasks';
   static String tasks({required String workspaceId}) =>

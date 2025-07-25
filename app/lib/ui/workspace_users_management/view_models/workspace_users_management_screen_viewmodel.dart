@@ -95,6 +95,7 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        notifyListeners();
         break;
       case Error():
         _log.warning('Failed to load workspace users', result.error);

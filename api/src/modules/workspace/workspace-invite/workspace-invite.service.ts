@@ -12,7 +12,7 @@ import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.do
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
 import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore } from './domain/workspace-invite-with-workspace-core-and-user-core.domain';
-import { WorkspaceInviteWithWorkspaceCore } from './domain/workspace-invite-with-workspace-core.domain';
+import { WorkspaceInviteWithWorkspaceWithCreatedByUser } from './domain/workspace-invite-with-workspace-with-created-by-user.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
 import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
 import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
@@ -83,7 +83,7 @@ export class WorkspaceInviteService {
 
   async findByTokenWithWorkspace(
     token: WorkspaceInvite['token'],
-  ): Promise<Nullable<WorkspaceInviteWithWorkspaceCore>> {
+  ): Promise<Nullable<WorkspaceInviteWithWorkspaceWithCreatedByUser>> {
     return await this.workspaceInviteRepository.findByToken({
       token,
       relations: {
@@ -113,7 +113,7 @@ export class WorkspaceInviteService {
   }: {
     token: WorkspaceInvite['token'];
     usedById: User['id'];
-  }): Promise<WorkspaceInviteWithWorkspaceCore> {
+  }): Promise<WorkspaceInviteWithWorkspaceWithCreatedByUser> {
     const workspaceInvite = await this.findByTokenWithWorkspaceAndUser(token);
 
     // Check if the invite exists

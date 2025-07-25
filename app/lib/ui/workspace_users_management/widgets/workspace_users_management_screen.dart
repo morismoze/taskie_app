@@ -118,50 +118,49 @@ class _WorkspaceUsersManagementScreenState
                       return const SizedBox.shrink();
                     }
 
-                    return child!;
-                  },
-                  // We don't have the standard 'First ListenableBuilder listening to a command
-                  // and its child is the second ListenableBuilder listening to viewModel' because
-                  // we want to show [ActivityIndicator] only on the initial load. All other loads
-                  // after that will happen when user pulls-to-refresh (and if the app process was not
-                  // killed by the underlying OS). And in that case we want to show the existing
-                  // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
-                  child: RefreshIndicator(
-                    displacement: 30,
-                    onRefresh: () async {
-                      widget.viewModel.loadWorkspaceMembers.execute((
-                        widget.viewModel.activeWorkspaceId,
-                        true,
-                      ));
-                    },
-                    child: ListView.separated(
-                      padding: EdgeInsets.only(
-                        bottom: 20,
-                        left: Dimens.of(context).paddingScreenHorizontal,
-                        right: Dimens.of(context).paddingScreenHorizontal,
-                      ),
-                      itemCount: widget.viewModel.users!.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (_, index) {
-                        final workspaceUser = widget.viewModel.users![index];
-                        final currentUser = widget.viewModel.currentUser;
-
-                        final isCurrentUser =
-                            currentUser.id == workspaceUser.userId;
-
-                        return WorkspaceUserTile(
-                          viewModel: widget.viewModel,
-                          id: workspaceUser.id,
-                          firstName: workspaceUser.firstName,
-                          lastName: workspaceUser.lastName,
-                          role: workspaceUser.role,
-                          isCurrentUser: isCurrentUser,
-                          email: workspaceUser.email,
-                          profileImageUrl: workspaceUser.profileImageUrl,
-                        );
+                    // We don't have the standard 'First ListenableBuilder listening to a command
+                    // and its child is the second ListenableBuilder listening to viewModel' because
+                    // we want to show [ActivityIndicator] only on the initial load. All other loads
+                    // after that will happen when user pulls-to-refresh (and if the app process was not
+                    // killed by the underlying OS). And in that case we want to show the existing
+                    // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
+                    return RefreshIndicator(
+                      displacement: 30,
+                      onRefresh: () async {
+                        widget.viewModel.loadWorkspaceMembers.execute((
+                          widget.viewModel.activeWorkspaceId,
+                          true,
+                        ));
                       },
-                    ),
-                  ),
+                      child: ListView.separated(
+                        padding: EdgeInsets.only(
+                          bottom: 20,
+                          left: Dimens.of(context).paddingScreenHorizontal,
+                          right: Dimens.of(context).paddingScreenHorizontal,
+                        ),
+                        itemCount: widget.viewModel.users!.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
+                        itemBuilder: (_, index) {
+                          final workspaceUser = widget.viewModel.users![index];
+                          final currentUser = widget.viewModel.currentUser;
+
+                          final isCurrentUser =
+                              currentUser.id == workspaceUser.userId;
+
+                          return WorkspaceUserTile(
+                            viewModel: widget.viewModel,
+                            id: workspaceUser.id,
+                            firstName: workspaceUser.firstName,
+                            lastName: workspaceUser.lastName,
+                            role: workspaceUser.role,
+                            isCurrentUser: isCurrentUser,
+                            email: workspaceUser.email,
+                            profileImageUrl: workspaceUser.profileImageUrl,
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -192,24 +191,22 @@ class _WorkspaceUsersManagementScreenState
   void _onWorkspaceUserDeleteResult() {
     if (widget.viewModel.deleteWorkspaceUser.completed) {
       widget.viewModel.deleteWorkspaceUser.clearResult();
-      context.pop(); // Close dialog
-      context.pop(); // Close bottom sheet
-
       AppSnackbar.showSuccess(
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserSuccess,
       );
+      context.pop(); // Close dialog
+      context.pop(); // Close bottom sheet
     }
 
     if (widget.viewModel.deleteWorkspaceUser.error) {
       widget.viewModel.deleteWorkspaceUser.clearResult();
-      context.pop(); // Close dialog
-      context.pop(); // Close bottom sheet
-
       AppSnackbar.showError(
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserError,
       );
+      context.pop(); // Close dialog
+      context.pop(); // Close bottom sheet
     }
   }
 }

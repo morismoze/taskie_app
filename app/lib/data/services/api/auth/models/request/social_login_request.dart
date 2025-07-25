@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'social_login_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class SocialLoginRequest {
   SocialLoginRequest(this.idToken);
 

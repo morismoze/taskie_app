@@ -362,10 +362,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleLabel => 'Role';
 
   @override
-  String get createdBy => 'Created by';
+  String get workspaceUsersManagementUserDetailsCreatedBy => 'User created by';
 
   @override
-  String get createdAt => 'Created at';
+  String get workspaceUsersManagementUserDetailsCreatedAt => 'User created at';
 
   @override
   String get createNewGoalNoMembers =>
@@ -401,4 +401,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalAssigneesRequired => 'Goal must have 1 assignee';
+
+  @override
+  String get workspaceSettings => 'Workspace settings';
+
+  @override
+  String get workspaceSettingsOwnerDeletedAccount =>
+      'Owner deleted their account';
+
+  @override
+  String get workspaceSettingsCreatedBy => 'Workspace created by';
+
+  @override
+  String get workspaceSettingsCreatedAt => 'Workspace created at';
+
+  @override
+  String get workspaceSettingsEdit => 'Edit workspace details';
+
+  @override
+  String get workspaceSettingsEditSubmit => 'Edit details';
+
+  @override
+  String get workspaceSettingsEditSuccess =>
+      'Successfully edited workspace details';
+
+  @override
+  String get workspaceSettingsEditError =>
+      'Uh-oh! We\'ve had some trouble editing workspace details';
 }

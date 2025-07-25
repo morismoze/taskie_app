@@ -9,30 +9,34 @@ class WorkspaceImage extends StatelessWidget {
     super.key,
     required this.isActive,
     this.url,
-    this.size,
+    this.size = 56,
   });
 
   final bool isActive;
+  final double size;
   final String? url;
-  final double? size;
 
   @override
   Widget build(BuildContext context) {
     return url != null
         ? WorkspaceImageStatus(
             isActive: isActive,
+            imageSize: size,
             child: CachedNetworkImage(
               imageUrl: url!,
               width: size,
               height: size,
+              fit: BoxFit.cover,
             ),
           )
         : WorkspaceImageStatus(
             isActive: isActive,
+            imageSize: size,
             child: Image(
               image: const AssetImage(Assets.appIcon),
               width: size,
               height: size,
+              fit: BoxFit.cover,
             ),
           );
   }

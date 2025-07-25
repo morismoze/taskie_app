@@ -5,7 +5,7 @@ import '../../../progress_status.dart';
 
 part 'workspace_goal_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkspaceGoalResponse {
   WorkspaceGoalResponse({
     required this.id,

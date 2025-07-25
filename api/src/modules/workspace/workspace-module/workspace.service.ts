@@ -1,6 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { AggregatedConfig } from 'src/config/config.type';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
@@ -28,6 +26,7 @@ import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.d
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
 import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
+import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
@@ -64,7 +63,6 @@ export class WorkspaceService {
     private readonly taskAssignmentService: TaskAssignmentService,
     private readonly workspaceInviteService: WorkspaceInviteService,
     private readonly unitOfWorkService: UnitOfWorkService,
-    private readonly configService: ConfigService<AggregatedConfig>,
   ) {}
 
   async create({
@@ -84,6 +82,9 @@ export class WorkspaceService {
             pictureUrl: null,
           },
           createdById,
+          relations: {
+            createdBy: true,
+          },
         });
 
         if (!newWorkspace) {
@@ -113,6 +114,76 @@ export class WorkspaceService {
       name: newWorkspace.name,
       description: newWorkspace.description,
       pictureUrl: newWorkspace.pictureUrl,
+      createdAt: newWorkspace.createdAt,
+      createdBy:
+        newWorkspace.createdBy === null
+          ? null
+          : {
+              firstName: newWorkspace.createdBy.firstName,
+              lastName: newWorkspace.createdBy.lastName,
+              profileImageUrl: newWorkspace.createdBy.profileImageUrl,
+            },
+    };
+
+    return response;
+  }
+
+  async updateWorkspace({
+    workspaceId,
+    data,
+  }: {
+    workspaceId: Workspace['id'];
+    data: UpdateWorkspaceRequest;
+  }): Promise<WorkspaceResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+      relations: {
+        members: {
+          user: true,
+        },
+      },
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const updatedWorkspace = await this.workspaceRepository.update({
+      id: workspaceId,
+      data,
+      relations: {
+        createdBy: true,
+      },
+    });
+
+    if (!updatedWorkspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const response: WorkspaceResponse = {
+      id: updatedWorkspace.id,
+      name: updatedWorkspace.name,
+      description: updatedWorkspace.description,
+      pictureUrl: updatedWorkspace.pictureUrl,
+      createdAt: updatedWorkspace.createdAt,
+      createdBy:
+        updatedWorkspace.createdBy === null
+          ? null
+          : {
+              firstName: updatedWorkspace.createdBy.firstName,
+              lastName: updatedWorkspace.createdBy.lastName,
+              profileImageUrl: updatedWorkspace.createdBy.profileImageUrl,
+            },
     };
 
     return response;
@@ -178,6 +249,16 @@ export class WorkspaceService {
       name: workspaceInvite.workspace.name,
       description: workspaceInvite.workspace.description,
       pictureUrl: workspaceInvite.workspace.pictureUrl,
+      createdAt: workspaceInvite.workspace.createdAt,
+      createdBy:
+        workspaceInvite.workspace.createdBy === null
+          ? null
+          : {
+              firstName: workspaceInvite.workspace.createdBy.firstName,
+              lastName: workspaceInvite.workspace.createdBy.lastName,
+              profileImageUrl:
+                workspaceInvite.workspace.createdBy.profileImageUrl,
+            },
     };
 
     return response;
@@ -201,6 +282,16 @@ export class WorkspaceService {
       name: updatedWorkspaceInvite.workspace.name,
       description: updatedWorkspaceInvite.workspace.description,
       pictureUrl: updatedWorkspaceInvite.workspace.pictureUrl,
+      createdAt: updatedWorkspaceInvite.workspace.createdAt,
+      createdBy:
+        updatedWorkspaceInvite.workspace.createdBy === null
+          ? null
+          : {
+              firstName: updatedWorkspaceInvite.workspace.createdBy.firstName,
+              lastName: updatedWorkspaceInvite.workspace.createdBy.lastName,
+              profileImageUrl:
+                updatedWorkspaceInvite.workspace.createdBy.profileImageUrl,
+            },
     };
 
     return response;
@@ -282,6 +373,9 @@ export class WorkspaceService {
   ): Promise<WorkspacesResponse> {
     const userWorkspaces = await this.workspaceRepository.findAllByUserId({
       userId,
+      relations: {
+        createdBy: true,
+      },
     });
 
     const response: WorkspacesResponse = userWorkspaces.map((workspace) => ({
@@ -289,6 +383,15 @@ export class WorkspaceService {
       name: workspace.name,
       description: workspace.description,
       pictureUrl: workspace.pictureUrl,
+      createdAt: workspace.createdAt,
+      createdBy:
+        workspace.createdBy === null
+          ? null
+          : {
+              firstName: workspace.createdBy.firstName,
+              lastName: workspace.createdBy.lastName,
+              profileImageUrl: workspace.createdBy.profileImageUrl,
+            },
     }));
 
     return response;

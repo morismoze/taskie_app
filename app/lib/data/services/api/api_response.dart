@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'api_response.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class ApiResponse<T> {
   ApiResponse({this.data, this.error});
 
@@ -15,7 +15,7 @@ class ApiResponse<T> {
   ) => _$ApiResponseFromJson(json, fromJsonT);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ApiError {
   ApiError({required this.code, this.context});
 
@@ -24,5 +24,4 @@ class ApiError {
 
   factory ApiError.fromJson(Map<String, dynamic> json) =>
       _$ApiErrorFromJson(json);
-  Map<String, dynamic> toJson() => _$ApiErrorToJson(this);
 }

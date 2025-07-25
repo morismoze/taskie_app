@@ -24,20 +24,6 @@ WorkspaceUserResponse _$WorkspaceUserResponseFromJson(
         ),
 );
 
-Map<String, dynamic> _$WorkspaceUserResponseToJson(
-  WorkspaceUserResponse instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'firstName': instance.firstName,
-  'lastName': instance.lastName,
-  'role': _$WorkspaceRoleEnumMap[instance.role]!,
-  'userId': instance.userId,
-  'createdAt': instance.createdAt.toIso8601String(),
-  'email': instance.email,
-  'profileImageUrl': instance.profileImageUrl,
-  'createdBy': instance.createdBy,
-};
-
 const _$WorkspaceRoleEnumMap = {
   WorkspaceRole.manager: 'MANAGER',
   WorkspaceRole.member: 'MEMBER',
@@ -50,11 +36,3 @@ WorkspaceUserCreatedByResponse _$WorkspaceUserCreatedByResponseFromJson(
   lastName: json['lastName'] as String,
   profileImageUrl: json['profileImageUrl'] as String?,
 );
-
-Map<String, dynamic> _$WorkspaceUserCreatedByResponseToJson(
-  WorkspaceUserCreatedByResponse instance,
-) => <String, dynamic>{
-  'firstName': instance.firstName,
-  'lastName': instance.lastName,
-  'profileImageUrl': instance.profileImageUrl,
-};

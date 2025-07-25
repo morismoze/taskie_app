@@ -27,7 +27,7 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
       ..execute(false);
     shareWorkspaceInviteLink = Command0(_shareWorkspaceInviteLink);
     createVirtualUser = Command1(_createVirtualUser);
-    _getActiveWorkspaceDetails();
+    _loadWorkspaceDetails();
   }
 
   final String _activeWorkspaceId;
@@ -43,24 +43,24 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
   /// Returns invite link
   late Command1<String, bool> createWorkspaceInviteLink;
   late Command1<void, (String firstName, String lastName)> createVirtualUser;
-  Workspace? _activeWorkspace;
+  Workspace? _activeWorkspaceDetails;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
   String? _workspaceInviteLink;
 
-  void _getActiveWorkspaceDetails() {
-    final activeWorkspaceResult = _workspaceRepository
-        .getActiveWorkspaceDetails();
+  void _loadWorkspaceDetails() {
+    final activeWorkspaceDetailsResult = _workspaceRepository
+        .loadWorkspaceDetails(_activeWorkspaceId);
 
-    switch (activeWorkspaceResult) {
+    switch (activeWorkspaceDetailsResult) {
       case Ok():
-        _activeWorkspace = activeWorkspaceResult.value;
+        _activeWorkspaceDetails = activeWorkspaceDetailsResult.value;
         return;
       case Error():
         _log.warning(
           'Failed to load active workspace details',
-          activeWorkspaceResult.error,
+          activeWorkspaceDetailsResult.error,
         );
     }
   }
@@ -86,7 +86,7 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<ShareResult>> _shareWorkspaceInviteLink() async {
-    if (_activeWorkspace == null) {
+    if (_activeWorkspaceDetails == null) {
       return Result.error(Exception('Active workspace details is empty'));
     }
 
@@ -96,7 +96,7 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
 
     final resultShare = await _shareWorkspaceInviteLinkUseCase.share(
       inviteLink: _workspaceInviteLink!,
-      workspaceName: _activeWorkspace!.name,
+      workspaceName: _activeWorkspaceDetails!.name,
     );
 
     switch (resultShare) {

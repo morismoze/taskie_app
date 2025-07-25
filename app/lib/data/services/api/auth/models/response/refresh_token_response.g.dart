@@ -13,11 +13,3 @@ RefreshTokenResponse _$RefreshTokenResponseFromJson(
   refreshToken: json['refreshToken'] as String,
   tokenExpires: (json['tokenExpires'] as num).toInt(),
 );
-
-Map<String, dynamic> _$RefreshTokenResponseToJson(
-  RefreshTokenResponse instance,
-) => <String, dynamic>{
-  'accessToken': instance.accessToken,
-  'refreshToken': instance.refreshToken,
-  'tokenExpires': instance.tokenExpires,
-};

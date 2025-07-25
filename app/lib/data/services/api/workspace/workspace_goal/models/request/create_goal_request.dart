@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'create_goal_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class CreateGoalRequest {
   CreateGoalRequest({
     required this.title,

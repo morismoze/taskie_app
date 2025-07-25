@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'refresh_token_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class RefreshTokenRequest {
   RefreshTokenRequest(this.refreshToken);
 

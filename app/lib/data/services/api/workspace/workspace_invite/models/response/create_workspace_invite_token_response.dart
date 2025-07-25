@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'create_workspace_invite_token_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class CreateWorkspaceInviteTokenResponse {
   CreateWorkspaceInviteTokenResponse({
     required this.token,

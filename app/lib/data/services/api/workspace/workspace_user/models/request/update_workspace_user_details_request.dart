@@ -1,10 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../../user/models/response/user_response.dart';
-
 part 'update_workspace_user_details_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class UpdateWorkspaceUserDetailsRequest {
   UpdateWorkspaceUserDetailsRequest({this.firstName, this.lastName, this.role});
 

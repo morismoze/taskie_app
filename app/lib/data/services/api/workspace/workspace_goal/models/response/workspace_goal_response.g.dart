@@ -18,18 +18,6 @@ WorkspaceGoalResponse _$WorkspaceGoalResponseFromJson(
   description: json['description'] as String?,
 );
 
-Map<String, dynamic> _$WorkspaceGoalResponseToJson(
-  WorkspaceGoalResponse instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'title': instance.title,
-  'requiredPoints': instance.requiredPoints,
-  'accumulatedPoints': instance.accumulatedPoints,
-  'assignee': instance.assignee,
-  'status': _$ProgressStatusEnumMap[instance.status]!,
-  'description': instance.description,
-};
-
 const _$ProgressStatusEnumMap = {
   ProgressStatus.inProgress: 'IN_PROGRESS',
   ProgressStatus.completed: 'COMPLETED',

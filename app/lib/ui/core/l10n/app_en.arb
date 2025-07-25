@@ -102,8 +102,8 @@
   "workspaceUserFirstNameLabel": "First name",
   "workspaceUserLastNameLabel": "Last name",
   "roleLabel": "Role",
-  "createdBy": "Created by",
-  "createdAt": "Created at",
+  "workspaceUsersManagementUserDetailsCreatedBy": "User created by",
+  "workspaceUsersManagementUserDetailsCreatedAt": "User created at",
   "createNewGoalNoMembers": "It looks like your workspace doesn't have any members to assign a goal to yet. Try inviting someone or creating virtual members.",
   "createNewGoalTitle": "New goal",
   "goalTitleLabel": "Goal title",
@@ -113,5 +113,13 @@
   "goalRequiredPointsNote": "Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).",
   "createNewGoalRequiredPointsNaN": "Required points must be a number without characters",
   "createNewGoalRequiredPointsNotMultipleOf10": "Required points must be a multiple of 10",
-  "goalAssigneesRequired": "Goal must have 1 assignee"
+  "goalAssigneesRequired": "Goal must have 1 assignee",
+  "workspaceSettings": "Workspace settings",
+  "workspaceSettingsOwnerDeletedAccount": "Owner deleted their account",
+  "workspaceSettingsCreatedBy": "Workspace created by",
+  "workspaceSettingsCreatedAt": "Workspace created at",
+  "workspaceSettingsEdit": "Edit workspace details",
+  "workspaceSettingsEditSubmit": "Edit details",
+  "workspaceSettingsEditSuccess": "Successfully edited workspace details",
+  "workspaceSettingsEditError": "Uh-oh! We've had some trouble editing workspace details"
 }
