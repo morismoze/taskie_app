@@ -10,20 +10,21 @@ class EntryScreenViewModel {
     required WorkspaceRepository workspaceRepository,
   }) : _userRepository = userRepository,
        _workspaceRepository = workspaceRepository {
-    loadInitial = Command0(_loadInitial)..execute();
+    setupInitial = Command0(_setupInitial)..execute();
   }
 
   final UserRepository _userRepository;
   final WorkspaceRepository _workspaceRepository;
   final _log = Logger('EntryViewModel');
 
-  /// Initial load of needed data.
+  /// Initial setup before proceeding to the app.
   ///
   /// Returns workspaceId of the workspace to navigate to or null
   /// if the loaded workspaces list is empty.
-  late Command0 loadInitial;
+  late Command0 setupInitial;
 
-  Future<Result<String?>> _loadInitial() async {
+  Future<Result<String?>> _setupInitial() async {
+    // 1. Load user
     final resultLoadUser = await _userRepository.loadUser();
 
     switch (resultLoadUser) {
@@ -34,8 +35,7 @@ class EntryScreenViewModel {
         return Result.error(resultLoadUser.error);
     }
 
-    // getWorkspaces repository function implementation also
-    // notifies when there is zero workspaces fetched from origin.
+    // 3. Load workspaces
     final resultLoadWorkspaces = await _workspaceRepository.loadWorkspaces();
 
     switch (resultLoadWorkspaces) {
@@ -43,8 +43,7 @@ class EntryScreenViewModel {
         if (resultLoadWorkspaces.value.isEmpty) {
           // Return null in the case workspaces list is empty, because
           // gorouter redirect function will kick in automatically in this case
-          // because of the comment above, and will redirect the user to
-          // workspaces/create/initial screen.
+          // and will redirect the user to workspaces/create/initial screen.
           return const Result.ok(null);
         }
         break;
@@ -53,6 +52,7 @@ class EntryScreenViewModel {
         return Result.error(resultLoadWorkspaces.error);
     }
 
+    // 4.a Load active workspace IDs
     final activeWorkspaceIdResult = await _workspaceRepository
         .loadActiveWorkspaceId();
 
@@ -68,8 +68,9 @@ class EntryScreenViewModel {
     if (activeWorkspaceId != null) {
       return Result.ok(activeWorkspaceIdResult.value);
     } else {
-      // User has either:
-      // 1. created his first workspace so we will set active workspace ID to that workspace ID or
+      // 4.b Set active workspace ID if active workspace ID from shared prefs is null.
+      // This can happen when user has either:
+      // 1. launched the app for the first time
       // 2. deleted application storage
       final firstWorkspaceId = resultLoadWorkspaces.value.first.id;
       final resultSetActiveWorkspaceId = await _workspaceRepository

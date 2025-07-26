@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
+import '../../../core/ui/app_dialog.dart';
 import '../../../core/ui/app_filled_button.dart';
-import '../../../core/ui/app_modal.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 
@@ -28,15 +28,15 @@ class WorkspaceLeaveButton extends StatelessWidget {
   }
 
   void _confirmWorkspaceLeave(BuildContext context, String workspaceId) {
-    AppDialog.show(
+    AppDialog.showAlert(
       context: context,
-      canPop: viewModel.leaveWorkspace.running,
+      canPop: !viewModel.leaveWorkspace.running,
       title: FaIcon(
         FontAwesomeIcons.circleExclamation,
         color: Theme.of(context).colorScheme.error,
         size: 30,
       ),
-      message: Text(
+      content: Text(
         context.localization.appDrawerLeaveWorkspaceModalMessage,
         style: Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.center,

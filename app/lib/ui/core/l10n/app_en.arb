@@ -9,8 +9,9 @@
   "misc_close": "Close",
   "misc_note": "Note",
   "misc_roleManager": "Manager",
-  "misc_roleMember": "ČlanMember",
+  "misc_roleMember": "Member",
   "misc_orSeparator": "or",
+  "misc_ok": "Ok",
   "@@comment": "Specific-case translations",
   "signInTitleStart": "Happy Chores, Happy Kids.",
   "signInTitleEnd": "Happy Home.",
@@ -45,7 +46,7 @@
   "appDrawerLeaveWorkspaceSuccess": "Successfully left the workspace",
   "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
   "appDrawerCreateNewWorkspace": "Create new workspace",
-  "appDrawerPreferences": "Preferences",
+  "preferencesLabel": "Preferences",
   "createNewTaskNoMembers": "It looks like your workspace doesn't have any members to assign a task to yet. Try inviting someone or creating virtual members.",
   "objectiveNoMembersCta": "Let's add members",
   "createNewTaskTitle": "New task",
@@ -121,5 +122,11 @@
   "workspaceSettingsEdit": "Edit workspace details",
   "workspaceSettingsEditSubmit": "Edit details",
   "workspaceSettingsEditSuccess": "Successfully edited workspace details",
-  "workspaceSettingsEditError": "Uh-oh! We've had some trouble editing workspace details"
+  "workspaceSettingsEditError": "Uh-oh! We've had some trouble editing workspace details",
+  "preferencesLocalization": "Localization",
+  "preferencesLocalizationLanguage": "Language",
+  "preferencesTheme": "Theme",
+  "preferencesThemeDarkMode": "Dark mode",
+  "preferencesThemeDarkModeOff": "Off",
+  "comingSoon": "Coming soon"
 }

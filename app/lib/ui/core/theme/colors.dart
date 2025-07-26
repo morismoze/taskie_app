@@ -22,7 +22,7 @@ abstract final class AppColors {
     onPrimary: AppColors.white1,
     secondary: AppColors.black1,
     onSecondary: AppColors.white1,
-    surface: Colors.white,
+    surface: AppColors.white1,
     onSurface: AppColors.black1,
     error: AppColors.red1,
     onError: AppColors.white1,
@@ -35,7 +35,7 @@ abstract final class AppColors {
     secondary: AppColors.white1,
     onSecondary: AppColors.black1,
     surface: AppColors.black1,
-    onSurface: Colors.white,
+    onSurface: AppColors.white1,
     error: AppColors.red1,
     onError: AppColors.white1,
   );

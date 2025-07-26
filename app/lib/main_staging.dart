@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'config/dependencies.dart';
+import 'ui/app_startup/view_models/app_startup_view_model.dart';
+import 'ui/app_startup/widgets/app_startup.dart';
 
 /// Staging config entry point.
 /// Launch with `derry run:staging`
@@ -20,5 +22,15 @@ void main() async {
     );
   });
 
-  runApp(MultiProvider(providers: providers, child: const MainApp()));
+  runApp(
+    MultiProvider(
+      providers: providers,
+      child: Builder(
+        builder: (context) => AppStartup(
+          viewModel: AppStartupViewModel(preferencesRepository: context.read()),
+          child: const MainApp(),
+        ),
+      ),
+    ),
+  );
 }
