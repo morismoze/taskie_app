@@ -9,6 +9,7 @@ class AppFilledButton extends StatelessWidget {
     required this.onPress,
     required this.label,
     this.isLoading = false,
+    this.isDisabled = false,
     this.backgroundColor,
     this.leadingIcon,
   });
@@ -16,13 +17,14 @@ class AppFilledButton extends StatelessWidget {
   final void Function() onPress;
   final String label;
   final bool isLoading;
+  final bool isDisabled;
   final Color? backgroundColor;
   final IconData? leadingIcon;
 
   @override
   Widget build(BuildContext context) {
     return FilledButton(
-      onPressed: isLoading ? () {} : onPress,
+      onPressed: isLoading || isDisabled ? () {} : onPress,
       style: Theme.of(context).filledButtonTheme.style!.copyWith(
         backgroundColor: backgroundColor != null
             ? WidgetStateProperty.all(backgroundColor)

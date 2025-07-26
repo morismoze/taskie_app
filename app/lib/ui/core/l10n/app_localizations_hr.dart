@@ -42,6 +42,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_orSeparator => 'ili';
 
   @override
+  String get misc_ok => 'U redu';
+
+  @override
   String get signInTitleStart => 'Učenje odgovornosti.';
 
   @override
@@ -155,7 +158,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get appDrawerCreateNewWorkspace => 'Stvori novi radni prostor';
 
   @override
-  String get appDrawerPreferences => 'Preference';
+  String get preferencesLabel => 'Preference';
 
   @override
   String get createNewTaskNoMembers =>
@@ -431,4 +434,22 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get workspaceSettingsEditError =>
       'Uh-oh! Došlo je do problema prilikom uređivanja podataka radnog prostora';
+
+  @override
+  String get preferencesLocalization => 'Lokalizacija';
+
+  @override
+  String get preferencesLocalizationLanguage => 'Jezik';
+
+  @override
+  String get preferencesTheme => 'Tema';
+
+  @override
+  String get preferencesThemeDarkMode => 'Tamni način';
+
+  @override
+  String get preferencesThemeDarkModeOff => 'Isključeno';
+
+  @override
+  String get comingSoon => 'Uskoro';
 }

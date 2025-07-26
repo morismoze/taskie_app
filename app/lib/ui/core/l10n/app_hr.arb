@@ -11,6 +11,7 @@
   "misc_roleManager": "Menadžer",
   "misc_roleMember": "Član",
   "misc_orSeparator": "ili",
+  "misc_ok": "U redu",
   "@@comment": "Specific-case translations",
   "signInTitleStart": "Učenje odgovornosti.",
   "signInTitleEnd": "Zabava nagrađivanja.",
@@ -45,7 +46,7 @@
   "appDrawerLeaveWorkspaceSuccess": "Uspješno ste napustili radni prostor",
   "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
   "appDrawerCreateNewWorkspace": "Stvori novi radni prostor",
-  "appDrawerPreferences": "Preference",
+  "preferencesLabel": "Preference",
   "createNewTaskNoMembers": "Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili stvoriti virtualne članove.",
   "objectiveNoMembersCta": "Dodajmo članove",
   "createNewTaskTitle": "Novi zadatak",
@@ -121,5 +122,11 @@
   "workspaceSettingsEdit": "Uređivanje podataka radnog prostora",
   "workspaceSettingsEditSubmit": "Uredi podatke",
   "workspaceSettingsEditSuccess": "Uspješno ste uredili podatke radnog prostora",
-  "workspaceSettingsEditError": "Uh-oh! Došlo je do problema prilikom uređivanja podataka radnog prostora"
+  "workspaceSettingsEditError": "Uh-oh! Došlo je do problema prilikom uređivanja podataka radnog prostora",
+  "preferencesLocalization": "Lokalizacija",
+  "preferencesLocalizationLanguage": "Jezik",
+  "preferencesTheme": "Tema",
+  "preferencesThemeDarkMode": "Tamni način",
+  "preferencesThemeDarkModeOff": "Isključeno",
+  "comingSoon": "Uskoro"
 }

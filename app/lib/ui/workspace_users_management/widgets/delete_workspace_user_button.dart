@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_modal.dart';
 import '../../core/ui/app_text_button.dart';
 import '../view_models/workspace_users_management_screen_viewmodel.dart';
 
@@ -30,7 +30,7 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
   }
 
   void _confirmWorkspaceUserDeletion(BuildContext context, String workspaceId) {
-    AppDialog.show(
+    AppDialog.showAlert(
       context: context,
       canPop: !viewModel.deleteWorkspaceUser.running,
       title: FaIcon(
@@ -38,7 +38,7 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.error,
         size: 30,
       ),
-      message: Text(
+      content: Text(
         context.localization.workspaceUsersManagementDeleteUserModalMessage,
         style: Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.center,

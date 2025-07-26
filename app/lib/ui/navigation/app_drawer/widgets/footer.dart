@@ -42,7 +42,7 @@ class Footer extends StatelessWidget {
                 onPress: () {
                   context.push(Routes.preferences);
                 },
-                label: context.localization.appDrawerPreferences,
+                label: context.localization.preferencesLabel,
                 leadingIcon: FontAwesomeIcons.gear,
               ),
             ],

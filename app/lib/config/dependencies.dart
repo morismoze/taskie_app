@@ -121,8 +121,10 @@ List<SingleChildWidget> get providers {
               )
               as WorkspaceInviteRepository,
     ),
-    Provider(
-      create: (context) => PreferencesRepositoryImpl() as PreferencesRepository,
+    ChangeNotifierProvider(
+      create: (context) =>
+          PreferencesRepositoryImpl(sharedPreferencesService: context.read())
+              as PreferencesRepository,
     ),
     Provider(
       create: (context) => RefreshTokenUseCase(

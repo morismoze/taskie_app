@@ -36,10 +36,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_roleManager => 'Manager';
 
   @override
-  String get misc_roleMember => 'ČlanMember';
+  String get misc_roleMember => 'Member';
 
   @override
   String get misc_orSeparator => 'or';
+
+  @override
+  String get misc_ok => 'Ok';
 
   @override
   String get signInTitleStart => 'Happy Chores, Happy Kids.';
@@ -155,7 +158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDrawerCreateNewWorkspace => 'Create new workspace';
 
   @override
-  String get appDrawerPreferences => 'Preferences';
+  String get preferencesLabel => 'Preferences';
 
   @override
   String get createNewTaskNoMembers =>
@@ -428,4 +431,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workspaceSettingsEditError =>
       'Uh-oh! We\'ve had some trouble editing workspace details';
+
+  @override
+  String get preferencesLocalization => 'Localization';
+
+  @override
+  String get preferencesLocalizationLanguage => 'Language';
+
+  @override
+  String get preferencesTheme => 'Theme';
+
+  @override
+  String get preferencesThemeDarkMode => 'Dark mode';
+
+  @override
+  String get preferencesThemeDarkModeOff => 'Off';
+
+  @override
+  String get comingSoon => 'Coming soon';
 }

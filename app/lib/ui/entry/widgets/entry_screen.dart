@@ -30,19 +30,19 @@ class _EntryScreenState extends State<EntryScreen> {
         statusBarColor: Colors.transparent,
       ),
     );
-    widget.viewModel.loadInitial.addListener(_onInitialLoad);
+    widget.viewModel.setupInitial.addListener(_onInitialLoad);
   }
 
   @override
   void didUpdateWidget(covariant EntryScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.loadInitial.addListener(_onInitialLoad);
-    oldWidget.viewModel.loadInitial.removeListener(_onInitialLoad);
+    widget.viewModel.setupInitial.addListener(_onInitialLoad);
+    oldWidget.viewModel.setupInitial.removeListener(_onInitialLoad);
   }
 
   @override
   void dispose() {
-    widget.viewModel.loadInitial.removeListener(_onInitialLoad);
+    widget.viewModel.setupInitial.removeListener(_onInitialLoad);
     super.dispose();
   }
 
@@ -74,17 +74,17 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   void _onInitialLoad() {
-    if (widget.viewModel.loadInitial.completed) {
+    if (widget.viewModel.setupInitial.completed) {
       final activeWorkspaceId =
-          (widget.viewModel.loadInitial.result as Ok<String?>).value;
+          (widget.viewModel.setupInitial.result as Ok<String?>).value;
       if (activeWorkspaceId != null) {
         context.go(Routes.tasks(workspaceId: activeWorkspaceId));
       }
-      widget.viewModel.loadInitial.clearResult();
+      widget.viewModel.setupInitial.clearResult();
     }
 
-    if (widget.viewModel.loadInitial.error) {
-      widget.viewModel.loadInitial.clearResult();
+    if (widget.viewModel.setupInitial.error) {
+      widget.viewModel.setupInitial.clearResult();
       AppSnackbar.showError(
         context: context,
         message: context.localization.errorOnInitialLoad,

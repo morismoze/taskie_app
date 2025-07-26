@@ -155,7 +155,7 @@ abstract class AppLocalizations {
   /// No description provided for @misc_roleMember.
   ///
   /// In en, this message translates to:
-  /// **'ČlanMember'**
+  /// **'Member'**
   String get misc_roleMember;
 
   /// No description provided for @misc_orSeparator.
@@ -163,6 +163,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'or'**
   String get misc_orSeparator;
+
+  /// No description provided for @misc_ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Ok'**
+  String get misc_ok;
 
   /// No description provided for @signInTitleStart.
   ///
@@ -362,11 +368,11 @@ abstract class AppLocalizations {
   /// **'Create new workspace'**
   String get appDrawerCreateNewWorkspace;
 
-  /// No description provided for @appDrawerPreferences.
+  /// No description provided for @preferencesLabel.
   ///
   /// In en, this message translates to:
   /// **'Preferences'**
-  String get appDrawerPreferences;
+  String get preferencesLabel;
 
   /// No description provided for @createNewTaskNoMembers.
   ///
@@ -823,6 +829,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble editing workspace details'**
   String get workspaceSettingsEditError;
+
+  /// No description provided for @preferencesLocalization.
+  ///
+  /// In en, this message translates to:
+  /// **'Localization'**
+  String get preferencesLocalization;
+
+  /// No description provided for @preferencesLocalizationLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get preferencesLocalizationLanguage;
+
+  /// No description provided for @preferencesTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get preferencesTheme;
+
+  /// No description provided for @preferencesThemeDarkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark mode'**
+  String get preferencesThemeDarkMode;
+
+  /// No description provided for @preferencesThemeDarkModeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get preferencesThemeDarkModeOff;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
 }
 
 class _AppLocalizationsDelegate
