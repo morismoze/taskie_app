@@ -19,6 +19,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
     _loadUser();
     _loadWorkspaces();
     createWorkspace = Command1(_createWorkspace);
+    joinWorkspaceViaInviteLink = Command1(_joinWorkspaceViaInviteLink);
   }
 
   final WorkspaceRepository _workspaceRepository;
@@ -28,6 +29,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
 
   /// Returns ID of the newly created workspace
   late Command1<String, (String name, String? description)> createWorkspace;
+  late Command1<String, String> joinWorkspaceViaInviteLink;
 
   User? _user;
 
@@ -76,5 +78,9 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
     );
 
     return resultCreate;
+  }
+
+  Future<Result<String>> _joinWorkspaceViaInviteLink(String inviteLink) async {
+    return Future.delayed(const Duration(seconds: 3));
   }
 }

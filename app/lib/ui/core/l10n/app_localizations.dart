@@ -170,6 +170,12 @@ abstract class AppLocalizations {
   /// **'Ok'**
   String get misc_ok;
 
+  /// No description provided for @misc_comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get misc_comingSoon;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -572,11 +578,11 @@ abstract class AppLocalizations {
   /// **'Invite new users to this workspace by sending them the invite link below:'**
   String get workspaceUsersManagementCreateWorkspaceInviteDescription;
 
-  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteLabel.
+  /// No description provided for @workspaceInviteLabel.
   ///
   /// In en, this message translates to:
   /// **'Workspace invite link'**
-  String get workspaceUsersManagementCreateWorkspaceInviteLabel;
+  String get workspaceInviteLabel;
 
   /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteNote.
   ///
@@ -860,11 +866,35 @@ abstract class AppLocalizations {
   /// **'Off'**
   String get preferencesThemeDarkModeOff;
 
-  /// No description provided for @comingSoon.
+  /// No description provided for @workspaceCreate.
   ///
   /// In en, this message translates to:
-  /// **'Coming soon'**
-  String get comingSoon;
+  /// **'New workspace'**
+  String get workspaceCreate;
+
+  /// No description provided for @workspaceCreateNewDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new workspace:'**
+  String get workspaceCreateNewDescription;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Join via workspace invite link:'**
+  String get workspaceCreateJoinViaInviteLinkDescription;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The invite link must be in the format\n{inviteLinkExample}.'**
+  String workspaceCreateJoinViaInviteLinkNote(Object inviteLinkExample);
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Join workspace'**
+  String get workspaceCreateJoinViaInviteLinkSubmit;
 }
 
 class _AppLocalizationsDelegate

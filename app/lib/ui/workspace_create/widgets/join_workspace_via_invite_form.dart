@@ -1,43 +1,71 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/environment/env.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../view_models/create_workspace_screen_viewmodel.dart';
 
-class CreateWorkspaceForm extends StatefulWidget {
-  const CreateWorkspaceForm({super.key, required this.viewModel});
+class JoinWorkspaceViaInviteForm extends StatefulWidget {
+  const JoinWorkspaceViaInviteForm({super.key, required this.viewModel});
 
   final CreateWorkspaceScreenViewModel viewModel;
 
   @override
-  State<CreateWorkspaceForm> createState() => _CreateWorkspaceFormState();
+  State<JoinWorkspaceViaInviteForm> createState() =>
+      _JoinWorkspaceViaInviteFormState();
 }
 
-class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
+class _JoinWorkspaceViaInviteFormState
+    extends State<JoinWorkspaceViaInviteForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _inviteLinkController = TextEditingController();
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _descriptionController.dispose();
+    _inviteLinkController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final workspaceJoinDeepLinkRoute = Routes.workspaceJoin('example');
+    final serverBaseUrl = Env.deepLinkBaseUrl;
+    final inviteLinkExample = '$serverBaseUrl$workspaceJoinDeepLinkRoute';
+
     return Column(
       spacing: 30,
       children: [
         Text(
-          context.localization.workspaceCreateNewDescription,
+          context.localization.workspaceCreateJoinViaInviteLinkDescription,
           textAlign: TextAlign.center,
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        Text.rich(
+          TextSpan(
+            text: '${context.localization.misc_note}: ',
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              fontSize: 13,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+            ),
+            children: [
+              TextSpan(
+                text: context.localization.workspaceCreateJoinViaInviteLinkNote(
+                  inviteLinkExample,
+                ),
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
         ),
         Form(
           key: _formKey,
@@ -45,31 +73,21 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
           child: Column(
             children: [
               AppTextFormField(
-                controller: _nameController,
-                label: context.localization.workspaceNameLabel,
-                validator: _validateName,
-                textInputAction: TextInputAction.next,
-                maxCharacterCount: ValidationRules.workspaceNameMaxLength,
-              ),
-              const SizedBox(height: 10),
-              AppTextFormField(
-                controller: _descriptionController,
-                label: context.localization.workspaceDescriptionLabel,
-                validator: _validateDescription,
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
+                controller: _inviteLinkController,
+                label: context.localization.workspaceInviteLabel,
+                validator: _validateInviteLink,
                 textInputAction: TextInputAction.done,
-                required: false,
-                maxCharacterCount:
-                    ValidationRules.workspaceDescriptionMaxLength,
               ),
               const SizedBox(height: 30),
               ListenableBuilder(
-                listenable: widget.viewModel.createWorkspace,
+                listenable: widget.viewModel.joinWorkspaceViaInviteLink,
                 builder: (builderContext, _) => AppFilledButton(
                   onPress: _onSubmit,
-                  label: builderContext.localization.workspaceCreateLabel,
-                  isLoading: widget.viewModel.createWorkspace.running,
+                  label: builderContext
+                      .localization
+                      .workspaceCreateJoinViaInviteLinkSubmit,
+                  isLoading:
+                      widget.viewModel.joinWorkspaceViaInviteLink.running,
                 ),
               ),
             ],
@@ -81,16 +99,12 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      final name = _nameController.text.trim();
-      final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
-      widget.viewModel.createWorkspace.execute((name, description));
+      final inviteLink = _inviteLinkController.text.trim();
+      widget.viewModel.joinWorkspaceViaInviteLink.execute(inviteLink);
     }
   }
 
-  String? _validateName(String? value) {
+  String? _validateInviteLink(String? value) {
     final trimmedValue = value?.trim();
     switch (trimmedValue) {
       case final String trimmedValue when trimmedValue.isEmpty:

@@ -45,6 +45,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_ok => 'Ok';
 
   @override
+  String get misc_comingSoon => 'Coming soon';
+
+  @override
   String get signInTitleStart => 'Happy Chores, Happy Kids.';
 
   @override
@@ -278,8 +281,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Invite new users to this workspace by sending them the invite link below:';
 
   @override
-  String get workspaceUsersManagementCreateWorkspaceInviteLabel =>
-      'Workspace invite link';
+  String get workspaceInviteLabel => 'Workspace invite link';
 
   @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
@@ -448,5 +450,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get preferencesThemeDarkModeOff => 'Off';
 
   @override
-  String get comingSoon => 'Coming soon';
+  String get workspaceCreate => 'New workspace';
+
+  @override
+  String get workspaceCreateNewDescription => 'Create new workspace:';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkDescription =>
+      'Join via workspace invite link:';
+
+  @override
+  String workspaceCreateJoinViaInviteLinkNote(Object inviteLinkExample) {
+    return 'The invite link must be in the format\n$inviteLinkExample.';
+  }
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkSubmit => 'Join workspace';
 }

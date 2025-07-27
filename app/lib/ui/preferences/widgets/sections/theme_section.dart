@@ -25,7 +25,7 @@ class _ThemeDarkModeOption extends StatelessWidget {
       title: context.localization.preferencesThemeDarkMode,
       subtitle: context.localization.preferencesThemeDarkModeOff,
       trailing: Text(
-        context.localization.comingSoon.toUpperCase(),
+        context.localization.misc_comingSoon.toUpperCase(),
         style: Theme.of(
           context,
         ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
