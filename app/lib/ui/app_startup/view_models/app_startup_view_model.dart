@@ -2,17 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
+import '../../../data/repositories/auth/auth_state_repository.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../utils/command.dart';
 import '../../core/utils/intl.dart';
 
 class AppStartupViewModel {
-  AppStartupViewModel({required PreferencesRepository preferencesRepository})
-    : _preferencesRepository = preferencesRepository {
+  AppStartupViewModel({
+    required PreferencesRepository preferencesRepository,
+    required AuthStateRepository authStateRepository,
+  }) : _preferencesRepository = preferencesRepository,
+       _authStateRepository = authStateRepository {
     bootstrap = Command0(_bootstrap)..execute();
   }
 
   final PreferencesRepository _preferencesRepository;
+  final AuthStateRepository _authStateRepository;
   final _log = Logger('AppStartupViewModel');
 
   late Command0 bootstrap;
@@ -47,6 +52,12 @@ class AppStartupViewModel {
           return Result.error(result.error);
       }
     }
+
+    // No need to check the result. This will either set the [isAuthenticated]
+    // state to `true` or it will remain to `false`. That state will then be
+    // inspected by the gorouter redirect function when gorouter builds the routes
+    // initially.
+    await _authStateRepository.loadAuthenticatedState();
 
     return const Result.ok(null);
   }

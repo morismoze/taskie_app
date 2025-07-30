@@ -10,22 +10,24 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
 
   final SecureStorageService _secureStorageService;
 
-  bool? _isAuthenticated;
+  // It is initially set to `false` because this will be set
+  // on app startup, which happens before gorouter (and hence its
+  // redirect function).
+  bool _isAuthenticated = false;
   String? _accessToken;
   String? _refreshToken;
   final _log = Logger('AuthStateRepository');
 
   @override
-  Future<bool> get isAuthenticated async {
-    // Status is cached
-    if (_isAuthenticated != null) {
-      return _isAuthenticated!;
-    }
+  bool get isAuthenticated => _isAuthenticated;
 
-    // Status is not cached, fetch from storage
+  @override
+  Future<bool> loadAuthenticatedState() async {
     final result = await _secureStorageService.getAccessToken();
     switch (result) {
       case Ok<String?>():
+        // No need to call `notifyListeners` here because this load
+        // happens on app startup before the gorouter (and its redirect function).
         _isAuthenticated = result.value != null;
       case Error<String?>():
         _log.severe(
@@ -34,7 +36,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
         );
     }
 
-    return _isAuthenticated ?? false;
+    return _isAuthenticated;
   }
 
   @override

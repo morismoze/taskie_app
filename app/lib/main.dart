@@ -27,7 +27,10 @@ void main() async {
       providers: providers,
       child: Builder(
         builder: (context) => AppStartup(
-          viewModel: AppStartupViewModel(preferencesRepository: context.read()),
+          viewModel: AppStartupViewModel(
+            preferencesRepository: context.read(),
+            authStateRepository: context.read(),
+          ),
           child: const MainApp(),
         ),
       ),
