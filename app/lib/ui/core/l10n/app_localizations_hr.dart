@@ -45,6 +45,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_ok => 'U redu';
 
   @override
+  String get misc_comingSoon => 'Uskoro';
+
+  @override
   String get signInTitleStart => 'Učenje odgovornosti.';
 
   @override
@@ -78,10 +81,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get bottomNavigationBarGoalsLabel => 'Ciljevi';
 
   @override
-  String get taskCreateNew => 'Stvori novi zadatak';
+  String get taskCreateNew => 'Kreiraj novi zadatak';
 
   @override
-  String get goalCreateNew => 'Stvori novi cilj';
+  String get goalCreateNew => 'Kreiraj novi cilj';
 
   @override
   String get workspaceNameLabel => 'Naziv radnog prostora';
@@ -90,7 +93,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get workspaceDescriptionLabel => 'Opis radnog prostora';
 
   @override
-  String get workspaceCreateTitle => 'Stvorimo novi radni prostor';
+  String get workspaceCreateTitle => 'Kreirajmo novi radni prostor';
 
   @override
   String workspaceCreateSubtitle(Object email) {
@@ -98,7 +101,7 @@ class AppLocalizationsHr extends AppLocalizations {
   }
 
   @override
-  String get workspaceCreateLabel => 'Stvori radni prostor';
+  String get workspaceCreateLabel => 'Kreiraj radni prostor';
 
   @override
   String get workspaceCreateNameMinLength =>
@@ -155,14 +158,14 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora';
 
   @override
-  String get appDrawerCreateNewWorkspace => 'Stvori novi radni prostor';
+  String get appDrawerCreateNewWorkspace => 'Kreiraj novi radni prostor';
 
   @override
   String get preferencesLabel => 'Preference';
 
   @override
   String get createNewTaskNoMembers =>
-      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
+      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
 
   @override
   String get objectiveNoMembersCta => 'Dodajmo članove';
@@ -255,7 +258,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUsersGuideRolesBody =>
-      'Svakom korisniku u radnom prostoru dodijeljena je jedna od dvije uloge. Korisnik koji stvori radni prostor automatski postaje Menadžer, dok se korisnicima koji se pridruže putem pozivne poveznice automatski dodjeljuje uloga Člana.';
+      'Svakom korisniku u radnom prostoru dodijeljena je jedna od dvije uloge. Korisnik koji kreira radni prostor automatski postaje Menadžer, dok se korisnicima koji se pridruže putem pozivne poveznice automatski dodjeljuje uloga Člana.';
 
   @override
   String get workspaceUsersManagementUsersGuideManagerRoleTitle =>
@@ -280,8 +283,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Pozovite nove korisnike u ovaj radni prostor slanjem donje poveznice za pozivnicu:';
 
   @override
-  String get workspaceUsersManagementCreateWorkspaceInviteLabel =>
-      'Pozivni link radnog prostora';
+  String get workspaceInviteLabel => 'Pozivni link radnog prostora';
 
   @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
@@ -375,7 +377,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get createNewGoalNoMembers =>
-      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti cilj. Pokušajte pozvati nekoga ili stvoriti virtualne članove.';
+      'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti cilj. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
 
   @override
   String get createNewGoalTitle => 'Novi cilj';
@@ -451,5 +453,41 @@ class AppLocalizationsHr extends AppLocalizations {
   String get preferencesThemeDarkModeOff => 'Isključeno';
 
   @override
-  String get comingSoon => 'Uskoro';
+  String get workspaceCreate => 'Novi radni prostor';
+
+  @override
+  String get workspaceCreateNewDescription => 'Kreirajte novi radni prostor:';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkDescription =>
+      'Pridružite se putem pozivnog linka radnog prostora:';
+
+  @override
+  String workspaceCreateJoinViaInviteLinkNote(Object inviteLinkExample) {
+    return 'Pozivni link mora biti u formatu\n$inviteLinkExample.';
+  }
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkSubmit =>
+      'Pridruži se radnom prostoru';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkInvalid =>
+      'Neispravan format pozivnog linka';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkNotFound =>
+      'Uneseni pozivni link nije važeći';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
+      'Uneseni pozivni link je istekao ili je već iskorišten';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkExistingUser =>
+      'Već ste član ovog radnog prostora';
+
+  @override
+  String get workspaceCreationSuccess =>
+      'Uspješno ste kreirali novi radni prostor';
 }

@@ -9,7 +9,7 @@ export class WorkspaceInviteCleanupService {
   ) {}
 
   /**
-   * We'll initally delete expired invites every week on Sunday midnight at midnight.
+   * We'll initally delete expired invites every week on Sunday at midnight.
    */
 
   @Cron(CronExpression.EVERY_WEEK)

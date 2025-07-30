@@ -33,6 +33,7 @@ import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
+import '../domain/use_cases/join_workspace_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/share_workspace_invite_link_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
@@ -135,9 +136,18 @@ List<SingleChildWidget> get providers {
     Provider(
       create: (context) => ActiveWorkspaceChangeUseCase(
         workspaceRepository: context.read(),
-        userRepository: context.read(),
         workspaceUserRepository: context.read(),
         workspaceTaskRepository: context.read(),
+        workspaceGoalRepository: context.read(),
+      ),
+    ),
+    Provider(
+      create: (context) => JoinWorkspaceUseCase(
+        workspaceInviteRepository: context.read(),
+        workspaceRepository: context.read(),
+        userRepository: context.read(),
+        refreshTokenUseCase: context.read(),
+        activeWorkspaceChangeUseCase: context.read(),
       ),
     ),
     Provider(

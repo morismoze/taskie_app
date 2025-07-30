@@ -2,42 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/l10n/l10n_extensions.dart';
-import '../../../core/ui/app_dialog.dart';
-import '../../../core/ui/app_filled_button.dart';
-import '../../../core/ui/app_radio_list_tile.dart';
-import '../../../core/ui/app_text_button.dart';
-import '../../../core/utils/intl.dart';
-import '../../view_models/preferences_screen_viewmodel.dart';
-import '../preferences_section.dart';
-import '../preferences_section_option.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core/ui/app_dialog.dart';
+import '../../../../core/ui/app_filled_button.dart';
+import '../../../../core/ui/app_radio_list_tile.dart';
+import '../../../../core/ui/app_text_button.dart';
+import '../../../../core/utils/intl.dart';
+import '../../../view_models/preferences_screen_viewmodel.dart';
+import '../../preferences_section_option.dart';
 
-class LocalizationSection extends StatelessWidget {
-  const LocalizationSection({super.key, required this.viewModel});
-
-  final PreferencesScreenViewModel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return PreferencesSection(
-      title: context.localization.preferencesLocalization,
-      children: [_LocalizationLanguageOption(viewModel: viewModel)],
-    );
-  }
-}
-
-class _LocalizationLanguageOption extends StatefulWidget {
-  const _LocalizationLanguageOption({required this.viewModel});
+class LocalizationLanguageOption extends StatefulWidget {
+  const LocalizationLanguageOption({super.key, required this.viewModel});
 
   final PreferencesScreenViewModel viewModel;
 
   @override
-  State<_LocalizationLanguageOption> createState() =>
+  State<LocalizationLanguageOption> createState() =>
       _LocalizationLanguageOptionState();
 }
 
 class _LocalizationLanguageOptionState
-    extends State<_LocalizationLanguageOption> {
+    extends State<LocalizationLanguageOption> {
   late Locale _initialLocale;
 
   @override
@@ -64,7 +49,7 @@ class _LocalizationLanguageOptionState
     return PreferencesSectionOption(
       leadingIconData: FontAwesomeIcons.globe,
       title: context.localization.preferencesLocalizationLanguage,
-      subtitle: IntlUtil.getDisplayName(widget.viewModel.appLocale),
+      subtitle: IntlUtils.getDisplayName(widget.viewModel.appLocale),
       onTap: () {
         var dialogSelectedLocale = _initialLocale;
         AppDialog.show(
@@ -86,7 +71,7 @@ class _LocalizationLanguageOptionState
 
                 return Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: IntlUtil.supportedLanguages.map((language) {
+                  children: IntlUtils.supportedLanguages.map((language) {
                     return AppRadioListTile(
                       value: language.locale,
                       title: Text(

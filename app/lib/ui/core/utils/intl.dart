@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-abstract final class IntlUtil {
+abstract final class IntlUtils {
   static SupportedLanguage defaultSupportedLanguage = const SupportedLanguage(
     Locale('en', 'US'),
     'English (US)',

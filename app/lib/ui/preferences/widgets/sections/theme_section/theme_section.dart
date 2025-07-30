@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../core/l10n/l10n_extensions.dart';
-import '../preferences_section.dart';
-import '../preferences_section_option.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
+import '../../preferences_section.dart';
+import '../../preferences_section_option.dart';
 
 class ThemeSection extends StatelessWidget {
   const ThemeSection({super.key});
@@ -25,7 +25,7 @@ class _ThemeDarkModeOption extends StatelessWidget {
       title: context.localization.preferencesThemeDarkMode,
       subtitle: context.localization.preferencesThemeDarkModeOff,
       trailing: Text(
-        context.localization.comingSoon.toUpperCase(),
+        context.localization.misc_comingSoon.toUpperCase(),
         style: Theme.of(
           context,
         ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),

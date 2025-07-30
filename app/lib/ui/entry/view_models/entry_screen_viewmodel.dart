@@ -35,7 +35,7 @@ class EntryScreenViewModel {
         return Result.error(resultLoadUser.error);
     }
 
-    // 3. Load workspaces
+    // 2. Load workspaces
     final resultLoadWorkspaces = await _workspaceRepository.loadWorkspaces();
 
     switch (resultLoadWorkspaces) {
@@ -52,7 +52,7 @@ class EntryScreenViewModel {
         return Result.error(resultLoadWorkspaces.error);
     }
 
-    // 4.a Load active workspace IDs
+    // 3.a Load active workspace IDs
     final activeWorkspaceIdResult = await _workspaceRepository
         .loadActiveWorkspaceId();
 
@@ -68,7 +68,7 @@ class EntryScreenViewModel {
     if (activeWorkspaceId != null) {
       return Result.ok(activeWorkspaceIdResult.value);
     } else {
-      // 4.b Set active workspace ID if active workspace ID from shared prefs is null.
+      // 3.b Set active workspace ID if active workspace ID from shared prefs is null.
       // This can happen when user has either:
       // 1. launched the app for the first time
       // 2. deleted application storage

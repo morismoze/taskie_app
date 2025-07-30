@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
@@ -90,7 +91,7 @@ export class UserService {
       lastName: user.lastName,
       roles: rolesPerWorkspaces,
       profileImageUrl: user.profileImageUrl,
-      createdAt: user.createdAt,
+      createdAt: DateTime.fromJSDate(user.createdAt).toISO()!,
     };
 
     return userDto;

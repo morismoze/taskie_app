@@ -180,7 +180,6 @@ class _WorkspaceUsersManagementScreenState
     if (widget.viewModel.loadWorkspaceMembers.error &&
         widget.viewModel.users != null) {
       widget.viewModel.loadWorkspaceMembers.clearResult();
-
       AppSnackbar.showError(
         context: context,
         message: context.localization.workspaceUsersManagementLoadUsersError,

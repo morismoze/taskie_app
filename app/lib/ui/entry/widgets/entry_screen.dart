@@ -77,10 +77,10 @@ class _EntryScreenState extends State<EntryScreen> {
     if (widget.viewModel.setupInitial.completed) {
       final activeWorkspaceId =
           (widget.viewModel.setupInitial.result as Ok<String?>).value;
+      widget.viewModel.setupInitial.clearResult();
       if (activeWorkspaceId != null) {
         context.go(Routes.tasks(workspaceId: activeWorkspaceId));
       }
-      widget.viewModel.setupInitial.clearResult();
     }
 
     if (widget.viewModel.setupInitial.error) {

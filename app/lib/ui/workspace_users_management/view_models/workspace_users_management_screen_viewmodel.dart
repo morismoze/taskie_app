@@ -40,7 +40,7 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
     final workspaceUsers = _workspaceUserRepository.users;
 
     if (workspaceUsers == null) {
-      return [];
+      return null;
     }
 
     final sortedUsers = List<WorkspaceUser>.from(workspaceUsers);

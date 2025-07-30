@@ -6,8 +6,8 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/preferences_screen_viewmodel.dart';
-import 'sections/localization_section.dart';
-import 'sections/theme_section.dart';
+import 'sections/localization_section/localization_section.dart';
+import 'sections/theme_section/theme_section.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.viewModel});

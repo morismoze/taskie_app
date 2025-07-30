@@ -44,8 +44,6 @@ export class CreateTaskRequest {
     this.title = title;
     this.rewardPoints = rewardPoints;
     this.assignees = assignees;
-    console.log(description);
-
     this.description = description || null;
     this.dueDate = dueDate || null;
   }

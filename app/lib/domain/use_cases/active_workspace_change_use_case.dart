@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 
-import '../../data/repositories/user/user_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
 import '../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
 import '../../utils/command.dart';
@@ -9,24 +9,22 @@ import '../../utils/command.dart';
 class ActiveWorkspaceChangeUseCase {
   ActiveWorkspaceChangeUseCase({
     required WorkspaceRepository workspaceRepository,
-    required UserRepository userRepository,
     required WorkspaceUserRepository workspaceUserRepository,
     required WorkspaceTaskRepository workspaceTaskRepository,
     // TODO: update when WorkspaceLeaderboardRepository is added: required WorkspaceLeaderboardRepository workspaceLeaderboardRepository,
-    // TODO: update when WorkspaceGoalRepository is added: required WorkspaceGoalRepository workspaceGoalRepository,
+    required WorkspaceGoalRepository workspaceGoalRepository,
   }) : _workspaceRepository = workspaceRepository,
-       _userRepository = userRepository,
        _workspaceUserRepository = workspaceUserRepository,
-       _workspaceTaskRepository = workspaceTaskRepository;
+       _workspaceTaskRepository = workspaceTaskRepository,
+       _workspaceGoalRepository = workspaceGoalRepository;
 
   final WorkspaceRepository _workspaceRepository;
-  final UserRepository _userRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
   // final WorkspaceLeaderboardRepository _workspaceLeaderboardRepository;
-  // final WorkspaceGoalRepository _workspaceGoalRepository;
+  final WorkspaceGoalRepository _workspaceGoalRepository;
 
-  final _log = Logger('PurgeCachedDataUseCase');
+  final _log = Logger('ActiveWorkspaceChangeUseCase');
 
   /// On every active workspace change:
   ///
@@ -45,7 +43,7 @@ class ActiveWorkspaceChangeUseCase {
     _workspaceUserRepository.purgeWorkspaceUsersCache();
     _workspaceTaskRepository.purgeTasksCache();
     // _workspaceLeaderboardRepository.purgeLeaderboardCache();
-    // _workspaceGoalRepository.purgeGoalsCache();
+    _workspaceGoalRepository.purgeGoalsCache();
 
     final resultSetActive = await _workspaceRepository.setActiveWorkspaceId(
       workspaceId,

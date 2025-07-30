@@ -29,40 +29,53 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      autovalidateMode: AutovalidateMode.onUnfocus,
-      child: Column(
-        children: [
-          AppTextFormField(
-            controller: _nameController,
-            label: context.localization.workspaceNameLabel,
-            validator: _validateName,
-            textInputAction: TextInputAction.next,
-            maxCharacterCount: ValidationRules.workspaceNameMaxLength,
+    return Column(
+      spacing: 30,
+      children: [
+        Text(
+          context.localization.workspaceCreateNewDescription,
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+        ),
+        Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.onUnfocus,
+          child: Column(
+            children: [
+              AppTextFormField(
+                controller: _nameController,
+                label: context.localization.workspaceNameLabel,
+                validator: _validateName,
+                textInputAction: TextInputAction.next,
+                maxCharacterCount: ValidationRules.workspaceNameMaxLength,
+              ),
+              const SizedBox(height: 10),
+              AppTextFormField(
+                controller: _descriptionController,
+                label: context.localization.workspaceDescriptionLabel,
+                validator: _validateDescription,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.done,
+                required: false,
+                maxCharacterCount:
+                    ValidationRules.workspaceDescriptionMaxLength,
+              ),
+              const SizedBox(height: 30),
+              ListenableBuilder(
+                listenable: widget.viewModel.createWorkspace,
+                builder: (builderContext, _) => AppFilledButton(
+                  onPress: _onSubmit,
+                  label: builderContext.localization.workspaceCreateLabel,
+                  isLoading: widget.viewModel.createWorkspace.running,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          AppTextFormField(
-            controller: _descriptionController,
-            label: context.localization.workspaceDescriptionLabel,
-            validator: _validateDescription,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.done,
-            required: false,
-            maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
-          ),
-          const SizedBox(height: 30),
-          ListenableBuilder(
-            listenable: widget.viewModel.createWorkspace,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: builderContext.localization.workspaceCreateLabel,
-              isLoading: widget.viewModel.createWorkspace.running,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

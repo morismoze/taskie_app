@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
+import '../../../ui/core/utils/intl.dart';
 import '../../../utils/command.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'preferences_repository.dart';
@@ -29,11 +30,15 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
 
     switch (result) {
       case Ok():
-        final appLocale = result.value;
-        if (appLocale != null) {
-          _appLocale = Locale(appLocale);
+        final appLanguageCode = result.value;
+        if (appLanguageCode != null) {
+          _appLocale = IntlUtils.getSupportedLanguageFromLangugageCode(
+            appLanguageCode,
+          ).locale;
           notifyListeners();
         }
+        // This is just loading of the locale from storage, we are not gonna set
+        // it here if it is missing in storage. That is the job for the AppStartup view model.
         return Result.ok(_appLocale);
       case Error():
         _log.severe(
@@ -46,7 +51,7 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
 
   @override
   Future<Result<void>> setAppLocale(Locale locale) async {
-    if (_appLocale != null && locale.languageCode == _appLocale!.languageCode) {
+    if (locale.languageCode == _appLocale!.languageCode) {
       return const Result.ok(null);
     }
 

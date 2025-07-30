@@ -56,9 +56,7 @@ class WorkspaceInviteSection extends StatelessWidget {
                         child: AppTextField(
                           controller: controller,
                           readOnly: true,
-                          label: context
-                              .localization
-                              .workspaceUsersManagementCreateWorkspaceInviteLabel,
+                          label: context.localization.workspaceInviteLabel,
                         ),
                       ),
                       WorkspaceInviteActionButton(

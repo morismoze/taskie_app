@@ -12,6 +12,7 @@
   "misc_roleMember": "Member",
   "misc_orSeparator": "or",
   "misc_ok": "Ok",
+  "misc_comingSoon": "Coming soon",
   "@@comment": "Specific-case translations",
   "signInTitleStart": "Happy Chores, Happy Kids.",
   "signInTitleEnd": "Happy Home.",
@@ -80,7 +81,7 @@
   "workspaceUsersManagementUsersGuideMemberRoleBody": "A Team Member with the 'Member' role has read-only access, allowing them to view all tasks, goals, and other content, but they cannot manage them. In contrast, a Virtual Profile, which always has this role, cannot log in and serves only as a placeholder for task assignment by a Manager.",
   "workspaceUsersManagementCreate": "New workspace user",
   "workspaceUsersManagementCreateWorkspaceInviteDescription": "Invite new users to this workspace by sending them the invite link below:",
-  "workspaceUsersManagementCreateWorkspaceInviteLabel": "Workspace invite link",
+  "workspaceInviteLabel": "Workspace invite link",
   "workspaceUsersManagementCreateWorkspaceInviteNote": "Each link is single-use (send it to one user only). You can copy it to the clipboard or share it. For your convenience, after either of those two actions, a new link is generated for new usage.",
   "workspaceUsersManagementCreateWorkspaceInviteClipboard": "Successfully copied to clipboard",
   "workspaceUsersManagementCreateVirtualUserDescription": "Create a new virtual user:",
@@ -128,5 +129,14 @@
   "preferencesTheme": "Theme",
   "preferencesThemeDarkMode": "Dark mode",
   "preferencesThemeDarkModeOff": "Off",
-  "comingSoon": "Coming soon"
+  "workspaceCreate": "New workspace",
+  "workspaceCreateNewDescription": "Create new workspace:",
+  "workspaceCreateJoinViaInviteLinkDescription": "Join via workspace invite link:",
+  "workspaceCreateJoinViaInviteLinkNote": "The invite link must be in the format\n{inviteLinkExample}.",
+  "workspaceCreateJoinViaInviteLinkSubmit": "Join workspace",
+  "workspaceCreateJoinViaInviteLinkInvalid": "Invalid invite link format",
+  "workspaceCreateJoinViaInviteLinkNotFound": "The provided link is invalid",
+  "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "The provided link has expired or was already used",
+  "workspaceCreateJoinViaInviteLinkExistingUser": "You are already part of this workspace",
+  "workspaceCreationSuccess": "You've successfully created new workspace"
 }

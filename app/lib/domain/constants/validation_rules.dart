@@ -1,3 +1,6 @@
+import '../../config/environment/env.dart';
+import '../../routing/routes.dart';
+
 abstract final class ValidationRules {
   static const int workspaceNameMinLength = 3;
   static const int workspaceNameMaxLength = 50;
@@ -11,4 +14,12 @@ abstract final class ValidationRules {
 
   static const int workspaceUserNameMinLength = 2;
   static const int workspaceUserNameMaxLength = 50;
+
+  static const int workspaceInviteLinkTokenlength = 24;
+  static String get workspaceInviteLinkRegex {
+    return '^${RegExp.escape(Env.deepLinkBaseUrl)}/'
+        '${Routes.workspacesRelative}/'
+        '${Routes.workspaceJoinRelative}/'
+        '[a-fA-F0-9]{$workspaceInviteLinkTokenlength}\$';
+  }
 }

@@ -121,8 +121,12 @@ class _CreateWorkspaceInitialScreenState
     if (widget.viewModel.createWorkspace.completed) {
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<String>).value;
-      context.go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.workspaceCreationSuccess,
+      );
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
     }
 
     if (widget.viewModel.createWorkspace.error) {

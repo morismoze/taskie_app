@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
@@ -114,7 +115,7 @@ export class WorkspaceService {
       name: newWorkspace.name,
       description: newWorkspace.description,
       pictureUrl: newWorkspace.pictureUrl,
-      createdAt: newWorkspace.createdAt,
+      createdAt: DateTime.fromJSDate(newWorkspace.createdAt).toISO()!,
       createdBy:
         newWorkspace.createdBy === null
           ? null
@@ -175,7 +176,7 @@ export class WorkspaceService {
       name: updatedWorkspace.name,
       description: updatedWorkspace.description,
       pictureUrl: updatedWorkspace.pictureUrl,
-      createdAt: updatedWorkspace.createdAt,
+      createdAt: DateTime.fromJSDate(updatedWorkspace.createdAt).toISO()!,
       createdBy:
         updatedWorkspace.createdBy === null
           ? null
@@ -222,7 +223,7 @@ export class WorkspaceService {
 
     const response: CreateWorkspaceInviteTokenResponse = {
       token: invite.token,
-      expiresAt: invite.expiresAt,
+      expiresAt: DateTime.fromJSDate(invite.expiresAt).toISO()!,
     };
 
     return response;
@@ -249,7 +250,7 @@ export class WorkspaceService {
       name: workspaceInvite.workspace.name,
       description: workspaceInvite.workspace.description,
       pictureUrl: workspaceInvite.workspace.pictureUrl,
-      createdAt: workspaceInvite.workspace.createdAt,
+      createdAt: DateTime.fromJSDate(workspaceInvite.createdAt).toISO()!,
       createdBy:
         workspaceInvite.workspace.createdBy === null
           ? null
@@ -282,7 +283,7 @@ export class WorkspaceService {
       name: updatedWorkspaceInvite.workspace.name,
       description: updatedWorkspaceInvite.workspace.description,
       pictureUrl: updatedWorkspaceInvite.workspace.pictureUrl,
-      createdAt: updatedWorkspaceInvite.workspace.createdAt,
+      createdAt: DateTime.fromJSDate(updatedWorkspaceInvite.createdAt).toISO()!,
       createdBy:
         updatedWorkspaceInvite.workspace.createdBy === null
           ? null
@@ -362,7 +363,7 @@ export class WorkspaceService {
       role: newWorkspaceUser.workspaceRole,
       userId: newUser.id,
       createdBy: newWorkspaceUser.createdBy,
-      createdAt: newWorkspaceUser.createdAt,
+      createdAt: DateTime.fromJSDate(newWorkspaceUser.createdAt).toISO()!,
     };
 
     return response;
@@ -383,7 +384,7 @@ export class WorkspaceService {
       name: workspace.name,
       description: workspace.description,
       pictureUrl: workspace.pictureUrl,
-      createdAt: workspace.createdAt,
+      createdAt: DateTime.fromJSDate(workspace.createdAt).toISO()!,
       createdBy:
         workspace.createdBy === null
           ? null
@@ -438,7 +439,7 @@ export class WorkspaceService {
                 lastName: member.createdBy.user.lastName,
                 profileImageUrl: member.createdBy.user.profileImageUrl,
               },
-        createdAt: member.createdAt,
+        createdAt: DateTime.fromJSDate(member.createdAt).toISO()!,
       }))
       .sort((wu1, wu2) => {
         // Sort by full name
@@ -845,7 +846,7 @@ export class WorkspaceService {
       profileImageUrl: updatedWorkspaceUser.user.profileImageUrl,
       role: updatedWorkspaceUser.workspaceRole,
       userId: updatedWorkspaceUser.user.id,
-      createdAt: updatedWorkspaceUser.createdAt,
+      createdAt: DateTime.fromJSDate(updatedWorkspaceUser.createdAt).toISO()!,
       createdBy:
         updatedWorkspaceUser.createdBy === null
           ? null
@@ -977,7 +978,10 @@ export class WorkspaceService {
       title: updatedTask.title,
       rewardPoints: updatedTask.rewardPoints,
       description: updatedTask.description,
-      dueDate: updatedTask.dueDate,
+      dueDate:
+        updatedTask.dueDate === null
+          ? null
+          : DateTime.fromJSDate(updatedTask.dueDate).toISO()!,
     };
 
     return response;

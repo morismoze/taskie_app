@@ -18,7 +18,7 @@ class AppStartupViewModel {
   late Command0 bootstrap;
 
   Future<Result<void>> _bootstrap() async {
-    // 2.a Load app locale from shared prefs
+    // 1.a Load app locale from shared prefs
     final resultLoadAppLocale = await _preferencesRepository.loadAppLocale();
 
     switch (resultLoadAppLocale) {
@@ -30,9 +30,9 @@ class AppStartupViewModel {
     }
 
     if (resultLoadAppLocale.value == null) {
-      // 2.b Set app locale if locale from shared prefs is null
+      // 1.b Set app locale if locale from shared prefs is null
       final systemLocale = PlatformDispatcher.instance.locale;
-      final supportedLocale = IntlUtil.getSupportedLanguageFromLangugageCode(
+      final supportedLocale = IntlUtils.getSupportedLanguageFromLangugageCode(
         systemLocale.languageCode,
       );
       final result = await _preferencesRepository.setAppLocale(
