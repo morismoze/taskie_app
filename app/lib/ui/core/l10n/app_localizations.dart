@@ -895,6 +895,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join workspace'**
   String get workspaceCreateJoinViaInviteLinkSubmit;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid invite link format'**
+  String get workspaceCreateJoinViaInviteLinkInvalid;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The provided link is invalid'**
+  String get workspaceCreateJoinViaInviteLinkNotFound;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkExpiredOrUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'The provided link has expired or was already used'**
+  String get workspaceCreateJoinViaInviteLinkExpiredOrUsed;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkExistingUser.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already part of this workspace'**
+  String get workspaceCreateJoinViaInviteLinkExistingUser;
+
+  /// No description provided for @workspaceCreationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve successfully created new workspace'**
+  String get workspaceCreationSuccess;
 }
 
 class _AppLocalizationsDelegate

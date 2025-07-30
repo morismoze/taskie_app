@@ -133,5 +133,10 @@
   "workspaceCreateNewDescription": "Create new workspace:",
   "workspaceCreateJoinViaInviteLinkDescription": "Join via workspace invite link:",
   "workspaceCreateJoinViaInviteLinkNote": "The invite link must be in the format\n{inviteLinkExample}.",
-  "workspaceCreateJoinViaInviteLinkSubmit": "Join workspace"
+  "workspaceCreateJoinViaInviteLinkSubmit": "Join workspace",
+  "workspaceCreateJoinViaInviteLinkInvalid": "Invalid invite link format",
+  "workspaceCreateJoinViaInviteLinkNotFound": "The provided link is invalid",
+  "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "The provided link has expired or was already used",
+  "workspaceCreateJoinViaInviteLinkExistingUser": "You are already part of this workspace",
+  "workspaceCreationSuccess": "You've successfully created new workspace"
 }

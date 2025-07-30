@@ -17,6 +17,8 @@ abstract final class ApiEndpoints {
   // Workspace invites
   static String createWorkspaceInviteToken(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/invites';
+  static String joinWorkspace(String inviteToken) =>
+      '$_prefix/workspaces/invites/$inviteToken/join';
 
   // Tasks
   static String getTasks(WorkspaceIdPathParam workspaceId) =>

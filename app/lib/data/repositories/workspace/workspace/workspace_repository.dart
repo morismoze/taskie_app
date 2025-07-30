@@ -43,4 +43,8 @@ abstract class WorkspaceRepository extends ChangeNotifier {
     String? name,
     String? description,
   });
+
+  /// This method is used in conjuction with `WorkspaceInviteRepository`'s
+  /// `joinWorkspace` method.
+  Future<Result<void>> addWorkspace({required Workspace workspace});
 }

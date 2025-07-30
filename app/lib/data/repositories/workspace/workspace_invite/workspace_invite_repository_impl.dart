@@ -1,7 +1,9 @@
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/workspace.dart';
 import '../../../../domain/models/workspace_invite.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace_invite/models/response/create_workspace_invite_token_response.dart';
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
 import 'workspace_invite_repository.dart';
@@ -46,6 +48,39 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
           _cachedWorkspaceInviteTokens[workspaceId] = workspaceInvite;
           return Result.ok(workspaceInvite);
         case Error<CreateWorkspaceInviteTokenResponse>():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<Workspace>> joinWorkspace({required String inviteToken}) async {
+    try {
+      final result = await _workspaceInviteApiService.joinWorkspace(
+        inviteToken,
+      );
+
+      switch (result) {
+        case Ok<WorkspaceResponse>():
+          final workspace = result.value;
+          final joinedWorkspace = Workspace(
+            id: workspace.id,
+            name: workspace.name,
+            createdAt: workspace.createdAt,
+            description: workspace.description,
+            pictureUrl: workspace.pictureUrl,
+            createdBy: workspace.createdBy == null
+                ? null
+                : WorkspaceCreatedBy(
+                    firstName: workspace.createdBy!.firstName,
+                    lastName: workspace.createdBy!.lastName,
+                    profileImageUrl: workspace.createdBy!.profileImageUrl,
+                  ),
+          );
+          return Result.ok(joinedWorkspace);
+        case Error<WorkspaceResponse>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

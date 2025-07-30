@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { WORKSPACE_INVITE_TOKEN_LENGTH } from 'src/common/helper/constants';
 import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
@@ -54,12 +55,8 @@ export class WorkspaceInviteService {
     }
 
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
-    const now = new Date();
-    const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-    const expiresAt = new Date(
-      now.getTime() + twentyFourHoursInMillis,
-    ).toISOString();
-
+    const now = DateTime.now();
+    const expiresAt = now.plus({ hours: 24 }).toISO();
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
         token,
@@ -120,20 +117,46 @@ export class WorkspaceInviteService {
     if (!workspaceInvite) {
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.INVALID_PAYLOAD,
+          code: ApiErrorCode.NOT_FOUND_WORKSPACE_INVITE_TOKEN,
         },
         HttpStatus.NOT_FOUND,
       );
     }
 
-    // Check if that workspace invite was already used or expired
-    if (
-      workspaceInvite.usedBy !== null ||
-      workspaceInvite.expiresAt < new Date().toISOString()
-    ) {
+    // Check if user is already part of the workspace
+    const existingWorkspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: usedById,
+        workspaceId: workspaceInvite.workspace.id,
+      });
+
+    if (existingWorkspaceUser !== null) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.WORKSPACE_INVITE_EXISTING_USER,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Check if that workspace invite was already used
+    if (workspaceInvite.usedBy !== null) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.WORKSPACE_INVITE_ALREADY_USED,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Check if that workspace invite has expired
+    const expiresAt = DateTime.fromJSDate(workspaceInvite.expiresAt).toISO()!;
+    const now = DateTime.now().toISO();
+
+    if (expiresAt < now) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.WORKSPACE_INVITE_EXPIRED,
         },
         HttpStatus.BAD_REQUEST,
       );

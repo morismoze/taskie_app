@@ -1,7 +1,7 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
 import { WorkspaceEntity } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
+import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-assignment.entity';
 
 /**
@@ -31,7 +31,8 @@ export class TaskEntity extends RootBaseEntity {
     nullable: true,
     name: 'due_date',
   })
-  dueDate!: string | null;
+  // UTC format
+  dueDate!: Date | null;
 
   @OneToMany(() => TaskAssignmentEntity, (ta) => ta.task)
   taskAssignments!: TaskAssignmentEntity[];

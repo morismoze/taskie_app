@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/ApiHttpException.type';
@@ -71,7 +72,10 @@ export class TaskService {
         title: data.title,
         description: data.description,
         rewardPoints: data.rewardPoints,
-        dueDate: data.dueDate,
+        dueDate:
+          data.dueDate === null
+            ? null
+            : DateTime.fromISO(data.dueDate).toJSDate(),
       },
       createdById,
     });
@@ -133,7 +137,10 @@ export class TaskService {
         title: data.title,
         description: data.description,
         rewardPoints: data.rewardPoints,
-        dueDate: data.dueDate,
+        dueDate:
+          data.dueDate === undefined
+            ? null
+            : DateTime.fromISO(data.dueDate).toJSDate(),
       },
     });
 

@@ -3,6 +3,7 @@ import { randomStringGenerator } from '@nestjs/common/utils/random-string-genera
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
+import { DateTime } from 'luxon';
 import * as ms from 'ms';
 import { AggregatedConfig } from 'src/config/config.type';
 import { Session } from 'src/modules/session/domain/session.domain';
@@ -150,7 +151,7 @@ export class AuthService {
       lastName: user.lastName,
       roles: rolesPerWorkspaces,
       profileImageUrl: user.profileImageUrl,
-      createdAt: user.createdAt,
+      createdAt: DateTime.fromJSDate(user.createdAt).toISO()!,
     };
 
     return {

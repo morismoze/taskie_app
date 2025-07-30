@@ -6,6 +6,8 @@ import '../../../data/repositories/workspace/workspace/workspace_repository.dart
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../domain/use_cases/create_workspace_use_case.dart';
+import '../../../domain/use_cases/join_workspace_use_case.dart';
+import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 
 class CreateWorkspaceScreenViewModel extends ChangeNotifier {
@@ -13,9 +15,11 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
     required CreateWorkspaceUseCase createWorkspaceUseCase,
+    required JoinWorkspaceUseCase joinWorkspaceUseCase,
   }) : _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
-       _createWorkspaceUseCase = createWorkspaceUseCase {
+       _createWorkspaceUseCase = createWorkspaceUseCase,
+       _joinWorkspaceUseCase = joinWorkspaceUseCase {
     _loadUser();
     _loadWorkspaces();
     createWorkspace = Command1(_createWorkspace);
@@ -25,6 +29,7 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
   final CreateWorkspaceUseCase _createWorkspaceUseCase;
+  final JoinWorkspaceUseCase _joinWorkspaceUseCase;
   final _log = Logger('CreateWorkspaceScreenViewModel');
 
   /// Returns ID of the newly created workspace
@@ -81,6 +86,20 @@ class CreateWorkspaceScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<String>> _joinWorkspaceViaInviteLink(String inviteLink) async {
-    return Future.delayed(const Duration(seconds: 3));
+    try {
+      final inviteToken = inviteLink.split(
+        '${Routes.workspaceJoinRelative}/',
+      )[1];
+
+      // This case should never happen because of the specific
+      // validation of the invite link field.
+      if (inviteToken.isEmpty) {
+        return Result.error(Exception('Invalid invite link'));
+      }
+
+      return await _joinWorkspaceUseCase.joinWorkspace(inviteToken);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
   }
 }

@@ -21,5 +21,17 @@ T? _$nullableGenericFromJson<T>(
   T Function(Object? json) fromJson,
 ) => input == null ? null : fromJson(input);
 
-ApiError _$ApiErrorFromJson(Map<String, dynamic> json) =>
-    ApiError(code: json['code'] as String, context: json['context'] as String?);
+ApiError _$ApiErrorFromJson(Map<String, dynamic> json) => ApiError(
+  code: $enumDecode(_$ApiErrorCodeEnumMap, json['code']),
+  context: json['context'] as String?,
+);
+
+const _$ApiErrorCodeEnumMap = {
+  ApiErrorCode.serverError: '0',
+  ApiErrorCode.invalidPayload: '1',
+  ApiErrorCode.emailAlreadyExists: '2',
+  ApiErrorCode.workspaceInviteAlreadyUsed: '3',
+  ApiErrorCode.workspaceInviteExpired: '4',
+  ApiErrorCode.workspaceInviteExistingUser: '5',
+  ApiErrorCode.notFoundWorkspaceInviteToken: '6',
+};

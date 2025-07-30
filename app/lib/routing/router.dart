@@ -106,7 +106,7 @@ GoRouter router({
       },
     ),
     GoRoute(
-      path: Routes.workspacesRelative,
+      path: '/${Routes.workspacesRelative}',
       builder: (_, _) => const SizedBox.shrink(),
       routes: [
         GoRoute(
@@ -152,6 +152,7 @@ GoRouter router({
                   userRepository: context.read(),
                   workspaceRepository: context.read(),
                   createWorkspaceUseCase: context.read(),
+                  joinWorkspaceUseCase: context.read(),
                 ),
               ),
             );

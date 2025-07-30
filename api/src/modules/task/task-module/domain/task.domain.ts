@@ -8,5 +8,5 @@ export interface Task extends RootDomain {
   rewardPoints: number;
   description: string | null;
   createdBy: WorkspaceUser;
-  dueDate: string | null;
+  dueDate: Date | null;
 }

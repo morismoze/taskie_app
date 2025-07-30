@@ -17,7 +17,7 @@ class PreferencesScreenViewModel extends ChangeNotifier {
 
   late Command1<void, Locale> setAppLocale;
 
-  /// [appLocale] in [PreferencesRepository] is set up in EntryScreen.
+  /// [appLocale] in [PreferencesRepository] is set up in AppStartup.
   Locale get appLocale => _preferencesRepository.appLocale!;
 
   void _onPreferencesChanged() {

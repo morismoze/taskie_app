@@ -161,6 +161,16 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           _cachedWorkspacesList?.add(newWorkspace);
           notifyListeners();
 
+          // We need to update [_hasNoWorkspacesNotifier] notifier, but just
+          // in the case user now is part of only one workspace for 2 reasons:
+          // 1. when user is not part of any workspace and creates a workspace for the first time
+          // 2. we don't want to trigger this everytime user creates new workspace, because
+          // we don't want the gorouter redirect function to re-trigger everytime.
+          if (_cachedWorkspacesList != null &&
+              _cachedWorkspacesList!.length == 1) {
+            _hasNoWorkspacesNotifier.value = false;
+          }
+
           return Result.ok(workspace.id);
         case Error<WorkspaceResponse>():
           return Result.error(result.error);
@@ -257,5 +267,16 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     } on Exception catch (e) {
       return Result.error(e);
     }
+  }
+
+  @override
+  Future<Result<void>> addWorkspace({required Workspace workspace}) async {
+    if (_cachedWorkspacesList != null) {
+      _cachedWorkspacesList!.add(workspace);
+      notifyListeners();
+      return const Result.ok(null);
+    }
+
+    return Result.error(Exception('Cached list was not initialized'));
   }
 }

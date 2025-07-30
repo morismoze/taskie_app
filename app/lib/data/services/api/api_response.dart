@@ -19,9 +19,36 @@ class ApiResponse<T> {
 class ApiError {
   ApiError({required this.code, this.context});
 
-  final String code;
+  final ApiErrorCode code;
   final String? context;
 
   factory ApiError.fromJson(Map<String, dynamic> json) =>
       _$ApiErrorFromJson(json);
+}
+
+enum ApiErrorCode {
+  @JsonValue('0')
+  serverError(0),
+
+  @JsonValue('1')
+  invalidPayload(1),
+
+  @JsonValue('2')
+  emailAlreadyExists(2),
+
+  @JsonValue('3')
+  workspaceInviteAlreadyUsed(3),
+
+  @JsonValue('4')
+  workspaceInviteExpired(4),
+
+  @JsonValue('5')
+  workspaceInviteExistingUser(5),
+
+  @JsonValue('6')
+  notFoundWorkspaceInviteToken(6);
+
+  const ApiErrorCode(this.code);
+
+  final int code;
 }

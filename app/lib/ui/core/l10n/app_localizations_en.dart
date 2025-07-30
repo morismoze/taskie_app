@@ -466,4 +466,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceCreateJoinViaInviteLinkSubmit => 'Join workspace';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkInvalid =>
+      'Invalid invite link format';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkNotFound =>
+      'The provided link is invalid';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
+      'The provided link has expired or was already used';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkExistingUser =>
+      'You are already part of this workspace';
+
+  @override
+  String get workspaceCreationSuccess =>
+      'You\'ve successfully created new workspace';
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/services/api/exceptions/not_found_exception.dart';
+import '../../../data/services/api/workspace/workspace_invite/exceptions/workspace_invite_existing_user_exception.dart';
+import '../../../data/services/api/workspace/workspace_invite/exceptions/workspace_invite_expired_or_used_exception.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -26,19 +29,33 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.createWorkspace.addListener(_onResult);
+    widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
+    widget.viewModel.joinWorkspaceViaInviteLink.addListener(
+      _onWorkspaceJoinResult,
+    );
   }
 
   @override
   void didUpdateWidget(covariant CreateWorkspaceScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspace.removeListener(_onResult);
-    widget.viewModel.createWorkspace.addListener(_onResult);
+    oldWidget.viewModel.createWorkspace.removeListener(
+      _onWorkspaceCreateResult,
+    );
+    oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
+      _onWorkspaceJoinResult,
+    );
+    widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
+    widget.viewModel.joinWorkspaceViaInviteLink.addListener(
+      _onWorkspaceJoinResult,
+    );
   }
 
   @override
   void dispose() {
-    widget.viewModel.createWorkspace.removeListener(_onResult);
+    widget.viewModel.createWorkspace.removeListener(_onWorkspaceCreateResult);
+    widget.viewModel.joinWorkspaceViaInviteLink.removeListener(
+      _onWorkspaceJoinResult,
+    );
     super.dispose();
   }
 
@@ -75,12 +92,16 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
     );
   }
 
-  void _onResult() {
+  void _onWorkspaceCreateResult() {
     if (widget.viewModel.createWorkspace.completed) {
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<String>).value;
-      context.go(Routes.tasks(workspaceId: newWorkspaceId));
       widget.viewModel.createWorkspace.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.workspaceCreationSuccess,
+      );
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
     }
 
     if (widget.viewModel.createWorkspace.error) {
@@ -89,6 +110,53 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
         context: context,
         message: context.localization.workspaceCreateError,
       );
+    }
+  }
+
+  void _onWorkspaceJoinResult() {
+    if (widget.viewModel.joinWorkspaceViaInviteLink.completed) {
+      final newWorkspaceId =
+          (widget.viewModel.joinWorkspaceViaInviteLink.result as Ok<String>)
+              .value;
+      widget.viewModel.joinWorkspaceViaInviteLink.clearResult();
+      context.go(Routes.tasks(workspaceId: newWorkspaceId));
+    }
+
+    if (widget.viewModel.joinWorkspaceViaInviteLink.error) {
+      final errorResult =
+          widget.viewModel.joinWorkspaceViaInviteLink.result as Error;
+      widget.viewModel.joinWorkspaceViaInviteLink.clearResult();
+
+      switch (errorResult.error) {
+        case NotFoundException():
+          AppSnackbar.showError(
+            context: context,
+            message:
+                context.localization.workspaceCreateJoinViaInviteLinkNotFound,
+          );
+          break;
+        case WorkspaceInviteExpiredOrUsedException():
+          AppSnackbar.showError(
+            context: context,
+            message: context
+                .localization
+                .workspaceCreateJoinViaInviteLinkExpiredOrUsed,
+          );
+          break;
+        case WorkspaceInviteExistingUserException():
+          AppSnackbar.showError(
+            context: context,
+            message: context
+                .localization
+                .workspaceCreateJoinViaInviteLinkExistingUser,
+          );
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.misc_somethingWentWrong,
+          );
+      }
     }
   }
 }

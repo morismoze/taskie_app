@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { DateTime } from 'luxon';
 import { SessionRepository } from '../persistence/session.repository';
 
 @Injectable()
@@ -14,11 +15,8 @@ export class SessionCleanupService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async cleanupInactiveSessions() {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - 7);
+    const cutoffDate = DateTime.now().minus({ days: 7 }).toJSDate();
 
-    await this.sessionRepository.deleteInactiveSessionsBefore(
-      cutoffDate.toISOString(),
-    );
+    await this.sessionRepository.deleteInactiveSessionsBefore(cutoffDate);
   }
 }

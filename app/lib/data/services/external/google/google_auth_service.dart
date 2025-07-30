@@ -18,7 +18,23 @@ class GoogleAuthService {
   /// Returns ID token
   Future<Result<String>> authenticate() async {
     try {
-      final googleUser = await _googleSignIn.signIn();
+      var googleUser = await _googleSignIn.signInSilently();
+
+      if (googleUser != null) {
+        final googleAuth = await googleUser.authentication;
+
+        if (googleAuth.idToken == null) {
+          _log.severe("Invalid ID token on silent sign-in", googleAuth);
+          return Result.error(
+            Exception(const GoogleSignInInvalidIdTokenException()),
+          );
+        }
+
+        return Result.ok(googleAuth.idToken!);
+      }
+
+      // Check if a Google session is still active
+      googleUser ??= await _googleSignIn.signIn();
 
       if (googleUser == null) {
         return const Result.error(GoogleSignInCancelledException());
@@ -27,16 +43,14 @@ class GoogleAuthService {
       final googleAuth = await googleUser.authentication;
 
       if (googleAuth.idToken == null) {
-        _log.severe("Invalid ID token", googleAuth);
+        _log.severe("Invalid ID token on sign-in", googleAuth);
         return Result.error(
           Exception(const GoogleSignInInvalidIdTokenException()),
         );
       }
 
-      // After the user was successfully authenticated, we want to disconnect him out
-      // which removes the user from the user information cache. This disables auto login
-      // on _googleSignIn.signIn(), and prompts the account choice window wvery time.
-      await GoogleSignIn().disconnect();
+      // This should be done when user manually signs out
+      // await _googleSignIn.disconnect();
 
       return Result.ok(googleAuth.idToken!);
     } on Exception catch (e) {

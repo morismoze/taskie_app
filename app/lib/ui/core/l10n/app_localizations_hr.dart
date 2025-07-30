@@ -470,4 +470,24 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get workspaceCreateJoinViaInviteLinkSubmit =>
       'Pridruži se radnom prostoru';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkInvalid =>
+      'Neispravan format pozivnog linka';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkNotFound =>
+      'Uneseni pozivni link nije važeći';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
+      'Uneseni pozivni link je istekao ili je već iskorišten';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkExistingUser =>
+      'Već ste član ovog radnog prostora';
+
+  @override
+  String get workspaceCreationSuccess =>
+      'Uspješno ste kreirali novi radni prostor';
 }

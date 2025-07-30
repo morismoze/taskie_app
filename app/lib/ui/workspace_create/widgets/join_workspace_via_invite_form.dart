@@ -110,23 +110,10 @@ class _JoinWorkspaceViaInviteFormState
       case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
       case final String trimmedValue
-          when trimmedValue.length < ValidationRules.workspaceNameMinLength:
-        return context.localization.workspaceCreateNameMinLength;
-      case final String trimmedValue
-          when trimmedValue.length > ValidationRules.workspaceNameMaxLength:
-        return context.localization.workspaceCreateNameMaxLength;
-      default:
-        return null;
-    }
-  }
-
-  String? _validateDescription(String? value) {
-    final trimmedValue = value?.trim();
-    switch (trimmedValue) {
-      case final String trimmedValue
-          when trimmedValue.length >
-              ValidationRules.workspaceDescriptionMaxLength:
-        return context.localization.workspaceCreateDescriptionMaxLength;
+          when !RegExp(
+            ValidationRules.workspaceInviteLinkRegex,
+          ).hasMatch(trimmedValue):
+        return context.localization.workspaceCreateJoinViaInviteLinkInvalid;
       default:
         return null;
     }

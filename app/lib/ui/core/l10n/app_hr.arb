@@ -133,5 +133,10 @@
   "workspaceCreateNewDescription": "Kreirajte novi radni prostor:",
   "workspaceCreateJoinViaInviteLinkDescription": "Pridružite se putem pozivnog linka radnog prostora:",
   "workspaceCreateJoinViaInviteLinkNote": "Pozivni link mora biti u formatu\n{inviteLinkExample}.",
-  "workspaceCreateJoinViaInviteLinkSubmit": "Pridruži se radnom prostoru"
+  "workspaceCreateJoinViaInviteLinkSubmit": "Pridruži se radnom prostoru",
+  "workspaceCreateJoinViaInviteLinkInvalid": "Neispravan format pozivnog linka",
+  "workspaceCreateJoinViaInviteLinkNotFound": "Uneseni pozivni link nije važeći",
+  "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "Uneseni pozivni link je istekao ili je već iskorišten",
+  "workspaceCreateJoinViaInviteLinkExistingUser": "Već ste član ovog radnog prostora",
+  "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor"
 }

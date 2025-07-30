@@ -5,7 +5,7 @@ import { WorkspaceUser } from '../../workspace-user-module/domain/workspace-user
 export interface WorkspaceInvite extends RootDomain {
   workspace: Workspace;
   token: string;
-  expiresAt: string;
+  expiresAt: Date;
   createdBy: WorkspaceUser | null;
   usedBy: WorkspaceUser | null;
 }

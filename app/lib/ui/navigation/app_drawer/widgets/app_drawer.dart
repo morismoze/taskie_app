@@ -109,7 +109,6 @@ class _AppDrawerState extends State<AppDrawer> {
           (widget.viewModel.leaveWorkspace.result as Ok<LeaveWorkspaceResult>)
               .value;
       widget.viewModel.leaveWorkspace.clearResult();
-
       AppSnackbar.showSuccess(
         context: context,
         message: context.localization.appDrawerLeaveWorkspaceSuccess,
@@ -119,12 +118,12 @@ class _AppDrawerState extends State<AppDrawer> {
         case LeaveWorkspaceResultNoAction():
           break;
         case LeaveWorkspaceResultCloseOverlays():
-          context.pop();
-          context.pop();
+          context.pop(); // Close dialog
+          context.pop(); // Close bottom sheet
           break;
         case LeaveWorkspaceResultNavigateTo(workspaceId: final workspaceId):
-          context.pop();
-          context.pop();
+          context.pop(); // Close dialog
+          context.pop(); // Close bottom sheet
           context.go(Routes.tasks(workspaceId: workspaceId));
       }
     }
