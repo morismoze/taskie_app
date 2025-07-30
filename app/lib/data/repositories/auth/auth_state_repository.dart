@@ -3,9 +3,14 @@ import 'package:flutter/foundation.dart';
 import '../../../utils/command.dart';
 
 abstract class AuthStateRepository extends ChangeNotifier {
-  /// Returns true when the user is logged in
-  /// Returns [Future] because it will load a stored auth state the first time.
-  Future<bool> get isAuthenticated;
+  /// Returns true when the user is logged in. It is initially set to `false`
+  /// because this will be set on app startup, which happens before gorouter
+  /// (and hence its redirect function) - in that setup it will either be set
+  /// to `true` or remain false (or set to `false` again).
+  bool get isAuthenticated;
+
+  /// Loads from the storage. This is done once, on the EntryScreen.
+  Future<bool> loadAuthenticatedState();
 
   /// Sets authenticated state.
   void setAuthenticated(bool isAuthenticated);

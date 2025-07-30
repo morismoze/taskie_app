@@ -51,7 +51,7 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
 
   @override
   Future<Result<void>> setAppLocale(Locale locale) async {
-    if (locale.languageCode == _appLocale!.languageCode) {
+    if (locale.languageCode == _appLocale?.languageCode) {
       return const Result.ok(null);
     }
 

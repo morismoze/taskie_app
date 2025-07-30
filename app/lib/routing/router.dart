@@ -585,7 +585,7 @@ GoRouter router({
   ],
 );
 
-Future<String?> _redirect(BuildContext context, GoRouterState state) async {
+String? _redirect(BuildContext context, GoRouterState state) {
   // if the user is not part of any workspace anymore (e.g. left all workspaces),
   // we need to redirect the user to workspace initial creation screen
   final hasNoWorkspaces = context
@@ -593,7 +593,7 @@ Future<String?> _redirect(BuildContext context, GoRouterState state) async {
       .hasNoWorkspacesNotifier
       .value;
   // if the user is not logged in, they need to login
-  final loggedIn = await context.read<AuthStateRepository>().isAuthenticated;
+  final loggedIn = context.read<AuthStateRepository>().isAuthenticated;
   final loggingIn = state.matchedLocation == Routes.login;
 
   if (!loggedIn) {
