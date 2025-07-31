@@ -15,8 +15,8 @@ class PaginableResponse<D> {
   ) => _$PaginableResponseFromJson(json, fromJsonT);
 }
 
-class PaginableRequestQueryParams {
-  PaginableRequestQueryParams({this.page = 1, this.limit, this.search});
+class RequestQueryParams {
+  RequestQueryParams({this.page = 1, this.limit, this.search});
 
   final int? page;
   final int? limit;

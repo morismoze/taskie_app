@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
-import '../../../services/api/workspace/paginable_objectives.dart';
 
 /// This is a [ChangeNotifier] beacuse of 2 reasons:
 ///
@@ -16,8 +16,8 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
 
   Future<Result<void>> loadTasks({
     required String workspaceId,
-    required PaginableObjectivesRequestQueryParams paginable,
     bool forceFetch,
+    ObjectiveFilter? filter,
   });
 
   Future<Result<void>> createTask(

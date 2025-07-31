@@ -1,28 +1,22 @@
 import '../paginable.dart';
 import 'progress_status.dart';
 
-class PaginableObjectivesRequestQueryParams
-    extends PaginableRequestQueryParams {
-  PaginableObjectivesRequestQueryParams({
+class ObjectiveRequestQueryParams extends RequestQueryParams {
+  ObjectiveRequestQueryParams({
     super.page,
-    super.limit,
+    super.limit = 20,
     super.search,
     this.status,
   });
 
   final ProgressStatus? status;
 
-  static Map<String, String> generateQueryParams({
-    int? page,
-    int? limit,
-    String? search,
-    ProgressStatus? status,
-  }) {
+  Map<String, String> generateQueryParamsMap() {
     return {
-      if (page != null) 'page': page.toString(),
-      if (limit != null) 'limit': limit.toString(),
-      if (search != null) 'search': search,
-      if (status != null) 'status': status.value,
+      if (page != null) 'page': page!.toString(),
+      if (limit != null) 'limit': limit!.toString(),
+      if (search != null) 'search': search!,
+      if (status != null) 'status': status!.value,
     };
   }
 }

@@ -14,7 +14,7 @@ class WorkspaceTask {
   final String id;
   final String title;
   final int rewardPoints;
-  final List<TaskAssignee> assignees;
+  final List<WorkspaceTaskAssignee> assignees;
 
   /// Indicates if the task is newly created. Used
   /// for differentiating between newly created tasks
@@ -23,8 +23,8 @@ class WorkspaceTask {
   final String? description;
 }
 
-class TaskAssignee extends Assignee {
-  TaskAssignee({
+class WorkspaceTaskAssignee extends Assignee {
+  WorkspaceTaskAssignee({
     required super.id,
     required super.firstName,
     required super.lastName,

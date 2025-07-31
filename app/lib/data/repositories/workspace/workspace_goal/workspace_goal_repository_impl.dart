@@ -27,7 +27,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   @override
   Future<Result<void>> loadGoals({
     required String workspaceId,
-    required PaginableObjectivesRequestQueryParams paginable,
+    required ObjectiveRequestQueryParams paginable,
     bool forceFetch = false,
   }) async {
     if (!forceFetch && _cachedGoals != null) {

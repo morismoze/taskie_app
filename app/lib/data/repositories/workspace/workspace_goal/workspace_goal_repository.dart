@@ -16,7 +16,7 @@ abstract class WorkspaceGoalRepository extends ChangeNotifier {
 
   Future<Result<void>> loadGoals({
     required String workspaceId,
-    required PaginableObjectivesRequestQueryParams paginable,
+    required ObjectiveRequestQueryParams paginable,
     bool forceFetch,
   });
 

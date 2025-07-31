@@ -123,6 +123,18 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksHello => 'Pozdrav!';
 
   @override
+  String get tasksProgressInProgress => 'U tijeku';
+
+  @override
+  String get tasksProgressCompleted => 'Dovršeno';
+
+  @override
+  String get tasksProgressCompletedAsStale => 'Dovršeno (zastarjelo)';
+
+  @override
+  String get tasksProgressClosed => 'Zatvoreno';
+
+  @override
   String get appDrawerTitle => 'Radni prostori';
 
   @override

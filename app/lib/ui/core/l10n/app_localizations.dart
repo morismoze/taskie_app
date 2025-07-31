@@ -308,6 +308,30 @@ abstract class AppLocalizations {
   /// **'Hello!'**
   String get tasksHello;
 
+  /// No description provided for @tasksProgressInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get tasksProgressInProgress;
+
+  /// No description provided for @tasksProgressCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get tasksProgressCompleted;
+
+  /// No description provided for @tasksProgressCompletedAsStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed as Stale'**
+  String get tasksProgressCompletedAsStale;
+
+  /// No description provided for @tasksProgressClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get tasksProgressClosed;
+
   /// No description provided for @appDrawerTitle.
   ///
   /// In en, this message translates to:

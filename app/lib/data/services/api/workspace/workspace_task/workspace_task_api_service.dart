@@ -16,18 +16,12 @@ class WorkspaceTaskApiService {
 
   Future<Result<PaginableResponse<WorkspaceTaskResponse>>> getTasks({
     required WorkspaceIdPathParam workspaceId,
-    required PaginableObjectivesRequestQueryParams paginable,
+    required ObjectiveRequestQueryParams queryParams,
   }) async {
     try {
       final response = await _apiClient.client.get(
         ApiEndpoints.getTasks(workspaceId),
-        queryParameters:
-            PaginableObjectivesRequestQueryParams.generateQueryParams(
-              page: paginable.page,
-              limit: paginable.limit,
-              search: paginable.search,
-              status: paginable.status,
-            ),
+        queryParameters: queryParams.generateQueryParamsMap(),
       );
 
       final apiResponse =

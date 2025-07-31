@@ -1,9 +1,10 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
+import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
-import '../../../data/services/api/workspace/paginable_objectives.dart';
+import '../../../domain/models/filter.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
@@ -13,27 +14,29 @@ class TasksScreenViewModel extends ChangeNotifier {
     required String workspaceId,
     required UserRepository userRepository,
     required WorkspaceTaskRepository workspaceTaskRepository,
+    required PreferencesRepository preferencesRepository,
   }) : _activeWorkspaceId = workspaceId,
        _userRepository = userRepository,
-       _workspaceTaskRepository = workspaceTaskRepository {
+       _workspaceTaskRepository = workspaceTaskRepository,
+       _preferencesRepository = preferencesRepository {
     _workspaceTaskRepository.addListener(_onTasksChanged);
     _userRepository.addListener(_onUserChanged);
     loadTasks = Command1(_loadTasks)
-      ..execute((workspaceId, PaginableObjectivesRequestQueryParams(page: 1)));
+      ..execute((workspaceId, ObjectiveFilter(page: 1)));
   }
 
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
+  final PreferencesRepository _preferencesRepository;
   final _log = Logger('TasksScreenViewModel');
 
-  late Command1<
-    void,
-    (String workspaceId, PaginableObjectivesRequestQueryParams paginable)
-  >
-  loadTasks;
+  late Command1<void, (String workspaceId, ObjectiveFilter? filter)> loadTasks;
 
   List<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
+
+  /// [appLocale] in [PreferencesRepository] is set up in AppStartup.
+  Locale get appLocale => _preferencesRepository.appLocale!;
 
   User? get user => _userRepository.user;
 
@@ -48,13 +51,12 @@ class TasksScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadTasks(
-    (String workspaceId, PaginableObjectivesRequestQueryParams paginable)
-    details,
+    (String workspaceId, ObjectiveFilter? filter) details,
   ) async {
-    final (workspaceId, paginable) = details;
+    final (workspaceId, filter) = details;
     final result = await _workspaceTaskRepository.loadTasks(
       workspaceId: workspaceId,
-      paginable: paginable,
+      filter: filter,
     );
 
     switch (result) {

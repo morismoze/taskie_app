@@ -14,7 +14,7 @@ abstract class WorkspaceRepository extends ChangeNotifier {
 
   /// This is used for Rbac widget, so it doesn't need to use
   /// async [loadActiveWorkspaceId] - that method is called once
-  /// on app startup on the EntryScreen.
+  ///on the EntryScreen.
   String? get activeWorkspaceId;
 
   /// This method is invoked on the EntryScreen or when user either leaves a

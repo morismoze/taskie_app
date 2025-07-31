@@ -218,11 +218,19 @@ GoRouter router({
 
                         return NoTransitionPage(
                           key: state.pageKey,
-                          child: TasksScreen(
-                            viewModel: TasksScreenViewModel(
+                          child: ChangeNotifierProvider(
+                            create: (context) => TasksScreenViewModel(
                               workspaceId: workspaceId,
                               userRepository: context.read(),
                               workspaceTaskRepository: context.read(),
+                              preferencesRepository: context.read(),
+                            ),
+                            child: Builder(
+                              builder: (builderContext) {
+                                return TasksScreen(
+                                  viewModel: builderContext.read(),
+                                );
+                              },
                             ),
                           ),
                         );
@@ -369,9 +377,10 @@ GoRouter router({
                     // `create` and `child` evaluate at almost the same time, hence why without Builder
                     // `context` would not yet see the new InheritedWidget (Provider).
                     child: Builder(
-                      builder: (context) => WorkspaceUsersManagementScreen(
-                        viewModel: context.read(),
-                      ),
+                      builder: (builderContext) =>
+                          WorkspaceUsersManagementScreen(
+                            viewModel: builderContext.read(),
+                          ),
                     ),
                   ),
                 );
