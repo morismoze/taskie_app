@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'data/repositories/preferences/preferences_repository.dart';
@@ -25,16 +24,7 @@ class MainApp extends StatelessWidget {
         authStateRepository: context.read(),
         workspaceRepository: context.read(),
       ),
-      builder: (context, child) {
-        SystemChrome.setSystemUIOverlayStyle(
-          const SystemUiOverlayStyle(
-            systemNavigationBarIconBrightness: Brightness.dark,
-            systemNavigationBarColor: Colors.transparent,
-          ),
-        );
-
-        return child!;
-      },
+      builder: (context, child) => child!,
     );
   }
 }

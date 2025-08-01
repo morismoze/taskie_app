@@ -49,6 +49,7 @@ class AppSelectField extends StatefulWidget {
     this.enabled = true,
     this.initialValue,
     this.disabledWidgetTrailingTooltipMessage,
+    this.max,
   });
 
   final List<AppSelectFieldOption> options;
@@ -56,12 +57,15 @@ class AppSelectField extends StatefulWidget {
   final void Function() onCleared;
   final String label;
 
-  /// Defines if this a multiple option selection field.
+  /// Defines if this is a multiple option selection field.
   final bool multiple;
   final bool required;
   final bool enabled;
   final List<AppSelectFieldOption>? initialValue;
   final String? disabledWidgetTrailingTooltipMessage;
+
+  /// Defines how many options can be selected when [multiple] is true.
+  final int? max;
 
   @override
   State<AppSelectField> createState() => _AppSelectFieldState();
@@ -155,6 +159,7 @@ class _AppSelectFieldState extends State<AppSelectField> {
         selectedOptions: _selectedOptions,
         onSubmit: _onSubmit,
         multiple: widget.multiple,
+        max: widget.max,
       ),
     );
   }
@@ -165,13 +170,15 @@ class _AppSelectFieldOptions extends StatefulWidget {
     required this.options,
     required this.selectedOptions,
     required this.onSubmit,
-    required this.multiple,
+    this.multiple = false,
+    this.max,
   });
 
   final List<AppSelectFieldOption> options;
   final List<AppSelectFieldOption> selectedOptions;
   final void Function(List<AppSelectFieldOption>) onSubmit;
   final bool multiple;
+  final int? max;
 
   @override
   State<_AppSelectFieldOptions> createState() => _AppSelectFieldOptionsState();
@@ -194,7 +201,13 @@ class _AppSelectFieldOptionsState extends State<_AppSelectFieldOptions> {
         if (_selectedOptions.contains(option)) {
           _selectedOptions.remove(option);
         } else {
-          _selectedOptions.add(option);
+          if (widget.max != null) {
+            if (_selectedOptions.length < widget.max!) {
+              _selectedOptions.add(option);
+            }
+          } else {
+            _selectedOptions.add(option);
+          }
         }
       } else {
         if (!_selectedOptions.contains(option)) {

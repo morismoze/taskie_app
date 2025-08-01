@@ -23,8 +23,11 @@ class TasksHeader extends StatelessWidget {
     final fullName = '${user.firstName} ${user.lastName}';
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: Dimens.of(context).paddingScreenVertical,
+      padding: EdgeInsets.only(
+        left: Dimens.of(context).paddingScreenHorizontal,
+        right: Dimens.of(context).paddingScreenHorizontal,
+        top: Dimens.paddingVertical,
+        bottom: Dimens.paddingVertical / 2,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,7 +52,9 @@ class TasksHeader extends StatelessWidget {
                   ),
                   Text(
                     fullName,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),

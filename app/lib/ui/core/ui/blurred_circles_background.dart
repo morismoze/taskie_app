@@ -48,11 +48,11 @@ class BlurredCirclesBackground extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: -100,
-          right: 50,
+          bottom: 100,
+          right: -20,
           child: BlurredCircle(
             color: Colors.yellow.withValues(alpha: 0.15),
-            radius: 80,
+            radius: 50,
             blurSigma: 35,
           ),
         ),

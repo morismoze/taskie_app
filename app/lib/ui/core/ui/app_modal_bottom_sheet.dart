@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../theme/dimens.dart';
 
@@ -24,13 +23,6 @@ class AppModalBottomSheet {
     bool shrinkWrap = true,
     VoidCallback? onDismiss,
   }) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        systemNavigationBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Theme.of(context).colorScheme.onSecondary,
-      ),
-    );
-
     return showModalBottomSheet<T>(
       context: context,
       useSafeArea: true,

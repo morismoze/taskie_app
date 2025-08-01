@@ -29,7 +29,9 @@ class _CreateWorkspaceInitialScreenState
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
       ),
     );
     widget.viewModel.createWorkspace.addListener(_onResult);

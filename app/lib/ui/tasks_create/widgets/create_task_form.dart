@@ -108,6 +108,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             onCleared: _onAssigneesCleared,
             label: context.localization.objectiveAssigneeLabel,
             multiple: true,
+            max: ValidationRules.taskMaxAssigneesCount,
             validator: (assignees) => _validateAssignees(context, assignees),
           ),
           const SizedBox(height: 10),

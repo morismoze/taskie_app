@@ -219,6 +219,7 @@ GoRouter router({
                         return NoTransitionPage(
                           key: state.pageKey,
                           child: ChangeNotifierProvider(
+                            key: ValueKey(workspaceId),
                             create: (context) => TasksScreenViewModel(
                               workspaceId: workspaceId,
                               userRepository: context.read(),
@@ -358,7 +359,7 @@ GoRouter router({
                           child: child,
                         );
                       },
-                  child: ChangeNotifierProvider<WorkspaceUsersManagementScreenViewModel>(
+                  child: ChangeNotifierProvider(
                     key: ValueKey(workspaceId),
                     create: (context) =>
                         WorkspaceUsersManagementScreenViewModel(

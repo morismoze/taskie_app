@@ -6,7 +6,7 @@ import '../../../core/theme/colors.dart';
 import '../../../core/ui/app_avatar.dart';
 
 /// Defines how many avatars will be shown before overflow avatar.
-const kShownAvatarsNumbers = 3;
+const _kShownAvatarsNumbers = 3;
 
 class TaskAssignees extends StatelessWidget {
   const TaskAssignees({super.key, required this.assignees});
@@ -15,7 +15,7 @@ class TaskAssignees extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shownAssignees = assignees.take(kShownAvatarsNumbers);
+    final shownAssignees = assignees.take(_kShownAvatarsNumbers);
     // How much each avatar will overlap with each other
     const overlap = kAppAvatarSize / 2;
     // Total width
@@ -30,7 +30,7 @@ class TaskAssignees extends StatelessWidget {
           ...shownAssignees.mapIndexed((index, assignee) {
             final fullName = '${assignee.firstName} ${assignee.lastName}';
             return Positioned(
-              left: (index * (40 - overlap)).toDouble(),
+              left: (index * (kAppAvatarSize - overlap)).toDouble(),
               child: AppAvatar(
                 hashString: assignee.id,
                 fullName: fullName,
@@ -40,7 +40,8 @@ class TaskAssignees extends StatelessWidget {
           }),
           if (assignees.length > 3)
             Positioned(
-              left: (kShownAvatarsNumbers * (40 - overlap)).toDouble(),
+              left: (_kShownAvatarsNumbers * (kAppAvatarSize - overlap))
+                  .toDouble(),
               child: OverflowAvatar(totalAssigness: assignees.length),
             ),
         ],
@@ -56,7 +57,7 @@ class OverflowAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final overflow = totalAssigness - kShownAvatarsNumbers;
+    final overflow = totalAssigness - _kShownAvatarsNumbers;
     final overflowText = '+$overflow';
     // Logic copied from [AppAvatar] widget
     final textFontSize = kAppAvatarRadius * 0.8;

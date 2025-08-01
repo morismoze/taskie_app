@@ -29,7 +29,9 @@ class _SignInScreenState extends State<SignInScreen> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
       ),
     );
     widget.viewModel.signInWithGoogle.addListener(_onResult);

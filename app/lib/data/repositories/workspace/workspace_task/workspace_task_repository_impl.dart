@@ -132,6 +132,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   @override
   void purgeTasksCache() {
     _cachedTasksPerFilter = LRUCache(maxSize: initLRUCacheLimitFilter);
+    _activeFilter = ObjectiveFilter();
   }
 
   WorkspaceTask _mapTaskFromResponse(
