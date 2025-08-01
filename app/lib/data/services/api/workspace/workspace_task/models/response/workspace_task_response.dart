@@ -13,6 +13,7 @@ class WorkspaceTaskResponse {
     required this.rewardPoints,
     required this.assignees,
     this.description,
+    this.dueDate,
   });
 
   final String id;
@@ -20,6 +21,7 @@ class WorkspaceTaskResponse {
   final int rewardPoints;
   final List<TaskAssigneeResponse> assignees;
   final String? description;
+  final DateTime? dueDate;
 
   factory WorkspaceTaskResponse.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceTaskResponseFromJson(json);

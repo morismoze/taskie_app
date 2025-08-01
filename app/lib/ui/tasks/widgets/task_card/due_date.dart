@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/theme/colors.dart';
-
 class TaskDueDate extends StatelessWidget {
   const TaskDueDate({
     super.key,
@@ -16,22 +14,23 @@ class TaskDueDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDatetime =
-        '${DateFormat.yMd(Localizations.localeOf(context).toString()).format(dueDate)} ${DateFormat.Hm(Localizations.localeOf(context).toString()).format(dueDate)}';
+    final formattedDate = DateFormat.yMd(
+      Localizations.localeOf(context).toString(),
+    ).format(dueDate);
 
     return Row(
-      spacing: 8,
+      spacing: 5,
       children: [
-        const FaIcon(
+        FaIcon(
           FontAwesomeIcons.clock,
           size: 16,
-          color: AppColors.purple1Light,
+          color: Theme.of(context).colorScheme.primary,
         ),
         Text(
-          formattedDatetime,
-          style: Theme.of(
-            context,
-          ).textTheme.labelMedium!.copyWith(color: AppColors.purple1Light),
+          formattedDate,
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ],
     );

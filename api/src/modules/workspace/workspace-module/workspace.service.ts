@@ -495,6 +495,10 @@ export class WorkspaceService {
         id: task.id,
         title: task.title,
         description: task.description,
+        dueDate:
+          task.dueDate === null
+            ? null
+            : DateTime.fromJSDate(task.dueDate).toISO()!,
         rewardPoints: task.rewardPoints,
         assignees: task.assignees.map((assignee) => ({
           id: assignee.id,
@@ -613,7 +617,14 @@ export class WorkspaceService {
         data,
       });
 
-      let response: WorkspaceTaskResponse = { ...newTask, assignees: [] };
+      let response: WorkspaceTaskResponse = {
+        ...newTask,
+        dueDate:
+          newTask.dueDate === null
+            ? null
+            : DateTime.fromJSDate(newTask.dueDate).toISO()!,
+        assignees: [],
+      };
 
       // Create new task assignment for each given assignee
       for (const assigneeId of data.assignees) {

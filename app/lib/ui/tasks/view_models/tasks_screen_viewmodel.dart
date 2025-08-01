@@ -21,8 +21,7 @@ class TasksScreenViewModel extends ChangeNotifier {
        _preferencesRepository = preferencesRepository {
     _workspaceTaskRepository.addListener(_onTasksChanged);
     _userRepository.addListener(_onUserChanged);
-    loadTasks = Command1(_loadTasks)
-      ..execute((workspaceId, ObjectiveFilter(page: 1)));
+    loadTasks = Command1(_loadTasks)..execute((ObjectiveFilter(page: 1), null));
   }
 
   final String _activeWorkspaceId;
@@ -31,7 +30,7 @@ class TasksScreenViewModel extends ChangeNotifier {
   final PreferencesRepository _preferencesRepository;
   final _log = Logger('TasksScreenViewModel');
 
-  late Command1<void, (String workspaceId, ObjectiveFilter? filter)> loadTasks;
+  late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadTasks;
 
   List<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
 
@@ -51,12 +50,13 @@ class TasksScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadTasks(
-    (String workspaceId, ObjectiveFilter? filter) details,
+    (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
-    final (workspaceId, filter) = details;
+    final (filter, forceFetch) = details;
     final result = await _workspaceTaskRepository.loadTasks(
-      workspaceId: workspaceId,
+      workspaceId: _activeWorkspaceId,
       filter: filter,
+      forceFetch: forceFetch ?? false,
     );
 
     switch (result) {

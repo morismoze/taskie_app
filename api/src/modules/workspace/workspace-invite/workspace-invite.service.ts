@@ -55,7 +55,7 @@ export class WorkspaceInviteService {
     }
 
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
-    const now = DateTime.now();
+    const now = DateTime.now().toUTC();
     const expiresAt = now.plus({ hours: 24 }).toISO();
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
@@ -151,7 +151,7 @@ export class WorkspaceInviteService {
 
     // Check if that workspace invite has expired
     const expiresAt = DateTime.fromJSDate(workspaceInvite.expiresAt).toISO()!;
-    const now = DateTime.now().toISO();
+    const now = DateTime.now().toUTC().toISO();
 
     if (expiresAt < now) {
       throw new ApiHttpException(

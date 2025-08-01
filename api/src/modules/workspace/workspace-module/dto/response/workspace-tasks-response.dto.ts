@@ -5,6 +5,7 @@ export interface WorkspaceTaskResponse {
   id: string;
   title: string;
   description: string | null;
+  dueDate: string | null;
   rewardPoints: number;
   assignees: {
     id: string;

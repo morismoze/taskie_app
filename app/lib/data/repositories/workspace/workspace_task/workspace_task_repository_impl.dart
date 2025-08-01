@@ -11,7 +11,7 @@ import '../../../services/api/workspace/workspace_task/models/response/workspace
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import 'workspace_task_repository.dart';
 
-const initLimitFilter = 20;
+const initLRUCacheLimitFilter = 20;
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   WorkspaceTaskRepositoryImpl({
@@ -25,12 +25,11 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   final _log = Logger('WorkspaceTaskRepository');
 
   // A map of tasks per ObjectiveFilter
-  LRUCache<ObjectiveFilter, List<WorkspaceTask>> _cachedTasks = LRUCache(
-    maxSize: initLimitFilter,
-  );
+  LRUCache<ObjectiveFilter, List<WorkspaceTask>> _cachedTasksPerFilter =
+      LRUCache(maxSize: initLRUCacheLimitFilter);
 
   @override
-  List<WorkspaceTask>? get tasks => _cachedTasks.get(_activeFilter);
+  List<WorkspaceTask>? get tasks => _cachedTasksPerFilter.get(_activeFilter);
 
   @override
   Future<Result<void>> loadTasks({
@@ -43,9 +42,10 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     // 2. provided [filter] and class [_filter] are different
     // 3. there is no value for given [effectiveFilter] cache key
 
+    // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
 
-    if (!forceFetch && _cachedTasks.get(effectiveFilter) != null) {
+    if (!forceFetch && _cachedTasksPerFilter.get(effectiveFilter) != null) {
       return const Result.ok(null);
     }
 
@@ -70,7 +70,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
               .map((task) => _mapTaskFromResponse(task))
               .toList();
 
-          _cachedTasks.put(_activeFilter, mappedData);
+          _cachedTasksPerFilter.put(_activeFilter, mappedData);
           notifyListeners();
 
           return const Result.ok(null);
@@ -108,16 +108,17 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         case Ok<WorkspaceTaskResponse>():
           final newTask = _mapTaskFromResponse(result.value, isNew: true);
 
-          final currentTasks = _cachedTasks.get(_activeFilter);
-          // This can be null in case initial tasks load request fails for some reason
-          if (currentTasks != null) {
-            // Add the new task with the `new` flag to the start index, so additional
-            // UI styles are applied to it in the current tasks paginable page. Also
-            // it is added to the current active filter key.
-            final updatedTasks = [newTask, ...currentTasks];
-            _cachedTasks.put(_activeFilter, updatedTasks);
-            notifyListeners();
+          final currentTasks = _cachedTasksPerFilter.get(_activeFilter);
+          if (currentTasks == null) {
+            _cachedTasksPerFilter.put(_activeFilter, []);
           }
+
+          // Add the new task with the `new` flag to the start index, so additional
+          // UI styles are applied to it in the current tasks paginable page. Also
+          // it is added to the current active filter key.
+          final updatedTasks = [newTask, ...currentTasks!];
+          _cachedTasksPerFilter.put(_activeFilter, updatedTasks);
+          notifyListeners();
 
           return const Result.ok(null);
         case Error<WorkspaceTaskResponse>():
@@ -130,7 +131,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   @override
   void purgeTasksCache() {
-    _cachedTasks = LRUCache(maxSize: initLimitFilter);
+    _cachedTasksPerFilter = LRUCache(maxSize: initLRUCacheLimitFilter);
   }
 
   WorkspaceTask _mapTaskFromResponse(
@@ -153,6 +154,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           )
           .toList(),
       description: task.description,
+      dueDate: task.dueDate,
       isNew: isNew,
     );
   }

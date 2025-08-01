@@ -73,7 +73,7 @@ export class WorkspaceInviteRepositoryImpl
   }
 
   async deleteExpiredInvites(): Promise<void> {
-    const now = DateTime.now().toJSDate();
+    const now = DateTime.now().toUTC().toJSDate();
     await this.repo.delete({
       expiresAt: LessThan(now),
     });

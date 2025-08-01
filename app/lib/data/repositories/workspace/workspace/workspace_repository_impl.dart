@@ -92,22 +92,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       switch (result) {
         case Ok<List<WorkspaceResponse>>():
           final mappedData = result.value
-              .map(
-                (workspace) => Workspace(
-                  id: workspace.id,
-                  name: workspace.name,
-                  createdAt: workspace.createdAt,
-                  description: workspace.description,
-                  pictureUrl: workspace.pictureUrl,
-                  createdBy: workspace.createdBy == null
-                      ? null
-                      : WorkspaceCreatedBy(
-                          firstName: workspace.createdBy!.firstName,
-                          lastName: workspace.createdBy!.lastName,
-                          profileImageUrl: workspace.createdBy!.profileImageUrl,
-                        ),
-                ),
-              )
+              .map((workspace) => _mapWorkspaceFromResponse(workspace))
               .toList();
 
           _cachedWorkspacesList = mappedData;
@@ -141,21 +126,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
       switch (result) {
         case Ok<WorkspaceResponse>():
-          final workspace = result.value;
-          final newWorkspace = Workspace(
-            id: workspace.id,
-            name: workspace.name,
-            createdAt: workspace.createdAt,
-            description: workspace.description,
-            pictureUrl: workspace.pictureUrl,
-            createdBy: workspace.createdBy == null
-                ? null
-                : WorkspaceCreatedBy(
-                    firstName: workspace.createdBy!.firstName,
-                    lastName: workspace.createdBy!.lastName,
-                    profileImageUrl: workspace.createdBy!.profileImageUrl,
-                  ),
-          );
+          final newWorkspace = _mapWorkspaceFromResponse(result.value);
 
           // Add the new workspace to the local list (cache)
           _cachedWorkspacesList?.add(newWorkspace);
@@ -171,7 +142,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
             _hasNoWorkspacesNotifier.value = false;
           }
 
-          return Result.ok(workspace.id);
+          return Result.ok(newWorkspace.id);
         case Error<WorkspaceResponse>():
           return Result.error(result.error);
       }
@@ -233,21 +204,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
       switch (result) {
         case Ok():
-          final workspace = result.value;
-          final updatedWorkspace = Workspace(
-            id: workspace.id,
-            name: workspace.name,
-            createdAt: workspace.createdAt,
-            description: workspace.description,
-            pictureUrl: workspace.pictureUrl,
-            createdBy: workspace.createdBy == null
-                ? null
-                : WorkspaceCreatedBy(
-                    firstName: workspace.createdBy!.firstName,
-                    lastName: workspace.createdBy!.lastName,
-                    profileImageUrl: workspace.createdBy!.profileImageUrl,
-                  ),
-          );
+          final updatedWorkspace = _mapWorkspaceFromResponse(result.value);
 
           // Update the existing workspace in the list by replacing it
           // with the new updated instance.
@@ -278,5 +235,22 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     }
 
     return Result.error(Exception('Cached list was not initialized'));
+  }
+
+  Workspace _mapWorkspaceFromResponse(WorkspaceResponse workspace) {
+    return Workspace(
+      id: workspace.id,
+      name: workspace.name,
+      createdAt: workspace.createdAt,
+      description: workspace.description,
+      pictureUrl: workspace.pictureUrl,
+      createdBy: workspace.createdBy == null
+          ? null
+          : WorkspaceCreatedBy(
+              firstName: workspace.createdBy!.firstName,
+              lastName: workspace.createdBy!.lastName,
+              profileImageUrl: workspace.createdBy!.profileImageUrl,
+            ),
+    );
   }
 }

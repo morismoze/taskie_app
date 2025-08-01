@@ -9,6 +9,7 @@ class WorkspaceTask {
     required this.assignees,
     this.isNew = false,
     this.description,
+    this.dueDate,
   });
 
   final String id;
@@ -21,6 +22,7 @@ class WorkspaceTask {
   /// and cached ones from origin.
   final bool isNew;
   final String? description;
+  final DateTime? dueDate;
 }
 
 class WorkspaceTaskAssignee extends Assignee {

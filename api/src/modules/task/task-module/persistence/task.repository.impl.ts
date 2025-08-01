@@ -2,12 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
-import {
-  FindManyOptions,
-  FindOptionsRelations,
-  ILike,
-  Repository,
-} from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { ProgressStatus } from '../domain/progress-status.enum';
 import { Task } from '../domain/task.domain';
 import { TaskEntity } from './task.entity';

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../utils/color.dart';
 
+const kAppAvatarRadius = 20.0;
+const kAppAvatarSize = kAppAvatarRadius * 2;
+
 /// [AppAvatar.imageUrl] takes precedence over text
 class AppAvatar extends StatelessWidget {
   const AppAvatar({
@@ -11,7 +14,7 @@ class AppAvatar extends StatelessWidget {
     required this.hashString,
     required this.fullName,
     this.imageUrl,
-    this.radius = 20,
+    this.radius = kAppAvatarRadius,
   });
 
   /// This is used for generating unique color out of a string, in

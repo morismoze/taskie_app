@@ -123,16 +123,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksHello => 'Hello!';
 
   @override
-  String get tasksProgressInProgress => 'In Progress';
+  String get tasksCardProgressInProgress => 'In Progress';
 
   @override
-  String get tasksProgressCompleted => 'Completed';
+  String get tasksCardProgressCompleted => 'Completed';
 
   @override
-  String get tasksProgressCompletedAsStale => 'Completed as Stale';
+  String get tasksCardProgressCompletedAsStale => 'Completed as Stale';
 
   @override
-  String get tasksProgressClosed => 'Closed';
+  String get tasksCardProgressClosed => 'Closed';
+
+  @override
+  String tasksCardPoints(Object points) {
+    return '$points points';
+  }
 
   @override
   String get appDrawerTitle => 'Workspaces';

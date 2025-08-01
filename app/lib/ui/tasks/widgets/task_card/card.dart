@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../../../data/services/api/workspace/progress_status.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../core/theme/colors.dart';
-import 'task_assignees.dart';
-import 'task_due_date.dart';
-import 'task_status.dart';
+import '../../../core/theme/dimens.dart';
+import 'assignees.dart';
+import 'due_date.dart';
+import 'reward_points.dart';
+import 'statuses.dart';
+import 'title.dart';
 
 class TaskCard extends StatelessWidget {
   const TaskCard({
@@ -13,7 +15,6 @@ class TaskCard extends StatelessWidget {
     required this.title,
     required this.assignees,
     required this.rewardPoints,
-    required this.status,
     required this.appLocale,
     this.isNew = false,
     this.dueDate,
@@ -22,7 +23,6 @@ class TaskCard extends StatelessWidget {
   final String title;
   final List<WorkspaceTaskAssignee> assignees;
   final int rewardPoints;
-  final ProgressStatus status;
   final Locale appLocale;
 
   /// This represents a task was just created and was placed in the
@@ -35,6 +35,10 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: Dimens.paddingVertical / 2,
+        horizontal: Dimens.paddingHorizontal,
+      ),
       decoration: BoxDecoration(
         color: AppColors.white1,
         borderRadius: BorderRadius.circular(12),
@@ -47,19 +51,34 @@ class TaskCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        spacing: 10,
         children: [
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
             children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              TaskAssignees(assignees: assignees),
+              Flexible(child: TaskTitle(title: title)),
+              TaskStatuses(assignees: assignees),
             ],
           ),
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (dueDate != null)
-                TaskDueDate(dueDate: dueDate!, appLocale: appLocale),
-              TaskStatus(status: status),
+              Column(
+                spacing: 6,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TaskAssignees(assignees: assignees),
+                  if (dueDate != null) ...[
+                    const SizedBox(height: 1),
+                    TaskDueDate(dueDate: dueDate!, appLocale: appLocale),
+                  ],
+                ],
+              ),
+              TaskRewardPoints(rewardPoints: rewardPoints),
             ],
           ),
         ],
