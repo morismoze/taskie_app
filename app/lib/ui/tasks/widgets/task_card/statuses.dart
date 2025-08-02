@@ -82,7 +82,7 @@ class TaskStatuses extends StatelessWidget {
         );
       case ProgressStatus.closed:
         return (
-          AppColors.purple1,
+          Theme.of(context).colorScheme.primary,
           AppColors.purple1Light,
           context.localization.tasksCardProgressClosed,
         );

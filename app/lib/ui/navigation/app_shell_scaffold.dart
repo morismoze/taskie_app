@@ -30,7 +30,6 @@ class AppShellScaffold extends StatelessWidget {
           appDrawerViewModel.loadWorkspaces.execute();
         }
       },
-      extendBody: true,
       bottomNavigationBar: AppBottomNavigationBar(
         viewModel: context.read<AppBottomNavigationBarViewModel>(),
         navigationShell: navigationShell,

@@ -1,3 +1,4 @@
+import '../../data/services/api/paginable.dart';
 import '../../data/services/api/workspace/progress_status.dart';
 
 class Filter {
@@ -22,12 +23,28 @@ class Filter {
 
   @override
   int get hashCode => Object.hash(page, limit, search);
+
+  Filter copyWith({int? page, int? limit, String? search}) {
+    return Filter(
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      search: search ?? this.search,
+    );
+  }
 }
 
 class ObjectiveFilter extends Filter {
-  ObjectiveFilter({super.page, super.limit, super.search, this.status});
+  ObjectiveFilter({
+    super.page,
+    super.limit,
+    super.search,
+    this.status,
+    this.sort,
+  });
 
   final ProgressStatus? status;
+
+  final SortBy? sort;
 
   @override
   bool operator ==(Object other) {
@@ -47,4 +64,21 @@ class ObjectiveFilter extends Filter {
 
   @override
   int get hashCode => Object.hash(page, limit, search, status);
+
+  @override
+  ObjectiveFilter copyWith({
+    int? page,
+    int? limit,
+    String? search,
+    ProgressStatus? status,
+    SortBy? sort,
+  }) {
+    return ObjectiveFilter(
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      search: search ?? this.search,
+      status: status ?? this.status,
+      sort: sort ?? this.sort,
+    );
+  }
 }

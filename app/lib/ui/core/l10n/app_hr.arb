@@ -36,6 +36,7 @@
   "workspaceCreateDescriptionMaxLength": "Opis može imati najviše 250 znakova",
   "workspaceCreateError": "Uh-oh! Došlo je do problema prilikom kreiranja radnog prostora",
   "tasksHello": "Pozdrav!",
+  "taskskNoTasks": "Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!",
   "tasksCardProgressInProgress": "U tijeku",
   "tasksCardProgressCompleted": "Dovršeno",
   "tasksCardProgressCompletedAsStale": "Dovršeno (zastarjelo)",

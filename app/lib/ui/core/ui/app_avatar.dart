@@ -12,7 +12,7 @@ class AppAvatar extends StatelessWidget {
   const AppAvatar({
     super.key,
     required this.hashString,
-    required this.fullName,
+    required this.firstName,
     this.imageUrl,
     this.radius = kAppAvatarRadius,
   });
@@ -20,14 +20,14 @@ class AppAvatar extends StatelessWidget {
   /// This is used for generating unique color out of a string, in
   /// most cases this will be user's ID (workspace user ID).
   final String hashString;
-  final String fullName;
+  final String firstName;
   final double radius;
   final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ColorGenerator.generateColorFromString(hashString);
-    final firstNameFirstLetter = fullName.split(' ')[0][0];
+    final firstNameFirstLetter = firstName[0];
     final textFontSize = radius <= 20 ? radius * 1.2 : radius * 0.95;
 
     return CircleAvatar(

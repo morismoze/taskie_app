@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
+import '../../core/utils/user.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
 import 'workspace_switcher.dart';
 
@@ -20,13 +21,16 @@ class TasksHeader extends StatelessWidget {
       return const SizedBox();
     }
 
-    final fullName = '${user.firstName} ${user.lastName}';
+    final fullName = UserUtils.constructFullName(
+      firstName: user.firstName,
+      lastName: user.lastName,
+    );
 
     return Padding(
       padding: EdgeInsets.only(
         left: Dimens.of(context).paddingScreenHorizontal,
         right: Dimens.of(context).paddingScreenHorizontal,
-        top: Dimens.paddingVertical,
+        top: Dimens.paddingVertical / 2,
         bottom: Dimens.paddingVertical / 2,
       ),
       child: Row(
@@ -37,7 +41,7 @@ class TasksHeader extends StatelessWidget {
             children: [
               AppAvatar(
                 hashString: user.id,
-                fullName: fullName,
+                firstName: user.firstName,
                 imageUrl: user.profileImageUrl,
               ),
               const SizedBox(width: 13),

@@ -5,6 +5,7 @@ import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../domain/models/filter.dart';
+import '../../../domain/models/paginable.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
@@ -32,7 +33,11 @@ class TasksScreenViewModel extends ChangeNotifier {
 
   late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadTasks;
 
-  List<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
+  String get activeWorkspaceId => _activeWorkspaceId;
+
+  ObjectiveFilter get activeFilter => _workspaceTaskRepository.activeFilter;
+
+  Paginable<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
 
   /// [appLocale] in [PreferencesRepository] is set up in AppStartup.
   Locale get appLocale => _preferencesRepository.appLocale!;

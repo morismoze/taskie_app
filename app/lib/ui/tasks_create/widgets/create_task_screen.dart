@@ -95,7 +95,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                   },
                   child: ListenableBuilder(
                     listenable: widget.viewModel,
-                    builder: (inderBuilderContext, _) {
+                    builder: (innerBuilderContext, _) {
                       if (widget.viewModel.workspaceMembers.isEmpty) {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -104,21 +104,21 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                             FractionallySizedBox(
                               widthFactor: 0.9,
                               child: Text(
-                                inderBuilderContext
+                                innerBuilderContext
                                     .localization
                                     .createNewTaskNoMembers,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
-                                  inderBuilderContext,
+                                  innerBuilderContext,
                                 ).textTheme.bodyMedium,
                               ),
                             ),
                             const SizedBox(height: 20),
                             AppOutlinedButton(
-                              label: inderBuilderContext
+                              label: innerBuilderContext
                                   .localization
                                   .objectiveNoMembersCta,
-                              onPress: () => inderBuilderContext.push(
+                              onPress: () => innerBuilderContext.push(
                                 Routes.workspaceUsers(
                                   workspaceId:
                                       widget.viewModel.activeWorkspaceId,

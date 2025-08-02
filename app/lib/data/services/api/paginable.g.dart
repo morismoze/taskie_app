@@ -11,5 +11,6 @@ PaginableResponse<D> _$PaginableResponseFromJson<D>(
   D Function(Object? json) fromJsonD,
 ) => PaginableResponse<D>(
   items: (json['items'] as List<dynamic>).map(fromJsonD).toList(),
+  totalPages: (json['totalPages'] as num).toInt(),
   total: (json['total'] as num).toInt(),
 );

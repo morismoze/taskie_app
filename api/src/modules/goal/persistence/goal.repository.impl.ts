@@ -100,6 +100,7 @@ export class GoalRepositoryImpl implements GoalRepository {
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{
     data: GoalEntity[];
+    totalPages: number;
     total: number;
   }> {
     const offset = (page - 1) * limit;
@@ -123,6 +124,7 @@ export class GoalRepositoryImpl implements GoalRepository {
 
     return {
       data: goalEntities,
+      totalPages: Math.ceil(totalCount / limit),
       total: totalCount,
     };
   }

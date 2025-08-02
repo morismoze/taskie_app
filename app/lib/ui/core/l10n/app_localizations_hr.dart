@@ -123,6 +123,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksHello => 'Pozdrav!';
 
   @override
+  String get taskskNoTasks =>
+      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!';
+
+  @override
   String get tasksCardProgressInProgress => 'U tijeku';
 
   @override

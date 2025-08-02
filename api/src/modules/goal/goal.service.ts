@@ -23,18 +23,22 @@ export class GoalService {
     query: WorkspaceItemRequestQuery;
   }): Promise<{
     data: GoalWithAssigneeUserCore[];
+    totalPages: number;
     total: number;
   }> {
-    const { data: goalEntities, total } =
-      await this.goalRepository.findAllByWorkspaceId({
-        workspaceId,
-        query,
-        relations: {
-          assignee: {
-            user: true,
-          },
+    const {
+      data: goalEntities,
+      totalPages,
+      total,
+    } = await this.goalRepository.findAllByWorkspaceId({
+      workspaceId,
+      query,
+      relations: {
+        assignee: {
+          user: true,
         },
-      });
+      },
+    });
 
     const goals: GoalWithAssigneeUserCore[] = [];
 
@@ -59,7 +63,8 @@ export class GoalService {
 
     return {
       data: goals,
-      total: total,
+      totalPages,
+      total,
     };
   }
 

@@ -8,7 +8,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/app_filled_button.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/rbac.dart';
-import '../../../core/utils/constants.dart';
+import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/app_floating_action_button_view_model.dart';
 
 class AppFloatingActionButton extends StatelessWidget {
@@ -26,7 +26,9 @@ class AppFloatingActionButton extends StatelessWidget {
         child: FloatingActionButton(
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(
+              kAppBottomNavigationBarBorderRadius,
+            ),
           ),
           onPressed: () => _onPressed(context),
           child: const FaIcon(FontAwesomeIcons.plus, size: 18),

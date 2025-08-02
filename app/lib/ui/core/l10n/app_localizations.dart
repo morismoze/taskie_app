@@ -308,6 +308,12 @@ abstract class AppLocalizations {
   /// **'Hello!'**
   String get tasksHello;
 
+  /// No description provided for @taskskNoTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one!'**
+  String get taskskNoTasks;
+
   /// No description provided for @tasksCardProgressInProgress.
   ///
   /// In en, this message translates to:

@@ -15,7 +15,7 @@ class RoleChip extends StatelessWidget {
         ? AppColors.purple1Light
         : AppColors.green1Light;
     final roleChipTextColor = role == WorkspaceRole.manager
-        ? AppColors.purple1
+        ? Theme.of(context).colorScheme.primary
         : AppColors.green1;
 
     return Chip(

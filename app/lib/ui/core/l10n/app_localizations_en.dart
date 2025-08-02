@@ -123,6 +123,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksHello => 'Hello!';
 
   @override
+  String get taskskNoTasks =>
+      'It looks like your workspace doesn\'t have any task yet. Try creating your first one!';
+
+  @override
   String get tasksCardProgressInProgress => 'In Progress';
 
   @override

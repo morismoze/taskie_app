@@ -28,12 +28,11 @@ class TaskAssignees extends StatelessWidget {
       child: Stack(
         children: [
           ...shownAssignees.mapIndexed((index, assignee) {
-            final fullName = '${assignee.firstName} ${assignee.lastName}';
             return Positioned(
               left: (index * (kAppAvatarSize - overlap)).toDouble(),
               child: AppAvatar(
                 hashString: assignee.id,
-                fullName: fullName,
+                firstName: assignee.firstName,
                 imageUrl: assignee.profileImageUrl,
               ),
             );
@@ -42,7 +41,7 @@ class TaskAssignees extends StatelessWidget {
             Positioned(
               left: (_kShownAvatarsNumbers * (kAppAvatarSize - overlap))
                   .toDouble(),
-              child: OverflowAvatar(totalAssigness: assignees.length),
+              child: _OverflowAvatar(totalAssigness: assignees.length),
             ),
         ],
       ),
@@ -50,8 +49,8 @@ class TaskAssignees extends StatelessWidget {
   }
 }
 
-class OverflowAvatar extends StatelessWidget {
-  const OverflowAvatar({super.key, required this.totalAssigness});
+class _OverflowAvatar extends StatelessWidget {
+  const _OverflowAvatar({required this.totalAssigness});
 
   final int totalAssigness;
 

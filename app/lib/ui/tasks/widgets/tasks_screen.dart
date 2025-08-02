@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
-import 'task_card/card.dart';
+import 'empty_tasks.dart';
 import 'tasks_header.dart';
+import 'tasks_list.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key, required this.viewModel});
@@ -74,6 +74,12 @@ class _TasksScreenState extends State<TasksScreen> {
                     return const SizedBox.shrink();
                   }
 
+                  if (widget.viewModel.tasks!.total == 0) {
+                    return EmptyTasks(
+                      activeWorkspaceId: widget.viewModel.activeWorkspaceId,
+                    );
+                  }
+
                   // We don't have the standard 'First ListenableBuilder listening to a command
                   // and its child is the second ListenableBuilder listening to viewModel' because
                   // we want to show [ActivityIndicator] only on the initial load. All other loads
@@ -81,30 +87,10 @@ class _TasksScreenState extends State<TasksScreen> {
                   // killed by the underlying OS). And in that case we want to show the existing
                   // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
                   return RefreshIndicator(
-                    displacement: 30,
                     onRefresh: () async {
                       widget.viewModel.loadTasks.execute((null, true));
                     },
-                    child: ListView.separated(
-                      padding: EdgeInsets.only(
-                        bottom: Dimens.paddingVertical,
-                        left: Dimens.of(context).paddingScreenHorizontal,
-                        right: Dimens.of(context).paddingScreenHorizontal,
-                      ),
-                      itemCount: widget.viewModel.tasks!.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (_, index) {
-                        final task = widget.viewModel.tasks![index];
-
-                        return TaskCard(
-                          appLocale: widget.viewModel.appLocale,
-                          title: task.title,
-                          assignees: task.assignees,
-                          rewardPoints: task.rewardPoints,
-                          dueDate: task.dueDate,
-                        );
-                      },
-                    ),
+                    child: TasksList(viewModel: widget.viewModel),
                   );
                 },
               ),

@@ -23,13 +23,17 @@ export class TaskService {
     query: WorkspaceItemRequestQuery;
   }): Promise<{
     data: TaskWithAssigneesCore[];
+    totalPages: number;
     total: number;
   }> {
-    const { data: taskEntities, total } =
-      await this.taskRepository.findAllByWorkspaceId({
-        workspaceId,
-        query,
-      });
+    const {
+      data: taskEntities,
+      totalPages,
+      total,
+    } = await this.taskRepository.findAllByWorkspaceId({
+      workspaceId,
+      query,
+    });
 
     const tasks: TaskWithAssigneesCore[] = taskEntities.map((task) => ({
       id: task.id,
@@ -38,7 +42,7 @@ export class TaskService {
       description: task.description,
       dueDate: task.dueDate,
       assignees: task.taskAssignments.map((assignment) => ({
-        id: assignment.assignee.user.id,
+        id: assignment.assignee.id, // workspace user ID
         firstName: assignment.assignee.user.firstName,
         lastName: assignment.assignee.user.lastName,
         profileImageUrl: assignment.assignee.user.profileImageUrl,
@@ -51,7 +55,8 @@ export class TaskService {
 
     return {
       data: tasks,
-      total: total,
+      totalPages,
+      total,
     };
   }
 

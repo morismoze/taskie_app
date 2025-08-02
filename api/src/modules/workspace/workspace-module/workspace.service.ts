@@ -484,11 +484,14 @@ export class WorkspaceService {
     // with only one DB query - where: { task: { id: In(taskIds) } }) - this is something I'm not
     // sure about, because I'm weighing *one more complex query, meaning less DB queries* vs *two
     // simple queries, from different service functions for SRP (single responsiblity principle)
-    const { data: tasks, total } =
-      await this.taskService.findPaginatedByWorkspaceWithAssignees({
-        workspaceId,
-        query,
-      });
+    const {
+      data: tasks,
+      totalPages,
+      total,
+    } = await this.taskService.findPaginatedByWorkspaceWithAssignees({
+      workspaceId,
+      query,
+    });
 
     const response: WorkspaceTasksResponse = {
       items: tasks.map((task) => ({
@@ -508,6 +511,7 @@ export class WorkspaceService {
           status: assignee.status,
         })),
       })),
+      totalPages,
       total,
     };
 
@@ -534,11 +538,14 @@ export class WorkspaceService {
       );
     }
 
-    const { data: goals, total } =
-      await this.goalService.findPaginatedByWorkspaceWithAssignee({
-        workspaceId,
-        query,
-      });
+    const {
+      data: goals,
+      totalPages,
+      total,
+    } = await this.goalService.findPaginatedByWorkspaceWithAssignee({
+      workspaceId,
+      query,
+    });
 
     const responseData: WorkspaceGoalsResponse['items'] = [];
 
@@ -566,6 +573,7 @@ export class WorkspaceService {
 
     const response: WorkspaceGoalsResponse = {
       items: responseData,
+      totalPages,
       total,
     };
 

@@ -1,9 +1,9 @@
 import 'package:logging/logging.dart';
 
 import '../../../../domain/models/filter.dart';
+import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
-import '../../../../utils/lru_cache.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/workspace/paginable_objectives.dart';
 import '../../../services/api/workspace/workspace_task/models/request/create_task_request.dart';
@@ -11,7 +11,7 @@ import '../../../services/api/workspace/workspace_task/models/response/workspace
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import 'workspace_task_repository.dart';
 
-const initLRUCacheLimitFilter = 20;
+const _kDefaultPaginableLimit = 2;
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   WorkspaceTaskRepositoryImpl({
@@ -20,16 +20,18 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   final WorkspaceTaskApiService _workspaceTaskApiService;
 
-  // Filter params
-  ObjectiveFilter _activeFilter = ObjectiveFilter();
   final _log = Logger('WorkspaceTaskRepository');
 
-  // A map of tasks per ObjectiveFilter
-  LRUCache<ObjectiveFilter, List<WorkspaceTask>> _cachedTasksPerFilter =
-      LRUCache(maxSize: initLRUCacheLimitFilter);
+  ObjectiveFilter _activeFilter = ObjectiveFilter();
 
   @override
-  List<WorkspaceTask>? get tasks => _cachedTasksPerFilter.get(_activeFilter);
+  ObjectiveFilter get activeFilter => _activeFilter;
+
+  // LRUCache would make sense here for infinite pagination, not for standard pagination
+  Paginable<WorkspaceTask>? _cachedTasks;
+
+  @override
+  Paginable<WorkspaceTask>? get tasks => _cachedTasks;
 
   @override
   Future<Result<void>> loadTasks({
@@ -45,7 +47,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
 
-    if (!forceFetch && _cachedTasksPerFilter.get(effectiveFilter) != null) {
+    if (!forceFetch &&
+        effectiveFilter == _activeFilter &&
+        _cachedTasks != null) {
       return const Result.ok(null);
     }
 
@@ -56,7 +60,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     try {
       final queryParams = ObjectiveRequestQueryParams(
         page: _activeFilter.page,
-        limit: _activeFilter.limit,
+        limit: _activeFilter.limit ?? _kDefaultPaginableLimit,
         search: _activeFilter.search,
         status: _activeFilter.status,
       );
@@ -66,11 +70,19 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       );
       switch (result) {
         case Ok<PaginableResponse<WorkspaceTaskResponse>>():
-          final mappedData = result.value.items
+          final items = result.value.items;
+          final totalPages = result.value.totalPages;
+          final total = result.value.total;
+          final mappedData = items
               .map((task) => _mapTaskFromResponse(task))
               .toList();
+          final paginable = Paginable(
+            items: mappedData,
+            totalPages: totalPages,
+            total: total,
+          );
 
-          _cachedTasksPerFilter.put(_activeFilter, mappedData);
+          _cachedTasks = paginable;
           notifyListeners();
 
           return const Result.ok(null);
@@ -106,18 +118,15 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
       switch (result) {
         case Ok<WorkspaceTaskResponse>():
+          // Add the new task with the `isNew` flag, so additional
+          // UI styles are applied to it in the current tasks paginable page.
+          // Also it is added to the current active filter key.
           final newTask = _mapTaskFromResponse(result.value, isNew: true);
 
-          final currentTasks = _cachedTasksPerFilter.get(_activeFilter);
-          if (currentTasks == null) {
-            _cachedTasksPerFilter.put(_activeFilter, []);
-          }
-
-          // Add the new task with the `new` flag to the start index, so additional
-          // UI styles are applied to it in the current tasks paginable page. Also
-          // it is added to the current active filter key.
-          final updatedTasks = [newTask, ...currentTasks!];
-          _cachedTasksPerFilter.put(_activeFilter, updatedTasks);
+          // [_cachedTasks] should always be != null at this point in time, because
+          // we show a error prompt with retry on the TasksScreen if there was a problem
+          // with initial tasks load from origin.
+          _cachedTasks = _cachedTasks!.addItem(newTask);
           notifyListeners();
 
           return const Result.ok(null);
@@ -131,7 +140,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   @override
   void purgeTasksCache() {
-    _cachedTasksPerFilter = LRUCache(maxSize: initLRUCacheLimitFilter);
+    _cachedTasks = null;
     _activeFilter = ObjectiveFilter();
   }
 

@@ -56,6 +56,7 @@ export abstract class GoalRepository {
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{
     data: GoalEntity[];
+    totalPages: number;
     total: number;
   }>;
 

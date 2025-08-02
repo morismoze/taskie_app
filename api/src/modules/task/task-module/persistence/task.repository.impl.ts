@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { ProgressStatus } from '../domain/progress-status.enum';
 import { Task } from '../domain/task.domain';
@@ -83,7 +84,7 @@ export class TaskRepositoryImpl implements TaskRepository {
 
   async findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search },
+    query: { page, limit, status, search, sort },
   }: {
     workspaceId: string;
     query: {
@@ -91,9 +92,11 @@ export class TaskRepositoryImpl implements TaskRepository {
       limit: number;
       status: ProgressStatus;
       search: string | null;
+      sort: SortBy | null;
     };
   }): Promise<{
     data: TaskEntity[];
+    totalPages: number;
     total: number;
   }> {
     const offset = (page - 1) * limit;
@@ -103,16 +106,22 @@ export class TaskRepositoryImpl implements TaskRepository {
       .leftJoinAndSelect('task.taskAssignments', 'assignment')
       .leftJoinAndSelect('assignment.assignee', 'assignee')
       .leftJoinAndSelect('assignee.user', 'user')
-      .where('task.workspace.id = :workspaceId', { workspaceId });
-
-    if (status) {
-      qb.andWhere('assignment.status = :status', { status });
-    }
+      .where('task.workspace.id = :workspaceId', { workspaceId })
+      .andWhere('assignment.status = :status', { status });
 
     if (search) {
       qb.andWhere('LOWER(task.title) LIKE :search', {
         search: `%${search.toLowerCase()}%`,
       });
+    }
+
+    if (sort) {
+      switch (sort) {
+        case SortBy.NEWEST:
+          qb.orderBy('task.createdAt', 'DESC');
+        case SortBy.OLDEST:
+          qb.orderBy('task.createdAt', 'ASC');
+      }
     }
 
     qb.skip(offset).take(limit);
@@ -121,6 +130,7 @@ export class TaskRepositoryImpl implements TaskRepository {
 
     return {
       data: taskEntities,
+      totalPages: Math.ceil(totalCount / limit),
       total: totalCount,
     };
   }

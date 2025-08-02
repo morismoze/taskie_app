@@ -11,6 +11,7 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/info_icon_with_tooltip.dart';
+import '../../core/utils/user.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
 import 'workspace_user_accumulated_points.dart';
 
@@ -49,13 +50,16 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   @override
   Widget build(BuildContext context) {
     final options = widget.viewModel.workspaceMembers.map((user) {
-      final fullName = '${user.firstName} ${user.lastName}';
+      final fullName = UserUtils.constructFullName(
+        firstName: user.firstName,
+        lastName: user.lastName,
+      );
       return AppSelectFieldOption(
         label: fullName,
         value: user,
         leading: AppAvatar(
           hashString: user.id,
-          fullName: fullName,
+          firstName: user.firstName,
           imageUrl: user.profileImageUrl,
         ),
       );

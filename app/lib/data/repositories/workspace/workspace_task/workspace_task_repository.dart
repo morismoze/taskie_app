@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../domain/models/filter.dart';
+import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
 
@@ -12,7 +13,9 @@ import '../../../../utils/command.dart';
 /// 2. when user does pull-to-refresh, cached list of tasks
 /// will be updated
 abstract class WorkspaceTaskRepository extends ChangeNotifier {
-  List<WorkspaceTask>? get tasks;
+  ObjectiveFilter get activeFilter;
+
+  Paginable<WorkspaceTask>? get tasks;
 
   Future<Result<void>> loadTasks({
     required String workspaceId,

@@ -7,8 +7,10 @@ import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/dimens.dart';
-import '../../../core/utils/constants.dart';
 import '../view_models/app_bottom_navigation_bar_view_model.dart';
+
+const double kAppBottomNavigationBarHeight = 56.0;
+const double kAppBottomNavigationBarBorderRadius = 15.0;
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({
@@ -22,10 +24,10 @@ class AppBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canCreate = context.select(
+    final canCreateObjective = context.select(
       (AppBottomNavigationBarViewModel vm) => vm.canPerformObjectiveCreation,
     );
-    final rightPadding = canCreate
+    final rightPadding = canCreateObjective
         ? Dimens.paddingHorizontal * 1.75 + kAppBottomNavigationBarHeight
         : Dimens.paddingHorizontal;
 
@@ -35,9 +37,12 @@ class AppBottomNavigationBar extends StatelessWidget {
           left: Dimens.paddingHorizontal,
           right: rightPadding,
           top: 0,
+          bottom: 0,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(
+            kAppBottomNavigationBarBorderRadius,
+          ),
           child: BottomNavigationBar(
             showUnselectedLabels: false,
             backgroundColor: AppColors.purple1Light,

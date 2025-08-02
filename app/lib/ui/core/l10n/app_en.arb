@@ -36,6 +36,7 @@
   "workspaceCreateDescriptionMaxLength": "Description can have at most 250 characters",
   "workspaceCreateError": "Uh-oh! We've had some trouble creating your workspace",
   "tasksHello": "Hello!",
+  "taskskNoTasks": "It looks like your workspace doesn't have any task yet. Try creating your first one!",
   "tasksCardProgressInProgress": "In Progress",
   "tasksCardProgressCompleted": "Completed",
   "tasksCardProgressCompletedAsStale": "Completed as Stale",

@@ -10,6 +10,7 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/utils/user.dart';
 import '../view_models/create_task_screen_viewmodel.dart';
 
 class CreateTaskForm extends StatefulWidget {
@@ -65,13 +66,16 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   @override
   Widget build(BuildContext context) {
     final options = widget.viewModel.workspaceMembers.map((user) {
-      final fullName = '${user.firstName} ${user.lastName}';
+      final fullName = UserUtils.constructFullName(
+        firstName: user.firstName,
+        lastName: user.lastName,
+      );
       return AppSelectFieldOption(
         label: fullName,
         value: user.id,
         leading: AppAvatar(
           hashString: user.id,
-          fullName: fullName,
+          firstName: user.firstName,
           imageUrl: user.profileImageUrl,
         ),
       );
