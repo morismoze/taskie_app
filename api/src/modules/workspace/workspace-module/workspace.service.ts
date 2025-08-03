@@ -510,6 +510,7 @@ export class WorkspaceService {
           profileImageUrl: assignee.profileImageUrl,
           status: assignee.status,
         })),
+        createdAt: DateTime.fromJSDate(task.createdAt).toISO()!,
       })),
       totalPages,
       total,
@@ -632,6 +633,7 @@ export class WorkspaceService {
             ? null
             : DateTime.fromJSDate(newTask.dueDate).toISO()!,
         assignees: [],
+        createdAt: DateTime.fromJSDate(newTask.createdAt).toISO()!,
       };
 
       // Create new task assignment for each given assignee

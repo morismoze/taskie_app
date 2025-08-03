@@ -145,6 +145,7 @@ class _AppDatePickerState extends State<_AppDatePicker> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
           height: 216,

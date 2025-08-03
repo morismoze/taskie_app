@@ -119,8 +119,10 @@ export class TaskRepositoryImpl implements TaskRepository {
       switch (sort) {
         case SortBy.NEWEST:
           qb.orderBy('task.createdAt', 'DESC');
+          break;
         case SortBy.OLDEST:
           qb.orderBy('task.createdAt', 'ASC');
+          break;
       }
     }
 

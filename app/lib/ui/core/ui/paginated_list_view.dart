@@ -22,9 +22,8 @@ class PaginatedListView extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.only(
-            left: Dimens.of(context).paddingScreenHorizontal,
-            right: Dimens.of(context).paddingScreenHorizontal,
+          padding: EdgeInsets.symmetric(
+            horizontal: Dimens.of(context).paddingScreenHorizontal,
           ),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(

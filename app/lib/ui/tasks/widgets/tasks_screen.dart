@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
+import 'empty_filtered_tasks.dart';
 import 'empty_tasks.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';
+import 'tasks_sorting/tasks_sorting_header.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key, required this.viewModel});
@@ -58,7 +61,7 @@ class _TasksScreenState extends State<TasksScreen> {
               child: ListenableBuilder(
                 listenable: widget.viewModel,
                 builder: (builderContext, _) {
-                  if (widget.viewModel.tasks == null) {
+                  if (widget.viewModel.isInitialLoad) {
                     return ActivityIndicator(
                       radius: 16,
                       color: Theme.of(builderContext).colorScheme.primary,
@@ -66,17 +69,26 @@ class _TasksScreenState extends State<TasksScreen> {
                   }
 
                   // If there was an error while fetching from origin, display error prompt
-                  // only on initial load (`widget.viewModel.tasks will` be `null`). In other
-                  // cases, old list will still be shown, but we will show snackbar.
-                  if (widget.viewModel.loadTasks.error &&
-                      widget.viewModel.tasks == null) {
+                  // only on initial load. In other cases, old list will still be shown, but
+                  // we will show snackbar.
+                  if (widget.viewModel.isInitialLoad &&
+                      widget.viewModel.loadTasks.error) {
                     // TODO: Usage of a generic error prompt widget
                     return const SizedBox.shrink();
                   }
 
-                  if (widget.viewModel.tasks!.total == 0) {
-                    return EmptyTasks(
-                      activeWorkspaceId: widget.viewModel.activeWorkspaceId,
+                  // If there are no tasks on initial load (without any specific
+                  // filters), then workspace doesn't have any tasks yet - this is
+                  // not correct because workspaces can have closed tasks and no
+                  if (widget.viewModel.isInitialLoad &&
+                      widget.viewModel.tasks!.total == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Dimens.paddingHorizontal,
+                      ),
+                      child: EmptyTasks(
+                        activeWorkspaceId: widget.viewModel.activeWorkspaceId,
+                      ),
                     );
                   }
 
@@ -86,11 +98,30 @@ class _TasksScreenState extends State<TasksScreen> {
                   // after that will happen when user pulls-to-refresh (and if the app process was not
                   // killed by the underlying OS). And in that case we want to show the existing
                   // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      widget.viewModel.loadTasks.execute((null, true));
-                    },
-                    child: TasksList(viewModel: widget.viewModel),
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: Dimens.paddingVertical / 2,
+                    ),
+                    child: Column(
+                      spacing: Dimens.paddingVertical / 2,
+                      children: [
+                        TasksSortingHeader(viewModel: widget.viewModel),
+                        if (widget.viewModel.tasks!.total > 0)
+                          Expanded(
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                widget.viewModel.loadTasks.execute((
+                                  null,
+                                  true,
+                                ));
+                              },
+                              child: TasksList(viewModel: widget.viewModel),
+                            ),
+                          )
+                        else
+                          const EmptyFilteredTasks(),
+                      ],
+                    ),
                   );
                 },
               ),

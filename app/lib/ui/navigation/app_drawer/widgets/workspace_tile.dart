@@ -73,6 +73,7 @@ class WorkspaceTile extends StatelessWidget {
       isDismissable: !viewModel.leaveWorkspace.running,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [

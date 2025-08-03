@@ -2,10 +2,10 @@ import '../../data/services/api/paginable.dart';
 import '../../data/services/api/workspace/progress_status.dart';
 
 class Filter {
-  Filter({this.page = 1, this.limit, this.search});
+  Filter({required this.page, required this.limit, this.search});
 
   final int page;
-  final int? limit;
+  final int limit;
   final String? search;
 
   @override
@@ -35,16 +35,15 @@ class Filter {
 
 class ObjectiveFilter extends Filter {
   ObjectiveFilter({
-    super.page,
-    super.limit,
+    required super.page,
+    required super.limit,
     super.search,
-    this.status,
-    this.sort,
+    required this.status,
+    required this.sort,
   });
 
-  final ProgressStatus? status;
-
-  final SortBy? sort;
+  final ProgressStatus status;
+  final SortBy sort;
 
   @override
   bool operator ==(Object other) {
@@ -59,7 +58,8 @@ class ObjectiveFilter extends Filter {
     return page == other.page &&
         limit == other.limit &&
         search == other.search &&
-        status == other.status;
+        status == other.status &&
+        sort == other.sort;
   }
 
   @override

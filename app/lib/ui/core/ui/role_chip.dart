@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../theme/colors.dart';
-import '../utils/role_extension.dart';
+import '../utils/extensions.dart';
 
 class RoleChip extends StatelessWidget {
   const RoleChip({super.key, required this.role});

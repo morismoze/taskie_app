@@ -8,9 +8,9 @@ class WorkspaceResponse {
     required this.id,
     required this.name,
     required this.createdAt,
-    this.description,
-    this.pictureUrl,
-    this.createdBy,
+    required this.description,
+    required this.pictureUrl,
+    required this.createdBy,
   });
 
   final String id;
@@ -29,7 +29,7 @@ class WorkspaceCreatedByResponse {
   WorkspaceCreatedByResponse({
     required this.firstName,
     required this.lastName,
-    this.profileImageUrl,
+    required this.profileImageUrl,
   });
 
   final String firstName;

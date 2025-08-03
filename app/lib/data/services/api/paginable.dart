@@ -21,12 +21,11 @@ class PaginableResponse<D> {
 }
 
 class RequestQueryParams {
-  RequestQueryParams({this.page = 1, this.limit, this.search, this.sort});
+  RequestQueryParams({required this.page, required this.limit, this.search});
 
-  final int? page;
-  final int? limit;
+  final int page;
+  final int limit;
   final String? search;
-  final SortBy? sort;
 }
 
 enum SortBy {

@@ -20,23 +20,19 @@ class AppModalBottomSheet {
     bool isDismissable = true,
     bool isDetached = false,
     bool isScrollControlled = false,
-    bool shrinkWrap = true,
     VoidCallback? onDismiss,
   }) {
     return showModalBottomSheet<T>(
       context: context,
       useSafeArea: true,
+      useRootNavigator: true,
       isDismissible: isDismissable,
       isScrollControlled: isScrollControlled || isDetached,
       backgroundColor: isDetached ? Colors.transparent : null,
       enableDrag: enableDrag,
       builder: (BuildContext builderContext) {
         return !isDetached
-            ? _createBottomSheetContent(
-                context: builderContext,
-                shrinkWrap: shrinkWrap,
-                child: child,
-              )
+            ? _createBottomSheetContent(context: builderContext, child: child)
             : _createDetachedBottomSheetContent(
                 context: builderContext,
                 child: child,
@@ -47,7 +43,6 @@ class AppModalBottomSheet {
 
   static Widget _createBottomSheetContent({
     required BuildContext context,
-    required bool shrinkWrap,
     required Widget child,
   }) {
     return Container(
@@ -57,7 +52,7 @@ class AppModalBottomSheet {
         ),
       ),
       child: Column(
-        mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Center(
             child: Padding(
@@ -69,22 +64,8 @@ class AppModalBottomSheet {
               ),
             ),
           ),
-          if (!shrinkWrap)
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  Dimens.paddingHorizontal,
-                  Dimens.paddingVertical / 1.75,
-                  Dimens.paddingHorizontal,
-                  Platform.isIOS
-                      ? Dimens.paddingVertical
-                      : MediaQuery.of(context).padding.bottom,
-                ),
-                child: child,
-              ),
-            )
-          else
-            Padding(
+          Flexible(
+            child: Padding(
               padding: EdgeInsets.fromLTRB(
                 Dimens.paddingHorizontal,
                 Dimens.paddingVertical / 1.75,
@@ -95,6 +76,7 @@ class AppModalBottomSheet {
               ),
               child: child,
             ),
+          ),
         ],
       ),
     );

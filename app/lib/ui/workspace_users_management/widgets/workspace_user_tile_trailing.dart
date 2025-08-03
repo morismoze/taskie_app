@@ -87,6 +87,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
       isDismissable: !viewModel.deleteWorkspaceUser.running,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [

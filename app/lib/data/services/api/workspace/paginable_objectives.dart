@@ -3,22 +3,23 @@ import 'progress_status.dart';
 
 class ObjectiveRequestQueryParams extends RequestQueryParams {
   ObjectiveRequestQueryParams({
-    super.page,
+    required super.page,
+    required super.limit,
     super.search,
-    required this.limit,
-    this.status,
-  }) : super(limit: limit);
+    required this.status,
+    required this.sort,
+  });
 
-  @override
-  final int limit;
-  final ProgressStatus? status;
+  final ProgressStatus status;
+  final SortBy sort;
 
   Map<String, String> generateQueryParamsMap() {
     return {
-      if (page != null) 'page': page!.toString(),
+      'page': page.toString(),
       'limit': limit.toString(),
       if (search != null) 'search': search!,
-      if (status != null) 'status': status!.value,
+      'status': status.value,
+      'sort': sort.value,
     };
   }
 }

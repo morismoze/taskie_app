@@ -13,6 +13,8 @@ import '../../../../utils/command.dart';
 /// 2. when user does pull-to-refresh, cached list of tasks
 /// will be updated
 abstract class WorkspaceTaskRepository extends ChangeNotifier {
+  bool get isInitialLoad;
+
   ObjectiveFilter get activeFilter;
 
   Paginable<WorkspaceTask>? get tasks;

@@ -127,16 +127,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'It looks like your workspace doesn\'t have any task yet. Try creating your first one!';
 
   @override
-  String get tasksCardProgressInProgress => 'In Progress';
+  String get taskskNoFilteredTasks =>
+      'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
 
   @override
-  String get tasksCardProgressCompleted => 'Completed';
+  String get progressStatusInProgress => 'In Progress';
 
   @override
-  String get tasksCardProgressCompletedAsStale => 'Completed as Stale';
+  String get progressStatusCompleted => 'Completed';
 
   @override
-  String get tasksCardProgressClosed => 'Closed';
+  String get progressStatusCompletedAsStale => 'Completed as Stale';
+
+  @override
+  String get progressStatusClosed => 'Closed';
+
+  @override
+  String get sortByNewest => 'Newest';
+
+  @override
+  String get sortByOldest => 'Oldest';
 
   @override
   String tasksCardPoints(Object points) {

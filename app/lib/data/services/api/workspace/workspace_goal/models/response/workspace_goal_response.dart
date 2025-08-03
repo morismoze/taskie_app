@@ -14,7 +14,7 @@ class WorkspaceGoalResponse {
     required this.accumulatedPoints,
     required this.status,
     required this.assignee,
-    this.description,
+    required this.description,
   });
 
   final String id;

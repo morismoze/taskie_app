@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
-import 'blurred_circle.dart';
+import 'package:flutter/material.dart';
 
 class BlurredCirclesBackground extends StatelessWidget {
   const BlurredCirclesBackground({super.key, required this.child});
@@ -14,7 +14,7 @@ class BlurredCirclesBackground extends StatelessWidget {
         Positioned(
           top: -50,
           right: -10,
-          child: BlurredCircle(
+          child: _BlurredCircle(
             color: Colors.yellow.withValues(alpha: 0.15),
             radius: 80,
             blurSigma: 40,
@@ -23,7 +23,7 @@ class BlurredCirclesBackground extends StatelessWidget {
         Positioned(
           top: 100,
           left: -50,
-          child: BlurredCircle(
+          child: _BlurredCircle(
             color: Colors.greenAccent.withValues(alpha: 0.15),
             radius: 80,
             blurSigma: 30,
@@ -32,7 +32,7 @@ class BlurredCirclesBackground extends StatelessWidget {
         Positioned(
           top: 250,
           right: -40,
-          child: BlurredCircle(
+          child: _BlurredCircle(
             color: Colors.blue.withValues(alpha: 0.15),
             radius: 80,
             blurSigma: 45,
@@ -41,16 +41,16 @@ class BlurredCirclesBackground extends StatelessWidget {
         Positioned(
           top: 500,
           left: 50,
-          child: BlurredCircle(
+          child: _BlurredCircle(
             color: Colors.lightBlue.withValues(alpha: 0.1),
             radius: 75,
             blurSigma: 45,
           ),
         ),
         Positioned(
-          bottom: 100,
+          bottom: 50,
           right: -20,
-          child: BlurredCircle(
+          child: _BlurredCircle(
             color: Colors.yellow.withValues(alpha: 0.15),
             radius: 50,
             blurSigma: 35,
@@ -58,6 +58,30 @@ class BlurredCirclesBackground extends StatelessWidget {
         ),
         child,
       ],
+    );
+  }
+}
+
+class _BlurredCircle extends StatelessWidget {
+  final Color color;
+  final double radius;
+  final double blurSigma; // Blur strength
+
+  const _BlurredCircle({
+    required this.color,
+    required this.radius,
+    this.blurSigma = 20.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+      child: Container(
+        width: radius * 2,
+        height: radius * 2,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
     );
   }
 }

@@ -127,16 +127,26 @@ class AppLocalizationsHr extends AppLocalizations {
       'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!';
 
   @override
-  String get tasksCardProgressInProgress => 'U tijeku';
+  String get taskskNoFilteredTasks =>
+      'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
 
   @override
-  String get tasksCardProgressCompleted => 'Dovršeno';
+  String get progressStatusInProgress => 'U tijeku';
 
   @override
-  String get tasksCardProgressCompletedAsStale => 'Dovršeno (zastarjelo)';
+  String get progressStatusCompleted => 'Dovršeno';
 
   @override
-  String get tasksCardProgressClosed => 'Zatvoreno';
+  String get progressStatusCompletedAsStale => 'Dovršeno (zastarjelo)';
+
+  @override
+  String get progressStatusClosed => 'Zatvoreno';
+
+  @override
+  String get sortByNewest => 'Najnoviji';
+
+  @override
+  String get sortByOldest => 'Najstariji';
 
   @override
   String tasksCardPoints(Object points) {

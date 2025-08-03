@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../data/services/api/workspace/progress_status.dart';
 import '../../../../domain/models/workspace_task.dart';
-import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/utils/extensions.dart';
 
 /// If the task has only one assignee, this will show full chip
 /// with status text and corresponding color. If there are more
@@ -66,25 +66,17 @@ class TaskStatuses extends StatelessWidget {
         return (
           AppColors.orange1,
           AppColors.orange1Light,
-          context.localization.tasksCardProgressInProgress,
+          status.l10n(context),
         );
       case ProgressStatus.completed:
-        return (
-          AppColors.green1,
-          AppColors.green1Light,
-          context.localization.tasksCardProgressCompleted,
-        );
+        return (AppColors.green1, AppColors.green1Light, status.l10n(context));
       case ProgressStatus.completedAsStale:
-        return (
-          AppColors.pink1,
-          AppColors.pink1Light,
-          context.localization.tasksCardProgressCompletedAsStale,
-        );
+        return (AppColors.pink1, AppColors.pink1Light, status.l10n(context));
       case ProgressStatus.closed:
         return (
           Theme.of(context).colorScheme.primary,
           AppColors.purple1Light,
-          context.localization.tasksCardProgressClosed,
+          status.l10n(context),
         );
     }
   }

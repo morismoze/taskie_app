@@ -314,29 +314,47 @@ abstract class AppLocalizations {
   /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one!'**
   String get taskskNoTasks;
 
-  /// No description provided for @tasksCardProgressInProgress.
+  /// No description provided for @taskskNoFilteredTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
+  String get taskskNoFilteredTasks;
+
+  /// No description provided for @progressStatusInProgress.
   ///
   /// In en, this message translates to:
   /// **'In Progress'**
-  String get tasksCardProgressInProgress;
+  String get progressStatusInProgress;
 
-  /// No description provided for @tasksCardProgressCompleted.
+  /// No description provided for @progressStatusCompleted.
   ///
   /// In en, this message translates to:
   /// **'Completed'**
-  String get tasksCardProgressCompleted;
+  String get progressStatusCompleted;
 
-  /// No description provided for @tasksCardProgressCompletedAsStale.
+  /// No description provided for @progressStatusCompletedAsStale.
   ///
   /// In en, this message translates to:
   /// **'Completed as Stale'**
-  String get tasksCardProgressCompletedAsStale;
+  String get progressStatusCompletedAsStale;
 
-  /// No description provided for @tasksCardProgressClosed.
+  /// No description provided for @progressStatusClosed.
   ///
   /// In en, this message translates to:
   /// **'Closed'**
-  String get tasksCardProgressClosed;
+  String get progressStatusClosed;
+
+  /// No description provided for @sortByNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get sortByNewest;
+
+  /// No description provided for @sortByOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get sortByOldest;
 
   /// No description provided for @tasksCardPoints.
   ///

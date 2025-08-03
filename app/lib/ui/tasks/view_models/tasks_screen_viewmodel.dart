@@ -22,7 +22,8 @@ class TasksScreenViewModel extends ChangeNotifier {
        _preferencesRepository = preferencesRepository {
     _workspaceTaskRepository.addListener(_onTasksChanged);
     _userRepository.addListener(_onUserChanged);
-    loadTasks = Command1(_loadTasks)..execute((ObjectiveFilter(page: 1), null));
+    // Repository defines default values for ObjectiveFilter, so we use null here for it
+    loadTasks = Command1(_loadTasks)..execute((null, null));
   }
 
   final String _activeWorkspaceId;
@@ -34,6 +35,8 @@ class TasksScreenViewModel extends ChangeNotifier {
   late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadTasks;
 
   String get activeWorkspaceId => _activeWorkspaceId;
+
+  bool get isInitialLoad => _workspaceTaskRepository.isInitialLoad;
 
   ObjectiveFilter get activeFilter => _workspaceTaskRepository.activeFilter;
 

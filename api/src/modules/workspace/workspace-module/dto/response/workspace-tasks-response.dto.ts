@@ -14,6 +14,7 @@ export interface WorkspaceTaskResponse {
     profileImageUrl: string | null;
     status: ProgressStatus;
   }[];
+  createdAt: string;
 }
 
 export type WorkspaceTasksResponse = Paginable<WorkspaceTaskResponse>;
