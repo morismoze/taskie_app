@@ -30,14 +30,16 @@ class AppShellScaffold extends StatelessWidget {
           appDrawerViewModel.loadWorkspaces.execute();
         }
       },
+      extendBody: true,
       bottomNavigationBar: AppBottomNavigationBar(
         viewModel: context.read<AppBottomNavigationBarViewModel>(),
         navigationShell: navigationShell,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: AppFloatingActionButton(
         viewModel: AppFloatingActionButtonViewModel(workspaceId: workspaceId),
       ),
+
       body: navigationShell,
     );
   }

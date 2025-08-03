@@ -48,14 +48,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_comingSoon => 'Coming soon';
 
   @override
-  String get signInTitleStart => 'Happy Chores, Happy Kids.';
+  String get misc_profile => 'Profile';
 
   @override
-  String get signInTitleEnd => 'Happy Home.';
+  String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
+
+  @override
+  String get signInTitleEnd => 'Successfully.';
 
   @override
   String get signInSubtitle =>
-      'Organize routines, motivate children, and celebrate every win.';
+      'Effectively manage obligations, encourage engagement, and celebrate every success.';
 
   @override
   String get signInGetStarted => 'Let\'s get started';

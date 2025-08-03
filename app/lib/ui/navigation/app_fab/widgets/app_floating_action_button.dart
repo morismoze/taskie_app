@@ -8,8 +8,9 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/app_filled_button.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/rbac.dart';
-import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/app_floating_action_button_view_model.dart';
+
+const double kAppFloatingActionButtonSize = 56.0;
 
 class AppFloatingActionButton extends StatelessWidget {
   const AppFloatingActionButton({super.key, required this.viewModel});
@@ -21,14 +22,12 @@ class AppFloatingActionButton extends StatelessWidget {
     return Rbac(
       permission: RbacPermission.objectiveCreate,
       child: SizedBox(
-        width: kAppBottomNavigationBarHeight,
-        height: kAppBottomNavigationBarHeight,
+        width: kAppFloatingActionButtonSize,
+        height: kAppFloatingActionButtonSize,
         child: FloatingActionButton(
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              kAppBottomNavigationBarBorderRadius,
-            ),
+            borderRadius: BorderRadius.circular(kAppFloatingActionButtonSize),
           ),
           onPressed: () => _onPressed(context),
           child: const FaIcon(FontAwesomeIcons.plus, size: 18),

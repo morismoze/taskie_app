@@ -45,23 +45,27 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     return BlurredCirclesBackground(
-      child: SafeArea(
-        child: Column(
-          children: [
-            ListenableBuilder(
-              listenable: widget.viewModel,
-              builder: (builderContext, _) {
-                if (widget.viewModel.user != null) {
-                  return TasksHeader(viewModel: widget.viewModel);
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-            Expanded(
+      child: Column(
+        children: [
+          ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (builderContext, _) {
+              if (widget.viewModel.user != null) {
+                return TasksHeader(viewModel: widget.viewModel);
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: kBottomNavigationBarHeight,
+              ),
               child: ListenableBuilder(
                 listenable: widget.viewModel,
                 builder: (builderContext, _) {
-                  if (widget.viewModel.isInitialLoad) {
+                  if (widget.viewModel.isInitialLoad ||
+                      widget.viewModel.tasks == null) {
                     return ActivityIndicator(
                       radius: 16,
                       color: Theme.of(builderContext).colorScheme.primary,
@@ -98,36 +102,28 @@ class _TasksScreenState extends State<TasksScreen> {
                   // after that will happen when user pulls-to-refresh (and if the app process was not
                   // killed by the underlying OS). And in that case we want to show the existing
                   // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      top: Dimens.paddingVertical / 2,
-                    ),
-                    child: Column(
-                      spacing: Dimens.paddingVertical / 2,
-                      children: [
-                        TasksSortingHeader(viewModel: widget.viewModel),
-                        if (widget.viewModel.tasks!.total > 0)
-                          Expanded(
-                            child: RefreshIndicator(
-                              onRefresh: () async {
-                                widget.viewModel.loadTasks.execute((
-                                  null,
-                                  true,
-                                ));
-                              },
-                              child: TasksList(viewModel: widget.viewModel),
-                            ),
-                          )
-                        else
-                          const EmptyFilteredTasks(),
-                      ],
-                    ),
+                  return Column(
+                    spacing: Dimens.paddingVertical / 2,
+                    children: [
+                      TasksSortingHeader(viewModel: widget.viewModel),
+                      if (widget.viewModel.tasks!.total > 0)
+                        Expanded(
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              widget.viewModel.loadTasks.execute((null, true));
+                            },
+                            child: TasksList(viewModel: widget.viewModel),
+                          ),
+                        )
+                      else
+                        const EmptyFilteredTasks(),
+                    ],
                   );
                 },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

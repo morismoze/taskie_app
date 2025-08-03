@@ -6,11 +6,12 @@ import 'package:provider/provider.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
-import '../../../core/theme/dimens.dart';
+import '../../../core/ui/app_avatar.dart';
+import '../../app_fab/widgets/app_floating_action_button.dart';
 import '../view_models/app_bottom_navigation_bar_view_model.dart';
 
-const double kAppBottomNavigationBarHeight = 56.0;
-const double kAppBottomNavigationBarBorderRadius = 15.0;
+const double kAppBottomNavigationBarHeight = 58.0;
+const double kAppBottomNavigationBarBorderRadius = 40.0;
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({
@@ -27,47 +28,57 @@ class AppBottomNavigationBar extends StatelessWidget {
     final canCreateObjective = context.select(
       (AppBottomNavigationBarViewModel vm) => vm.canPerformObjectiveCreation,
     );
-    final rightPadding = canCreateObjective
-        ? Dimens.paddingHorizontal * 1.75 + kAppBottomNavigationBarHeight
-        : Dimens.paddingHorizontal;
+    final currentIndex = _getCurrentTabIndex(context);
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: Dimens.paddingHorizontal,
-          right: rightPadding,
-          top: 0,
-          bottom: 0,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(
-            kAppBottomNavigationBarBorderRadius,
-          ),
-          child: BottomNavigationBar(
-            showUnselectedLabels: false,
-            backgroundColor: AppColors.purple1Light,
-            unselectedItemColor: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.4),
-            selectedFontSize: 10,
-            currentIndex: _calculateSelectedIndex(context),
-            onTap: (index) => navigationShell.goBranch(index),
-            items: _getItems(context)
-                .map(
-                  (item) => BottomNavigationBarItem(
-                    icon: FaIcon(item.$1, size: 18),
-                    label: item.$2,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                  ),
-                )
-                .toList(),
-          ),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(kAppBottomNavigationBarBorderRadius),
+        topRight: Radius.circular(kAppBottomNavigationBarBorderRadius),
+      ),
+      child: BottomAppBar(
+        height: kAppBottomNavigationBarHeight,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        shape: canCreateObjective ? const CircularNotchedRectangle() : null,
+        color: AppColors.purple1Light,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            _buildTabItem(
+              context: context,
+              icon: FontAwesomeIcons.house,
+              label: context.localization.bottomNavigationBarTasksLabel,
+              isActive: currentIndex == 0,
+              onPressed: () => navigationShell.goBranch(0),
+            ),
+            _buildTabItem(
+              context: context,
+              icon: FontAwesomeIcons.solidFlag,
+              label: context.localization.bottomNavigationBarGoalsLabel,
+              isActive: currentIndex == 2,
+              onPressed: () => navigationShell.goBranch(2),
+            ),
+            if (canCreateObjective)
+              const SizedBox(width: kAppFloatingActionButtonSize),
+            _buildTabItem(
+              context: context,
+              icon: FontAwesomeIcons.trophy,
+              label: context.localization.bottomNavigationBarLeaderboardLabel,
+              isActive: currentIndex == 1,
+              onPressed: () => navigationShell.goBranch(1),
+            ),
+            _buildAvatarTabItem(
+              context: context,
+              isActive: currentIndex == 3,
+              onPressed: () => navigationShell.goBranch(3),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  int _calculateSelectedIndex(BuildContext context) {
+  int _getCurrentTabIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
       final path when path.contains(Routes.tasksRelative) => 0,
@@ -77,20 +88,89 @@ class AppBottomNavigationBar extends StatelessWidget {
     };
   }
 
-  List<(IconData, String)> _getItems(BuildContext context) {
-    return [
-      (
-        FontAwesomeIcons.house,
-        context.localization.bottomNavigationBarTasksLabel,
+  Widget _buildTabItem({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required bool isActive,
+    required VoidCallback onPressed,
+  }) {
+    final color = isActive
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.primary.withValues(alpha: 0.4);
+
+    return Expanded(
+      child: InkWell(
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            spacing: 4,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FaIcon(icon, size: 16, color: color),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: color,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      (
-        FontAwesomeIcons.trophy,
-        context.localization.bottomNavigationBarLeaderboardLabel,
+    );
+  }
+
+  Widget _buildAvatarTabItem({
+    required BuildContext context,
+    required bool isActive,
+    required VoidCallback onPressed,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            spacing: 4,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: isActive
+                    ? BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        ),
+                      )
+                    : null,
+                child: AppAvatar(
+                  hashString: viewModel.user!.id,
+                  firstName: viewModel.user!.firstName,
+                  imageUrl: viewModel.user!.profileImageUrl,
+                  radius: 10,
+                ),
+              ),
+              Text(
+                context.localization.misc_profile,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isActive
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.4),
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      (
-        FontAwesomeIcons.solidFlag,
-        context.localization.bottomNavigationBarGoalsLabel,
-      ),
-    ];
+    );
   }
 }

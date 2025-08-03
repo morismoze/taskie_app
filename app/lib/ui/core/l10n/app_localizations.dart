@@ -176,22 +176,28 @@ abstract class AppLocalizations {
   /// **'Coming soon'**
   String get misc_comingSoon;
 
+  /// No description provided for @misc_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get misc_profile;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
-  /// **'Happy Chores, Happy Kids.'**
+  /// **'Organize Tasks, Achieve Goals.'**
   String get signInTitleStart;
 
   /// No description provided for @signInTitleEnd.
   ///
   /// In en, this message translates to:
-  /// **'Happy Home.'**
+  /// **'Successfully.'**
   String get signInTitleEnd;
 
   /// No description provided for @signInSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Organize routines, motivate children, and celebrate every win.'**
+  /// **'Effectively manage obligations, encourage engagement, and celebrate every success.'**
   String get signInSubtitle;
 
   /// No description provided for @signInGetStarted.

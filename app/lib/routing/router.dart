@@ -188,6 +188,7 @@ GoRouter router({
                       create: (notifierContext) =>
                           AppBottomNavigationBarViewModel(
                             workspaceId: workspaceId,
+                            userRepository: notifierContext.read(),
                             rbacService: notifierContext.read(),
                           ),
                     ),

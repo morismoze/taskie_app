@@ -48,14 +48,17 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_comingSoon => 'Uskoro';
 
   @override
-  String get signInTitleStart => 'Učenje odgovornosti.';
+  String get misc_profile => 'Profil';
 
   @override
-  String get signInTitleEnd => 'Zabava nagrađivanja.';
+  String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
+
+  @override
+  String get signInTitleEnd => 'Uspješno.';
 
   @override
   String get signInSubtitle =>
-      'Organizirajte rutine, motivirajte djecu i slavite svaki uspjeh.';
+      'Učinkovito upravljajte obavezama, potaknite angažman i proslavite svaki uspjeh.';
 
   @override
   String get signInGetStarted => 'Započnimo';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:number_paginator/number_paginator.dart';
 
+import '../../navigation/app_fab/widgets/app_floating_action_button.dart';
 import '../theme/dimens.dart';
 
 class PaginatedListView extends StatelessWidget {
@@ -36,7 +37,8 @@ class PaginatedListView extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(
               top: 20,
-              bottom: Dimens.paddingVertical,
+              bottom:
+                  Dimens.paddingVertical * 1.5 + kAppFloatingActionButtonSize,
               left: Dimens.of(context).paddingScreenHorizontal,
               right: Dimens.of(context).paddingScreenHorizontal,
             ),
