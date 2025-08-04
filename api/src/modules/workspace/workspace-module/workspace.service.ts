@@ -120,6 +120,7 @@ export class WorkspaceService {
         newWorkspace.createdBy === null
           ? null
           : {
+              id: newWorkspace.createdBy.id,
               firstName: newWorkspace.createdBy.firstName,
               lastName: newWorkspace.createdBy.lastName,
               profileImageUrl: newWorkspace.createdBy.profileImageUrl,
@@ -181,6 +182,7 @@ export class WorkspaceService {
         updatedWorkspace.createdBy === null
           ? null
           : {
+              id: updatedWorkspace.createdBy.id,
               firstName: updatedWorkspace.createdBy.firstName,
               lastName: updatedWorkspace.createdBy.lastName,
               profileImageUrl: updatedWorkspace.createdBy.profileImageUrl,
@@ -255,6 +257,7 @@ export class WorkspaceService {
         workspaceInvite.workspace.createdBy === null
           ? null
           : {
+              id: workspaceInvite.workspace.createdBy.id,
               firstName: workspaceInvite.workspace.createdBy.firstName,
               lastName: workspaceInvite.workspace.createdBy.lastName,
               profileImageUrl:
@@ -288,6 +291,7 @@ export class WorkspaceService {
         updatedWorkspaceInvite.workspace.createdBy === null
           ? null
           : {
+              id: updatedWorkspaceInvite.workspace.createdBy.id,
               firstName: updatedWorkspaceInvite.workspace.createdBy.firstName,
               lastName: updatedWorkspaceInvite.workspace.createdBy.lastName,
               profileImageUrl:
@@ -389,6 +393,7 @@ export class WorkspaceService {
         workspace.createdBy === null
           ? null
           : {
+              id: workspace.createdBy.id,
               firstName: workspace.createdBy.firstName,
               lastName: workspace.createdBy.lastName,
               profileImageUrl: workspace.createdBy.profileImageUrl,
@@ -435,6 +440,7 @@ export class WorkspaceService {
           member.createdBy === null
             ? null
             : {
+                id: member.createdBy.id,
                 firstName: member.createdBy.user.firstName,
                 lastName: member.createdBy.user.lastName,
                 profileImageUrl: member.createdBy.user.profileImageUrl,
@@ -872,6 +878,7 @@ export class WorkspaceService {
         updatedWorkspaceUser.createdBy === null
           ? null
           : {
+              id: updatedWorkspaceUser.createdBy.id,
               firstName: updatedWorkspaceUser.createdBy.firstName,
               lastName: updatedWorkspaceUser.createdBy.lastName,
               profileImageUrl: updatedWorkspaceUser.createdBy.profileImageUrl,

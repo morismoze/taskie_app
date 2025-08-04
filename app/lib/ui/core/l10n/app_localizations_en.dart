@@ -163,6 +163,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tasksDetails => 'Task details';
+
+  @override
+  String get tasksDetailsCreatedAt => 'Task created at';
+
+  @override
   String get appDrawerTitle => 'Workspaces';
 
   @override

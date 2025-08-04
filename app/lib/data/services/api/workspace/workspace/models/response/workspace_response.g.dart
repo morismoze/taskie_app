@@ -23,6 +23,7 @@ WorkspaceResponse _$WorkspaceResponseFromJson(Map<String, dynamic> json) =>
 WorkspaceCreatedByResponse _$WorkspaceCreatedByResponseFromJson(
   Map<String, dynamic> json,
 ) => WorkspaceCreatedByResponse(
+  id: json['id'] as String,
   firstName: json['firstName'] as String,
   lastName: json['lastName'] as String,
   profileImageUrl: json['profileImageUrl'] as String?,

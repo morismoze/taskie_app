@@ -163,6 +163,12 @@ class AppLocalizationsHr extends AppLocalizations {
   }
 
   @override
+  String get tasksDetails => 'Detalji zadatka';
+
+  @override
+  String get tasksDetailsCreatedAt => 'Zadatak kreiran';
+
+  @override
   String get appDrawerTitle => 'Radni prostori';
 
   @override

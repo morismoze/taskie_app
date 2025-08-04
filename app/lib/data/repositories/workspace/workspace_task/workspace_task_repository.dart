@@ -34,5 +34,10 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
     DateTime? dueDate,
   });
 
+  Result<WorkspaceTask> loadWorkspaceTaskDetails({
+    required String workspaceId,
+    required String taskId,
+  });
+
   void purgeTasksCache();
 }

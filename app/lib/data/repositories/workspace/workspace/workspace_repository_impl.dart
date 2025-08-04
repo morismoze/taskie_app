@@ -181,10 +181,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
   @override
   Result<Workspace> loadWorkspaceDetails(String workspaceId) {
-    final workspaceDetails = _cachedWorkspacesList!.firstWhere(
+    final details = _cachedWorkspacesList!.firstWhere(
       (workspace) => workspace.id == workspaceId,
     );
-    return Result.ok(workspaceDetails);
+    return Result.ok(details);
   }
 
   @override
@@ -247,6 +247,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       createdBy: workspace.createdBy == null
           ? null
           : WorkspaceCreatedBy(
+              id: workspace.createdBy!.id,
               firstName: workspace.createdBy!.firstName,
               lastName: workspace.createdBy!.lastName,
               profileImageUrl: workspace.createdBy!.profileImageUrl,

@@ -48,6 +48,8 @@
   "sortByNewest": "Newest",
   "sortByOldest": "Oldest",
   "tasksCardPoints": "{points} points",
+  "tasksDetails": "Task details",
+  "tasksDetailsCreatedAt": "Task created at",
   "appDrawerTitle": "Workspaces",
   "appDrawerChangeActiveWorkspaceError": "Uh-oh! We've had some trouble changing workspace",
   "appDrawerEditWorkspace": "Workspace setttings",

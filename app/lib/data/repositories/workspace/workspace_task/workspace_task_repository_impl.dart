@@ -154,6 +154,15 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   }
 
   @override
+  Result<WorkspaceTask> loadWorkspaceTaskDetails({
+    required String workspaceId,
+    required String taskId,
+  }) {
+    final details = _cachedTasks!.items.firstWhere((task) => task.id == taskId);
+    return Result.ok(details);
+  }
+
+  @override
   void purgeTasksCache() {
     _cachedTasks = null;
     _activeFilter = ObjectiveFilter(

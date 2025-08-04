@@ -13,7 +13,8 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../../core/ui/labeled_data.dart';
+import '../../core/ui/labeled_data/labeled_data.dart';
+import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/utils/user.dart';
 import '../../navigation/app_drawer/widgets/workspace_image.dart';
@@ -80,13 +81,6 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                         : context
                               .localization
                               .workspaceSettingsOwnerDeletedAccount;
-                    final createdByAvatar = details.createdBy != null
-                        ? AppAvatar(
-                            hashString: details.id,
-                            firstName: details.createdBy!.firstName,
-                            imageUrl: details.createdBy!.profileImageUrl,
-                          )
-                        : null;
 
                     return Column(
                       children: [
@@ -119,16 +113,33 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                         LabeledData(
                           label:
                               context.localization.workspaceSettingsCreatedAt,
-                          data: DateFormat.yMd(
-                            Localizations.localeOf(context).toString(),
-                          ).format(details.createdAt),
+                          child: LabeledDataText(
+                            data: DateFormat.yMd(
+                              Localizations.localeOf(context).toString(),
+                            ).format(details.createdAt),
+                          ),
                         ),
                         const SizedBox(height: 15),
                         LabeledData(
                           label:
                               context.localization.workspaceSettingsCreatedBy,
-                          leading: createdByAvatar,
-                          data: createdByFullName,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 8,
+                            children: [
+                              if (details.createdBy != null)
+                                AppAvatar(
+                                  hashString: details.createdBy!.id,
+                                  firstName: details.createdBy!.firstName,
+                                  imageUrl: details.createdBy!.profileImageUrl,
+                                ),
+                              Text(
+                                createdByFullName,
+                                style: Theme.of(context).textTheme.bodyLarge!
+                                    .copyWith(fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     );

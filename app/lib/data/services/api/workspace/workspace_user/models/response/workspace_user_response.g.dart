@@ -32,6 +32,7 @@ const _$WorkspaceRoleEnumMap = {
 WorkspaceUserCreatedByResponse _$WorkspaceUserCreatedByResponseFromJson(
   Map<String, dynamic> json,
 ) => WorkspaceUserCreatedByResponse(
+  id: json['id'] as String,
   firstName: json['firstName'] as String,
   lastName: json['lastName'] as String,
   profileImageUrl: json['profileImageUrl'] as String?,

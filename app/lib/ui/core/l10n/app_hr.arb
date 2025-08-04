@@ -48,6 +48,8 @@
   "sortByNewest": "Najnoviji",
   "sortByOldest": "Najstariji",
   "tasksCardPoints": "{points} bodova",
+  "tasksDetails": "Detalji zadatka",
+  "tasksDetailsCreatedAt": "Zadatak kreiran",
   "appDrawerTitle": "Radni prostori",
   "appDrawerChangeActiveWorkspaceError": "Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora",
   "appDrawerEditWorkspace": "Postavke radnog prostora",

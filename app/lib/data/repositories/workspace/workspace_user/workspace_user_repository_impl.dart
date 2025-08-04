@@ -93,10 +93,10 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
     required String workspaceId,
     required String workspaceUserId,
   }) {
-    final workspaceUserDetails = _cachedWorkspaceUsersList!.firstWhere(
+    final details = _cachedWorkspaceUsersList!.firstWhere(
       (user) => user.id == workspaceUserId,
     );
-    return Result.ok(workspaceUserDetails);
+    return Result.ok(details);
   }
 
   @override
@@ -214,6 +214,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       createdBy: workspaceUser.createdBy == null
           ? null
           : WorkspaceUserCreatedBy(
+              id: workspaceUser.createdBy!.id,
               firstName: workspaceUser.createdBy!.firstName,
               lastName: workspaceUser.createdBy!.lastName,
               profileImageUrl: workspaceUser.createdBy!.profileImageUrl,

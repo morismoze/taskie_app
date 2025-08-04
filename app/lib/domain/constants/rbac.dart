@@ -8,6 +8,7 @@ enum RbacPermission {
 
   /// `objective` is just a single name for either task or goal
   objectiveCreate,
+  objectiveEdit,
 }
 
 abstract final class RbacConfig {

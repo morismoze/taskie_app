@@ -13,7 +13,8 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../../core/ui/labeled_data.dart';
+import '../../core/ui/labeled_data/labeled_data.dart';
+import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
 import '../../core/utils/user.dart';
@@ -129,9 +130,11 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                           label: context
                               .localization
                               .workspaceUsersManagementUserDetailsCreatedAt,
-                          data: DateFormat.yMd(
-                            Localizations.localeOf(context).toString(),
-                          ).format(details.createdAt),
+                          child: LabeledDataText(
+                            data: DateFormat.yMd(
+                              Localizations.localeOf(context).toString(),
+                            ).format(details.createdAt),
+                          ),
                         ),
                         if (details.createdBy != null) ...[
                           const SizedBox(height: 15),
@@ -139,13 +142,21 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                             label: context
                                 .localization
                                 .workspaceUsersManagementUserDetailsCreatedBy,
-                            leading: AppAvatar(
-                              hashString: details.id,
-                              firstName: details.firstName,
-                              imageUrl: details.createdBy!.profileImageUrl,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AppAvatar(
+                                  hashString: details.createdBy!.id,
+                                  firstName: details.createdBy!.firstName,
+                                  imageUrl: details.createdBy!.profileImageUrl,
+                                ),
+                                const SizedBox(width: 8),
+                                LabeledDataText(
+                                  data:
+                                      '${details.createdBy!.firstName} ${details.createdBy!.lastName}',
+                                ),
+                              ],
                             ),
-                            data:
-                                '${details.createdBy!.firstName} ${details.createdBy!.lastName}',
                           ),
                         ],
                       ],

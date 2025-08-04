@@ -16,6 +16,7 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
     required final void Function() onCleared,
     bool multiple = false,
     bool required = true,
+    bool isScrollControlled = false,
     String? disabledWidgetTrailingTooltipMessage,
     int? max,
   }) : super(
@@ -48,6 +49,7 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                  disabledWidgetTrailingTooltipMessage:
                      disabledWidgetTrailingTooltipMessage,
                  max: max,
+                 isScrollControlled: isScrollControlled,
                ),
                Padding(
                  padding: EdgeInsets.only(

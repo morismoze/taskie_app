@@ -20,6 +20,8 @@ import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
 import '../ui/tasks_create/widgets/create_task_screen.dart';
+import '../ui/tasks_details/view_models/task_details_screen_view_model.dart';
+import '../ui/tasks_details/widgets/task_details_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
@@ -269,6 +271,43 @@ GoRouter router({
                                   workspaceId: workspaceId,
                                   workspaceTaskRepository: context.read(),
                                   workspaceUserRepository: context.read(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: ':taskId',
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+                            final taskId = state.pathParameters['taskId']!;
+
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: TaskDetailsScreen(
+                                viewModel: TaskDetailsScreenViewModel(
+                                  workspaceId: workspaceId,
+                                  taskId: taskId,
+                                  workspaceTaskRepository: context.read(),
                                 ),
                               ),
                             );

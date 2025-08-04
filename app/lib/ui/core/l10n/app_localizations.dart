@@ -380,6 +380,18 @@ abstract class AppLocalizations {
   /// **'{points} points'**
   String tasksCardPoints(Object points);
 
+  /// No description provided for @tasksDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Task details'**
+  String get tasksDetails;
+
+  /// No description provided for @tasksDetailsCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created at'**
+  String get tasksDetailsCreatedAt;
+
   /// No description provided for @appDrawerTitle.
   ///
   /// In en, this message translates to:

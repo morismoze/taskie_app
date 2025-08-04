@@ -74,6 +74,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
             createdBy: workspace.createdBy == null
                 ? null
                 : WorkspaceCreatedBy(
+                    id: workspace.createdBy!.id,
                     firstName: workspace.createdBy!.firstName,
                     lastName: workspace.createdBy!.lastName,
                     profileImageUrl: workspace.createdBy!.profileImageUrl,

@@ -44,6 +44,7 @@ class AppSelectField extends StatefulWidget {
     this.multiple = false,
     this.required = true,
     this.enabled = true,
+    this.isScrollControlled = false,
     this.initialValue,
     this.disabledWidgetTrailingTooltipMessage,
     this.max,
@@ -58,6 +59,10 @@ class AppSelectField extends StatefulWidget {
   final bool multiple;
   final bool required;
   final bool enabled;
+
+  /// Defines if the bottom sheet should stretch to the top
+  /// of the screen (to the status bar).
+  final bool isScrollControlled;
   final List<AppSelectFieldOption>? initialValue;
   final String? disabledWidgetTrailingTooltipMessage;
 
@@ -149,6 +154,7 @@ class _AppSelectFieldState extends State<AppSelectField> {
   void _openOptions(BuildContext context) {
     AppModalBottomSheet.show(
       context: context,
+      isScrollControlled: widget.isScrollControlled,
       child: AppSelectFieldOptions(
         options: widget.options,
         selectedOptions: _selectedOptions,

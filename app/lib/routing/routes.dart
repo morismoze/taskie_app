@@ -56,10 +56,16 @@ abstract final class Routes {
   static const taskCreateRelative = 'create';
   static String taskCreate({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$tasksRelative/$taskCreateRelative';
-  static String taskWithId({
+  static String taskDetails({
     required String workspaceId,
     required String taskId,
   }) => '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId';
+  static const taskEditDetailsRelative = 'edit';
+  static String taskEditDetails({
+    required String workspaceId,
+    required String taskId,
+  }) =>
+      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskEditDetailsRelative';
 
   static const leaderboardRelative = 'leaderboard';
   static String leaderboard({required String workspaceId}) =>

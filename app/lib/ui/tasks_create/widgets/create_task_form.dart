@@ -114,6 +114,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             multiple: true,
             max: ValidationRules.taskMaxAssigneesCount,
             validator: (assignees) => _validateAssignees(context, assignees),
+            isScrollControlled: true,
           ),
           const SizedBox(height: 10),
           AppDatePickerFormField(
