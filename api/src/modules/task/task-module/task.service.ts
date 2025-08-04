@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
 import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
@@ -23,13 +23,17 @@ export class TaskService {
     query: WorkspaceItemRequestQuery;
   }): Promise<{
     data: TaskWithAssigneesCore[];
+    totalPages: number;
     total: number;
   }> {
-    const { data: taskEntities, total } =
-      await this.taskRepository.findAllByWorkspaceId({
-        workspaceId,
-        query,
-      });
+    const {
+      data: taskEntities,
+      totalPages,
+      total,
+    } = await this.taskRepository.findAllByWorkspaceId({
+      workspaceId,
+      query,
+    });
 
     const tasks: TaskWithAssigneesCore[] = taskEntities.map((task) => ({
       id: task.id,
@@ -38,7 +42,7 @@ export class TaskService {
       description: task.description,
       dueDate: task.dueDate,
       assignees: task.taskAssignments.map((assignment) => ({
-        id: assignment.assignee.user.id,
+        id: assignment.assignee.id, // workspace user ID
         firstName: assignment.assignee.user.firstName,
         lastName: assignment.assignee.user.lastName,
         profileImageUrl: assignment.assignee.user.profileImageUrl,
@@ -51,7 +55,8 @@ export class TaskService {
 
     return {
       data: tasks,
-      total: total,
+      totalPages,
+      total,
     };
   }
 

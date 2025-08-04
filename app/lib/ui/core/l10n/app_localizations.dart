@@ -176,22 +176,34 @@ abstract class AppLocalizations {
   /// **'Coming soon'**
   String get misc_comingSoon;
 
+  /// No description provided for @misc_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get misc_profile;
+
+  /// No description provided for @misc_new.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get misc_new;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
-  /// **'Happy Chores, Happy Kids.'**
+  /// **'Organize Tasks, Achieve Goals.'**
   String get signInTitleStart;
 
   /// No description provided for @signInTitleEnd.
   ///
   /// In en, this message translates to:
-  /// **'Happy Home.'**
+  /// **'Successfully.'**
   String get signInTitleEnd;
 
   /// No description provided for @signInSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Organize routines, motivate children, and celebrate every win.'**
+  /// **'Effectively manage obligations, encourage engagement, and celebrate every success.'**
   String get signInSubtitle;
 
   /// No description provided for @signInGetStarted.
@@ -307,6 +319,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hello!'**
   String get tasksHello;
+
+  /// No description provided for @taskskNoTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one!'**
+  String get taskskNoTasks;
+
+  /// No description provided for @taskskNoFilteredTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
+  String get taskskNoFilteredTasks;
+
+  /// No description provided for @objectiveStatusFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get objectiveStatusFilterAll;
+
+  /// No description provided for @progressStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get progressStatusInProgress;
+
+  /// No description provided for @progressStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get progressStatusCompleted;
+
+  /// No description provided for @progressStatusCompletedAsStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed as Stale'**
+  String get progressStatusCompletedAsStale;
+
+  /// No description provided for @progressStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get progressStatusClosed;
+
+  /// No description provided for @sortByNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get sortByNewest;
+
+  /// No description provided for @sortByOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get sortByOldest;
+
+  /// No description provided for @tasksCardPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} points'**
+  String tasksCardPoints(Object points);
 
   /// No description provided for @appDrawerTitle.
   ///

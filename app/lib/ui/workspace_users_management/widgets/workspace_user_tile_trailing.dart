@@ -8,6 +8,7 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
+import '../../core/utils/user.dart';
 import '../view_models/workspace_users_management_screen_viewmodel.dart';
 import 'delete_workspace_user_button.dart';
 
@@ -17,7 +18,8 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
     required this.viewModel,
     required this.workspaceUserId,
     required this.role,
-    required this.fullName,
+    required this.firstName,
+    required this.lastName,
     required this.isCurrentUser,
     this.profileImageUrl,
   });
@@ -25,7 +27,8 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
   final WorkspaceUsersManagementScreenViewModel viewModel;
   final String workspaceUserId;
   final WorkspaceRole role;
-  final String fullName;
+  final String firstName;
+  final String lastName;
   final bool isCurrentUser;
   final String? profileImageUrl;
 
@@ -44,7 +47,8 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                 onTap: () => _userOptionsTap(
                   context,
                   viewModel,
-                  fullName,
+                  firstName,
+                  lastName,
                   viewModel.activeWorkspaceId,
                   workspaceUserId,
                   profileImageUrl,
@@ -67,23 +71,29 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
   void _userOptionsTap(
     BuildContext context,
     WorkspaceUsersManagementScreenViewModel viewModel,
-    String fullName,
+    String firstName,
+    String lastName,
     String workspaceId,
     String workspaceUserId,
     String? profileImageUrl,
   ) {
+    final fullName = UserUtils.constructFullName(
+      firstName: firstName,
+      lastName: lastName,
+    );
     AppModalBottomSheet.show(
       context: context,
       enableDrag: !viewModel.deleteWorkspaceUser.running,
       isDismissable: !viewModel.deleteWorkspaceUser.running,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
               AppAvatar(
                 hashString: workspaceUserId,
-                fullName: fullName,
+                firstName: firstName,
                 imageUrl: profileImageUrl,
               ),
               const SizedBox(width: 12),

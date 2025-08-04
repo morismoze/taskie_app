@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../theme/colors.dart';
-import '../utils/role_extension.dart';
+import '../utils/extensions.dart';
 
 class RoleChip extends StatelessWidget {
   const RoleChip({super.key, required this.role});
@@ -15,7 +15,7 @@ class RoleChip extends StatelessWidget {
         ? AppColors.purple1Light
         : AppColors.green1Light;
     final roleChipTextColor = role == WorkspaceRole.manager
-        ? AppColors.purple1
+        ? Theme.of(context).colorScheme.primary
         : AppColors.green1;
 
     return Chip(

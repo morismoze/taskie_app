@@ -4,6 +4,10 @@ abstract final class AppColors {
   static const black1 = Color(0xFF101010);
   static const purple1 = Color(0xFF5F34E2);
   static const purple1Light = Color(0xFFEEE9FF);
+  static const orange1 = Color(0xFFFF9142);
+  static const orange1Light = Color(0xFFFEE7D4);
+  static const pink1 = Color(0xFFF478B8);
+  static const pink1Light = Color(0xFFFFE4F2);
   static Color green1 = Colors.green[800]!;
   static Color green1Light = Colors.green.shade50;
   static const white1 = Color(0xFFFFFFFF);
@@ -13,6 +17,7 @@ abstract final class AppColors {
   static const whiteTransparent = Color(0x4DFFFFFF);
   static const blackTransparent = Color(0x4D000000);
   static const red1 = Color(0xFFE74C3C);
+  static Color golden = Colors.amber[600]!;
   static Color fieldFillColor = grey2.withValues(alpha: 0.075);
   static Color fieldUnfocusedLabelColor = grey2.withValues(alpha: 0.5);
 

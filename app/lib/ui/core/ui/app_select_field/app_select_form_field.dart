@@ -17,10 +17,13 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
     bool multiple = false,
     bool required = true,
     String? disabledWidgetTrailingTooltipMessage,
+    int? max,
   }) : super(
          builder: (FormFieldState<List<AppSelectFieldOption>> state) {
            final context = state.context;
            final errorText = state.errorText;
+           final selectedCount = state.value?.length ?? 0;
+           final counterText = max != null ? '$selectedCount/$max' : null;
 
            return Column(
              crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,18 +47,32 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                  enabled: enabled,
                  disabledWidgetTrailingTooltipMessage:
                      disabledWidgetTrailingTooltipMessage,
+                 max: max,
                ),
                Padding(
                  padding: EdgeInsets.only(
                    top: 2,
                    left: AppTheme.fieldInnerPadding,
+                   right: AppTheme.fieldInnerPadding,
                  ),
-                 child: Text(
-                   errorText ?? '',
-                   style: TextStyle(
-                     color: Theme.of(context).colorScheme.error,
-                     fontSize: 14,
-                   ),
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   children: [
+                     Expanded(
+                       child: Text(
+                         errorText ?? '',
+                         style: TextStyle(
+                           color: Theme.of(context).colorScheme.error,
+                           fontSize: 14,
+                         ),
+                       ),
+                     ),
+                     if (multiple && counterText != null)
+                       Text(
+                         counterText,
+                         style: Theme.of(context).textTheme.labelMedium,
+                       ),
+                   ],
                  ),
                ),
              ],

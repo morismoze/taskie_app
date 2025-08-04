@@ -53,6 +53,7 @@ export abstract class TaskRepository {
     };
   }): Promise<{
     data: TaskEntity[];
+    totalPages: number;
     total: number;
   }>;
 

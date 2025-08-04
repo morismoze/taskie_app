@@ -5,6 +5,7 @@ export interface WorkspaceTaskResponse {
   id: string;
   title: string;
   description: string | null;
+  dueDate: string | null;
   rewardPoints: number;
   assignees: {
     id: string;
@@ -13,6 +14,7 @@ export interface WorkspaceTaskResponse {
     profileImageUrl: string | null;
     status: ProgressStatus;
   }[];
+  createdAt: string;
 }
 
 export type WorkspaceTasksResponse = Paginable<WorkspaceTaskResponse>;

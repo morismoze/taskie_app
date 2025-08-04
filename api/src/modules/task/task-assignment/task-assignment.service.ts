@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { UpdateTaskAssignmentsRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignment-status-request.dto';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';

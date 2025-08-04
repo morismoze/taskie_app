@@ -27,7 +27,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   @override
   Future<Result<void>> loadGoals({
     required String workspaceId,
-    required PaginableObjectivesRequestQueryParams paginable,
+    required ObjectiveRequestQueryParams paginable,
     bool forceFetch = false,
   }) async {
     if (!forceFetch && _cachedGoals != null) {
@@ -42,21 +42,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
       switch (result) {
         case Ok<PaginableResponse<WorkspaceGoalResponse>>():
           final mappedData = result.value.items
-              .map(
-                (goal) => WorkspaceGoal(
-                  id: goal.id,
-                  title: goal.title,
-                  requiredPoints: goal.requiredPoints,
-                  assignee: Assignee(
-                    id: goal.assignee.id,
-                    firstName: goal.assignee.firstName,
-                    lastName: goal.assignee.lastName,
-                    profileImageUrl: goal.assignee.profileImageUrl,
-                  ),
-                  status: goal.status,
-                  description: goal.description,
-                ),
-              )
+              .map((goal) => _mapGoalFromResponse(goal))
               .toList();
 
           _cachedGoals = mappedData;
@@ -93,21 +79,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
       switch (result) {
         case Ok<WorkspaceGoalResponse>():
-          final newGoalResultValue = result.value;
-          final newGoal = WorkspaceGoal(
-            id: newGoalResultValue.id,
-            title: newGoalResultValue.title,
-            requiredPoints: newGoalResultValue.requiredPoints,
-            assignee: Assignee(
-              id: newGoalResultValue.assignee.id,
-              firstName: newGoalResultValue.assignee.firstName,
-              lastName: newGoalResultValue.assignee.lastName,
-              profileImageUrl: newGoalResultValue.assignee.profileImageUrl,
-            ),
-            status: newGoalResultValue.status,
-            description: newGoalResultValue.description,
-            isNew: true,
-          );
+          final newGoal = _mapGoalFromResponse(result.value);
 
           // Add the new goal with the `new` flag to the start index, so additional
           // UI styles are applied to it in the current goals paginable page
@@ -128,5 +100,22 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   @override
   void purgeGoalsCache() {
     _cachedGoals = null;
+  }
+
+  WorkspaceGoal _mapGoalFromResponse(WorkspaceGoalResponse goal) {
+    return WorkspaceGoal(
+      id: goal.id,
+      title: goal.title,
+      requiredPoints: goal.requiredPoints,
+      assignee: Assignee(
+        id: goal.assignee.id,
+        firstName: goal.assignee.firstName,
+        lastName: goal.assignee.lastName,
+        profileImageUrl: goal.assignee.profileImageUrl,
+      ),
+      status: goal.status,
+      description: goal.description,
+      isNew: true,
+    );
   }
 }

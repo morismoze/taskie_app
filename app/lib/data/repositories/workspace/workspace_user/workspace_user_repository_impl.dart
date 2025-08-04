@@ -41,24 +41,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
         case Ok<List<WorkspaceUserResponse>>():
           final mappedData = result.value
               .map(
-                (workspaceUser) => WorkspaceUser(
-                  id: workspaceUser.id,
-                  firstName: workspaceUser.firstName,
-                  lastName: workspaceUser.lastName,
-                  role: workspaceUser.role,
-                  userId: workspaceUser.userId,
-                  createdAt: workspaceUser.createdAt,
-                  email: workspaceUser.email,
-                  profileImageUrl: workspaceUser.profileImageUrl,
-                  createdBy: workspaceUser.createdBy == null
-                      ? null
-                      : WorkspaceUserCreatedBy(
-                          firstName: workspaceUser.createdBy!.firstName,
-                          lastName: workspaceUser.createdBy!.lastName,
-                          profileImageUrl:
-                              workspaceUser.createdBy!.profileImageUrl,
-                        ),
-                ),
+                (workspaceUser) => _mapWorkspaceUserFromResponse(workspaceUser),
               )
               .toList();
 
@@ -91,24 +74,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
 
       switch (result) {
         case Ok<WorkspaceUserResponse>():
-          final workspaceUser = result.value;
-          final mappedData = WorkspaceUser(
-            id: workspaceUser.id,
-            firstName: workspaceUser.firstName,
-            lastName: workspaceUser.lastName,
-            role: workspaceUser.role,
-            userId: workspaceUser.userId,
-            createdAt: workspaceUser.createdAt,
-            email: workspaceUser.email,
-            profileImageUrl: workspaceUser.profileImageUrl,
-            createdBy: workspaceUser.createdBy == null
-                ? null
-                : WorkspaceUserCreatedBy(
-                    firstName: workspaceUser.createdBy!.firstName,
-                    lastName: workspaceUser.createdBy!.lastName,
-                    profileImageUrl: workspaceUser.createdBy!.profileImageUrl,
-                  ),
-          );
+          final mappedData = _mapWorkspaceUserFromResponse(result.value);
 
           _cachedWorkspaceUsersList!.add(mappedData);
           notifyListeners();
@@ -181,23 +147,8 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
 
       switch (result) {
         case Ok():
-          final workspaceUser = result.value;
-          final updatedWorkspaceUser = WorkspaceUser(
-            id: workspaceUser.id,
-            firstName: workspaceUser.firstName,
-            lastName: workspaceUser.lastName,
-            role: workspaceUser.role,
-            userId: workspaceUser.userId,
-            createdAt: workspaceUser.createdAt,
-            email: workspaceUser.email,
-            profileImageUrl: workspaceUser.profileImageUrl,
-            createdBy: workspaceUser.createdBy == null
-                ? null
-                : WorkspaceUserCreatedBy(
-                    firstName: workspaceUser.createdBy!.firstName,
-                    lastName: workspaceUser.createdBy!.lastName,
-                    profileImageUrl: workspaceUser.createdBy!.profileImageUrl,
-                  ),
+          final updatedWorkspaceUser = _mapWorkspaceUserFromResponse(
+            result.value,
           );
 
           // Update the existing user in the list by replacing it
@@ -246,5 +197,27 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   @override
   void purgeWorkspaceUsersCache() {
     _cachedWorkspaceUsersList = null;
+  }
+
+  WorkspaceUser _mapWorkspaceUserFromResponse(
+    WorkspaceUserResponse workspaceUser,
+  ) {
+    return WorkspaceUser(
+      id: workspaceUser.id,
+      firstName: workspaceUser.firstName,
+      lastName: workspaceUser.lastName,
+      role: workspaceUser.role,
+      userId: workspaceUser.userId,
+      createdAt: workspaceUser.createdAt,
+      email: workspaceUser.email,
+      profileImageUrl: workspaceUser.profileImageUrl,
+      createdBy: workspaceUser.createdBy == null
+          ? null
+          : WorkspaceUserCreatedBy(
+              firstName: workspaceUser.createdBy!.firstName,
+              lastName: workspaceUser.createdBy!.lastName,
+              profileImageUrl: workspaceUser.createdBy!.profileImageUrl,
+            ),
+    );
   }
 }

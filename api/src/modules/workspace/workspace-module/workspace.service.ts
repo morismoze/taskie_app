@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { GoalService } from 'src/modules/goal/goal.service';
@@ -484,17 +484,24 @@ export class WorkspaceService {
     // with only one DB query - where: { task: { id: In(taskIds) } }) - this is something I'm not
     // sure about, because I'm weighing *one more complex query, meaning less DB queries* vs *two
     // simple queries, from different service functions for SRP (single responsiblity principle)
-    const { data: tasks, total } =
-      await this.taskService.findPaginatedByWorkspaceWithAssignees({
-        workspaceId,
-        query,
-      });
+    const {
+      data: tasks,
+      totalPages,
+      total,
+    } = await this.taskService.findPaginatedByWorkspaceWithAssignees({
+      workspaceId,
+      query,
+    });
 
     const response: WorkspaceTasksResponse = {
       items: tasks.map((task) => ({
         id: task.id,
         title: task.title,
         description: task.description,
+        dueDate:
+          task.dueDate === null
+            ? null
+            : DateTime.fromJSDate(task.dueDate).toISO()!,
         rewardPoints: task.rewardPoints,
         assignees: task.assignees.map((assignee) => ({
           id: assignee.id,
@@ -503,7 +510,9 @@ export class WorkspaceService {
           profileImageUrl: assignee.profileImageUrl,
           status: assignee.status,
         })),
+        createdAt: DateTime.fromJSDate(task.createdAt).toISO()!,
       })),
+      totalPages,
       total,
     };
 
@@ -530,11 +539,14 @@ export class WorkspaceService {
       );
     }
 
-    const { data: goals, total } =
-      await this.goalService.findPaginatedByWorkspaceWithAssignee({
-        workspaceId,
-        query,
-      });
+    const {
+      data: goals,
+      totalPages,
+      total,
+    } = await this.goalService.findPaginatedByWorkspaceWithAssignee({
+      workspaceId,
+      query,
+    });
 
     const responseData: WorkspaceGoalsResponse['items'] = [];
 
@@ -562,6 +574,7 @@ export class WorkspaceService {
 
     const response: WorkspaceGoalsResponse = {
       items: responseData,
+      totalPages,
       total,
     };
 
@@ -613,7 +626,15 @@ export class WorkspaceService {
         data,
       });
 
-      let response: WorkspaceTaskResponse = { ...newTask, assignees: [] };
+      let response: WorkspaceTaskResponse = {
+        ...newTask,
+        dueDate:
+          newTask.dueDate === null
+            ? null
+            : DateTime.fromJSDate(newTask.dueDate).toISO()!,
+        assignees: [],
+        createdAt: DateTime.fromJSDate(newTask.createdAt).toISO()!,
+      };
 
       // Create new task assignment for each given assignee
       for (const assigneeId of data.assignees) {
@@ -623,7 +644,7 @@ export class WorkspaceService {
           status: ProgressStatus.IN_PROGRESS,
         });
         response.assignees.push({
-          id: newTaskAssignment.id,
+          id: newTaskAssignment.assignee.id,
           firstName: newTaskAssignment.assignee.user.firstName,
           lastName: newTaskAssignment.assignee.user.lastName,
           status: newTaskAssignment.status,

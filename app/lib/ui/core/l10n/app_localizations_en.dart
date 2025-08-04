@@ -48,14 +48,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_comingSoon => 'Coming soon';
 
   @override
-  String get signInTitleStart => 'Happy Chores, Happy Kids.';
+  String get misc_profile => 'Profile';
 
   @override
-  String get signInTitleEnd => 'Happy Home.';
+  String get misc_new => 'New';
+
+  @override
+  String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
+
+  @override
+  String get signInTitleEnd => 'Successfully.';
 
   @override
   String get signInSubtitle =>
-      'Organize routines, motivate children, and celebrate every win.';
+      'Effectively manage obligations, encourage engagement, and celebrate every success.';
 
   @override
   String get signInGetStarted => 'Let\'s get started';
@@ -121,6 +127,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksHello => 'Hello!';
+
+  @override
+  String get taskskNoTasks =>
+      'It looks like your workspace doesn\'t have any task yet. Try creating your first one!';
+
+  @override
+  String get taskskNoFilteredTasks =>
+      'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
+
+  @override
+  String get objectiveStatusFilterAll => 'All';
+
+  @override
+  String get progressStatusInProgress => 'In Progress';
+
+  @override
+  String get progressStatusCompleted => 'Completed';
+
+  @override
+  String get progressStatusCompletedAsStale => 'Completed as Stale';
+
+  @override
+  String get progressStatusClosed => 'Closed';
+
+  @override
+  String get sortByNewest => 'Newest';
+
+  @override
+  String get sortByOldest => 'Oldest';
+
+  @override
+  String tasksCardPoints(Object points) {
+    return '$points points';
+  }
 
   @override
   String get appDrawerTitle => 'Workspaces';

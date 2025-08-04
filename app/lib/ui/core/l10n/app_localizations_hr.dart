@@ -48,14 +48,20 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_comingSoon => 'Uskoro';
 
   @override
-  String get signInTitleStart => 'Učenje odgovornosti.';
+  String get misc_profile => 'Profil';
 
   @override
-  String get signInTitleEnd => 'Zabava nagrađivanja.';
+  String get misc_new => 'Novo';
+
+  @override
+  String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
+
+  @override
+  String get signInTitleEnd => 'Uspješno.';
 
   @override
   String get signInSubtitle =>
-      'Organizirajte rutine, motivirajte djecu i slavite svaki uspjeh.';
+      'Učinkovito upravljajte obavezama, potaknite angažman i proslavite svaki uspjeh.';
 
   @override
   String get signInGetStarted => 'Započnimo';
@@ -121,6 +127,40 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksHello => 'Pozdrav!';
+
+  @override
+  String get taskskNoTasks =>
+      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!';
+
+  @override
+  String get taskskNoFilteredTasks =>
+      'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
+
+  @override
+  String get objectiveStatusFilterAll => 'Svi';
+
+  @override
+  String get progressStatusInProgress => 'U tijeku';
+
+  @override
+  String get progressStatusCompleted => 'Dovršeno';
+
+  @override
+  String get progressStatusCompletedAsStale => 'Dovršeno (zastarjelo)';
+
+  @override
+  String get progressStatusClosed => 'Zatvoreno';
+
+  @override
+  String get sortByNewest => 'Najnoviji';
+
+  @override
+  String get sortByOldest => 'Najstariji';
+
+  @override
+  String tasksCardPoints(Object points) {
+    return '$points bodova';
+  }
 
   @override
   String get appDrawerTitle => 'Radni prostori';

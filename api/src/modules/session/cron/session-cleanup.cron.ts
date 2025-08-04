@@ -15,7 +15,7 @@ export class SessionCleanupService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async cleanupInactiveSessions() {
-    const cutoffDate = DateTime.now().minus({ days: 7 }).toJSDate();
+    const cutoffDate = DateTime.now().toUTC().minus({ days: 7 }).toJSDate();
 
     await this.sessionRepository.deleteInactiveSessionsBefore(cutoffDate);
   }

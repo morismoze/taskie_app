@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { Environment } from 'src/config/app.config';
 import { AggregatedConfig } from 'src/config/config.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 
 const getValidationOptions = (
   configService: ConfigService<AggregatedConfig>,

@@ -4,9 +4,14 @@ part 'paginable.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class PaginableResponse<D> {
-  PaginableResponse({required this.items, required this.total});
+  PaginableResponse({
+    required this.items,
+    required this.totalPages,
+    required this.total,
+  });
 
   final List<D> items;
+  final int totalPages;
   final int total;
 
   factory PaginableResponse.fromJson(
@@ -15,10 +20,22 @@ class PaginableResponse<D> {
   ) => _$PaginableResponseFromJson(json, fromJsonT);
 }
 
-class PaginableRequestQueryParams {
-  PaginableRequestQueryParams({this.page = 1, this.limit, this.search});
+class RequestQueryParams {
+  RequestQueryParams({required this.page, required this.limit, this.search});
 
-  final int? page;
-  final int? limit;
+  final int page;
+  final int limit;
   final String? search;
+}
+
+enum SortBy {
+  @JsonValue('newest')
+  newestFirst('newest'),
+
+  @JsonValue('oldest')
+  oldestFirst('oldest');
+
+  const SortBy(this.value);
+
+  final String value;
 }

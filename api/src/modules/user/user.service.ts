@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
 import { WorkspaceUserService } from '../workspace/workspace-user-module/workspace-user.service';
 import { User } from './domain/user.domain';

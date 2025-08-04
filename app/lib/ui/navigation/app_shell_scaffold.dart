@@ -35,10 +35,11 @@ class AppShellScaffold extends StatelessWidget {
         viewModel: context.read<AppBottomNavigationBarViewModel>(),
         navigationShell: navigationShell,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: AppFloatingActionButton(
         viewModel: AppFloatingActionButtonViewModel(workspaceId: workspaceId),
       ),
+
       body: navigationShell,
     );
   }

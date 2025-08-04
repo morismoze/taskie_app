@@ -16,7 +16,7 @@ class WorkspaceGoalApiService {
 
   Future<Result<PaginableResponse<WorkspaceGoalResponse>>> getGoals({
     required WorkspaceIdPathParam workspaceId,
-    required PaginableObjectivesRequestQueryParams paginable,
+    required ObjectiveRequestQueryParams paginable,
   }) async {
     try {
       final response = await _apiClient.client.get(

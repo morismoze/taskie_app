@@ -8,7 +8,7 @@ class CreateGoalRequest {
     required this.title,
     required this.assignee,
     required this.requiredPoints,
-    this.description,
+    required this.description,
   });
 
   final String title;

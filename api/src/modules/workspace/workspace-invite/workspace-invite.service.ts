@@ -4,7 +4,7 @@ import { WORKSPACE_INVITE_TOKEN_LENGTH } from 'src/common/helper/constants';
 import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
@@ -55,7 +55,7 @@ export class WorkspaceInviteService {
     }
 
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
-    const now = DateTime.now();
+    const now = DateTime.now().toUTC();
     const expiresAt = now.plus({ hours: 24 }).toISO();
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
@@ -151,7 +151,7 @@ export class WorkspaceInviteService {
 
     // Check if that workspace invite has expired
     const expiresAt = DateTime.fromJSDate(workspaceInvite.expiresAt).toISO()!;
-    const now = DateTime.now().toISO();
+    const now = DateTime.now().toUTC().toISO();
 
     if (expiresAt < now) {
       throw new ApiHttpException(

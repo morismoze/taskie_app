@@ -16,6 +16,7 @@ import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/labeled_data.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
+import '../../core/utils/user.dart';
 import '../view_models/workspace_user_details_screen_view_model.dart';
 
 class WorkspaceUserDetailsScreen extends StatelessWidget {
@@ -88,16 +89,19 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                       );
                     }
 
-                    final fullName = '${details.firstName} ${details.lastName}';
+                    final fullName = UserUtils.constructFullName(
+                      firstName: details.firstName,
+                      lastName: details.lastName,
+                    );
 
                     return Column(
                       children: [
                         // First section
                         AppAvatar(
                           hashString: details.id,
-                          fullName: fullName,
+                          firstName: details.firstName,
                           imageUrl: details.profileImageUrl,
-                          radius: 50,
+                          size: 100,
                         ),
                         const SizedBox(height: 30),
                         // Second section
@@ -137,7 +141,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                                 .workspaceUsersManagementUserDetailsCreatedBy,
                             leading: AppAvatar(
                               hashString: details.id,
-                              fullName: fullName,
+                              firstName: details.firstName,
                               imageUrl: details.createdBy!.profileImageUrl,
                             ),
                             data:

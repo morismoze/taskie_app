@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import {
-  IsDate,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsString,
@@ -10,7 +10,6 @@ import {
   Max,
   MaxLength,
   Min,
-  MinDate,
   Validate,
 } from 'class-validator';
 import {
@@ -19,6 +18,7 @@ import {
   TASK_REWARD_POINTS_STEP,
 } from 'src/modules/task/task-module/domain/task.constants';
 import { IsMultipleOfConstraint } from '../validators/is-multiple-of.validator';
+import { IsNotPastIsoDateTimeConstraint } from '../validators/is-not-past-date.validator';
 
 export const IsValidWorkspaceName = () => {
   const decorators = [IsNotEmpty(), IsString(), Length(3, 50)];
@@ -58,7 +58,7 @@ export const IsValidTaskRewardPoints = () => {
 };
 
 export const IsValidTaskDueDate = () => {
-  const decorators = [Type(() => Date), IsDate(), MinDate(new Date())];
+  const decorators = [IsDateString(), Validate(IsNotPastIsoDateTimeConstraint)];
   return applyDecorators(...decorators);
 };
 

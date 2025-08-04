@@ -5,6 +5,7 @@ import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../routing/routes.dart';
 import '../../core/theme/colors.dart';
 import '../../core/ui/app_avatar.dart';
+import '../../core/utils/user.dart';
 import '../view_models/workspace_users_management_screen_viewmodel.dart';
 import 'workspace_user_tile_trailing.dart';
 
@@ -32,7 +33,10 @@ class WorkspaceUserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fullName = '$firstName $lastName';
+    final fullName = UserUtils.constructFullName(
+      firstName: firstName,
+      lastName: lastName,
+    );
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -62,7 +66,10 @@ class WorkspaceUserTile extends StatelessWidget {
           ),
           leading: AppAvatar(
             hashString: id,
-            fullName: fullName,
+            firstName: UserUtils.constructFullName(
+              firstName: firstName,
+              lastName: lastName,
+            ),
             imageUrl: profileImageUrl,
           ),
           title: Column(
@@ -90,7 +97,8 @@ class WorkspaceUserTile extends StatelessWidget {
             viewModel: viewModel,
             workspaceUserId: id,
             role: role,
-            fullName: fullName,
+            firstName: firstName,
+            lastName: lastName,
             profileImageUrl: profileImageUrl,
             isCurrentUser: isCurrentUser,
           ),

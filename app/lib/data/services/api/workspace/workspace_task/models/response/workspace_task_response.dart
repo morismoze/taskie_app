@@ -12,14 +12,18 @@ class WorkspaceTaskResponse {
     required this.title,
     required this.rewardPoints,
     required this.assignees,
-    this.description,
+    required this.createdAt,
+    required this.description,
+    required this.dueDate,
   });
 
   final String id;
   final String title;
   final int rewardPoints;
   final List<TaskAssigneeResponse> assignees;
+  final DateTime createdAt;
   final String? description;
+  final DateTime? dueDate;
 
   factory WorkspaceTaskResponse.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceTaskResponseFromJson(json);
@@ -31,7 +35,7 @@ class TaskAssigneeResponse extends AssigneeResponse {
     required super.id,
     required super.firstName,
     required super.lastName,
-    super.profileImageUrl,
+    required super.profileImageUrl,
     required this.status,
   });
 

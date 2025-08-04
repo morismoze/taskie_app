@@ -8,8 +8,8 @@ class WorkspaceGoal {
     required this.requiredPoints,
     required this.assignee,
     required this.status,
+    required this.description,
     this.isNew = false,
-    this.description,
   });
 
   final String id;
@@ -17,10 +17,10 @@ class WorkspaceGoal {
   final int requiredPoints;
   final Assignee assignee;
   final ProgressStatus status;
+  final String? description;
 
   /// Indicates if the goal is newly created. Used
   /// for differentiating between newly created goals
   /// and cached ones from origin.
   final bool isNew;
-  final String? description;
 }

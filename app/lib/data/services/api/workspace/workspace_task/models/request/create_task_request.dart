@@ -8,8 +8,8 @@ class CreateTaskRequest {
     required this.title,
     required this.assignees,
     required this.rewardPoints,
-    this.description,
-    this.dueDate,
+    required this.description,
+    required this.dueDate,
   });
 
   final String title;

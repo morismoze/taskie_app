@@ -8,9 +8,9 @@ class WorkspaceUser {
     required this.role,
     required this.userId,
     required this.createdAt,
-    this.email,
-    this.profileImageUrl,
-    this.createdBy,
+    required this.email,
+    required this.profileImageUrl,
+    required this.createdBy,
   });
 
   final String id;
@@ -28,7 +28,7 @@ class WorkspaceUserCreatedBy {
   WorkspaceUserCreatedBy({
     required this.firstName,
     required this.lastName,
-    this.profileImageUrl,
+    required this.profileImageUrl,
   });
 
   final String firstName;

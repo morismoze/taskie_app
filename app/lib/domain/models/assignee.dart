@@ -3,7 +3,7 @@ class Assignee {
     required this.id,
     required this.firstName,
     required this.lastName,
-    this.profileImageUrl,
+    required this.profileImageUrl,
   });
 
   final String id;

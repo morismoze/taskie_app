@@ -4,7 +4,6 @@ import '../../data/repositories/user/user_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
 import '../../utils/command.dart';
-import 'active_workspace_change_use_case.dart';
 import 'refresh_token_use_case.dart';
 
 class JoinWorkspaceUseCase {
@@ -13,18 +12,15 @@ class JoinWorkspaceUseCase {
     required WorkspaceRepository workspaceRepository,
     required UserRepository userRepository,
     required RefreshTokenUseCase refreshTokenUseCase,
-    required ActiveWorkspaceChangeUseCase activeWorkspaceChangeUseCase,
   }) : _workspaceInviteRepository = workspaceInviteRepository,
        _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
-       _refreshTokenUseCase = refreshTokenUseCase,
-       _activeWorkspaceChangeUseCase = activeWorkspaceChangeUseCase;
+       _refreshTokenUseCase = refreshTokenUseCase;
 
   final WorkspaceInviteRepository _workspaceInviteRepository;
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
-  final ActiveWorkspaceChangeUseCase _activeWorkspaceChangeUseCase;
 
   final _log = Logger('JoinWorkspaceUseCase');
 

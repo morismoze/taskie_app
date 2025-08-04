@@ -7,8 +7,8 @@ class User {
     required this.lastName,
     required this.createdAt,
     required this.roles,
-    this.email,
-    this.profileImageUrl,
+    required this.email,
+    required this.profileImageUrl,
   });
 
   final String id;
@@ -16,8 +16,10 @@ class User {
   final String lastName;
   final DateTime createdAt;
   final List<RolePerWorkspace> roles;
-  // Email can be null in case of virtual users
+
+  /// Email can be null in case of virtual users
   final String? email;
-  // Profile image URL can be null in case of virtual users
+
+  /// Profile image URL can be null in case of virtual users
   final String? profileImageUrl;
 }

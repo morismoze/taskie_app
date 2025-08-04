@@ -15,6 +15,7 @@ import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/labeled_data.dart';
 import '../../core/ui/rbac.dart';
+import '../../core/utils/user.dart';
 import '../../navigation/app_drawer/widgets/workspace_image.dart';
 import '../view_models/workspace_settings_screen_viewmodel.dart';
 
@@ -72,14 +73,17 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                     }
 
                     final createdByFullName = details.createdBy != null
-                        ? '${details.createdBy!.firstName} ${details.createdBy!.lastName}'
+                        ? UserUtils.constructFullName(
+                            firstName: details.createdBy!.firstName,
+                            lastName: details.createdBy!.lastName,
+                          )
                         : context
                               .localization
                               .workspaceSettingsOwnerDeletedAccount;
                     final createdByAvatar = details.createdBy != null
                         ? AppAvatar(
                             hashString: details.id,
-                            fullName: createdByFullName,
+                            firstName: details.createdBy!.firstName,
                             imageUrl: details.createdBy!.profileImageUrl,
                           )
                         : null;

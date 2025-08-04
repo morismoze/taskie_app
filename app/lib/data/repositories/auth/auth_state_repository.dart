@@ -9,7 +9,7 @@ abstract class AuthStateRepository extends ChangeNotifier {
   /// to `true` or remain false (or set to `false` again).
   bool get isAuthenticated;
 
-  /// Loads from the storage. This is done once, on the EntryScreen.
+  /// Loads from the storage. This is done once, in the AppStartup widget.
   Future<bool> loadAuthenticatedState();
 
   /// Sets authenticated state.
