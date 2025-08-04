@@ -34,7 +34,6 @@ class SortByTimeButton extends StatelessWidget {
         label: viewModel.activeFilter.sort.l10n(context),
         value: viewModel.activeFilter.sort,
       ),
-      activeValueLabel: viewModel.activeFilter.sort.l10n(context),
       onSubmit: onSubmit,
     );
   }

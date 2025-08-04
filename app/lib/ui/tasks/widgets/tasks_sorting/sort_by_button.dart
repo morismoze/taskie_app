@@ -11,13 +11,11 @@ class SortByButton extends StatefulWidget {
     super.key,
     required this.options,
     required this.activeValue,
-    required this.activeValueLabel,
     required this.onSubmit,
   });
 
   final List<AppSelectFieldOption> options;
   final AppSelectFieldOption activeValue;
-  final String activeValueLabel;
   final void Function(AppSelectFieldOption selectedOption) onSubmit;
 
   @override
@@ -49,7 +47,7 @@ class _SortByButtonState extends State<SortByButton> {
       fontSize: 13,
       trailingIcon: FontAwesomeIcons.sort,
       onPress: () => _openSortByTime(context, widget.options, _selectedOptions),
-      label: widget.activeValueLabel,
+      label: widget.activeValue.label,
     );
   }
 

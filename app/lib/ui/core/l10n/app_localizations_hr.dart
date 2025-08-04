@@ -51,6 +51,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_profile => 'Profil';
 
   @override
+  String get misc_new => 'Novo';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -132,6 +135,9 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
+
+  @override
+  String get objectiveStatusFilterAll => 'Svi';
 
   @override
   String get progressStatusInProgress => 'U tijeku';

@@ -38,12 +38,12 @@ class ObjectiveFilter extends Filter {
     required super.page,
     required super.limit,
     super.search,
-    required this.status,
     required this.sort,
+    this.status,
   });
 
-  final ProgressStatus status;
   final SortBy sort;
+  final ProgressStatus? status;
 
   @override
   bool operator ==(Object other) {
@@ -76,8 +76,8 @@ class ObjectiveFilter extends Filter {
     return ObjectiveFilter(
       page: page ?? this.page,
       limit: limit ?? this.limit,
-      search: search ?? this.search,
-      status: status ?? this.status,
+      search: search,
+      status: status,
       sort: sort ?? this.sort,
     );
   }

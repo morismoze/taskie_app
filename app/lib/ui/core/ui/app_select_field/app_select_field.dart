@@ -15,12 +15,14 @@ class AppSelectFieldOption {
   });
 
   final String label;
-  final Object value;
+  final Object? value;
   final Widget? leading;
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
 
     return other is AppSelectFieldOption && other.value == value;
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/dimens.dart';
+import '../../../core/ui/new_objective_badge.dart';
 import 'assignees.dart';
 import 'due_date.dart';
 import 'reward_points.dart';
@@ -16,8 +17,8 @@ class TaskCard extends StatelessWidget {
     required this.assignees,
     required this.rewardPoints,
     required this.appLocale,
-    this.isNew = false,
-    this.dueDate,
+    required this.isNew,
+    required this.dueDate,
   });
 
   final String title;
@@ -60,7 +61,21 @@ class TaskCard extends StatelessWidget {
             spacing: 10,
             children: [
               Flexible(child: TaskTitle(title: title)),
-              TaskStatuses(assignees: assignees),
+              Padding(
+                // Padding is used to accomodate line height
+                // of the font-family. Setting `height: 1` to
+                // the text in TaskTitle is not an option because
+                // in that case there won't be needed line height
+                // between lines when long text wraps to new line.
+                padding: const EdgeInsets.only(top: 2),
+                child: Row(
+                  spacing: 6,
+                  children: [
+                    if (isNew) const NewObjectiveBadge(),
+                    TaskStatuses(assignees: assignees),
+                  ],
+                ),
+              ),
             ],
           ),
           Row(

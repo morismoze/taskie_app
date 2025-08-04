@@ -152,7 +152,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                   hashString: viewModel.user!.id,
                   firstName: viewModel.user!.firstName,
                   imageUrl: viewModel.user!.profileImageUrl,
-                  radius: 10,
+                  size: 20,
                 ),
               ),
               Text(

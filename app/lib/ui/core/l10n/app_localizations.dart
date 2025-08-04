@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get misc_profile;
 
+  /// No description provided for @misc_new.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get misc_new;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -325,6 +331,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
   String get taskskNoFilteredTasks;
+
+  /// No description provided for @objectiveStatusFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get objectiveStatusFilterAll;
 
   /// No description provided for @progressStatusInProgress.
   ///

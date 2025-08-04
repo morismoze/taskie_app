@@ -7,10 +7,10 @@ import '../../../core/theme/colors.dart';
 import '../../../core/utils/extensions.dart';
 
 /// If the task has only one assignee, this will show full chip
-/// with status text and corresponding color. If there are more
-/// than one assignees, then this will show small bullets, each
+/// with status text and corresponding color. If there is more
+/// than one assignee, then this will show small bullets, each
 /// connected to a assignee, with corresponding color for each
-/// bullet depending on the status of the assignee in question.
+/// bullet depending on the task status of the assignee in question.
 class TaskStatuses extends StatelessWidget {
   const TaskStatuses({super.key, required this.assignees});
 
@@ -24,13 +24,10 @@ class TaskStatuses extends StatelessWidget {
         context,
       );
 
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
+      return Badge(
+        backgroundColor: backgroundColor,
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+        label: Text(
           text,
           style: Theme.of(context).textTheme.labelSmall!.copyWith(
             fontWeight: FontWeight.bold,

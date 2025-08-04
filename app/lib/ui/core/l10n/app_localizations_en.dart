@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_profile => 'Profile';
 
   @override
+  String get misc_new => 'New';
+
+  @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
 
   @override
@@ -132,6 +135,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
+
+  @override
+  String get objectiveStatusFilterAll => 'All';
 
   @override
   String get progressStatusInProgress => 'In Progress';

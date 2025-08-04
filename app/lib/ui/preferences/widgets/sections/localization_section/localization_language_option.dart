@@ -92,7 +92,7 @@ class _LocalizationLanguageOptionState
             ListenableBuilder(
               listenable: widget.viewModel.setAppLocale,
               builder: (BuildContext builderContext, _) => AppFilledButton(
-                label: builderContext.localization.misc_ok,
+                label: builderContext.localization.misc_submit,
                 onPress: () => _onSubmit(dialogSelectedLocale),
                 isDisabled: widget.viewModel.setAppLocale.running,
               ),

@@ -6,19 +6,19 @@ class ObjectiveRequestQueryParams extends RequestQueryParams {
     required super.page,
     required super.limit,
     super.search,
-    required this.status,
     required this.sort,
+    this.status,
   });
 
-  final ProgressStatus status;
   final SortBy sort;
+  final ProgressStatus? status;
 
   Map<String, String> generateQueryParamsMap() {
     return {
       'page': page.toString(),
       'limit': limit.toString(),
       if (search != null) 'search': search!,
-      'status': status.value,
+      if (status != null) 'status': status!.value,
       'sort': sort.value,
     };
   }

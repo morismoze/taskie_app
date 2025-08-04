@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { GoalService } from 'src/modules/goal/goal.service';
@@ -644,7 +644,7 @@ export class WorkspaceService {
           status: ProgressStatus.IN_PROGRESS,
         });
         response.assignees.push({
-          id: newTaskAssignment.id,
+          id: newTaskAssignment.assignee.id,
           firstName: newTaskAssignment.assignee.user.firstName,
           lastName: newTaskAssignment.assignee.user.lastName,
           status: newTaskAssignment.status,

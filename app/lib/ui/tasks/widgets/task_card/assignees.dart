@@ -17,19 +17,19 @@ class TaskAssignees extends StatelessWidget {
   Widget build(BuildContext context) {
     final shownAssignees = assignees.take(_kShownAvatarsNumbers);
     // How much each avatar will overlap with each other
-    const overlap = kAppAvatarSize / 2;
+    const overlap = kAppAvatarDefaultSize / 2;
     // Total width
     final totalWidth =
-        (assignees.length * (kAppAvatarSize - overlap)) + overlap;
+        (assignees.length * (kAppAvatarDefaultSize - overlap)) + overlap;
 
     return SizedBox(
       width: totalWidth,
-      height: kAppAvatarSize,
+      height: kAppAvatarDefaultSize,
       child: Stack(
         children: [
           ...shownAssignees.mapIndexed((index, assignee) {
             return Positioned(
-              left: (index * (kAppAvatarSize - overlap)).toDouble(),
+              left: (index * (kAppAvatarDefaultSize - overlap)).toDouble(),
               child: AppAvatar(
                 hashString: assignee.id,
                 firstName: assignee.firstName,
@@ -39,7 +39,7 @@ class TaskAssignees extends StatelessWidget {
           }),
           if (assignees.length > 3)
             Positioned(
-              left: (_kShownAvatarsNumbers * (kAppAvatarSize - overlap))
+              left: (_kShownAvatarsNumbers * (kAppAvatarDefaultSize - overlap))
                   .toDouble(),
               child: _OverflowAvatar(totalAssigness: assignees.length),
             ),
@@ -58,11 +58,12 @@ class _OverflowAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final overflow = totalAssigness - _kShownAvatarsNumbers;
     final overflowText = '+$overflow';
+    final radius = kAppAvatarDefaultSize / 2;
     // Logic copied from [AppAvatar] widget
-    final textFontSize = kAppAvatarRadius * 0.8;
+    final textFontSize = radius * 0.8;
 
     return CircleAvatar(
-      radius: kAppAvatarRadius,
+      radius: radius,
       backgroundColor: AppColors.grey2,
       child: Text(
         overflowText,

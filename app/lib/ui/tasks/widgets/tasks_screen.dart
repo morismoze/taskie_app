@@ -5,11 +5,9 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
-import 'empty_filtered_tasks.dart';
 import 'empty_tasks.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';
-import 'tasks_sorting/tasks_sorting_header.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key, required this.viewModel});
@@ -64,8 +62,8 @@ class _TasksScreenState extends State<TasksScreen> {
               child: ListenableBuilder(
                 listenable: widget.viewModel,
                 builder: (builderContext, _) {
-                  if (widget.viewModel.isInitialLoad ||
-                      widget.viewModel.tasks == null) {
+                  // If the tasks are still null show activity indicator.
+                  if (widget.viewModel.tasks == null) {
                     return ActivityIndicator(
                       radius: 16,
                       color: Theme.of(builderContext).colorScheme.primary,
@@ -81,9 +79,8 @@ class _TasksScreenState extends State<TasksScreen> {
                     return const SizedBox.shrink();
                   }
 
-                  // If there are no tasks on initial load (without any specific
-                  // filters), then workspace doesn't have any tasks yet - this is
-                  // not correct because workspaces can have closed tasks and no
+                  // If it is initial load and tasks are empty (not null),
+                  // show Create new task prompt
                   if (widget.viewModel.isInitialLoad &&
                       widget.viewModel.tasks!.total == 0) {
                     return Padding(
@@ -102,22 +99,11 @@ class _TasksScreenState extends State<TasksScreen> {
                   // after that will happen when user pulls-to-refresh (and if the app process was not
                   // killed by the underlying OS). And in that case we want to show the existing
                   // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
-                  return Column(
-                    spacing: Dimens.paddingVertical / 2,
-                    children: [
-                      TasksSortingHeader(viewModel: widget.viewModel),
-                      if (widget.viewModel.tasks!.total > 0)
-                        Expanded(
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              widget.viewModel.loadTasks.execute((null, true));
-                            },
-                            child: TasksList(viewModel: widget.viewModel),
-                          ),
-                        )
-                      else
-                        const EmptyFilteredTasks(),
-                    ],
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      widget.viewModel.loadTasks.execute((null, true));
+                    },
+                    child: TasksList(viewModel: widget.viewModel),
                   );
                 },
               ),

@@ -101,7 +101,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                           hashString: details.id,
                           firstName: details.firstName,
                           imageUrl: details.profileImageUrl,
-                          radius: 50,
+                          size: 100,
                         ),
                         const SizedBox(height: 30),
                         // Second section

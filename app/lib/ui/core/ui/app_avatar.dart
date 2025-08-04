@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../utils/color.dart';
 
-const kAppAvatarRadius = 20.0;
-const kAppAvatarSize = kAppAvatarRadius * 2;
+const kAppAvatarDefaultSize = 40.0;
 
 /// [AppAvatar.imageUrl] takes precedence over text
 class AppAvatar extends StatelessWidget {
@@ -14,29 +13,35 @@ class AppAvatar extends StatelessWidget {
     required this.hashString,
     required this.firstName,
     this.imageUrl,
-    this.radius = kAppAvatarRadius,
+    this.size = kAppAvatarDefaultSize,
   });
 
   /// This is used for generating unique color out of a string, in
   /// most cases this will be user's ID (workspace user ID).
   final String hashString;
   final String firstName;
-  final double radius;
+  final double size;
   final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ColorGenerator.generateColorFromString(hashString);
     final firstNameFirstLetter = firstName[0];
-    final textFontSize = radius <= 20 ? radius * 1.2 : radius * 0.95;
+    final radius = size / 2;
+    final textFontSize = radius / 2 <= 20 ? radius * 1.2 : radius * 0.95;
+    final isGoogleImage =
+        imageUrl != null && imageUrl!.contains('googleusercontent');
+    final resizedImage = isGoogleImage
+        ? resizeGoogleImage(imageUrl!, size.toInt())
+        : imageUrl;
 
     return CircleAvatar(
       radius: radius,
-      foregroundImage: imageUrl != null
-          ? CachedNetworkImageProvider(imageUrl!)
+      foregroundImage: resizedImage != null
+          ? CachedNetworkImageProvider(resizedImage)
           : null,
       backgroundColor: backgroundColor,
-      child: imageUrl == null
+      child: resizedImage == null
           ? Text(
               firstNameFirstLetter,
               style: TextStyle(
@@ -52,6 +57,28 @@ class AppAvatar extends StatelessWidget {
               ),
             )
           : null,
+    );
+  }
+
+  String resizeGoogleImage(String imageUrl, int size) {
+    // In Google Image API URL parameters start after `=` sign and it
+    // should contain size parameter (e.g. `s96` - meaning the size
+    // is set to 96 pixels).
+
+    final googleImageUrlSizeParameterPattern = RegExp(r's\d+');
+    // Multipled by two for better quality
+    final effectiveSize = size * 2;
+
+    if (!imageUrl.contains(googleImageUrlSizeParameterPattern)) {
+      // If the image URL doesn't contain size parameter, then add one.
+      // `c` defines that Image API should return square crop.
+      return imageUrl + ('s-$effectiveSize-c');
+    }
+
+    // Replace the existing set size
+    return imageUrl.replaceFirst(
+      googleImageUrlSizeParameterPattern,
+      's$effectiveSize',
     );
   }
 }

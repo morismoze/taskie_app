@@ -6,7 +6,6 @@ import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/workspace/paginable_objectives.dart';
-import '../../../services/api/workspace/progress_status.dart';
 import '../../../services/api/workspace/workspace_task/models/request/create_task_request.dart';
 import '../../../services/api/workspace/workspace_task/models/response/workspace_task_response.dart';
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
@@ -14,7 +13,6 @@ import 'workspace_task_repository.dart';
 
 const _kDefaultPaginablePage = 1;
 const _kDefaultPaginableLimit = 15;
-const _kDefaultPaginableStatus = ProgressStatus.inProgress;
 const _kDefaultPaginableSort = SortBy.newestFirst;
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
@@ -26,7 +24,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   final _log = Logger('WorkspaceTaskRepository');
 
-  bool _isInitialLoad = true;
+  bool _isInitialLoad = false;
 
   @override
   bool get isInitialLoad => _isInitialLoad;
@@ -34,7 +32,6 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   ObjectiveFilter _activeFilter = ObjectiveFilter(
     page: _kDefaultPaginablePage,
     limit: _kDefaultPaginableLimit,
-    status: _kDefaultPaginableStatus,
     sort: _kDefaultPaginableSort,
   );
 
@@ -98,8 +95,8 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           );
 
           _cachedTasks = paginable;
-          if (_isInitialLoad) {
-            _isInitialLoad = false;
+          if (!_isInitialLoad) {
+            _isInitialLoad = true;
           }
           notifyListeners();
 
@@ -144,7 +141,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           // [_cachedTasks] should always be != null at this point in time, because
           // we show a error prompt with retry on the TasksScreen if there was a problem
           // with initial tasks load from origin.
-          _cachedTasks = _cachedTasks!.addItem(newTask);
+          _cachedTasks!.items.add(newTask);
           notifyListeners();
 
           return const Result.ok(null);
@@ -162,7 +159,8 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     _activeFilter = ObjectiveFilter(
       page: _kDefaultPaginablePage,
       limit: _kDefaultPaginableLimit,
-      status: _kDefaultPaginableStatus,
+      search: null,
+      status: null,
       sort: _kDefaultPaginableSort,
     );
   }

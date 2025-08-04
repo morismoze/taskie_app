@@ -4,7 +4,7 @@ import { WORKSPACE_INVITE_TOKEN_LENGTH } from 'src/common/helper/constants';
 import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';

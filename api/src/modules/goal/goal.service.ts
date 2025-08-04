@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
 import { UpdateGoalRequest } from '../workspace/workspace-module/dto/request/update-goal-request.dto';

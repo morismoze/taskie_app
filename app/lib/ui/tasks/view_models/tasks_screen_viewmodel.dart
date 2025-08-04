@@ -40,7 +40,44 @@ class TasksScreenViewModel extends ChangeNotifier {
 
   ObjectiveFilter get activeFilter => _workspaceTaskRepository.activeFilter;
 
-  Paginable<WorkspaceTask>? get tasks => _workspaceTaskRepository.tasks;
+  Paginable<WorkspaceTask>? get tasks {
+    final tasks = _workspaceTaskRepository.tasks;
+
+    if (tasks == null) {
+      return null;
+    }
+
+    final clonedTasks = Paginable.clone(tasks);
+    // Sort tasks so that tasks with `isNew` property set
+    // to true are always at the top
+    clonedTasks.items.sort((t1, t2) {
+      // Checking `!t2.isNew` for stable sorting
+      if (t1.isNew && !t2.isNew) {
+        return -1;
+      }
+
+      if (t2.isNew && !t1.isNew) {
+        // Checking `!t1.isNew` for stable sorting
+        return 1;
+      }
+
+      // New tasks should be additionally sorted by creation
+      // date so that newest created ones are first (DESC)
+      if (t1.isNew && t2.isNew) {
+        return t2.createdAt.compareTo(t1.createdAt);
+      }
+
+      // If both tasks are not new, keep the original ordering
+      if (!t1.isNew && !t2.isNew) {
+        return 0;
+      }
+
+      // Safety case - keep the original ordering
+      return 0;
+    });
+
+    return clonedTasks;
+  }
 
   /// [appLocale] in [PreferencesRepository] is set up in AppStartup.
   Locale get appLocale => _preferencesRepository.appLocale!;

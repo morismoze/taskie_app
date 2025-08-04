@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
 import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
 import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
