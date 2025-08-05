@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../theme/colors.dart';
-import '../app_field_button.dart';
 import '../app_modal_bottom_sheet.dart';
-import '../info_icon_with_tooltip.dart';
 import 'app_select_field_options.dart';
+import 'app_select_field_selected_options.dart';
 
 class AppSelectFieldOption {
   const AppSelectFieldOption({
@@ -46,8 +45,8 @@ class AppSelectField extends StatefulWidget {
     this.enabled = true,
     this.isScrollControlled = false,
     this.initialValue,
-    this.disabledWidgetTrailingTooltipMessage,
     this.max,
+    this.trailing,
   });
 
   final List<AppSelectFieldOption> options;
@@ -64,10 +63,12 @@ class AppSelectField extends StatefulWidget {
   /// of the screen (to the status bar).
   final bool isScrollControlled;
   final List<AppSelectFieldOption>? initialValue;
-  final String? disabledWidgetTrailingTooltipMessage;
 
   /// Defines how many options can be selected when [multiple] is true.
   final int? max;
+
+  /// This is mostly used in disabled state.
+  final Widget? trailing;
 
   @override
   State<AppSelectField> createState() => _AppSelectFieldState();
@@ -102,33 +103,23 @@ class _AppSelectFieldState extends State<AppSelectField> {
   Widget build(BuildContext context) {
     final hasSelection = _selectedOptions.isNotEmpty;
 
-    Widget? trailing = const FaIcon(
-      FontAwesomeIcons.sort,
-      color: AppColors.black1,
-      size: 17,
-    );
-    if (!widget.enabled) {
-      trailing = widget.disabledWidgetTrailingTooltipMessage != null
-          ? InfoIconWithTooltip(
-              message: widget.disabledWidgetTrailingTooltipMessage!,
-            )
-          : null;
-    } else {
-      if (hasSelection) {
-        trailing = InkWell(
-          onTap: _clearSelections,
-          child: const FaIcon(
-            FontAwesomeIcons.solidCircleXmark,
-            color: AppColors.black1,
-            size: 17,
-          ),
-        );
-      }
+    Widget? trailing =
+        widget.trailing ??
+        const FaIcon(FontAwesomeIcons.sort, color: AppColors.black1, size: 17);
+    if (widget.enabled && hasSelection) {
+      trailing = InkWell(
+        onTap: _clearSelections,
+        child: const FaIcon(
+          FontAwesomeIcons.solidCircleXmark,
+          color: AppColors.black1,
+          size: 17,
+        ),
+      );
     }
 
-    return AppFieldButton(
+    return AppSelectFieldSelectedOptions(
       label: widget.label,
-      required: widget.required,
+      selectedOptions: _selectedOptions,
       isFieldFocused: hasSelection,
       onTap: () {
         if (widget.enabled) {
@@ -136,18 +127,8 @@ class _AppSelectFieldState extends State<AppSelectField> {
         }
       },
       trailing: trailing,
-      child: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: _selectedOptions
-            .map(
-              (option) => _AppSelectFieldSelectedOption(
-                label: option.label,
-                isFieldEnabled: widget.enabled,
-              ),
-            )
-            .toList(),
-      ),
+      enabled: widget.enabled,
+      required: widget.required,
     );
   }
 
@@ -161,43 +142,6 @@ class _AppSelectFieldState extends State<AppSelectField> {
         onSubmit: _onSubmit,
         multiple: widget.multiple,
         max: widget.max,
-      ),
-    );
-  }
-}
-
-class _AppSelectFieldSelectedOption extends StatelessWidget {
-  const _AppSelectFieldSelectedOption({
-    required this.label,
-    this.isFieldEnabled = true,
-  });
-
-  final String label;
-  final bool isFieldEnabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 150),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: isFieldEnabled
-                ? AppColors.grey2
-                : Theme.of(context).disabledColor,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall!.copyWith(color: AppColors.white1),
-            ),
-          ),
-        ),
       ),
     );
   }

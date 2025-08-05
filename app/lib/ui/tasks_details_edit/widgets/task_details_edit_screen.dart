@@ -47,29 +47,30 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
           child: Column(
             children: [
               HeaderBar(title: context.localization.tasksDetailsEdit),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
-                ),
-                child: ListenableBuilder(
-                  listenable: widget.viewModel,
-                  builder: (builderContext, child) {
-                    if (widget.viewModel.details == null) {
-                      return ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
-                    }
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: Dimens.of(context).paddingScreenHorizontal,
+                    right: Dimens.of(context).paddingScreenHorizontal,
+                  ),
+                  child: ListenableBuilder(
+                    listenable: widget.viewModel,
+                    builder: (builderContext, child) {
+                      if (widget.viewModel.details == null) {
+                        return ActivityIndicator(
+                          radius: 16,
+                          color: Theme.of(builderContext).colorScheme.primary,
+                        );
+                      }
 
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.only(
-                        top: Dimens.paddingVertical,
-                      ),
-                      child: TaskDetailsEditForm(viewModel: widget.viewModel),
-                    );
-                  },
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Dimens.paddingVertical,
+                        ),
+                        child: TaskDetailsEditForm(viewModel: widget.viewModel),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

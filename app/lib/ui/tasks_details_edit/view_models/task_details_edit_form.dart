@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/colors.dart';
 import '../../core/ui/app_date_picker_field/app_date_picker_form_field.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
+import '../../core/ui/app_select_field/app_select_field_selected_options.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/utils/user.dart';
 import 'task_details_edit_screen_view_model.dart';
 
 class TaskDetailsEditForm extends StatefulWidget {
@@ -62,6 +66,14 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedOptions = widget.viewModel.details!.assignees.map((assignee) {
+      final fullName = UserUtils.constructFullName(
+        firstName: assignee.firstName,
+        lastName: assignee.lastName,
+      );
+      return AppSelectFieldOption(label: fullName, value: assignee.id);
+    }).toList();
+
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUnfocus,
@@ -87,6 +99,20 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
+          AppSelectFieldSelectedOptions(
+            label: context.localization.objectiveAssigneeLabel,
+            selectedOptions: selectedOptions,
+            isFieldFocused: true,
+            onTap: () => {},
+            enabled: true,
+            required: true,
+            trailing: const FaIcon(
+              FontAwesomeIcons.sort,
+              color: AppColors.black1,
+              size: 17,
+            ),
+          ),
+          const SizedBox(height: 30),
           AppDatePickerFormField(
             onSelected: _onDueDateSelected,
             onCleared: _onDueDateCleared,
@@ -158,20 +184,6 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
           when trimmedValue.length >
               ValidationRules.objectiveDescriptionMaxLength:
         return context.localization.objectiveDescriptionMaxLength;
-      default:
-        return null;
-    }
-  }
-
-  String? _validateAssignees(
-    BuildContext context,
-    List<AppSelectFieldOption>? assignees,
-  ) {
-    switch (assignees) {
-      case final List<AppSelectFieldOption>? value when value == null:
-      case final List<AppSelectFieldOption> value
-          when value.length < ValidationRules.objectiveMinAssigneesCount:
-        return context.localization.taskAssigneesMinLength;
       default:
         return null;
     }

@@ -26,7 +26,7 @@ class _WorkspaceUserDetailsEditFormState
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  late WorkspaceRole _selectedRole;
+  late WorkspaceRole? _selectedRole;
 
   @override
   void initState() {
@@ -51,8 +51,7 @@ class _WorkspaceUserDetailsEditFormState
 
   void _onRoleCleared() {
     setState(() {
-      // On clear revert back to original user's role
-      _selectedRole = widget.viewModel.details!.role;
+      _selectedRole = null;
     });
   }
 
@@ -69,8 +68,8 @@ class _WorkspaceUserDetailsEditFormState
       ),
     ]).toList();
     final initialRole = AppSelectFieldOption(
-      label: _selectedRole.l10n(context),
-      value: _selectedRole,
+      label: widget.viewModel.details!.role.l10n(context),
+      value: widget.viewModel.details!.role,
     );
     // Virtual users don't have emails, and real users must have emails.
     final isVirtualUser = widget.viewModel.details!.email == null;
@@ -122,15 +121,20 @@ class _WorkspaceUserDetailsEditFormState
           const SizedBox(height: 10),
           AppSelectFormField(
             options: roles,
+            validator: (selected) => _validateRole(context, selected),
             initialValue: [initialRole],
             onSelected: _onRoleSelected,
             onCleared: _onRoleCleared,
             label: context.localization.roleLabel,
             // Role is not editable for virtual users
             enabled: !isVirtualUser,
-            disabledWidgetTrailingTooltipMessage: context
-                .localization
-                .workspaceUsersManagementUserDetailsEditRoleBlocked,
+            trailing: isVirtualUser
+                ? InfoIconWithTooltip(
+                    message: context
+                        .localization
+                        .workspaceUsersManagementUserDetailsEditRoleBlocked,
+                  )
+                : null,
           ),
           const SizedBox(height: 30),
           ListenableBuilder(
@@ -186,6 +190,19 @@ class _WorkspaceUserDetailsEditFormState
       case final String trimmedValue
           when trimmedValue.length > ValidationRules.workspaceUserNameMaxLength:
         return context.localization.workspaceUserLastNameMaxLength;
+      default:
+        return null;
+    }
+  }
+
+  String? _validateRole(
+    BuildContext context,
+    List<AppSelectFieldOption>? role,
+  ) {
+    switch (role) {
+      case final List<AppSelectFieldOption>? value when value == null:
+      case final List<AppSelectFieldOption> value when value.isEmpty:
+        return context.localization.misc_requiredField;
       default:
         return null;
     }

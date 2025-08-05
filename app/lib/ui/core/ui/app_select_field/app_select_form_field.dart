@@ -17,8 +17,8 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
     bool multiple = false,
     bool required = true,
     bool isScrollControlled = false,
-    String? disabledWidgetTrailingTooltipMessage,
     int? max,
+    Widget? trailing,
   }) : super(
          builder: (FormFieldState<List<AppSelectFieldOption>> state) {
            final context = state.context;
@@ -46,10 +46,9 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                  },
                  initialValue: initialValue,
                  enabled: enabled,
-                 disabledWidgetTrailingTooltipMessage:
-                     disabledWidgetTrailingTooltipMessage,
                  max: max,
                  isScrollControlled: isScrollControlled,
+                 trailing: trailing,
                ),
                Padding(
                  padding: EdgeInsets.only(
