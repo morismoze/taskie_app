@@ -98,11 +98,14 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                     return Column(
                       children: [
                         // First section
-                        AppAvatar(
-                          hashString: details.id,
-                          firstName: details.firstName,
-                          imageUrl: details.profileImageUrl,
-                          size: 100,
+                        Hero(
+                          tag: 'workspace-user-${details.id}',
+                          child: AppAvatar(
+                            hashString: details.id,
+                            firstName: details.firstName,
+                            imageUrl: details.profileImageUrl,
+                            size: 100,
+                          ),
                         ),
                         const SizedBox(height: 30),
                         // Second section

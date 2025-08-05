@@ -19,7 +19,7 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return ListenableBuilder(
-      listenable: viewModel,
+      listenable: Listenable.merge([viewModel, viewModel.loadTasks]),
       builder: (_, _) => TasksSortingHeader(viewModel: viewModel),
     );
   }
@@ -32,6 +32,7 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant TasksSortingHeaderDelegate oldDelegate) {
-    return viewModel.activeFilter != oldDelegate.viewModel.activeFilter;
+    return viewModel.activeFilter != oldDelegate.viewModel.activeFilter ||
+        viewModel.loadTasks.running != oldDelegate.viewModel.loadTasks.running;
   }
 }

@@ -18,7 +18,7 @@ class AppDatePickerField extends StatefulWidget {
     required this.onCleared,
     required this.label,
     this.required = true,
-    this.initialDateTime,
+    this.initialValue,
     this.minimumDate,
     this.maximumDate,
   });
@@ -27,7 +27,7 @@ class AppDatePickerField extends StatefulWidget {
   final void Function() onCleared;
   final String label;
   final bool required;
-  final DateTime? initialDateTime;
+  final DateTime? initialValue;
   final DateTime? minimumDate;
   final DateTime? maximumDate;
 
@@ -37,6 +37,14 @@ class AppDatePickerField extends StatefulWidget {
 
 class _AppDatePickerFieldState extends State<AppDatePickerField> {
   DateTime? _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialValue != null) {
+      _selectedDate = widget.initialValue!;
+    }
+  }
 
   void _clearSelections() {
     setState(() {
@@ -92,7 +100,7 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
       child: _AppDatePicker(
         selectedDate: _selectedDate,
         onSubmit: _onSubmit,
-        initialDateTime: widget.initialDateTime,
+        initialValue: widget.initialValue,
         minimumDate: widget.minimumDate,
         maximumDate: widget.maximumDate,
       ),
@@ -104,14 +112,14 @@ class _AppDatePicker extends StatefulWidget {
   const _AppDatePicker({
     required this.selectedDate,
     required this.onSubmit,
-    this.initialDateTime,
+    this.initialValue,
     this.minimumDate,
     this.maximumDate,
   });
 
   final DateTime? selectedDate;
   final void Function(DateTime date) onSubmit;
-  final DateTime? initialDateTime;
+  final DateTime? initialValue;
   final DateTime? minimumDate;
   final DateTime? maximumDate;
 
@@ -144,14 +152,27 @@ class _AppDatePickerState extends State<_AppDatePicker> {
 
   @override
   Widget build(BuildContext context) {
+    var minimumDate = widget.minimumDate;
+
+    // [initialDateTime] property must be inside the datetime interval defined
+    // by [minimumDate] and [maximumDate] properties.
+    // A task can have a `dueDate` which has maybe passed on the current DateTime,
+    // meaning it can fall out of the lower [minimumDate] limit. In this case we
+    // will make `dueDate` the [minimumDate] limit.
+    if (widget.initialValue != null &&
+        minimumDate != null &&
+        widget.initialValue!.isBefore(minimumDate)) {
+      minimumDate = widget.initialValue;
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
           height: 216,
           child: CupertinoDatePicker(
-            initialDateTime: widget.initialDateTime,
-            minimumDate: widget.minimumDate,
+            initialDateTime: widget.initialValue,
+            minimumDate: minimumDate,
             maximumDate: widget.maximumDate,
             mode: CupertinoDatePickerMode.date,
             use24hFormat: true,

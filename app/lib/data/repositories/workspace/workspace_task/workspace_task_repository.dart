@@ -5,15 +5,8 @@ import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
 
-/// This is a [ChangeNotifier] beacuse of 2 reasons:
-///
-/// 1. when creating new tasks, those tasks are pushed into the
-/// current cached list of tasks,
-///
-/// 2. when user does pull-to-refresh, cached list of tasks
-/// will be updated
 abstract class WorkspaceTaskRepository extends ChangeNotifier {
-  bool get isInitialLoad;
+  bool get isFilterSearch;
 
   ObjectiveFilter get activeFilter;
 

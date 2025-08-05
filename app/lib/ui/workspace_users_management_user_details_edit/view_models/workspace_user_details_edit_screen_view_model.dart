@@ -64,6 +64,14 @@ class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
     (String? firstName, String? lastName, WorkspaceRole? role) details,
   ) async {
     final (String? firstName, String? lastName, WorkspaceRole? role) = details;
+
+    // Don't invoke API request if the data stayed the same
+    if (firstName == _details!.firstName &&
+        lastName == _details!.lastName &&
+        role == _details!.role) {
+      return const Result.ok(null);
+    }
+
     final result = await _workspaceUserRepository.updateWorkspaceUserDetails(
       workspaceId: _activeWorkspaceId,
       workspaceUserId: _workspaceUserId,

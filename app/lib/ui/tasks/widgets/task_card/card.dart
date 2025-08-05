@@ -41,72 +41,79 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => context.push(
-        Routes.taskDetails(workspaceId: activeWorkspaceId, taskId: taskId),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: Dimens.paddingVertical / 2,
-          horizontal: Dimens.paddingHorizontal,
+    return Dismissible(
+      key: Key('task-card-$taskId'),
+      child: InkWell(
+        onTap: () => context.push(
+          Routes.taskEditDetails(
+            workspaceId: activeWorkspaceId,
+            taskId: taskId,
+          ),
         ),
-        decoration: BoxDecoration(
-          color: AppColors.white1,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            const BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.1),
-              blurRadius: 12,
-              spreadRadius: 0,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          spacing: 10,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Flexible(child: TaskTitle(title: title)),
-                Padding(
-                  // Padding is used to accomodate line height
-                  // of the font-family. Setting `height: 1` to
-                  // the text in TaskTitle is not an option because
-                  // in that case there won't be needed line height
-                  // between lines when long text wraps to new line.
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Row(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: Dimens.paddingVertical / 2,
+            horizontal: Dimens.paddingHorizontal,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.white1,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              const BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.1),
+                blurRadius: 12,
+                spreadRadius: 0,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            spacing: 10,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  Flexible(child: TaskTitle(title: title)),
+                  Padding(
+                    // Padding is used to accomodate line height
+                    // of the font-family in TaskTitle. Setting
+                    // `height: 1` to the text in TaskTitle is not
+                    // an option because in that case there won't
+                    // be needed line height between lines when long
+                    // text wraps to new line.
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Row(
+                      spacing: 6,
+                      children: [
+                        if (isNew) const NewObjectiveBadge(),
+                        TaskStatuses(assignees: assignees),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Column(
                     spacing: 6,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (isNew) const NewObjectiveBadge(),
-                      TaskStatuses(assignees: assignees),
+                      TaskAssignees(assignees: assignees),
+                      if (dueDate != null) ...[
+                        const SizedBox(height: 1),
+                        TaskDueDate(dueDate: dueDate!, appLocale: appLocale),
+                      ],
                     ],
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Column(
-                  spacing: 6,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TaskAssignees(assignees: assignees),
-                    if (dueDate != null) ...[
-                      const SizedBox(height: 1),
-                      TaskDueDate(dueDate: dueDate!, appLocale: appLocale),
-                    ],
-                  ],
-                ),
-                TaskRewardPoints(rewardPoints: rewardPoints),
-              ],
-            ),
-          ],
+                  TaskRewardPoints(rewardPoints: rewardPoints),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

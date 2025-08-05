@@ -163,7 +163,7 @@ class AppLocalizationsHr extends AppLocalizations {
   }
 
   @override
-  String get tasksDetails => 'Detalji zadatka';
+  String get tasksDetailsEdit => 'Uređivanje detalja zadatka';
 
   @override
   String get tasksDetailsCreatedAt => 'Zadatak kreiran';
@@ -395,7 +395,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Virtualnim korisnicima je uvijek dodijeljena uloga Člana i nije ju moguće promijeniti.';
 
   @override
-  String get workspaceUsersManagementUserDetailsEditSubmit => 'Uredi podatke';
+  String get editDetailsSubmit => 'Uredi detalje';
 
   @override
   String get workspaceUsersManagementUserDetailsEditSuccess =>
@@ -470,10 +470,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get workspaceSettingsCreatedAt => 'Radni prostor kreiran';
 
   @override
-  String get workspaceSettingsEdit => 'Uređivanje podataka radnog prostora';
-
-  @override
-  String get workspaceSettingsEditSubmit => 'Uredi podatke';
+  String get workspaceSettingsEdit => 'Uređivanje detalja radnog prostora';
 
   @override
   String get workspaceSettingsEditSuccess =>

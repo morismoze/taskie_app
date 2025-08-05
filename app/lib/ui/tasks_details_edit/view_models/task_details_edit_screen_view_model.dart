@@ -5,8 +5,8 @@ import '../../../data/repositories/workspace/workspace_task/workspace_task_repos
 import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
 
-class TaskDetailsScreenViewModel extends ChangeNotifier {
-  TaskDetailsScreenViewModel({
+class TaskDetailsEditScreenViewModel extends ChangeNotifier {
+  TaskDetailsEditScreenViewModel({
     required String workspaceId,
     required String taskId,
     required WorkspaceTaskRepository workspaceTaskRepository,
@@ -14,12 +14,19 @@ class TaskDetailsScreenViewModel extends ChangeNotifier {
        _taskId = taskId,
        _workspaceTaskRepository = workspaceTaskRepository {
     _loadWorkspaceTaskDetails();
+    editTaskDetails = Command1(_editTaskDetails);
   }
 
   final String _activeWorkspaceId;
   final String _taskId;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('TaskDetailsScreenViewModel');
+  final _log = Logger('TaskDetailsEditScreenViewModel');
+
+  late Command1<
+    void,
+    (String? title, String? description, int? rewardPoints, DateTime? dueDate)
+  >
+  editTaskDetails;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -42,5 +49,22 @@ class TaskDetailsScreenViewModel extends ChangeNotifier {
         _log.warning('Failed to load workspace task details', result.error);
         return result;
     }
+  }
+
+  Future<Result<void>> _editTaskDetails(
+    (String? title, String? description, int? rewardPoints, DateTime? dueDate)
+    details,
+  ) async {
+    final (title, description, rewardPoints, dueDate) = details;
+
+    // Don't invoke API request if the data stayed the same
+    if (title == _details!.title &&
+        description == _details!.description &&
+        rewardPoints == _details!.rewardPoints &&
+        dueDate == _details!.dueDate) {
+      return const Result.ok(null);
+    }
+
+    return const Result.ok(null);
   }
 }

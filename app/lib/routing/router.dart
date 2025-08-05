@@ -20,8 +20,8 @@ import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
 import '../ui/tasks_create/widgets/create_task_screen.dart';
-import '../ui/tasks_details/view_models/task_details_screen_view_model.dart';
-import '../ui/tasks_details/widgets/task_details_screen.dart';
+import '../ui/tasks_details_edit/view_models/task_details_edit_screen_view_model.dart';
+import '../ui/tasks_details_edit/widgets/task_details_edit_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
@@ -277,7 +277,7 @@ GoRouter router({
                           },
                         ),
                         GoRoute(
-                          path: ':taskId',
+                          path: ':taskId/${Routes.taskEditDetailsRelative}',
                           parentNavigatorKey: _rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
@@ -303,8 +303,8 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: TaskDetailsScreen(
-                                viewModel: TaskDetailsScreenViewModel(
+                              child: TaskDetailsEditScreen(
+                                viewModel: TaskDetailsEditScreenViewModel(
                                   workspaceId: workspaceId,
                                   taskId: taskId,
                                   workspaceTaskRepository: context.read(),

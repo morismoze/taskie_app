@@ -9,6 +9,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/utils/constants.dart';
 import '../view_models/entry_screen_viewmodel.dart';
 
 class EntryScreen extends StatefulWidget {
@@ -50,6 +51,10 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appIconSize = 90.0;
+    final appIconBorderRadius =
+        appIconSize * MiscConstants.appIconBorderRadiusSizePercentage;
+
     return Scaffold(
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
@@ -58,9 +63,15 @@ class _EntryScreenState extends State<EntryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  child: Image(image: AssetImage(Assets.appIcon)),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(appIconBorderRadius),
+                  ),
+                  child: Image(
+                    image: const AssetImage(Assets.appIcon),
+                    height: appIconSize,
+                    width: appIconSize,
+                  ),
                 ),
                 const SizedBox(height: 18),
                 ActivityIndicator(

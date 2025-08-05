@@ -61,7 +61,6 @@ class _WorkspaceSettingsEditScreenState
                 padding: EdgeInsets.only(
                   left: Dimens.of(context).paddingScreenHorizontal,
                   right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel,
@@ -74,8 +73,8 @@ class _WorkspaceSettingsEditScreenState
                     }
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.only(
-                        top: Dimens.paddingVertical,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: Dimens.paddingVertical,
                       ),
                       child: WorkspaceSettingsEditForm(
                         viewModel: widget.viewModel,

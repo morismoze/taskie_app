@@ -66,7 +66,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             listenable: widget.viewModel.editWorkspaceDetails,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: builderContext.localization.workspaceSettingsEditSubmit,
+              label: builderContext.localization.editDetailsSubmit,
               isLoading: widget.viewModel.editWorkspaceDetails.running,
             ),
           ),
@@ -83,12 +83,6 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
       final description = trimmedDescription.isNotEmpty
           ? trimmedDescription
           : null;
-
-      // Don't invoke API request if the data stayed the same
-      if (name == widget.viewModel.details!.name &&
-          description == widget.viewModel.details!.description) {
-        return;
-      }
 
       widget.viewModel.editWorkspaceDetails.execute((name, description));
     }

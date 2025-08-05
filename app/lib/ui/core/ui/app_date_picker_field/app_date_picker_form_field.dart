@@ -36,7 +36,7 @@ class AppDatePickerFormField extends FormField<DateTime> {
                      state.validate();
                    }
                  },
-                 initialDateTime: initialValue,
+                 initialValue: initialValue,
                  minimumDate: minimumDate,
                  maximumDate: maximumDate,
                  required: required,

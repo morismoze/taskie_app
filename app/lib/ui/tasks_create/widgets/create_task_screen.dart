@@ -74,7 +74,6 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                 padding: EdgeInsets.only(
                   left: Dimens.of(context).paddingScreenHorizontal,
                   right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel.loadWorkspaceMembers,
@@ -130,9 +129,8 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: EdgeInsets.only(
-                          top: Dimens.paddingVertical,
-                          bottom: MediaQuery.of(context).padding.bottom,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Dimens.paddingVertical,
                         ),
                         child: CreateTaskForm(viewModel: widget.viewModel),
                       );

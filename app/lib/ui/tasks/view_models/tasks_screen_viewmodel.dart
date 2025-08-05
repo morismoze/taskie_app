@@ -36,7 +36,7 @@ class TasksScreenViewModel extends ChangeNotifier {
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  bool get isInitialLoad => _workspaceTaskRepository.isInitialLoad;
+  bool get isFilterSearch => _workspaceTaskRepository.isFilterSearch;
 
   ObjectiveFilter get activeFilter => _workspaceTaskRepository.activeFilter;
 

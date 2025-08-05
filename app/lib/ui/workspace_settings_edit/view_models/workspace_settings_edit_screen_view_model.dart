@@ -47,6 +47,12 @@ class WorkspaceSettingsEditScreenViewModel extends ChangeNotifier {
     (String? name, String? description) details,
   ) async {
     final (String? name, String? description) = details;
+
+    // Don't invoke API request if the data stayed the same
+    if (name == _details!.name && description == _details!.description) {
+      return const Result.ok(null);
+    }
+
     final result = await _workspaceRepository.updateWorkspaceDetails(
       _activeWorkspaceId,
       name: name,

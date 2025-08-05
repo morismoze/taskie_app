@@ -163,7 +163,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tasksDetails => 'Task details';
+  String get tasksDetailsEdit => 'Edit task details';
 
   @override
   String get tasksDetailsCreatedAt => 'Task created at';
@@ -176,7 +176,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble changing workspace';
 
   @override
-  String get appDrawerEditWorkspace => 'Workspace setttings';
+  String get appDrawerEditWorkspace => 'Workspace settings';
 
   @override
   String get appDrawerManageUsers => 'Workspace users';
@@ -393,7 +393,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Virtual users always have the Member role and cannot be changed.';
 
   @override
-  String get workspaceUsersManagementUserDetailsEditSubmit => 'Edit details';
+  String get editDetailsSubmit => 'Edit details';
 
   @override
   String get workspaceUsersManagementUserDetailsEditSuccess =>
@@ -468,9 +468,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceSettingsEdit => 'Edit workspace details';
-
-  @override
-  String get workspaceSettingsEditSubmit => 'Edit details';
 
   @override
   String get workspaceSettingsEditSuccess =>

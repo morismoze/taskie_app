@@ -90,10 +90,11 @@ class WorkspaceTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
+          // Show these two options only if the this workspace
+          // is the current active one
           if (activeWorkspaceId == workspaceId) ...[
             AppTextButton(
               onPress: () {
-                context.pop(); // Close bottom sheet
                 context.push(Routes.workspaceSettings(workspaceId: id));
               },
               label: context.localization.appDrawerEditWorkspace,

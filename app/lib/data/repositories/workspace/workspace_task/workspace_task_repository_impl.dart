@@ -24,10 +24,10 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   final _log = Logger('WorkspaceTaskRepository');
 
-  bool _isInitialLoad = false;
+  bool _isFilterSearch = false;
 
   @override
-  bool get isInitialLoad => _isInitialLoad;
+  bool get isFilterSearch => _isFilterSearch;
 
   ObjectiveFilter _activeFilter = ObjectiveFilter(
     page: _kDefaultPaginablePage,
@@ -66,6 +66,11 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
     if (effectiveFilter != _activeFilter) {
       _activeFilter = effectiveFilter;
+      _isFilterSearch = true;
+    }
+
+    if (filter == null) {
+      _isFilterSearch = false;
     }
 
     try {
@@ -95,9 +100,6 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           );
 
           _cachedTasks = paginable;
-          if (!_isInitialLoad) {
-            _isInitialLoad = true;
-          }
           notifyListeners();
 
           return const Result.ok(null);
@@ -164,6 +166,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   @override
   void purgeTasksCache() {
+    _isFilterSearch = false;
     _cachedTasks = null;
     _activeFilter = ObjectiveFilter(
       page: _kDefaultPaginablePage,

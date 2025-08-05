@@ -137,9 +137,7 @@ class _WorkspaceUserDetailsEditFormState
             listenable: widget.viewModel.editWorkspaceUserDetails,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: builderContext
-                  .localization
-                  .workspaceUsersManagementUserDetailsEditSubmit,
+              label: builderContext.localization.editDetailsSubmit,
               isLoading: widget.viewModel.editWorkspaceUserDetails.running,
             ),
           ),
@@ -152,13 +150,6 @@ class _WorkspaceUserDetailsEditFormState
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
-
-      // Don't invoke API request if the data stayed the same
-      if (firstName == widget.viewModel.details!.firstName &&
-          lastName == widget.viewModel.details!.lastName &&
-          _selectedRole == widget.viewModel.details!.role) {
-        return;
-      }
 
       widget.viewModel.editWorkspaceUserDetails.execute((
         firstName,

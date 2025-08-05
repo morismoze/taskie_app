@@ -64,13 +64,16 @@ class WorkspaceUserTile extends StatelessWidget {
             vertical: 8,
             horizontal: 12,
           ),
-          leading: AppAvatar(
-            hashString: id,
-            firstName: UserUtils.constructFullName(
-              firstName: firstName,
-              lastName: lastName,
+          leading: Hero(
+            tag: 'workspace-user-$id',
+            child: AppAvatar(
+              hashString: id,
+              firstName: UserUtils.constructFullName(
+                firstName: firstName,
+                lastName: lastName,
+              ),
+              imageUrl: profileImageUrl,
             ),
-            imageUrl: profileImageUrl,
           ),
           title: Column(
             mainAxisAlignment: MainAxisAlignment.center,

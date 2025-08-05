@@ -380,11 +380,11 @@ abstract class AppLocalizations {
   /// **'{points} points'**
   String tasksCardPoints(Object points);
 
-  /// No description provided for @tasksDetails.
+  /// No description provided for @tasksDetailsEdit.
   ///
   /// In en, this message translates to:
-  /// **'Task details'**
-  String get tasksDetails;
+  /// **'Edit task details'**
+  String get tasksDetailsEdit;
 
   /// No description provided for @tasksDetailsCreatedAt.
   ///
@@ -407,7 +407,7 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerEditWorkspace.
   ///
   /// In en, this message translates to:
-  /// **'Workspace setttings'**
+  /// **'Workspace settings'**
   String get appDrawerEditWorkspace;
 
   /// No description provided for @appDrawerManageUsers.
@@ -764,11 +764,11 @@ abstract class AppLocalizations {
   /// **'Virtual users always have the Member role and cannot be changed.'**
   String get workspaceUsersManagementUserDetailsEditRoleBlocked;
 
-  /// No description provided for @workspaceUsersManagementUserDetailsEditSubmit.
+  /// No description provided for @editDetailsSubmit.
   ///
   /// In en, this message translates to:
   /// **'Edit details'**
-  String get workspaceUsersManagementUserDetailsEditSubmit;
+  String get editDetailsSubmit;
 
   /// No description provided for @workspaceUsersManagementUserDetailsEditSuccess.
   ///
@@ -901,12 +901,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit workspace details'**
   String get workspaceSettingsEdit;
-
-  /// No description provided for @workspaceSettingsEditSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit details'**
-  String get workspaceSettingsEditSubmit;
 
   /// No description provided for @workspaceSettingsEditSuccess.
   ///
