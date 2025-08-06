@@ -29,10 +29,9 @@ import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignme
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
-import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
-import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -469,7 +468,7 @@ export class WorkspaceService {
     query,
   }: {
     workspaceId: Workspace['id'];
-    query: WorkspaceItemRequestQuery;
+    query: WorkspaceObjectiveRequestQuery;
   }): Promise<WorkspaceTasksResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -530,7 +529,7 @@ export class WorkspaceService {
     query,
   }: {
     workspaceId: Workspace['id'];
-    query: WorkspaceItemRequestQuery;
+    query: WorkspaceObjectiveRequestQuery;
   }): Promise<WorkspaceGoalsResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -976,7 +975,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
     payload: UpdateTaskRequest;
-  }): Promise<UpdateTaskResponse> {
+  }): Promise<WorkspaceTaskResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -1001,7 +1000,7 @@ export class WorkspaceService {
       },
     });
 
-    const response: UpdateTaskResponse = {
+    const response: WorkspaceTaskResponse = {
       id: updatedTask.id,
       title: updatedTask.title,
       rewardPoints: updatedTask.rewardPoints,
@@ -1010,6 +1009,14 @@ export class WorkspaceService {
         updatedTask.dueDate === null
           ? null
           : DateTime.fromJSDate(updatedTask.dueDate).toISO()!,
+      assignees: updatedTask.assignees.map((assignee) => ({
+        id: assignee.id,
+        firstName: assignee.firstName,
+        lastName: assignee.lastName,
+        profileImageUrl: assignee.profileImageUrl,
+        status: assignee.status,
+      })),
+      createdAt: DateTime.fromJSDate(updatedTask.createdAt).toISO()!,
     };
 
     return response;

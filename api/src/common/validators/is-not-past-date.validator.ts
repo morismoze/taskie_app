@@ -5,11 +5,11 @@ import {
 import { DateTime } from 'luxon';
 
 @ValidatorConstraint({ name: 'IsNotPastIsoDateTime' })
-export class IsNotPastIsoDateTimeConstraint
+export class IsNotPastIsoDateConstraint
   implements ValidatorConstraintInterface
 {
   validate(dateTimeIsoString: string) {
-    const dueDate = DateTime.fromISO(dateTimeIsoString, { zone: 'utc' });
+    const dueDate = DateTime.fromISO(dateTimeIsoString).toUTC();
     const nowUtc = DateTime.now().toUTC();
 
     return dueDate >= nowUtc;

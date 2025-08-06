@@ -1,4 +1,4 @@
-import { IsOptional } from 'class-validator';
+import { IsOptional, NotEquals, ValidateIf } from 'class-validator';
 import {
   IsValidTaskDescription,
   IsValidTaskDueDate,
@@ -7,31 +7,23 @@ import {
 } from 'src/common/decorators/request-validation-decorators';
 
 export class UpdateTaskRequest {
-  @IsOptional()
   @IsValidTaskTitle()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   title?: string;
 
   @IsOptional()
   @IsValidTaskDescription()
+  // Can be set to null - resets it
   description?: string | null;
 
-  @IsOptional()
   @IsValidTaskRewardPoints()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   rewardPoints?: number;
 
   @IsOptional()
   @IsValidTaskDueDate()
-  dueDate?: string;
-
-  constructor(
-    title: string,
-    rewardPoints: number,
-    description: string,
-    dueDate: string,
-  ) {
-    this.title = title;
-    this.rewardPoints = rewardPoints;
-    this.description = description;
-    this.dueDate = dueDate;
-  }
+  // Can be set to null - resets it
+  dueDate?: string | null;
 }

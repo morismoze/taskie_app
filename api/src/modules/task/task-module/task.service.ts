@@ -5,7 +5,7 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
 import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
-import { WorkspaceItemRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
 import { TaskWithAssigneesCore } from './domain/task-with-assignees-core.domain';
 import { Task } from './domain/task.domain';
@@ -20,7 +20,7 @@ export class TaskService {
     query,
   }: {
     workspaceId: Task['workspace']['id'];
-    query: WorkspaceItemRequestQuery;
+    query: WorkspaceObjectiveRequestQuery;
   }): Promise<{
     data: TaskWithAssigneesCore[];
     totalPages: number;
@@ -124,7 +124,7 @@ export class TaskService {
     taskId: Task['id'];
     workspaceId: Task['workspace']['id'];
     data: UpdateTaskRequest;
-  }): Promise<TaskCore> {
+  }): Promise<TaskWithAssigneesCore> {
     const task = await this.findByTaskIdAndWorkspaceId({ taskId, workspaceId });
 
     if (!task) {
@@ -136,20 +136,33 @@ export class TaskService {
       );
     }
 
-    const newTask = await this.taskRepository.update({
+    let dueDate: Date | undefined;
+    if (data.dueDate !== null && data.dueDate !== undefined) {
+      dueDate = DateTime.fromISO(data.dueDate).toUTC().toJSDate();
+    }
+    console.log(data.title);
+    console.log(data.description);
+    console.log(data.rewardPoints);
+    console.log(dueDate);
+
+    const updatedTask = await this.taskRepository.update({
       id: taskId,
       data: {
         title: data.title,
         description: data.description,
         rewardPoints: data.rewardPoints,
-        dueDate:
-          data.dueDate === undefined
-            ? null
-            : DateTime.fromISO(data.dueDate).toJSDate(),
+        dueDate: dueDate,
+      },
+      relations: {
+        taskAssignments: {
+          assignee: {
+            user: true,
+          },
+        },
       },
     });
 
-    if (!newTask) {
+    if (!updatedTask) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -158,6 +171,15 @@ export class TaskService {
       );
     }
 
-    return newTask;
+    return {
+      ...updatedTask,
+      assignees: updatedTask.taskAssignments.map((assignment) => ({
+        id: assignment.assignee.id, // workspace user ID
+        firstName: assignment.assignee.user.firstName,
+        lastName: assignment.assignee.user.lastName,
+        profileImageUrl: assignment.assignee.user.profileImageUrl,
+        status: assignment.status,
+      })),
+    };
   }
 }

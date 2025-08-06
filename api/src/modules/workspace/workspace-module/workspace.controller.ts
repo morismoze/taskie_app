@@ -30,11 +30,10 @@ import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.d
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
-import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
 import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace-user-id-path-param-request.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
-import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -225,7 +224,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getTasks(
     @Param() params: WorkspaceIdRequestPathParam,
-    @Query() query: WorkspaceItemRequestQuery,
+    @Query() query: WorkspaceObjectiveRequestQuery,
   ): Promise<WorkspaceTasksResponse> {
     return this.workspaceService.getWorkspaceTasks({
       workspaceId: params.workspaceId,
@@ -242,9 +241,6 @@ export class WorkspaceController {
     @Req() request: RequestWithUser,
     @Body() data: CreateTaskRequest,
   ): Promise<WorkspaceTaskResponse> {
-    // Returning nothing in the response because tasks are paginable and sortable by
-    // different query params, so it doesn't make sense to return a newly created task
-    // in the response if it won't be usable for task list state update in the app
     return this.workspaceService.createTask({
       workspaceId: params.workspaceId,
       createdById: request.user.sub,
@@ -260,9 +256,7 @@ export class WorkspaceController {
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
     @Body() payload: UpdateTaskRequest,
-  ): Promise<UpdateTaskResponse> {
-    // This endpoint doesn't return WorkspaceTaskResponse because this endpoints
-    // doesn't update assignees - we do that via updateTaskAssigments endpoint
+  ): Promise<WorkspaceTaskResponse> {
     return this.workspaceService.updateTask({
       workspaceId,
       taskId,
@@ -307,7 +301,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getGoals(
     @Param() params: WorkspaceIdRequestPathParam,
-    @Query() query: WorkspaceItemRequestQuery,
+    @Query() query: WorkspaceObjectiveRequestQuery,
   ): Promise<WorkspaceGoalsResponse> {
     return this.workspaceService.getWorkspaceGoals({
       workspaceId: params.workspaceId,

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import {
   FindManyOptions,
@@ -87,15 +88,16 @@ export class GoalRepositoryImpl implements GoalRepository {
 
   async findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search },
+    query: { page, limit, status, search, sort },
     relations,
   }: {
     workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
       limit: number;
-      status: ProgressStatus;
+      status: ProgressStatus | null;
       search: string | null;
+      sort: SortBy | null;
     };
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{
@@ -106,17 +108,32 @@ export class GoalRepositoryImpl implements GoalRepository {
     const offset = (page - 1) * limit;
 
     const findOptions: FindManyOptions<GoalEntity> = {
-      where: { workspace: { id: workspaceId }, status },
+      where: { workspace: { id: workspaceId } },
       skip: offset,
       take: limit,
       relations,
     };
+
+    if (status) {
+      findOptions.where = { status };
+    }
 
     if (search) {
       findOptions.where = {
         ...findOptions.where,
         title: ILike(`%${search}%`),
       };
+    }
+
+    if (sort) {
+      switch (sort) {
+        case SortBy.NEWEST:
+          findOptions.order = { createdAt: 'DESC' };
+          break;
+        case SortBy.OLDEST:
+          findOptions.order = { createdAt: 'ASC' };
+          break;
+      }
     }
 
     const [goalEntities, totalCount] =

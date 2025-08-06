@@ -9,7 +9,7 @@ export enum SortBy {
 
 const WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT = 20;
 
-export class WorkspaceItemRequestQuery {
+export class WorkspaceObjectiveRequestQuery {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -24,7 +24,7 @@ export class WorkspaceItemRequestQuery {
 
   @IsOptional()
   @IsEnum(ProgressStatus)
-  status: ProgressStatus;
+  status: ProgressStatus | null;
 
   @IsOptional()
   @IsString()
@@ -43,7 +43,7 @@ export class WorkspaceItemRequestQuery {
   ) {
     this.page = page ? page : 1;
     this.limit = limit ? limit : WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT;
-    this.status = status ? status : ProgressStatus.IN_PROGRESS;
+    this.status = status ? status : null;
     this.search = search ? search : null;
     this.sort = sort ? sort : null;
   }
