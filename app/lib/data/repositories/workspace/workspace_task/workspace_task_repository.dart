@@ -4,6 +4,7 @@ import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/value_patch.dart';
 
 abstract class WorkspaceTaskRepository extends ChangeNotifier {
   bool get isFilterSearch;
@@ -27,9 +28,15 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
     DateTime? dueDate,
   });
 
-  Result<WorkspaceTask> loadWorkspaceTaskDetails({
-    required String workspaceId,
-    required String taskId,
+  Result<WorkspaceTask> loadWorkspaceTaskDetails({required String taskId});
+
+  Future<Result<void>> updateTaskDetails(
+    String workspaceId,
+    String taskId, {
+    ValuePatch<String>? title,
+    ValuePatch<String?>? description,
+    ValuePatch<int>? rewardPoints,
+    ValuePatch<DateTime?>? dueDate,
   });
 
   void purgeTasksCache();

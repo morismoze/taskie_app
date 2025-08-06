@@ -40,7 +40,7 @@
   "tasksHello": "Pozdrav!",
   "taskskNoTasks": "Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!",
   "taskskNoFilteredTasks": "Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!",
-  "objectiveStatusFilterAll": "Svi",
+  "objectiveStatusFilterAll": "Svi statusi",
   "progressStatusInProgress": "U tijeku",
   "progressStatusCompleted": "Dovršeno",
   "progressStatusCompletedAsStale": "Dovršeno (zastarjelo)",
@@ -49,7 +49,7 @@
   "sortByOldest": "Najstariji",
   "tasksCardPoints": "{points} bodova",
   "tasksDetailsEdit": "Uređivanje detalja zadatka",
-  "tasksDetailsCreatedAt": "Zadatak kreiran",
+  "tasksAssignmentsEdit": "Uređivanje dodjela zadatka",
   "appDrawerTitle": "Radni prostori",
   "appDrawerChangeActiveWorkspaceError": "Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora",
   "appDrawerEditWorkspace": "Postavke radnog prostora",
@@ -151,5 +151,7 @@
   "workspaceCreateJoinViaInviteLinkNotFound": "Uneseni pozivni link nije važeći",
   "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "Uneseni pozivni link je istekao ili je već iskorišten",
   "workspaceCreateJoinViaInviteLinkExistingUser": "Već ste član ovog radnog prostora",
-  "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor"
+  "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor",
+  "taskDetailsEditSuccess": "Uspješno ste uredili detalje zadatka",
+  "taskDetailsEditError": "Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka"
 }

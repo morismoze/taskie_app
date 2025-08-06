@@ -5,8 +5,10 @@ import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
+import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/paginable_objectives.dart';
 import '../../../services/api/workspace/workspace_task/models/request/create_task_request.dart';
+import '../../../services/api/workspace/workspace_task/models/request/update_task_details_request.dart';
 import '../../../services/api/workspace/workspace_task/models/response/workspace_task_response.dart';
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import 'workspace_task_repository.dart';
@@ -156,12 +158,60 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   }
 
   @override
-  Result<WorkspaceTask> loadWorkspaceTaskDetails({
-    required String workspaceId,
-    required String taskId,
-  }) {
+  Result<WorkspaceTask> loadWorkspaceTaskDetails({required String taskId}) {
     final details = _cachedTasks!.items.firstWhere((task) => task.id == taskId);
     return Result.ok(details);
+  }
+
+  @override
+  Future<Result<void>> updateTaskDetails(
+    String workspaceId,
+    String taskId, {
+    ValuePatch<String>? title,
+    ValuePatch<String?>? description,
+    ValuePatch<int>? rewardPoints,
+    ValuePatch<DateTime?>? dueDate,
+  }) async {
+    try {
+      final result = await _workspaceTaskApiService.updateTaskDetails(
+        workspaceId: workspaceId,
+        taskId: taskId,
+        payload: UpdateTaskDetailsRequest(
+          title: title,
+          description: description,
+          rewardPoints: rewardPoints,
+          dueDate: dueDate,
+        ),
+      );
+
+      switch (result) {
+        case Ok():
+          final existingTaskResult =
+              loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
+          final existingTask = existingTaskResult.value;
+          final updatedTask = _mapTaskFromResponse(
+            result.value,
+            isNew: existingTask.isNew,
+          );
+
+          // Update the existing task in the list by replacing it
+          // with the new updated instance.
+          final taskIndex = _cachedTasks!.items.indexWhere(
+            (task) => task.id == updatedTask.id,
+          );
+
+          if (taskIndex != -1) {
+            _cachedTasks!.items[taskIndex] = updatedTask;
+            notifyListeners();
+          }
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
   }
 
   @override

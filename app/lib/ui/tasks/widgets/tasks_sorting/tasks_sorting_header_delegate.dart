@@ -13,15 +13,8 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double height;
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return ListenableBuilder(
-      listenable: Listenable.merge([viewModel, viewModel.loadTasks]),
-      builder: (_, _) => TasksSortingHeader(viewModel: viewModel),
-    );
+  Widget build(_, _, _) {
+    return TasksSortingHeader(viewModel: viewModel);
   }
 
   @override

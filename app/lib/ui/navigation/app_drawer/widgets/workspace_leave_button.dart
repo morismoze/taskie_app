@@ -48,7 +48,7 @@ class WorkspaceLeaveButton extends StatelessWidget {
             label: builderContext.localization.appDrawerLeaveWorkspaceModalCta,
             onPress: () => viewModel.leaveWorkspace.execute(workspaceId),
             backgroundColor: Theme.of(builderContext).colorScheme.error,
-            isLoading: viewModel.leaveWorkspace.running,
+            loading: viewModel.leaveWorkspace.running,
           ),
         ),
         ListenableBuilder(

@@ -67,7 +67,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label: builderContext.localization.editDetailsSubmit,
-              isLoading: widget.viewModel.editWorkspaceDetails.running,
+              loading: widget.viewModel.editWorkspaceDetails.running,
             ),
           ),
         ],

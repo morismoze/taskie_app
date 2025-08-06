@@ -23,7 +23,7 @@ class AppDatePickerField extends StatefulWidget {
     this.maximumDate,
   });
 
-  final void Function(DateTime date) onSelected;
+  final void Function(DateTime selectedDate) onSelected;
   final void Function() onCleared;
   final String label;
   final bool required;
@@ -56,10 +56,19 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
   }
 
   void _onSubmit(DateTime date) {
+    // Since this is date picker only (without time), the date is
+    // in the device's local time without timezone offset. To be a
+    // compliant full ISO 8601 string we have to add the zone offset.
+    // In this case we are setting it to UTC, which will basically
+    // take the date and append it midnight time and the `Z` (Zulu)
+    // keyword - it won't change the date, but it will make compliant
+    // datetime by adding the time.
+    final utcDate = DateTime.utc(date.year, date.month, date.day);
+
     setState(() {
-      _selectedDate = date;
+      _selectedDate = utcDate;
     });
-    widget.onSelected(date);
+    widget.onSelected(utcDate);
   }
 
   @override

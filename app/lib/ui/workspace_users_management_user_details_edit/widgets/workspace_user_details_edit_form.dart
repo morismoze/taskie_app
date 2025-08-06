@@ -142,7 +142,7 @@ class _WorkspaceUserDetailsEditFormState
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label: builderContext.localization.editDetailsSubmit,
-              isLoading: widget.viewModel.editWorkspaceUserDetails.running,
+              loading: widget.viewModel.editWorkspaceUserDetails.running,
             ),
           ),
         ],

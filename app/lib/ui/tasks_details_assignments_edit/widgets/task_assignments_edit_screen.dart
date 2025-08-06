@@ -7,19 +7,19 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/task_details_edit_form.dart';
-import '../view_models/task_details_edit_screen_view_model.dart';
+import '../view_models/task_assignments_edit_screen_view_model.dart';
 
-class TaskDetailsEditScreen extends StatefulWidget {
-  const TaskDetailsEditScreen({super.key, required this.viewModel});
+class TaskAssignmentsEditScreen extends StatefulWidget {
+  const TaskAssignmentsEditScreen({super.key, required this.viewModel});
 
-  final TaskDetailsEditScreenViewModel viewModel;
+  final TaskAssignmentsEditScreenViewModel viewModel;
 
   @override
-  State<TaskDetailsEditScreen> createState() => _TaskDetailsEditScreenState();
+  State<TaskAssignmentsEditScreen> createState() =>
+      _TaskAssignmentsEditScreenState();
 }
 
-class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
+class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void initState() {
     super.initState();
@@ -27,7 +27,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   }
 
   @override
-  void didUpdateWidget(covariant TaskDetailsEditScreen oldWidget) {
+  void didUpdateWidget(covariant TaskAssignmentsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.editTaskDetails.removeListener(
       _onTaskDetailsEditResult,
@@ -48,7 +48,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              HeaderBar(title: context.localization.tasksDetailsEdit),
+              HeaderBar(title: context.localization.tasksAssignmentsEdit),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -58,18 +58,18 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                   child: ListenableBuilder(
                     listenable: widget.viewModel,
                     builder: (builderContext, child) {
-                      if (widget.viewModel.details == null) {
+                      if (widget.viewModel.assignees == null) {
                         return ActivityIndicator(
                           radius: 16,
                           color: Theme.of(builderContext).colorScheme.primary,
                         );
                       }
 
-                      return SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
+                      return const SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(
                           vertical: Dimens.paddingVertical,
                         ),
-                        child: TaskDetailsEditForm(viewModel: widget.viewModel),
+                        child: Text('data'),
                       );
                     },
                   ),

@@ -154,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
             onPress: () => widget.viewModel.signInWithGoogle.execute(),
             label: builderContext.localization.signInViaGoogle,
             leadingIcon: FontAwesomeIcons.google,
-            isLoading: widget.viewModel.signInWithGoogle.running,
+            loading: widget.viewModel.signInWithGoogle.running,
             backgroundColor: Colors.red[800],
           ),
         ),

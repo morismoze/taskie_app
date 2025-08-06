@@ -69,7 +69,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
                   label: builderContext
                       .localization
                       .workspaceUsersManagementCreateVirtualUserSubmit,
-                  isLoading: widget.viewModel.createVirtualUser.running,
+                  loading: widget.viewModel.createVirtualUser.running,
                 ),
               ),
             ],

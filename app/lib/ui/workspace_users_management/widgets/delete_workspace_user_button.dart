@@ -55,7 +55,7 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
               workspaceUserId,
             )),
             backgroundColor: Theme.of(builderContext).colorScheme.error,
-            isLoading: viewModel.deleteWorkspaceUser.running,
+            loading: viewModel.deleteWorkspaceUser.running,
           ),
         ),
         ListenableBuilder(

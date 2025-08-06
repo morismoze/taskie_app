@@ -40,7 +40,7 @@
   "tasksHello": "Hello!",
   "taskskNoTasks": "It looks like your workspace doesn't have any task yet. Try creating your first one!",
   "taskskNoFilteredTasks": "Uh-oh! It looks like there aren't any tasks for the chosen filters. Try different ones!",
-  "objectiveStatusFilterAll": "All",
+  "objectiveStatusFilterAll": "All statuses",
   "progressStatusInProgress": "In Progress",
   "progressStatusCompleted": "Completed",
   "progressStatusCompletedAsStale": "Completed as Stale",
@@ -49,7 +49,7 @@
   "sortByOldest": "Oldest",
   "tasksCardPoints": "{points} points",
   "tasksDetailsEdit": "Edit task details",
-  "tasksDetailsCreatedAt": "Task created at",
+  "tasksAssignmentsEdit": "Edit task assignments",
   "appDrawerTitle": "Workspaces",
   "appDrawerChangeActiveWorkspaceError": "Uh-oh! We've had some trouble changing workspace",
   "appDrawerEditWorkspace": "Workspace settings",
@@ -151,5 +151,7 @@
   "workspaceCreateJoinViaInviteLinkNotFound": "The provided link is invalid",
   "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "The provided link has expired or was already used",
   "workspaceCreateJoinViaInviteLinkExistingUser": "You are already part of this workspace",
-  "workspaceCreationSuccess": "You've successfully created new workspace"
+  "workspaceCreationSuccess": "You've successfully created new workspace",
+  "taskDetailsEditSuccess": "Successfully edited task details",
+  "taskDetailsEditError": "Uh-oh! We've had some trouble editing task details"
 }

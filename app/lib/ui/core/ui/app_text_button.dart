@@ -20,7 +20,7 @@ class AppTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: disabled ? () {} : onPress,
+      onPressed: disabled ? null : onPress,
       style: TextButton.styleFrom(
         overlayColor: Colors.transparent,
         padding: const EdgeInsets.all(0),

@@ -136,14 +136,10 @@ export class TaskService {
       );
     }
 
-    let dueDate: Date | undefined;
+    let dueDate: Date | null = null;
     if (data.dueDate !== null && data.dueDate !== undefined) {
       dueDate = DateTime.fromISO(data.dueDate).toUTC().toJSDate();
     }
-    console.log(data.title);
-    console.log(data.description);
-    console.log(data.rewardPoints);
-    console.log(dueDate);
 
     const updatedTask = await this.taskRepository.update({
       id: taskId,

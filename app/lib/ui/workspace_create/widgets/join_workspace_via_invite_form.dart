@@ -86,8 +86,7 @@ class _JoinWorkspaceViaInviteFormState
                   label: builderContext
                       .localization
                       .workspaceCreateJoinViaInviteLinkSubmit,
-                  isLoading:
-                      widget.viewModel.joinWorkspaceViaInviteLink.running,
+                  loading: widget.viewModel.joinWorkspaceViaInviteLink.running,
                 ),
               ),
             ],

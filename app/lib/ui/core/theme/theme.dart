@@ -43,6 +43,7 @@ abstract final class AppTheme {
   );
 
   static ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.light,
     highlightColor: Colors.transparent,
     hoverColor: Colors.transparent,
@@ -52,16 +53,6 @@ abstract final class AppTheme {
     fontFamily: 'Roboto',
     textTheme: _textTheme,
     inputDecorationTheme: _inputDecorationTheme,
-    filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    ),
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(
         color: Colors.grey[700],
@@ -80,14 +71,10 @@ abstract final class AppTheme {
     fontFamily: 'Roboto',
     textTheme: _textTheme,
     inputDecorationTheme: _inputDecorationTheme,
-    filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(
+        color: Colors.grey[700],
+        borderRadius: BorderRadius.circular(AppTheme.fieldBorderRadius),
       ),
     ),
   );

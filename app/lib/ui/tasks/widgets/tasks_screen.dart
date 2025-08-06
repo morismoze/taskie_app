@@ -47,15 +47,7 @@ class _TasksScreenState extends State<TasksScreen> {
     return BlurredCirclesBackground(
       child: Column(
         children: [
-          ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (builderContext, _) {
-              if (widget.viewModel.user != null) {
-                return TasksHeader(viewModel: widget.viewModel);
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+          TasksHeader(viewModel: widget.viewModel),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(

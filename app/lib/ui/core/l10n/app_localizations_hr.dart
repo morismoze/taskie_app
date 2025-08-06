@@ -137,7 +137,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
 
   @override
-  String get objectiveStatusFilterAll => 'Svi';
+  String get objectiveStatusFilterAll => 'Svi statusi';
 
   @override
   String get progressStatusInProgress => 'U tijeku';
@@ -166,7 +166,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksDetailsEdit => 'Uređivanje detalja zadatka';
 
   @override
-  String get tasksDetailsCreatedAt => 'Zadatak kreiran';
+  String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
   String get appDrawerTitle => 'Radni prostori';
@@ -533,4 +533,11 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get workspaceCreationSuccess =>
       'Uspješno ste kreirali novi radni prostor';
+
+  @override
+  String get taskDetailsEditSuccess => 'Uspješno ste uredili detalje zadatka';
+
+  @override
+  String get taskDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
 }

@@ -69,7 +69,7 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
                 builder: (builderContext, _) => AppFilledButton(
                   onPress: _onSubmit,
                   label: builderContext.localization.workspaceCreateLabel,
-                  isLoading: widget.viewModel.createWorkspace.running,
+                  loading: widget.viewModel.createWorkspace.running,
                 ),
               ),
             ],

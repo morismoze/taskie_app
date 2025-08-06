@@ -9,6 +9,8 @@ extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
+
+  String? get nullIfEmpty => isEmpty ? null : this;
 }
 
 extension WorkspaceRoleLocalization on WorkspaceRole {

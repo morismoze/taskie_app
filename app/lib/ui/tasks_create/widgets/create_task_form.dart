@@ -139,7 +139,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label: builderContext.localization.taskCreateNew,
-              isLoading: widget.viewModel.createTask.running,
+              loading: widget.viewModel.createTask.running,
             ),
           ),
         ],

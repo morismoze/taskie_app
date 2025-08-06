@@ -137,7 +137,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
 
   @override
-  String get objectiveStatusFilterAll => 'All';
+  String get objectiveStatusFilterAll => 'All statuses';
 
   @override
   String get progressStatusInProgress => 'In Progress';
@@ -166,7 +166,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksDetailsEdit => 'Edit task details';
 
   @override
-  String get tasksDetailsCreatedAt => 'Task created at';
+  String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
   String get appDrawerTitle => 'Workspaces';
@@ -529,4 +529,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workspaceCreationSuccess =>
       'You\'ve successfully created new workspace';
+
+  @override
+  String get taskDetailsEditSuccess => 'Successfully edited task details';
+
+  @override
+  String get taskDetailsEditError =>
+      'Uh-oh! We\'ve had some trouble editing task details';
 }

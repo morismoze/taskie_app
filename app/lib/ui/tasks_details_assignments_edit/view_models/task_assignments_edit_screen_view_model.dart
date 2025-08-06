@@ -6,8 +6,8 @@ import '../../../data/services/api/value_patch.dart';
 import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
 
-class TaskDetailsEditScreenViewModel extends ChangeNotifier {
-  TaskDetailsEditScreenViewModel({
+class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
+  TaskAssignmentsEditScreenViewModel({
     required String workspaceId,
     required String taskId,
     required WorkspaceTaskRepository workspaceTaskRepository,
@@ -15,13 +15,13 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
        _taskId = taskId,
        _workspaceTaskRepository = workspaceTaskRepository {
     _loadWorkspaceTaskDetails();
-    editTaskDetails = Command1(_editTaskDetails);
+    editTaskDetails = Command1(_editTaskAssignments);
   }
 
   final String _activeWorkspaceId;
   final String _taskId;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('TaskDetailsEditScreenViewModel');
+  final _log = Logger('TaskAssignmentsEditScreenViewModel');
 
   late Command1<
     void,
@@ -33,7 +33,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
 
   WorkspaceTask? _details;
 
-  WorkspaceTask? get details => _details;
+  List<WorkspaceTaskAssignee>? get assignees => _details?.assignees;
 
   Result<void> _loadWorkspaceTaskDetails() {
     final result = _workspaceTaskRepository.loadWorkspaceTaskDetails(
@@ -51,7 +51,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Result<void>> _editTaskDetails(
+  Future<Result<void>> _editTaskAssignments(
     (String? title, String? description, int? rewardPoints, DateTime? dueDate)
     details,
   ) async {

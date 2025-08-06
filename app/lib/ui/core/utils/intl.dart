@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 abstract final class IntlUtils {
   static SupportedLanguage defaultSupportedLanguage = const SupportedLanguage(
@@ -40,6 +41,13 @@ abstract final class IntlUtils {
 
     return languageOnlyMatch.name;
   }
+
+  static String mapDateTimeToLocalTimeZoneFormat(
+    BuildContext context,
+    DateTime dateTime,
+  ) => DateFormat.yMd(
+    Localizations.localeOf(context).toString(),
+  ).format(dateTime.toLocal());
 }
 
 class SupportedLanguage {

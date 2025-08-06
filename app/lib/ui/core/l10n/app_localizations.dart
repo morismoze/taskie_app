@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @objectiveStatusFilterAll.
   ///
   /// In en, this message translates to:
-  /// **'All'**
+  /// **'All statuses'**
   String get objectiveStatusFilterAll;
 
   /// No description provided for @progressStatusInProgress.
@@ -386,11 +386,11 @@ abstract class AppLocalizations {
   /// **'Edit task details'**
   String get tasksDetailsEdit;
 
-  /// No description provided for @tasksDetailsCreatedAt.
+  /// No description provided for @tasksAssignmentsEdit.
   ///
   /// In en, this message translates to:
-  /// **'Task created at'**
-  String get tasksDetailsCreatedAt;
+  /// **'Edit task assignments'**
+  String get tasksAssignmentsEdit;
 
   /// No description provided for @appDrawerTitle.
   ///
@@ -1003,6 +1003,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve successfully created new workspace'**
   String get workspaceCreationSuccess;
+
+  /// No description provided for @taskDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited task details'**
+  String get taskDetailsEditSuccess;
+
+  /// No description provided for @taskDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing task details'**
+  String get taskDetailsEditError;
 }
 
 class _AppLocalizationsDelegate

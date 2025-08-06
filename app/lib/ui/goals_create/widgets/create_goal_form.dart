@@ -123,7 +123,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label: builderContext.localization.goalCreateNew,
-              isLoading: widget.viewModel.createGoal.running,
+              loading: widget.viewModel.createGoal.running,
             ),
           ),
         ],

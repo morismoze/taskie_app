@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/ui/app_date_picker_field/app_date_picker_form_field.dart';
@@ -11,6 +13,7 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_field_selected_options.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 import 'task_details_edit_screen_view_model.dart';
 
@@ -27,16 +30,18 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  late int _rewardPoints;
-  late DateTime? _dueDate;
+  late ValueNotifier<int> _rewardPointsNotifier;
+  late ValueNotifier<DateTime?> _dueDateNotifier;
 
   @override
   void initState() {
     super.initState();
     _titleController.text = widget.viewModel.details!.title;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
-    _rewardPoints = widget.viewModel.details!.rewardPoints;
-    _dueDate = widget.viewModel.details!.dueDate;
+    _rewardPointsNotifier = ValueNotifier(
+      widget.viewModel.details!.rewardPoints,
+    );
+    _dueDateNotifier = ValueNotifier(widget.viewModel.details!.dueDate);
   }
 
   @override
@@ -48,19 +53,19 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
   void _onRewardPointsChanged(double points) {
     setState(() {
-      _rewardPoints = points.toInt();
+      _rewardPointsNotifier.value = points.toInt();
     });
   }
 
   void _onDueDateSelected(DateTime date) {
     setState(() {
-      _dueDate = date;
+      _dueDateNotifier.value = date;
     });
   }
 
   void _onDueDateCleared() {
     setState(() {
-      _dueDate = null;
+      _dueDateNotifier.value = null;
     });
   }
 
@@ -103,7 +108,12 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
             label: context.localization.objectiveAssigneeLabel,
             selectedOptions: selectedOptions,
             isFieldFocused: true,
-            onTap: () => {},
+            onTap: () => context.push(
+              Routes.taskEditAssignments(
+                workspaceId: widget.viewModel.activeWorkspaceId,
+                taskId: widget.viewModel.details!.id,
+              ),
+            ),
             enabled: true,
             required: true,
             trailing: const FaIcon(
@@ -113,31 +123,55 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
             ),
           ),
           const SizedBox(height: 30),
-          AppDatePickerFormField(
-            onSelected: _onDueDateSelected,
-            onCleared: _onDueDateCleared,
-            label: context.localization.taskDueDateLabel,
-            required: false,
-            minimumDate: DateTime.now(),
-            initialValue: _dueDate,
+          ValueListenableBuilder(
+            valueListenable: _dueDateNotifier,
+            builder: (builderContext, dateValue, _) => AppDatePickerFormField(
+              onSelected: _onDueDateSelected,
+              onCleared: _onDueDateCleared,
+              label: builderContext.localization.taskDueDateLabel,
+              required: false,
+              minimumDate: DateTime.now(),
+              initialValue: dateValue,
+            ),
           ),
           const SizedBox(height: 20),
-          AppSliderFormField(
-            label: context.localization.taskRewardPointsLabel,
-            value: _rewardPoints.toDouble(),
-            onChanged: _onRewardPointsChanged,
-            step: ObjectiveRules.rewardPointsStep,
-            min: ObjectiveRules.rewardPointsMin.toDouble(),
-            max: ObjectiveRules.rewardPointsMax.toDouble(),
+          ValueListenableBuilder(
+            valueListenable: _rewardPointsNotifier,
+            builder: (builderContext, rewardPointsValue, _) =>
+                AppSliderFormField(
+                  label: builderContext.localization.taskRewardPointsLabel,
+                  value: rewardPointsValue.toDouble(),
+                  onChanged: _onRewardPointsChanged,
+                  step: ObjectiveRules.rewardPointsStep,
+                  min: ObjectiveRules.rewardPointsMin.toDouble(),
+                  max: ObjectiveRules.rewardPointsMax.toDouble(),
+                ),
           ),
           const SizedBox(height: 30),
           ListenableBuilder(
-            listenable: widget.viewModel.editTaskDetails,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: builderContext.localization.editDetailsSubmit,
-              isLoading: widget.viewModel.editTaskDetails.running,
-            ),
+            listenable: Listenable.merge([
+              widget.viewModel.editTaskDetails,
+              _titleController,
+              _descriptionController,
+              _rewardPointsNotifier,
+              _dueDateNotifier,
+            ]),
+            builder: (builderContext, _) {
+              final dirty =
+                  _titleController.text != widget.viewModel.details!.title ||
+                  _descriptionController.text.nullIfEmpty !=
+                      widget.viewModel.details!.description ||
+                  _rewardPointsNotifier.value !=
+                      widget.viewModel.details!.rewardPoints ||
+                  _dueDateNotifier.value != widget.viewModel.details!.dueDate;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.editDetailsSubmit,
+                loading: widget.viewModel.editTaskDetails.running,
+                disabled: !dirty,
+              );
+            },
           ),
         ],
       ),
@@ -155,8 +189,8 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
       widget.viewModel.editTaskDetails.execute((
         title,
         description,
-        _rewardPoints,
-        _dueDate,
+        _rewardPointsNotifier.value,
+        _dueDateNotifier.value,
       ));
     }
   }
