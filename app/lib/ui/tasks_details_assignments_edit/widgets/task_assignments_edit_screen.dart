@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
+import '../../core/ui/separator.dart';
 import '../view_models/task_assignments_edit_screen_view_model.dart';
+import 'add_new_assignee_form.dart';
+import 'task_assignment_tile.dart';
 
 class TaskAssignmentsEditScreen extends StatefulWidget {
   const TaskAssignmentsEditScreen({super.key, required this.viewModel});
@@ -65,11 +69,39 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                         );
                       }
 
-                      return const SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
+                      return ListView(
+                        padding: const EdgeInsets.symmetric(
                           vertical: Dimens.paddingVertical,
                         ),
-                        child: Text('data'),
+                        children: [
+                          ...widget.viewModel.assignees!.map(
+                            (assignee) =>
+                                TaskAssignmentTile(assignee: assignee),
+                          ),
+                          ListenableBuilder(
+                            listenable: widget.viewModel,
+                            builder: (builderContext, _) {
+                              if (widget.viewModel.workspaceMembers.isEmpty ||
+                                  widget.viewModel.assignees!.length ==
+                                      ValidationRules.taskMaxAssigneesCount) {
+                                // Either all the workspace members are assigned to this task
+                                // or the number of assignees is already maxed out.
+                                return const SizedBox.shrink();
+                              }
+
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 20),
+                                  const Separator(),
+                                  const SizedBox(height: 30),
+                                  AddNewAssigneeForm(
+                                    viewModel: widget.viewModel,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
                       );
                     },
                   ),

@@ -149,6 +149,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressStatusCompletedAsStale => 'Completed as Stale';
 
   @override
+  String get progressStatusNotCompleted => 'Not Completed';
+
+  @override
   String get progressStatusClosed => 'Closed';
 
   @override
@@ -176,10 +179,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksDetailsEditCreatedAt => 'Task created at';
 
   @override
-  String get tasksDetailsEditSectionTitle => 'Edit details';
+  String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
-  String get tasksAssignmentsEdit => 'Edit task assignments';
+  String get tasksAssignmentsEditStatusLabel => 'Status';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssignee =>
+      'Add additional assignees to this task:';
 
   @override
   String get appDrawerTitle => 'Workspaces';

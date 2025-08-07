@@ -44,15 +44,15 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
   int? get workspaceUserAccumulatedPoints => _workspaceUserAccumulatedPoints;
 
-  void _onWorkspaceUsersChanged() {
-    notifyListeners();
-  }
-
   List<WorkspaceUser> get workspaceMembers =>
       _workspaceUserRepository.users
           ?.where((user) => user.role == WorkspaceRole.member)
           .toList() ??
       [];
+
+  void _onWorkspaceUsersChanged() {
+    notifyListeners();
+  }
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(

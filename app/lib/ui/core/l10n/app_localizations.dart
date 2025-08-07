@@ -356,6 +356,12 @@ abstract class AppLocalizations {
   /// **'Completed as Stale'**
   String get progressStatusCompletedAsStale;
 
+  /// No description provided for @progressStatusNotCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Completed'**
+  String get progressStatusNotCompleted;
+
   /// No description provided for @progressStatusClosed.
   ///
   /// In en, this message translates to:
@@ -404,17 +410,23 @@ abstract class AppLocalizations {
   /// **'Task created at'**
   String get tasksDetailsEditCreatedAt;
 
-  /// No description provided for @tasksDetailsEditSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit details'**
-  String get tasksDetailsEditSectionTitle;
-
   /// No description provided for @tasksAssignmentsEdit.
   ///
   /// In en, this message translates to:
   /// **'Edit task assignments'**
   String get tasksAssignmentsEdit;
+
+  /// No description provided for @tasksAssignmentsEditStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get tasksAssignmentsEditStatusLabel;
+
+  /// No description provided for @tasksAssignmentsEditAddNewAssignee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add additional assignees to this task:'**
+  String get tasksAssignmentsEditAddNewAssignee;
 
   /// No description provided for @appDrawerTitle.
   ///

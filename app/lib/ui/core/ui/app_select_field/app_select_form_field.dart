@@ -16,7 +16,6 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
     required final void Function() onCleared,
     bool multiple = false,
     bool required = true,
-    bool isScrollControlled = false,
     int? max,
     Widget? trailing,
   }) : super(
@@ -47,7 +46,6 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
                  initialValue: initialValue,
                  enabled: enabled,
                  max: max,
-                 isScrollControlled: isScrollControlled,
                  trailing: trailing,
                ),
                Padding(

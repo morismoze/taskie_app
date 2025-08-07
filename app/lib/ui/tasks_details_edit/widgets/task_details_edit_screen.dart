@@ -76,14 +76,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                             TaskDetailsMeta(viewModel: widget.viewModel),
                             const SizedBox(height: 20),
                             const Separator(),
-                            const SizedBox(height: 30),
-                            Text(
-                              context.localization.tasksDetailsEditSectionTitle,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 40),
                             TaskDetailsEditForm(viewModel: widget.viewModel),
                           ],
                         ),

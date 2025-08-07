@@ -351,6 +351,8 @@ GoRouter router({
                                           taskId: taskId,
                                           workspaceTaskRepository: context
                                               .read(),
+                                          workspaceUserRepository: context
+                                              .read(),
                                         ),
                                   ),
                                 );

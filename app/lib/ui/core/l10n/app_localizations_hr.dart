@@ -149,6 +149,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get progressStatusCompletedAsStale => 'Dovršeno (zastarjelo)';
 
   @override
+  String get progressStatusNotCompleted => 'Nedovršeno';
+
+  @override
   String get progressStatusClosed => 'Zatvoreno';
 
   @override
@@ -176,10 +179,14 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksDetailsEditCreatedAt => 'Zadatak kreiran';
 
   @override
-  String get tasksDetailsEditSectionTitle => 'Uredite detalje';
+  String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
-  String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
+  String get tasksAssignmentsEditStatusLabel => 'Status';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssignee =>
+      'Dodijelite ovaj zadatak dodatnome članu:';
 
   @override
   String get appDrawerTitle => 'Radni prostori';

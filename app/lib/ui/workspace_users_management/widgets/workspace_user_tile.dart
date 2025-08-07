@@ -68,10 +68,7 @@ class WorkspaceUserTile extends StatelessWidget {
             tag: 'workspace-user-$id',
             child: AppAvatar(
               hashString: id,
-              firstName: UserUtils.constructFullName(
-                firstName: firstName,
-                lastName: lastName,
-              ),
+              firstName: firstName,
               imageUrl: profileImageUrl,
             ),
           ),

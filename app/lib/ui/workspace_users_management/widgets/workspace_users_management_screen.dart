@@ -143,7 +143,6 @@ class _WorkspaceUsersManagementScreenState
                         itemBuilder: (_, index) {
                           final workspaceUser = widget.viewModel.users![index];
                           final currentUser = widget.viewModel.currentUser;
-
                           final isCurrentUser =
                               currentUser.id == workspaceUser.userId;
 

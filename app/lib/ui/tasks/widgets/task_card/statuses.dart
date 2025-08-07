@@ -19,16 +19,14 @@ class TaskStatuses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (assignees.length == 1) {
-      final (textColor, backgroundColor, text) = _getStatusMeta(
-        assignees[0].status,
-        context,
-      );
+      final status = assignees[0].status;
+      final (textColor, backgroundColor) = _getStatusMeta(status, context);
 
       return Badge(
         backgroundColor: backgroundColor,
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
         label: Text(
-          text,
+          status.l10n(context),
           style: Theme.of(context).textTheme.labelSmall!.copyWith(
             fontWeight: FontWeight.bold,
             color: textColor,
@@ -40,7 +38,7 @@ class TaskStatuses extends StatelessWidget {
     return Row(
       spacing: 4,
       children: assignees.mapIndexed((index, assignee) {
-        final (textColor, _, _) = _getStatusMeta(assignee.status, context);
+        final (textColor, _) = _getStatusMeta(assignee.status, context);
 
         return Container(
           width: 6,
@@ -54,27 +52,21 @@ class TaskStatuses extends StatelessWidget {
     );
   }
 
-  (Color textColor, Color backgroundColor, String text) _getStatusMeta(
+  (Color textColor, Color backgroundColor) _getStatusMeta(
     ProgressStatus status,
     BuildContext context,
   ) {
     switch (status) {
       case ProgressStatus.inProgress:
-        return (
-          AppColors.orange1,
-          AppColors.orange1Light,
-          status.l10n(context),
-        );
+        return (AppColors.orange1, AppColors.orange1Light);
       case ProgressStatus.completed:
-        return (AppColors.green1, AppColors.green1Light, status.l10n(context));
+        return (AppColors.green1, AppColors.green1Light);
       case ProgressStatus.completedAsStale:
-        return (AppColors.pink1, AppColors.pink1Light, status.l10n(context));
+        return (AppColors.grey2, AppColors.grey3);
+      case ProgressStatus.notCompleted:
+        return (AppColors.red1, AppColors.red1Light);
       case ProgressStatus.closed:
-        return (
-          Theme.of(context).colorScheme.primary,
-          AppColors.purple1Light,
-          status.l10n(context),
-        );
+        return (Theme.of(context).colorScheme.primary, AppColors.purple1Light);
     }
   }
 }

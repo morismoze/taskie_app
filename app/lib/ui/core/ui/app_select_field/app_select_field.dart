@@ -43,7 +43,6 @@ class AppSelectField extends StatefulWidget {
     this.multiple = false,
     this.required = true,
     this.enabled = true,
-    this.isScrollControlled = false,
     this.initialValue,
     this.max,
     this.trailing,
@@ -58,10 +57,6 @@ class AppSelectField extends StatefulWidget {
   final bool multiple;
   final bool required;
   final bool enabled;
-
-  /// Defines if the bottom sheet should stretch to the top
-  /// of the screen (to the status bar).
-  final bool isScrollControlled;
   final List<AppSelectFieldOption>? initialValue;
 
   /// Defines how many options can be selected when [multiple] is true.
@@ -87,9 +82,8 @@ class _AppSelectFieldState extends State<AppSelectField> {
     setState(() {
       // Clear local state
       _selectedOptions.clear();
-      // Clear caller state
-      widget.onCleared();
     });
+    widget.onCleared();
   }
 
   void _onSubmit(List<AppSelectFieldOption> options) {
@@ -107,6 +101,7 @@ class _AppSelectFieldState extends State<AppSelectField> {
         widget.trailing ??
         const FaIcon(FontAwesomeIcons.sort, color: AppColors.black1, size: 17);
     if (widget.enabled && hasSelection) {
+      // Clear selections icon
       trailing = InkWell(
         onTap: _clearSelections,
         child: const FaIcon(
@@ -135,7 +130,7 @@ class _AppSelectFieldState extends State<AppSelectField> {
   void _openOptions(BuildContext context) {
     AppModalBottomSheet.show(
       context: context,
-      isScrollControlled: widget.isScrollControlled,
+      isScrollControlled: true,
       child: AppSelectFieldOptions(
         options: widget.options,
         selectedOptions: _selectedOptions,

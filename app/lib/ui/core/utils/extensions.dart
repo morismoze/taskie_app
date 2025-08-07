@@ -30,6 +30,8 @@ extension ProgressStatusLocalization on ProgressStatus {
     ProgressStatus.completed => context.localization.progressStatusCompleted,
     ProgressStatus.completedAsStale =>
       context.localization.progressStatusCompletedAsStale,
+    ProgressStatus.notCompleted =>
+      context.localization.progressStatusNotCompleted,
     ProgressStatus.closed => context.localization.progressStatusClosed,
   };
 }

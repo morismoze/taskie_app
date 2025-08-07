@@ -22,5 +22,6 @@ const _$ProgressStatusEnumMap = {
   ProgressStatus.inProgress: 'IN_PROGRESS',
   ProgressStatus.completed: 'COMPLETED',
   ProgressStatus.completedAsStale: 'COMPLETED_AS_STALE',
+  ProgressStatus.notCompleted: 'NOT_COMPLETED',
   ProgressStatus.closed: 'CLOSED',
 };
