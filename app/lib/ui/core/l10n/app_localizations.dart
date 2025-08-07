@@ -386,6 +386,30 @@ abstract class AppLocalizations {
   /// **'Edit task details'**
   String get tasksDetailsEdit;
 
+  /// No description provided for @tasksDetailsEditCreatedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created by'**
+  String get tasksDetailsEditCreatedBy;
+
+  /// No description provided for @tasksDetailsEditCreatedByDeletedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator deleted their account'**
+  String get tasksDetailsEditCreatedByDeletedAccount;
+
+  /// No description provided for @tasksDetailsEditCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created at'**
+  String get tasksDetailsEditCreatedAt;
+
+  /// No description provided for @tasksDetailsEditSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get tasksDetailsEditSectionTitle;
+
   /// No description provided for @tasksAssignmentsEdit.
   ///
   /// In en, this message translates to:

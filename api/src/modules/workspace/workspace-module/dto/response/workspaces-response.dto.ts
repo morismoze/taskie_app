@@ -5,7 +5,6 @@ export interface WorkspaceResponse {
   pictureUrl: string | null;
   createdAt: string;
   // Will be null in the case user has deleted their account
-  // and that user was the only Manager left in that workspace.
   createdBy: {
     id: string;
     firstName: string;

@@ -365,7 +365,15 @@ export class WorkspaceService {
       profileImageUrl: null,
       role: newWorkspaceUser.workspaceRole,
       userId: newUser.id,
-      createdBy: newWorkspaceUser.createdBy,
+      createdBy:
+        newWorkspaceUser.createdBy === null
+          ? null
+          : {
+              id: newWorkspaceUser.createdBy.id,
+              firstName: newWorkspaceUser.createdBy.firstName,
+              lastName: newWorkspaceUser.createdBy.lastName,
+              profileImageUrl: newWorkspaceUser.createdBy.profileImageUrl,
+            },
       createdAt: DateTime.fromJSDate(newWorkspaceUser.createdAt).toISO()!,
     };
 
@@ -515,6 +523,15 @@ export class WorkspaceService {
           profileImageUrl: assignee.profileImageUrl,
           status: assignee.status,
         })),
+        createdBy:
+          task.createdBy === null
+            ? null
+            : {
+                id: task.createdBy.id,
+                firstName: task.createdBy.firstName,
+                lastName: task.createdBy.lastName,
+                profileImageUrl: task.createdBy.profileImageUrl,
+              },
         createdAt: DateTime.fromJSDate(task.createdAt).toISO()!,
       })),
       totalPages,
@@ -637,7 +654,16 @@ export class WorkspaceService {
           newTask.dueDate === null
             ? null
             : DateTime.fromJSDate(newTask.dueDate).toISO()!,
-        assignees: [],
+        assignees: [], // This is filled in the code below
+        createdBy:
+          newTask.createdBy === null
+            ? null
+            : {
+                id: newTask.createdBy.id,
+                firstName: newTask.createdBy.firstName,
+                lastName: newTask.createdBy.lastName,
+                profileImageUrl: newTask.createdBy.profileImageUrl,
+              },
         createdAt: DateTime.fromJSDate(newTask.createdAt).toISO()!,
       };
 
@@ -1016,6 +1042,15 @@ export class WorkspaceService {
         profileImageUrl: assignee.profileImageUrl,
         status: assignee.status,
       })),
+      createdBy:
+        updatedTask.createdBy === null
+          ? null
+          : {
+              id: updatedTask.createdBy.id,
+              firstName: updatedTask.createdBy.firstName,
+              lastName: updatedTask.createdBy.lastName,
+              profileImageUrl: updatedTask.createdBy.profileImageUrl,
+            },
       createdAt: DateTime.fromJSDate(updatedTask.createdAt).toISO()!,
     };
 

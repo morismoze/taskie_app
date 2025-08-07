@@ -16,6 +16,9 @@ WorkspaceTaskResponse _$WorkspaceTaskResponseFromJson(
       .map((e) => TaskAssigneeResponse.fromJson(e as Map<String, dynamic>))
       .toList(),
   createdAt: DateTime.parse(json['createdAt'] as String),
+  createdBy: json['createdBy'] == null
+      ? null
+      : CreatedByResponse.fromJson(json['createdBy'] as Map<String, dynamic>),
   description: json['description'] as String?,
   dueDate: json['dueDate'] == null
       ? null

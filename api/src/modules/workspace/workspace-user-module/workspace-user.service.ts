@@ -58,7 +58,7 @@ export class WorkspaceUserService {
       workspaceUser.createdBy === null
         ? null
         : {
-            id: workspaceUser.createdBy.user.id,
+            id: workspaceUser.createdBy.id,
             firstName: workspaceUser.createdBy.user.firstName,
             lastName: workspaceUser.createdBy.user.lastName,
             profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
@@ -113,7 +113,7 @@ export class WorkspaceUserService {
       workspaceUser.createdBy === null
         ? null
         : {
-            id: workspaceUser.createdBy.user.id,
+            id: workspaceUser.createdBy.id,
             firstName: workspaceUser.createdBy.user.firstName,
             lastName: workspaceUser.createdBy.user.lastName,
             profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,

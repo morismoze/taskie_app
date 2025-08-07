@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../domain/models/workspace_invite.dart';
 import '../../../../utils/command.dart';
@@ -73,7 +74,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
             pictureUrl: workspace.pictureUrl,
             createdBy: workspace.createdBy == null
                 ? null
-                : WorkspaceCreatedBy(
+                : CreatedBy(
                     id: workspace.createdBy!.id,
                     firstName: workspace.createdBy!.firstName,
                     lastName: workspace.createdBy!.lastName,

@@ -7,7 +7,7 @@ import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/re
 import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
 import { WorkspaceObjectiveRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { TaskCore } from './domain/task-core.domain';
-import { TaskWithAssigneesCore } from './domain/task-with-assignees-core.domain';
+import { TaskWithAssigneesCoreAndCreatedByUser } from './domain/task-with-assignees-core.domain';
 import { Task } from './domain/task.domain';
 import { TaskRepository } from './persistence/task.repository';
 
@@ -22,7 +22,7 @@ export class TaskService {
     workspaceId: Task['workspace']['id'];
     query: WorkspaceObjectiveRequestQuery;
   }): Promise<{
-    data: TaskWithAssigneesCore[];
+    data: TaskWithAssigneesCoreAndCreatedByUser[];
     totalPages: number;
     total: number;
   }> {
@@ -35,23 +35,34 @@ export class TaskService {
       query,
     });
 
-    const tasks: TaskWithAssigneesCore[] = taskEntities.map((task) => ({
-      id: task.id,
-      title: task.title,
-      rewardPoints: task.rewardPoints,
-      description: task.description,
-      dueDate: task.dueDate,
-      assignees: task.taskAssignments.map((assignment) => ({
-        id: assignment.assignee.id, // workspace user ID
-        firstName: assignment.assignee.user.firstName,
-        lastName: assignment.assignee.user.lastName,
-        profileImageUrl: assignment.assignee.user.profileImageUrl,
-        status: assignment.status,
-      })),
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-      deletedAt: task.deletedAt,
-    }));
+    const tasks: TaskWithAssigneesCoreAndCreatedByUser[] = taskEntities.map(
+      (task) => ({
+        id: task.id,
+        title: task.title,
+        rewardPoints: task.rewardPoints,
+        description: task.description,
+        dueDate: task.dueDate,
+        assignees: task.taskAssignments.map((assignment) => ({
+          id: assignment.assignee.id, // workspace user ID
+          firstName: assignment.assignee.user.firstName,
+          lastName: assignment.assignee.user.lastName,
+          profileImageUrl: assignment.assignee.user.profileImageUrl,
+          status: assignment.status,
+        })),
+        createdBy:
+          task.createdBy === null
+            ? null
+            : {
+                id: task.createdBy.id,
+                firstName: task.createdBy.user.firstName,
+                lastName: task.createdBy.user.lastName,
+                profileImageUrl: task.createdBy.user.profileImageUrl,
+              },
+        createdAt: task.createdAt,
+        updatedAt: task.updatedAt,
+        deletedAt: task.deletedAt,
+      }),
+    );
 
     return {
       data: tasks,
@@ -70,7 +81,7 @@ export class TaskService {
     // Assignees are used for task assignment records
     // This is just creation of a concrete task
     data: Omit<CreateTaskRequest, 'assignees'>;
-  }): Promise<TaskCore> {
+  }): Promise<TaskWithAssigneesCoreAndCreatedByUser> {
     const newTask = await this.taskRepository.create({
       workspaceId,
       data: {
@@ -83,6 +94,11 @@ export class TaskService {
             : DateTime.fromISO(data.dueDate).toJSDate(),
       },
       createdById,
+      relations: {
+        createdBy: {
+          user: true,
+        },
+      },
     });
 
     if (!newTask) {
@@ -94,7 +110,19 @@ export class TaskService {
       );
     }
 
-    return newTask;
+    return {
+      ...newTask,
+      assignees: [],
+      createdBy:
+        newTask.createdBy === null
+          ? null
+          : {
+              id: newTask.createdBy.id,
+              firstName: newTask.createdBy.user.firstName,
+              lastName: newTask.createdBy.user.lastName,
+              profileImageUrl: newTask.createdBy.user.profileImageUrl,
+            },
+    };
   }
 
   async findById(id: Task['id']): Promise<Nullable<TaskCore>> {
@@ -124,7 +152,7 @@ export class TaskService {
     taskId: Task['id'];
     workspaceId: Task['workspace']['id'];
     data: UpdateTaskRequest;
-  }): Promise<TaskWithAssigneesCore> {
+  }): Promise<TaskWithAssigneesCoreAndCreatedByUser> {
     const task = await this.findByTaskIdAndWorkspaceId({ taskId, workspaceId });
 
     if (!task) {
@@ -155,6 +183,9 @@ export class TaskService {
             user: true,
           },
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -176,6 +207,15 @@ export class TaskService {
         profileImageUrl: assignment.assignee.user.profileImageUrl,
         status: assignment.status,
       })),
+      createdBy:
+        updatedTask.createdBy === null
+          ? null
+          : {
+              id: updatedTask.createdBy.id,
+              firstName: updatedTask.createdBy.user.firstName,
+              lastName: updatedTask.createdBy.user.lastName,
+              profileImageUrl: updatedTask.createdBy.user.profileImageUrl,
+            },
     };
   }
 }

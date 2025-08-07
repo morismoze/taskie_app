@@ -15,7 +15,7 @@ import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
-import 'task_details_edit_screen_view_model.dart';
+import '../view_models/task_details_edit_screen_view_model.dart';
 
 class TaskDetailsEditForm extends StatefulWidget {
   const TaskDetailsEditForm({super.key, required this.viewModel});

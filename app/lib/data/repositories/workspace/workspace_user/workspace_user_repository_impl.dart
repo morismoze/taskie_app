@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace_user.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/user/models/response/user_response.dart';
@@ -213,7 +214,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       profileImageUrl: workspaceUser.profileImageUrl,
       createdBy: workspaceUser.createdBy == null
           ? null
-          : WorkspaceUserCreatedBy(
+          : CreatedBy(
               id: workspaceUser.createdBy!.id,
               firstName: workspaceUser.createdBy!.firstName,
               lastName: workspaceUser.createdBy!.lastName,

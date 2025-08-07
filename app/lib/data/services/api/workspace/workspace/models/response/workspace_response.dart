@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../created_by_response.dart';
+
 part 'workspace_response.g.dart';
 
 @JsonSerializable(createToJson: false)
@@ -18,26 +20,8 @@ class WorkspaceResponse {
   final DateTime createdAt;
   final String? description;
   final String? pictureUrl;
-  final WorkspaceCreatedByResponse? createdBy;
+  final CreatedByResponse? createdBy;
 
   factory WorkspaceResponse.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceResponseFromJson(json);
-}
-
-@JsonSerializable(createToJson: false)
-class WorkspaceCreatedByResponse {
-  WorkspaceCreatedByResponse({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.profileImageUrl,
-  });
-
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String? profileImageUrl;
-
-  factory WorkspaceCreatedByResponse.fromJson(Map<String, dynamic> json) =>
-      _$WorkspaceCreatedByResponseFromJson(json);
 }

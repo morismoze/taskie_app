@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/request/create_workspace_request.dart';
@@ -246,7 +247,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       pictureUrl: workspace.pictureUrl,
       createdBy: workspace.createdBy == null
           ? null
-          : WorkspaceCreatedBy(
+          : CreatedBy(
               id: workspace.createdBy!.id,
               firstName: workspace.createdBy!.firstName,
               lastName: workspace.createdBy!.lastName,

@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
@@ -247,6 +248,14 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           )
           .toList(),
       createdAt: task.createdAt,
+      createdBy: task.createdBy == null
+          ? null
+          : CreatedBy(
+              id: task.createdBy!.id,
+              firstName: task.createdBy!.firstName,
+              lastName: task.createdBy!.lastName,
+              profileImageUrl: task.createdBy!.profileImageUrl,
+            ),
       description: task.description,
       dueDate: task.dueDate,
       isNew: isNew,

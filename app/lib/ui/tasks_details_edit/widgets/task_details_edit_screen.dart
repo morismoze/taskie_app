@@ -7,8 +7,10 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/task_details_edit_form.dart';
+import '../../core/ui/separator.dart';
 import '../view_models/task_details_edit_screen_view_model.dart';
+import 'task_details_edit_form.dart';
+import 'task_details_meta.dart';
 
 class TaskDetailsEditScreen extends StatefulWidget {
   const TaskDetailsEditScreen({super.key, required this.viewModel});
@@ -69,7 +71,22 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                         padding: const EdgeInsets.symmetric(
                           vertical: Dimens.paddingVertical,
                         ),
-                        child: TaskDetailsEditForm(viewModel: widget.viewModel),
+                        child: Column(
+                          children: [
+                            TaskDetailsMeta(viewModel: widget.viewModel),
+                            const SizedBox(height: 20),
+                            const Separator(),
+                            const SizedBox(height: 30),
+                            Text(
+                              context.localization.tasksDetailsEditSectionTitle,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleMedium!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 30),
+                            TaskDetailsEditForm(viewModel: widget.viewModel),
+                          ],
+                        ),
                       );
                     },
                   ),

@@ -1,4 +1,5 @@
 import '../../data/services/api/user/models/response/user_response.dart';
+import 'created_by.dart';
 
 class WorkspaceUser {
   WorkspaceUser({
@@ -21,19 +22,5 @@ class WorkspaceUser {
   final DateTime createdAt;
   final String? email;
   final String? profileImageUrl;
-  final WorkspaceUserCreatedBy? createdBy;
-}
-
-class WorkspaceUserCreatedBy {
-  WorkspaceUserCreatedBy({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.profileImageUrl,
-  });
-
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String? profileImageUrl;
+  final CreatedBy? createdBy;
 }

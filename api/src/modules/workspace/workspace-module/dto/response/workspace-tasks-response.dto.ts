@@ -14,6 +14,13 @@ export interface WorkspaceTaskResponse {
     profileImageUrl: string | null;
     status: ProgressStatus;
   }[];
+  // Will be null in the case user has deleted their account
+  createdBy: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profileImageUrl: string | null;
+  } | null;
   createdAt: string;
 }
 

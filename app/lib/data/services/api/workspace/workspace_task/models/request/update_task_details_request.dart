@@ -29,7 +29,6 @@ class UpdateTaskDetailsRequest {
       json['rewardPoints'] = rewardPoints!.value;
     }
     if (dueDate != null) {
-      print('yoo ${dueDate!.value}');
       json['dueDate'] = dueDate!.value?.toIso8601String();
     }
 

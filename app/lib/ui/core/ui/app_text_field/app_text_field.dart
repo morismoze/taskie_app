@@ -18,6 +18,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.maxCharacterCount,
+    this.suffixIcon,
   });
 
   final TextEditingController controller;
@@ -31,6 +32,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final int? maxCharacterCount;
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +92,13 @@ class AppTextField extends StatelessWidget {
                   '${controller.text.length}/$maxCharacterCount',
                   style: Theme.of(builderContext).textTheme.labelMedium,
                 ),
+              )
+            : null,
+        suffixIcon: suffixIcon != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [suffixIcon!],
               )
             : null,
       ),

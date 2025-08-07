@@ -166,6 +166,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksDetailsEdit => 'Edit task details';
 
   @override
+  String get tasksDetailsEditCreatedBy => 'Task created by';
+
+  @override
+  String get tasksDetailsEditCreatedByDeletedAccount =>
+      'Creator deleted their account';
+
+  @override
+  String get tasksDetailsEditCreatedAt => 'Task created at';
+
+  @override
+  String get tasksDetailsEditSectionTitle => 'Edit details';
+
+  @override
   String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override

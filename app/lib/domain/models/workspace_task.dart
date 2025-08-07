@@ -1,5 +1,6 @@
 import '../../data/services/api/workspace/progress_status.dart';
 import 'assignee.dart';
+import 'created_by.dart';
 
 class WorkspaceTask {
   WorkspaceTask({
@@ -8,6 +9,7 @@ class WorkspaceTask {
     required this.rewardPoints,
     required this.assignees,
     required this.createdAt,
+    required this.createdBy,
     required this.description,
     required this.dueDate,
     this.isNew = false,
@@ -18,6 +20,7 @@ class WorkspaceTask {
   final int rewardPoints;
   final List<WorkspaceTaskAssignee> assignees;
   final DateTime createdAt;
+  final CreatedBy? createdBy;
   final String? description;
   final DateTime? dueDate;
 

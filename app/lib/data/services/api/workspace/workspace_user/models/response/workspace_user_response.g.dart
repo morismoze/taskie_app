@@ -19,21 +19,10 @@ WorkspaceUserResponse _$WorkspaceUserResponseFromJson(
   profileImageUrl: json['profileImageUrl'] as String?,
   createdBy: json['createdBy'] == null
       ? null
-      : WorkspaceUserCreatedByResponse.fromJson(
-          json['createdBy'] as Map<String, dynamic>,
-        ),
+      : CreatedByResponse.fromJson(json['createdBy'] as Map<String, dynamic>),
 );
 
 const _$WorkspaceRoleEnumMap = {
   WorkspaceRole.manager: 'MANAGER',
   WorkspaceRole.member: 'MEMBER',
 };
-
-WorkspaceUserCreatedByResponse _$WorkspaceUserCreatedByResponseFromJson(
-  Map<String, dynamic> json,
-) => WorkspaceUserCreatedByResponse(
-  id: json['id'] as String,
-  firstName: json['firstName'] as String,
-  lastName: json['lastName'] as String,
-  profileImageUrl: json['profileImageUrl'] as String?,
-);

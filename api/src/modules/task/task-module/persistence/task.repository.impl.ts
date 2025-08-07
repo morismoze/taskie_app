@@ -106,6 +106,8 @@ export class TaskRepositoryImpl implements TaskRepository {
       .leftJoinAndSelect('task.taskAssignments', 'assignment')
       .leftJoinAndSelect('assignment.assignee', 'assignee')
       .leftJoinAndSelect('assignee.user', 'user')
+      .leftJoinAndSelect('task.createdBy', 'createdBy')
+      .leftJoinAndSelect('createdBy.user', 'createdByUser')
       .where('task.workspace.id = :workspaceId', { workspaceId });
 
     if (status) {

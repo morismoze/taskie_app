@@ -166,6 +166,19 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksDetailsEdit => 'Uređivanje detalja zadatka';
 
   @override
+  String get tasksDetailsEditCreatedBy => 'Zadatak kreirao/la';
+
+  @override
+  String get tasksDetailsEditCreatedByDeletedAccount =>
+      'Kreator je izbrisao račun';
+
+  @override
+  String get tasksDetailsEditCreatedAt => 'Zadatak kreiran';
+
+  @override
+  String get tasksDetailsEditSectionTitle => 'Uredite detalje';
+
+  @override
   String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
