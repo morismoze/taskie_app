@@ -8,10 +8,28 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 
-class TaskAssignmentTile extends StatelessWidget {
+class TaskAssignmentTile extends StatefulWidget {
   const TaskAssignmentTile({super.key, required this.assignee});
 
   final WorkspaceTaskAssignee assignee;
+
+  @override
+  State<TaskAssignmentTile> createState() => _TaskAssignmentTileState();
+}
+
+class _TaskAssignmentTileState extends State<TaskAssignmentTile> {
+  late AppSelectFieldOption _activeStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _activeStatus = AppSelectFieldOption(
+        label: widget.assignee.status.l10n(context),
+        value: widget.assignee.status,
+      );
+    });
+  }
 
   void _onStatusChange(List<AppSelectFieldOption> selectedOptions) {
     // invoke view model command
@@ -37,10 +55,6 @@ class TaskAssignmentTile extends StatelessWidget {
         value: ProgressStatus.notCompleted,
       ),
     ];
-    final activeStatus = AppSelectFieldOption(
-      label: assignee.status.l10n(context),
-      value: assignee.status,
-    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -51,14 +65,14 @@ class TaskAssignmentTile extends StatelessWidget {
             spacing: 16,
             children: [
               AppAvatar(
-                hashString: assignee.id,
-                firstName: assignee.firstName,
-                imageUrl: assignee.profileImageUrl,
+                hashString: widget.assignee.id,
+                firstName: widget.assignee.firstName,
+                imageUrl: widget.assignee.profileImageUrl,
               ),
               Text(
                 UserUtils.constructFullName(
-                  firstName: assignee.firstName,
-                  lastName: assignee.lastName,
+                  firstName: widget.assignee.firstName,
+                  lastName: widget.assignee.lastName,
                 ),
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                   fontWeight: FontWeight.bold,
@@ -69,8 +83,8 @@ class TaskAssignmentTile extends StatelessWidget {
           ),
           AppSelectField(
             options: options,
-            initialValue: [activeStatus],
-            onSelected: _onStatusChange,
+            value: [_activeStatus],
+            onChanged: _onStatusChange,
             onCleared: () {},
             label: context.localization.tasksAssignmentsEditStatusLabel,
           ),

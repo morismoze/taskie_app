@@ -26,14 +26,25 @@ class _WorkspaceUserDetailsEditFormState
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  late WorkspaceRole? _selectedRole;
+  late AppSelectFieldOption<WorkspaceRole>? _selectedRole;
+  final bool _isInit = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedRole = widget.viewModel.details!.role;
     _firstNameController.text = widget.viewModel.details!.firstName;
     _lastNameController.text = widget.viewModel.details!.lastName;
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!_isInit) {
+      _selectedRole = AppSelectFieldOption(
+        label: widget.viewModel.details!.role.l10n(context),
+        value: widget.viewModel.details!.role,
+      );
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -43,9 +54,9 @@ class _WorkspaceUserDetailsEditFormState
     super.dispose();
   }
 
-  void _onRoleSelected(List<AppSelectFieldOption> selectedOptions) {
+  void _onRoleSelected(AppSelectFieldOption<WorkspaceRole> selectedOption) {
     setState(() {
-      _selectedRole = selectedOptions[0].value as WorkspaceRole;
+      _selectedRole = selectedOption;
     });
   }
 
@@ -57,7 +68,7 @@ class _WorkspaceUserDetailsEditFormState
 
   @override
   Widget build(BuildContext context) {
-    final roles = List<AppSelectFieldOption>.from([
+    final roles = List<AppSelectFieldOption<WorkspaceRole>>.from([
       AppSelectFieldOption(
         label: WorkspaceRole.manager.l10n(context),
         value: WorkspaceRole.manager,
@@ -67,10 +78,6 @@ class _WorkspaceUserDetailsEditFormState
         value: WorkspaceRole.member,
       ),
     ]).toList();
-    final initialRole = AppSelectFieldOption(
-      label: widget.viewModel.details!.role.l10n(context),
-      value: widget.viewModel.details!.role,
-    );
     // Virtual users don't have emails, and real users must have emails.
     final isVirtualUser = widget.viewModel.details!.email == null;
 
@@ -119,11 +126,11 @@ class _WorkspaceUserDetailsEditFormState
                 : null,
           ),
           const SizedBox(height: 10),
-          AppSelectFormField(
+          AppSelectFormField.single(
             options: roles,
             validator: (selected) => _validateRole(context, selected),
-            initialValue: [initialRole],
-            onSelected: _onRoleSelected,
+            value: _selectedRole,
+            onChanged: _onRoleSelected,
             onCleared: _onRoleCleared,
             label: context.localization.roleLabel,
             // Role is not editable for virtual users
@@ -154,11 +161,12 @@ class _WorkspaceUserDetailsEditFormState
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
+      final role = _selectedRole!.value;
 
       widget.viewModel.editWorkspaceUserDetails.execute((
         firstName,
         lastName,
-        _selectedRole,
+        role,
       ));
     }
   }

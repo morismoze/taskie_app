@@ -4,12 +4,10 @@ import '../../theme/colors.dart';
 import '../app_field_button.dart';
 import 'app_select_field.dart';
 
-/// This abstraction is made so that the same select field with
-/// pre-selected options can be used in the AppSelectField widget
-/// and in the TaskDetailsEditForm/GoalDetailsEditForm widgets - in
-/// these form widgets, this widget is used as a "tappable button",
-/// rather than a select field, hence why this layer of abstraction
-/// is needed.
+/// This abstraction widget is made so that the same select field with
+/// pre-selected options can be used in the AppSelectField widget and
+/// as a selected-options-display-widget (e.g. used as a "tappable
+/// button", rather than a select field).
 class AppSelectFieldSelectedOptions extends StatelessWidget {
   const AppSelectFieldSelectedOptions({
     super.key,

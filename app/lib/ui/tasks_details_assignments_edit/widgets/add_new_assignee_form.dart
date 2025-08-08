@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -20,8 +21,8 @@ class AddNewAssigneeForm extends StatefulWidget {
 
 class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
   final _formKey = GlobalKey<FormState>();
-  List<AppSelectFieldOption> options = [];
-  List<String> _selectedAssigneeWorkspaceIds = [];
+  List<AppSelectFieldOption<WorkspaceUser>> options = [];
+  List<AppSelectFieldOption<WorkspaceUser>> _selectedAssignees = [];
 
   @override
   void didChangeDependencies() {
@@ -30,9 +31,9 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
         firstName: user.firstName,
         lastName: user.lastName,
       );
-      return AppSelectFieldOption(
+      return AppSelectFieldOption<WorkspaceUser>(
         label: fullName,
-        value: user.id,
+        value: user,
         leading: AppAvatar(
           hashString: user.id,
           firstName: user.firstName,
@@ -43,18 +44,17 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
     super.didChangeDependencies();
   }
 
-  void _onAssigneesSelected(List<AppSelectFieldOption> selectedOptions) {
+  void _onAssigneesSelected(
+    List<AppSelectFieldOption<WorkspaceUser>> selectedOptions,
+  ) {
     setState(() {
-      // Take selected workspace IDs
-      _selectedAssigneeWorkspaceIds = selectedOptions
-          .map((option) => option.value as String)
-          .toList();
+      _selectedAssignees = selectedOptions;
     });
   }
 
   void _onAssigneesCleared() {
     setState(() {
-      _selectedAssigneeWorkspaceIds = [];
+      _selectedAssignees = [];
     });
   }
 
@@ -78,7 +78,8 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
               const SizedBox(height: 10),
               AppSelectFormField(
                 options: options,
-                onSelected: _onAssigneesSelected,
+                value: _selectedAssignees,
+                onChanged: _onAssigneesSelected,
                 onCleared: _onAssigneesCleared,
                 label: context.localization.objectiveAssigneeLabel,
                 multiple: true,
@@ -94,7 +95,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
                 builder: (builderContext, _) => AppFilledButton(
                   onPress: _onSubmit,
                   label: builderContext.localization.taskCreateNew,
-                  loading: widget.viewModel.addNewAssignee.running,
+                  loading: widget.viewModel.addNewAssignees.running,
                 ),
               ),
             ],
@@ -106,7 +107,10 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      widget.viewModel.addNewAssignee.execute(_selectedAssigneeWorkspaceIds);
+      final assigneesIds = _selectedAssignees
+          .map((assignee) => assignee.value.id)
+          .toList();
+      widget.viewModel.addNewAssignees.execute(assigneesIds);
     }
   }
 

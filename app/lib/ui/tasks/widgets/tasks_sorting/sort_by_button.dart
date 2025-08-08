@@ -60,7 +60,7 @@ class _SortByButtonState extends State<SortByButton> {
       context: context,
       child: AppSelectFieldOptions(
         options: options,
-        selectedOptions: selectedOptions,
+        value: selectedOptions,
         onSubmit: _onSubmit,
       ),
     );

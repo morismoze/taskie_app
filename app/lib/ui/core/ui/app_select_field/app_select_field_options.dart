@@ -8,38 +8,41 @@ import '../app_filled_button.dart';
 import '../app_text_button.dart';
 import 'app_select_field.dart';
 
-class AppSelectFieldOptions extends StatefulWidget {
+class AppSelectFieldOptions<T> extends StatefulWidget {
   const AppSelectFieldOptions({
     super.key,
     required this.options,
-    required this.selectedOptions,
+    required this.value,
     required this.onSubmit,
     this.multiple = false,
+    this.isSubmitLoading = false,
     this.max,
   });
 
-  final List<AppSelectFieldOption> options;
-  final List<AppSelectFieldOption> selectedOptions;
-  final void Function(List<AppSelectFieldOption>) onSubmit;
+  final List<AppSelectFieldOption<T>> options;
+  final List<AppSelectFieldOption<T>> value;
+  final void Function(List<AppSelectFieldOption<T>>) onSubmit;
   final bool multiple;
+  final bool isSubmitLoading;
   final int? max;
 
   @override
-  State<AppSelectFieldOptions> createState() => _AppSelectFieldOptionsState();
+  State<AppSelectFieldOptions<T>> createState() =>
+      _AppSelectFieldOptionsState<T>();
 }
 
-class _AppSelectFieldOptionsState extends State<AppSelectFieldOptions> {
-  late List<AppSelectFieldOption> _selectedOptions;
+class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
+  late List<AppSelectFieldOption<T>> _selectedOptions;
 
   @override
   void initState() {
     super.initState();
     // We need to copy values from the given list and not assign it directly
     // beacuse we would change direct reference (the given list).
-    _selectedOptions = List.from(widget.selectedOptions);
+    _selectedOptions = List.from(widget.value);
   }
 
-  void _onOptionTap(AppSelectFieldOption option) {
+  void _onOptionTap(AppSelectFieldOption<T> option) {
     setState(() {
       if (widget.multiple) {
         if (_selectedOptions.contains(option)) {
@@ -102,6 +105,7 @@ class _AppSelectFieldOptionsState extends State<AppSelectFieldOptions> {
           children: [
             AppFilledButton(
               onPress: _onSubmit,
+              loading: widget.isSubmitLoading,
               label: context.localization.misc_submit,
             ),
             AppTextButton(

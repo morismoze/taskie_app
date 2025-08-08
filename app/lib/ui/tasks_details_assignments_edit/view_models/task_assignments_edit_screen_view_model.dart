@@ -25,7 +25,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
     editTaskDetails = Command1(_editTaskAssignments);
-    addNewAssignee = Command1(_addNewAssignee);
+    addNewAssignees = Command1(_addNewAssignees);
   }
 
   final String _activeWorkspaceId;
@@ -39,7 +39,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
     (String? title, String? description, int? rewardPoints, DateTime? dueDate)
   >
   editTaskDetails;
-  late Command1<void, List<String>> addNewAssignee;
+  late Command1<void, List<String>> addNewAssignees;
   late Command1<void, String> loadWorkspaceMembers;
 
   String get activeWorkspaceId => _activeWorkspaceId;
@@ -125,7 +125,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Result<void>> _addNewAssignee(List<String> assigneeIds) async {
+  Future<Result<void>> _addNewAssignees(List<String> assigneeIds) async {
     return const Result.ok(null);
   }
 

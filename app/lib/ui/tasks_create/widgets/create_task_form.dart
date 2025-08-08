@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_date_picker_field/app_date_picker_form_field.dart';
@@ -27,22 +28,22 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  List<String> _selectedAssigneeWorkspaceIds = [];
+  List<AppSelectFieldOption<WorkspaceUser>> _selectedAssignees = [];
   int _rewardPoints = ObjectiveRules.rewardPointsMin;
   DateTime? _dueDate;
 
-  void _onAssigneesSelected(List<AppSelectFieldOption> selectedOptions) {
+  void _onAssigneesSelected(
+    List<AppSelectFieldOption<WorkspaceUser>> selectedOptions,
+  ) {
     setState(() {
       // Take selected workspace IDs
-      _selectedAssigneeWorkspaceIds = selectedOptions
-          .map((option) => option.value as String)
-          .toList();
+      _selectedAssignees = selectedOptions;
     });
   }
 
   void _onAssigneesCleared() {
     setState(() {
-      _selectedAssigneeWorkspaceIds = [];
+      _selectedAssignees = [];
     });
   }
 
@@ -71,9 +72,9 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         firstName: user.firstName,
         lastName: user.lastName,
       );
-      return AppSelectFieldOption(
+      return AppSelectFieldOption<WorkspaceUser>(
         label: fullName,
-        value: user.id,
+        value: user,
         leading: AppAvatar(
           hashString: user.id,
           firstName: user.firstName,
@@ -109,7 +110,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           const SizedBox(height: 10),
           AppSelectFormField(
             options: options,
-            onSelected: _onAssigneesSelected,
+            value: _selectedAssignees,
+            onChanged: _onAssigneesSelected,
             onCleared: _onAssigneesCleared,
             label: context.localization.objectiveAssigneeLabel,
             multiple: true,
@@ -156,11 +158,14 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       final description = trimmedDescription.isNotEmpty
           ? trimmedDescription
           : null;
+      final assigneesIds = _selectedAssignees
+          .map((assignee) => assignee.value.id)
+          .toList();
 
       widget.viewModel.createTask.execute((
         title,
         description,
-        _selectedAssigneeWorkspaceIds,
+        assigneesIds,
         _rewardPoints,
         _dueDate,
       ));
