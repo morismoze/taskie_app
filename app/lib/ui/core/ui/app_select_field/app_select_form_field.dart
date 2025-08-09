@@ -39,15 +39,15 @@ class AppSelectFormField<T> extends FormField<List<AppSelectFieldOption<T>>> {
                    onChanged(selected);
                    state.validate();
                  },
-                 onCleared: () {
-                   if (onCleared != null) {
-                     state.didChange([]);
-                     onCleared();
-                     state.validate();
-                   }
-                 },
+                 onCleared: onCleared != null
+                     ? () {
+                         state.didChange([]);
+                         onCleared();
+                         state.validate();
+                       }
+                     : null,
                  value: state.value ?? [],
-                 enabled: enabled ?? true,
+                 enabled: enabled,
                  max: max,
                  trailing: trailing,
                ),

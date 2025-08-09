@@ -39,9 +39,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_roleMember => 'Član';
 
   @override
-  String get misc_orSeparator => 'ili';
-
-  @override
   String get misc_ok => 'U redu';
 
   @override
@@ -166,6 +163,9 @@ class AppLocalizationsHr extends AppLocalizations {
   }
 
   @override
+  String get tasksDetails => 'Detalji zadatka';
+
+  @override
   String get tasksDetailsEdit => 'Uređivanje detalja zadatka';
 
   @override
@@ -179,10 +179,34 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksDetailsEditCreatedAt => 'Zadatak kreiran';
 
   @override
+  String get tasksDetailsEditSuccess => 'Uspješno ste uredili detalje zadatka';
+
+  @override
+  String get tasksDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
+
+  @override
+  String get tasksDetailsCloseTask => 'Zatvori zadatak';
+
+  @override
+  String get tasksDetailsCloseTaskModalMessage =>
+      'Jeste li sigurni da želite zatvoriti ovaj zadatak?';
+
+  @override
+  String get tasksDetailsCloseSuccess => 'Uspješno ste zatvorili zadatak';
+
+  @override
+  String get tasksDetailsCloseError =>
+      'Uh-oh! Došlo je do problema prilikom zatvaranja zadatka';
+
+  @override
   String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
   String get tasksAssignmentsEditStatusLabel => 'Status';
+
+  @override
+  String get tasksAssignmentsEditStatusSubmit => 'Ažuriraj dodjele';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
@@ -553,11 +577,4 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get workspaceCreationSuccess =>
       'Uspješno ste kreirali novi radni prostor';
-
-  @override
-  String get taskDetailsEditSuccess => 'Uspješno ste uredili detalje zadatka';
-
-  @override
-  String get taskDetailsEditError =>
-      'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
 }

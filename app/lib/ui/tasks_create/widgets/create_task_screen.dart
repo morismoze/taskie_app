@@ -26,8 +26,8 @@ class CreateTaskScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.createTask.addListener(_onResult);
+    super.initState();
   }
 
   @override

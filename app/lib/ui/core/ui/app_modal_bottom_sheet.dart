@@ -64,7 +64,8 @@ class AppModalBottomSheet {
               ),
             ),
           ),
-          Flexible(
+          Align(
+            alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                 Dimens.paddingHorizontal,

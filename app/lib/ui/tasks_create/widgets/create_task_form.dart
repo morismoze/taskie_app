@@ -137,7 +137,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             min: ObjectiveRules.rewardPointsMin.toDouble(),
             max: ObjectiveRules.rewardPointsMax.toDouble(),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.createTask,
             builder: (builderContext, _) => AppFilledButton(

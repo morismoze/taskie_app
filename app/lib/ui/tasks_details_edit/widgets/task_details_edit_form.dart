@@ -35,13 +35,13 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
   @override
   void initState() {
-    super.initState();
     _titleController.text = widget.viewModel.details!.title;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
     _rewardPointsNotifier = ValueNotifier(
       widget.viewModel.details!.rewardPoints,
     );
     _dueDateNotifier = ValueNotifier(widget.viewModel.details!.dueDate);
+    super.initState();
   }
 
   @override
@@ -109,7 +109,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
             selectedOptions: selectedOptions,
             isFieldFocused: true,
             onTap: () => context.push(
-              Routes.taskEditAssignments(
+              Routes.taskDetailsAssignmentsEdit(
                 workspaceId: widget.viewModel.activeWorkspaceId,
                 taskId: widget.viewModel.details!.id,
               ),

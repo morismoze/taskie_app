@@ -23,9 +23,9 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
 
   @override
   void initState() {
-    super.initState();
     _nameController.text = widget.viewModel.details!.name;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
+    super.initState();
   }
 
   @override
@@ -61,7 +61,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             required: false,
             maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.editWorkspaceDetails,
             builder: (builderContext, _) => AppFilledButton(

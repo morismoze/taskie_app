@@ -15,6 +15,7 @@ class AppSliderFormField extends FormField<double> {
     required double max,
     required int step,
     bool required = true,
+    bool readOnly = false,
   }) : super(
          builder: (FormFieldState<double> state) {
            final context = state.context;
@@ -34,6 +35,7 @@ class AppSliderFormField extends FormField<double> {
                  min: min,
                  max: max,
                  required: required,
+                 readOnly: readOnly,
                ),
                Padding(
                  padding: EdgeInsets.only(

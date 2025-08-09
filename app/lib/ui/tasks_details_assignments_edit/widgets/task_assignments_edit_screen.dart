@@ -11,7 +11,7 @@ import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
 import '../view_models/task_assignments_edit_screen_view_model.dart';
 import 'add_new_assignee_form.dart';
-import 'task_assignment_tile.dart';
+import 'edit_assignments_form.dart';
 
 class TaskAssignmentsEditScreen extends StatefulWidget {
   const TaskAssignmentsEditScreen({super.key, required this.viewModel});
@@ -26,22 +26,24 @@ class TaskAssignmentsEditScreen extends StatefulWidget {
 class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void initState() {
+    widget.viewModel.editTaskDetails.addListener(_onTaskAssignmentsEditResult);
     super.initState();
-    widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
   }
 
   @override
   void didUpdateWidget(covariant TaskAssignmentsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.editTaskDetails.removeListener(
-      _onTaskDetailsEditResult,
+      _onTaskAssignmentsEditResult,
     );
-    widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
+    widget.viewModel.editTaskDetails.addListener(_onTaskAssignmentsEditResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.editTaskDetails.removeListener(_onTaskDetailsEditResult);
+    widget.viewModel.editTaskDetails.removeListener(
+      _onTaskAssignmentsEditResult,
+    );
     super.dispose();
   }
 
@@ -74,10 +76,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                           vertical: Dimens.paddingVertical,
                         ),
                         children: [
-                          ...widget.viewModel.assignees!.map(
-                            (assignee) =>
-                                TaskAssignmentTile(assignee: assignee),
-                          ),
+                          EditAssignmentsForm(viewModel: widget.viewModel),
                           ListenableBuilder(
                             listenable: widget.viewModel,
                             builder: (builderContext, _) {
@@ -91,7 +90,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
 
                               return Column(
                                 children: [
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 40),
                                   const Separator(),
                                   const SizedBox(height: 30),
                                   AddNewAssigneeForm(
@@ -114,12 +113,12 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
     );
   }
 
-  void _onTaskDetailsEditResult() {
+  void _onTaskAssignmentsEditResult() {
     if (widget.viewModel.editTaskDetails.completed) {
       widget.viewModel.editTaskDetails.clearResult();
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.taskDetailsEditSuccess,
+        message: context.localization.tasksDetailsEditSuccess,
       );
       context.pop(); // Navigate back to tasks page
     }
@@ -128,7 +127,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.editTaskDetails.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.taskDetailsEditError,
+        message: context.localization.tasksDetailsEditError,
       );
     }
   }

@@ -5,16 +5,18 @@ abstract final class Routes {
   // Public routes
   static const login = '/login';
 
+  // Resuable subroutes
+  static const createRelative = 'create';
+  static const editRelative = 'edit';
+
   // Private routes
   static const workspacesRelative = 'workspaces';
 
-  static const workspaceCreateInitialRelative = 'create/initial';
+  static const workspaceCreateInitialRelative = '$createRelative/initial';
   static const workspaceCreateInitial =
       '/$workspacesRelative/$workspaceCreateInitialRelative';
 
-  static const workspaceCreateRelative = 'create';
-  static const workspaceCreate =
-      '/$workspacesRelative/$workspaceCreateRelative';
+  static const workspaceCreate = '/$workspacesRelative/$createRelative';
 
   static const workspaceJoinRelative = 'join';
   static String workspaceJoin(String inviteToken) =>
@@ -28,15 +30,13 @@ abstract final class Routes {
     required String workspaceUserId,
   }) =>
       '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUserId';
-  static const workspaceUsersEditUserDetailsRelative = 'edit';
   static String workspaceUsersEditUserDetails({
     required String workspaceId,
     required String workspaceUserId,
   }) =>
-      '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUserId/$workspaceUsersEditUserDetailsRelative';
-  static const workspaceUsersCreateRelative = 'create';
+      '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUserId/$editRelative';
   static String workspaceUsersCreate({required String workspaceId}) =>
-      '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersCreateRelative';
+      '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$createRelative';
   static const workspaceUsersGuideRelative = 'guide';
   static String workspaceUsersGuide({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersGuideRelative';
@@ -44,28 +44,31 @@ abstract final class Routes {
   static const workspaceSettingsRelative = 'settings';
   static String workspaceSettings({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$workspaceSettingsRelative';
-  static const workspaceSettingsEditWorkspaceSettingsRelative = 'edit';
   static String workspaceSettingsEditWorkspaceSettings({
     required String workspaceId,
   }) =>
-      '/$workspacesRelative/$workspaceId/$workspaceSettingsRelative/$workspaceSettingsEditWorkspaceSettingsRelative';
+      '/$workspacesRelative/$workspaceId/$workspaceSettingsRelative/$editRelative';
 
   static const tasksRelative = 'tasks';
   static String tasks({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$tasksRelative';
-  static const taskCreateRelative = 'create';
   static String taskCreate({required String workspaceId}) =>
-      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskCreateRelative';
-  static String taskEditDetails({
+      '/$workspacesRelative/$workspaceId/$tasksRelative/$createRelative';
+  static String taskDetails({
     required String workspaceId,
     required String taskId,
   }) => '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId';
-  static const taskEditAssignmentsRelative = 'assignments';
-  static String taskEditAssignments({
+  static String taskDetailsEdit({
     required String workspaceId,
     required String taskId,
   }) =>
-      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskEditAssignmentsRelative';
+      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$editRelative';
+  static const taskDetailsAssignmentsRelative = 'assignments';
+  static String taskDetailsAssignmentsEdit({
+    required String workspaceId,
+    required String taskId,
+  }) =>
+      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskDetailsAssignmentsRelative/$editRelative';
 
   static const leaderboardRelative = 'leaderboard';
   static String leaderboard({required String workspaceId}) =>
@@ -74,10 +77,9 @@ abstract final class Routes {
   static const goalsRelative = 'goals';
   static String goals({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$goalsRelative';
-  static const goalCreateRelative = 'create';
   static String goalCreate({required String workspaceId}) =>
-      '/$workspacesRelative/$workspaceId/$goalsRelative/$goalCreateRelative';
-  static String goalWithId({
+      '/$workspacesRelative/$workspaceId/$goalsRelative/$createRelative';
+  static String goalDetails({
     required String workspaceId,
     required String goalId,
   }) => '/$workspacesRelative/$workspaceId/$goalsRelative/$goalId';

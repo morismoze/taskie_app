@@ -16,6 +16,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
        _workspaceTaskRepository = workspaceTaskRepository {
     _loadWorkspaceTaskDetails();
     editTaskDetails = Command1(_editTaskDetails);
+    closeTask = Command0(_closeTask);
   }
 
   final String _activeWorkspaceId;
@@ -23,6 +24,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('TaskDetailsEditScreenViewModel');
 
+  late Command0 closeTask;
   late Command1<
     void,
     (String? title, String? description, int? rewardPoints, DateTime? dueDate)
@@ -78,5 +80,9 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
         _log.warning('Failed to update task details', result.error);
         return result;
     }
+  }
+
+  Future<Result<void>> _closeTask() async {
+    return const Result.ok(null);
   }
 }

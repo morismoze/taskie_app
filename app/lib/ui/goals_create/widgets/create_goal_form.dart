@@ -120,7 +120,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.createGoal,
             builder: (builderContext, _) => AppFilledButton(

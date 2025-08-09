@@ -12,6 +12,7 @@ class AppDatePickerFormField extends FormField<DateTime> {
     required void Function(DateTime selectedDate) onSelected,
     required void Function() onCleared,
     bool required = true,
+    bool readOnly = false,
     DateTime? minimumDate,
     DateTime? maximumDate,
   }) : super(
@@ -40,6 +41,7 @@ class AppDatePickerFormField extends FormField<DateTime> {
                  minimumDate: minimumDate,
                  maximumDate: maximumDate,
                  required: required,
+                 readOnly: readOnly,
                ),
                Padding(
                  padding: EdgeInsets.only(

@@ -18,6 +18,7 @@ class AppDatePickerField extends StatefulWidget {
     required this.onCleared,
     required this.label,
     this.required = true,
+    this.readOnly = false,
     this.initialValue,
     this.minimumDate,
     this.maximumDate,
@@ -27,6 +28,7 @@ class AppDatePickerField extends StatefulWidget {
   final void Function() onCleared;
   final String label;
   final bool required;
+  final bool readOnly;
   final DateTime? initialValue;
   final DateTime? minimumDate;
   final DateTime? maximumDate;
@@ -40,10 +42,10 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
 
   @override
   void initState() {
-    super.initState();
     if (widget.initialValue != null) {
       _selectedDate = widget.initialValue!;
     }
+    super.initState();
   }
 
   void _clearSelections() {
@@ -91,7 +93,7 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
       required: widget.required,
       label: widget.label,
       isFieldFocused: isDateSelected,
-      onTap: () => _openDatePicker(context),
+      onTap: widget.readOnly ? () {} : () => _openDatePicker(context),
       trailing: trailing,
       child: _selectedDate != null
           ? Text(
@@ -138,11 +140,6 @@ class _AppDatePicker extends StatefulWidget {
 
 class _AppDatePickerState extends State<_AppDatePicker> {
   DateTime _selectedDate = DateTime.now();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _onDateTimeChanged(DateTime newDate) {
     setState(() {

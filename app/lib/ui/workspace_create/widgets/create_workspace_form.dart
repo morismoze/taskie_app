@@ -63,7 +63,7 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
                 maxCharacterCount:
                     ValidationRules.workspaceDescriptionMaxLength,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               ListenableBuilder(
                 listenable: widget.viewModel.createWorkspace,
                 builder: (builderContext, _) => AppFilledButton(

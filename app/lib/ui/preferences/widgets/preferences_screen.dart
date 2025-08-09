@@ -9,36 +9,13 @@ import '../view_models/preferences_screen_viewmodel.dart';
 import 'sections/localization_section/localization_section.dart';
 import 'sections/theme_section/theme_section.dart';
 
-class PreferencesScreen extends StatefulWidget {
+class PreferencesScreen extends StatelessWidget {
   const PreferencesScreen({super.key, required this.viewModel});
 
   final PreferencesScreenViewModel viewModel;
 
-  @override
-  State<StatefulWidget> createState() => _PreferencesScreenState();
-}
-
-class _PreferencesScreenState extends State<PreferencesScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant PreferencesScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   List<Widget> _getPreferencesSectionsWidgets() {
-    return [
-      LocalizationSection(viewModel: widget.viewModel),
-      const ThemeSection(),
-    ];
+    return [LocalizationSection(viewModel: viewModel), const ThemeSection()];
   }
 
   @override

@@ -23,11 +23,11 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.changeActiveWorkspace.addListener(
       _onActiveWorkspaceChangeResult,
     );
     widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
+    super.initState();
   }
 
   @override

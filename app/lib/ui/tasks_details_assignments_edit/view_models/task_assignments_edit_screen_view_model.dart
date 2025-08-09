@@ -5,7 +5,6 @@ import 'package:logging/logging.dart';
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
 import '../../../data/services/api/user/models/response/user_response.dart';
-import '../../../data/services/api/value_patch.dart';
 import '../../../domain/models/workspace_task.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
@@ -100,29 +99,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
     (String? title, String? description, int? rewardPoints, DateTime? dueDate)
     details,
   ) async {
-    final (title, description, rewardPoints, dueDate) = details;
-
-    final hasTitleChanged = title != _details!.title;
-    final hasDescriptionChanged = description != _details!.description;
-    final hasRewardPointsChanged = rewardPoints != _details!.rewardPoints;
-    final hasDueDateChanged = dueDate != _details!.dueDate;
-
-    final result = await _workspaceTaskRepository.updateTaskDetails(
-      _activeWorkspaceId,
-      _details!.id,
-      title: hasTitleChanged ? ValuePatch(title!) : null,
-      description: hasDescriptionChanged ? ValuePatch(description) : null,
-      rewardPoints: hasRewardPointsChanged ? ValuePatch(rewardPoints!) : null,
-      dueDate: hasDueDateChanged ? ValuePatch(dueDate) : null,
-    );
-
-    switch (result) {
-      case Ok():
-        return const Result.ok(null);
-      case Error():
-        _log.warning('Failed to update task details', result.error);
-        return result;
-    }
+    return const Result.ok(null);
   }
 
   Future<Result<void>> _addNewAssignees(List<String> assigneeIds) async {

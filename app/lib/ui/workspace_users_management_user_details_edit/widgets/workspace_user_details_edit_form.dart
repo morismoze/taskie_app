@@ -31,20 +31,20 @@ class _WorkspaceUserDetailsEditFormState
 
   @override
   void initState() {
-    super.initState();
     _firstNameController.text = widget.viewModel.details!.firstName;
     _lastNameController.text = widget.viewModel.details!.lastName;
+    super.initState();
   }
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     if (!_isInit) {
       _selectedRole = AppSelectFieldOption(
         label: widget.viewModel.details!.role.l10n(context),
         value: widget.viewModel.details!.role,
       );
     }
-    super.didChangeDependencies();
   }
 
   @override
@@ -143,7 +143,7 @@ class _WorkspaceUserDetailsEditFormState
                   )
                 : null,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.editWorkspaceUserDetails,
             builder: (builderContext, _) => AppFilledButton(

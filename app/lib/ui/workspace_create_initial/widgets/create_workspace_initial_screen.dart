@@ -25,7 +25,6 @@ class _CreateWorkspaceInitialScreenState
     extends State<CreateWorkspaceInitialScreen> {
   @override
   void initState() {
-    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
@@ -35,6 +34,7 @@ class _CreateWorkspaceInitialScreenState
       ),
     );
     widget.viewModel.createWorkspace.addListener(_onResult);
+    super.initState();
   }
 
   @override

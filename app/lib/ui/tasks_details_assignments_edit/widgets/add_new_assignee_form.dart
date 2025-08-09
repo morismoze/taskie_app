@@ -20,28 +20,31 @@ class AddNewAssigneeForm extends StatefulWidget {
 }
 
 class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
+  final bool _isInit = true; // First init flag
   final _formKey = GlobalKey<FormState>();
   List<AppSelectFieldOption<WorkspaceUser>> options = [];
   List<AppSelectFieldOption<WorkspaceUser>> _selectedAssignees = [];
 
   @override
   void didChangeDependencies() {
-    options = widget.viewModel.workspaceMembers.map((user) {
-      final fullName = UserUtils.constructFullName(
-        firstName: user.firstName,
-        lastName: user.lastName,
-      );
-      return AppSelectFieldOption<WorkspaceUser>(
-        label: fullName,
-        value: user,
-        leading: AppAvatar(
-          hashString: user.id,
-          firstName: user.firstName,
-          imageUrl: user.profileImageUrl,
-        ),
-      );
-    }).toList();
     super.didChangeDependencies();
+    if (_isInit) {
+      options = widget.viewModel.workspaceMembers.map((user) {
+        final fullName = UserUtils.constructFullName(
+          firstName: user.firstName,
+          lastName: user.lastName,
+        );
+        return AppSelectFieldOption<WorkspaceUser>(
+          label: fullName,
+          value: user,
+          leading: AppAvatar(
+            hashString: user.id,
+            firstName: user.firstName,
+            imageUrl: user.profileImageUrl,
+          ),
+        );
+      }).toList();
+    }
   }
 
   void _onAssigneesSelected(
@@ -75,7 +78,6 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
           autovalidateMode: AutovalidateMode.onUnfocus,
           child: Column(
             children: [
-              const SizedBox(height: 10),
               AppSelectFormField(
                 options: options,
                 value: _selectedAssignees,
@@ -89,7 +91,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
                 validator: (assignees) =>
                     _validateAssignees(context, assignees),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               ListenableBuilder(
                 listenable: widget.viewModel.editTaskDetails,
                 builder: (builderContext, _) => AppFilledButton(

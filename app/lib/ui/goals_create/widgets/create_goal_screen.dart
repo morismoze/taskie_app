@@ -26,8 +26,8 @@ class CreateGoalScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.createGoal.addListener(_onResult);
+    super.initState();
   }
 
   @override

@@ -20,7 +20,6 @@ class AppStartup extends StatefulWidget {
 class _AppStartupState extends State<AppStartup> {
   @override
   void initState() {
-    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
@@ -29,6 +28,7 @@ class _AppStartupState extends State<AppStartup> {
         systemNavigationBarContrastEnforced: false,
       ),
     );
+    super.initState();
   }
 
   @override

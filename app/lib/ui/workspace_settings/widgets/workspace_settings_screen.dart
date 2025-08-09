@@ -36,7 +36,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                 title: context.localization.workspaceSettings,
                 actions: [
                   Rbac(
-                    permission: RbacPermission.workspaceManageSettings,
+                    permission: RbacPermission.workspaceSettingsManage,
                     child: AppHeaderActionButton(
                       iconData: FontAwesomeIcons.pencil,
                       onTap: () {

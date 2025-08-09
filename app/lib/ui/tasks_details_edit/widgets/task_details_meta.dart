@@ -23,6 +23,7 @@ class _TaskDetailsMetaState extends State<TaskDetailsMeta> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     if (_isInit) {
       _createdByController.text = widget.viewModel.details!.createdBy != null
           ? UserUtils.constructFullName(
@@ -36,7 +37,6 @@ class _TaskDetailsMetaState extends State<TaskDetailsMeta> {
       );
     }
     _isInit = false;
-    super.didChangeDependencies();
   }
 
   @override

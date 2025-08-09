@@ -39,9 +39,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_roleMember => 'Member';
 
   @override
-  String get misc_orSeparator => 'or';
-
-  @override
   String get misc_ok => 'Ok';
 
   @override
@@ -166,6 +163,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tasksDetails => 'Task details';
+
+  @override
   String get tasksDetailsEdit => 'Edit task details';
 
   @override
@@ -179,10 +179,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksDetailsEditCreatedAt => 'Task created at';
 
   @override
+  String get tasksDetailsEditSuccess => 'Successfully edited task details';
+
+  @override
+  String get tasksDetailsEditError =>
+      'Uh-oh! We\'ve had some trouble editing task details';
+
+  @override
+  String get tasksDetailsCloseTask => 'Close task';
+
+  @override
+  String get tasksDetailsCloseTaskModalMessage =>
+      'Are you sure you want to close this task?';
+
+  @override
+  String get tasksDetailsCloseSuccess => 'Successfully closed the task';
+
+  @override
+  String get tasksDetailsCloseError =>
+      'Uh-oh! We\'ve had some trouble closing the task';
+
+  @override
   String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
   String get tasksAssignmentsEditStatusLabel => 'Status';
+
+  @override
+  String get tasksAssignmentsEditStatusSubmit => 'Update assignments';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
@@ -549,11 +573,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workspaceCreationSuccess =>
       'You\'ve successfully created new workspace';
-
-  @override
-  String get taskDetailsEditSuccess => 'Successfully edited task details';
-
-  @override
-  String get taskDetailsEditError =>
-      'Uh-oh! We\'ve had some trouble editing task details';
 }

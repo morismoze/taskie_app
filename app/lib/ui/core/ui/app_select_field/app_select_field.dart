@@ -93,7 +93,8 @@ class AppSelectField<T> extends StatelessWidget {
   final bool enabled;
   final bool isSubmitLoading;
 
-  /// Clear icon will be displayed if this method is passed.
+  /// 'Clear" trailing icon will be displayed if this method is passed
+  /// (and if the field is enabled).
   final void Function()? onCleared;
 
   /// Defines how many options can be selected when [multiple] is true.
@@ -102,14 +103,6 @@ class AppSelectField<T> extends StatelessWidget {
   /// This is mostly used in disabled state.
   final Widget? trailing;
 
-  void _clearSelections() {
-    onCleared!();
-  }
-
-  void _onSubmit(List<AppSelectFieldOption<T>> submittedOptions) {
-    onChanged(submittedOptions);
-  }
-
   @override
   Widget build(BuildContext context) {
     final hasSelection = value.isNotEmpty;
@@ -117,10 +110,13 @@ class AppSelectField<T> extends StatelessWidget {
     Widget? trailingWidget =
         trailing ??
         const FaIcon(FontAwesomeIcons.sort, color: AppColors.black1, size: 17);
-    if (enabled && hasSelection) {
+    // Clearing is enabled if:
+    // 1. field is enabled
+    // 2. `onCleared` was passed
+    if (enabled && onCleared != null && hasSelection) {
       // Clear selections icon
       trailingWidget = InkWell(
-        onTap: onCleared != null ? _clearSelections : null,
+        onTap: onCleared,
         child: const FaIcon(
           FontAwesomeIcons.solidCircleXmark,
           color: AppColors.black1,
@@ -151,7 +147,7 @@ class AppSelectField<T> extends StatelessWidget {
       child: AppSelectFieldOptions<T>(
         options: options,
         value: value,
-        onSubmit: _onSubmit,
+        onSubmit: onChanged,
         multiple: multiple,
         max: max,
       ),

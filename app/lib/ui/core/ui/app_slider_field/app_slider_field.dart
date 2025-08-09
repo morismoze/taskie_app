@@ -13,6 +13,7 @@ class AppSliderField extends StatelessWidget {
     required this.max,
     required this.step,
     this.required = true,
+    this.readOnly = false,
   });
 
   final String label;
@@ -22,6 +23,7 @@ class AppSliderField extends StatelessWidget {
   final double min;
   final double max;
   final bool required;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class AppSliderField extends StatelessWidget {
           // to true (old design), even though the old design should be depreceated
           year2023: false,
           value: value,
-          onChanged: onChanged,
+          onChanged: readOnly ? null : onChanged,
           divisions: divisions,
           max: max,
           min: min,

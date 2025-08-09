@@ -138,7 +138,7 @@ GoRouter router({
           },
         ),
         GoRoute(
-          path: Routes.workspaceCreateRelative,
+          path: Routes.createRelative,
           pageBuilder: (context, state) {
             return CustomTransitionPage(
               transitionDuration: const Duration(milliseconds: 250),
@@ -243,7 +243,7 @@ GoRouter router({
                       },
                       routes: [
                         GoRoute(
-                          path: Routes.taskCreateRelative,
+                          path: Routes.createRelative,
                           parentNavigatorKey: _rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
@@ -279,7 +279,7 @@ GoRouter router({
                           },
                         ),
                         GoRoute(
-                          path: ':taskId',
+                          path: ':taskId/${Routes.editRelative}',
                           parentNavigatorKey: _rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
@@ -314,51 +314,77 @@ GoRouter router({
                               ),
                             );
                           },
-                          routes: [
-                            GoRoute(
-                              path: Routes.taskEditAssignmentsRelative,
-                              parentNavigatorKey: _rootNavigatorKey,
-                              pageBuilder: (context, state) {
-                                final workspaceId =
-                                    state.pathParameters['workspaceId']!;
-                                final taskId = state.pathParameters['taskId']!;
+                        ),
+                        GoRoute(
+                          path:
+                              ':taskId/${Routes.taskDetailsAssignmentsRelative}/${Routes.editRelative}',
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+                            final taskId = state.pathParameters['taskId']!;
 
-                                return CustomTransitionPage(
-                                  transitionDuration: const Duration(
-                                    milliseconds: 400,
-                                  ),
-                                  transitionsBuilder:
-                                      (
-                                        context,
-                                        animation,
-                                        secondaryAnimation,
-                                        child,
-                                      ) {
-                                        return SharedAxisTransition(
-                                          animation: animation,
-                                          secondaryAnimation:
-                                              secondaryAnimation,
-                                          transitionType:
-                                              SharedAxisTransitionType
-                                                  .horizontal,
-                                          child: child,
-                                        );
-                                      },
-                                  child: TaskAssignmentsEditScreen(
-                                    viewModel:
-                                        TaskAssignmentsEditScreenViewModel(
-                                          workspaceId: workspaceId,
-                                          taskId: taskId,
-                                          workspaceTaskRepository: context
-                                              .read(),
-                                          workspaceUserRepository: context
-                                              .read(),
-                                        ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: TaskAssignmentsEditScreen(
+                                viewModel: TaskAssignmentsEditScreenViewModel(
+                                  workspaceId: workspaceId,
+                                  taskId: taskId,
+                                  workspaceTaskRepository: context.read(),
+                                  workspaceUserRepository: context.read(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: ':taskId',
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+                            final taskId = state.pathParameters['taskId']!;
+
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              // TODO: add details screen
+                              child: const Text('Task details'),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -389,7 +415,7 @@ GoRouter router({
                       },
                       routes: [
                         GoRoute(
-                          path: Routes.goalCreateRelative,
+                          path: Routes.createRelative,
                           parentNavigatorKey: _rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
@@ -475,7 +501,7 @@ GoRouter router({
               },
               routes: [
                 GoRoute(
-                  path: Routes.workspaceUsersCreateRelative,
+                  path: Routes.createRelative,
                   pageBuilder: (context, state) {
                     final workspaceId = state.pathParameters['workspaceId']!;
 
@@ -562,7 +588,7 @@ GoRouter router({
                   },
                   routes: [
                     GoRoute(
-                      path: Routes.workspaceUsersEditUserDetailsRelative,
+                      path: Routes.editRelative,
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
@@ -627,7 +653,7 @@ GoRouter router({
               },
               routes: [
                 GoRoute(
-                  path: Routes.workspaceSettingsEditWorkspaceSettingsRelative,
+                  path: Routes.editRelative,
                   pageBuilder: (context, state) {
                     final workspaceId = state.pathParameters['workspaceId']!;
 

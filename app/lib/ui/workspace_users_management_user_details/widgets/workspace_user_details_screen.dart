@@ -50,7 +50,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                       }
 
                       return Rbac(
-                        permission: RbacPermission.workspaceManageUsers,
+                        permission: RbacPermission.workspaceUsersEditDetails,
                         child: AppHeaderActionButton(
                           iconData: FontAwesomeIcons.pencil,
                           onTap: () {

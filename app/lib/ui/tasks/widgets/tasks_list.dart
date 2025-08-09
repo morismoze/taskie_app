@@ -18,8 +18,7 @@ class TasksList extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TaskCard(
-              appLocale: viewModel.appLocale,
-              activeWorkspaceId: viewModel.activeWorkspaceId,
+              viewModel: viewModel,
               taskId: task.id,
               title: task.title,
               assignees: task.assignees,

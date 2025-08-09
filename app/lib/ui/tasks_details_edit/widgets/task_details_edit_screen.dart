@@ -9,6 +9,7 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
 import '../view_models/task_details_edit_screen_view_model.dart';
+import 'task_close_button.dart';
 import 'task_details_edit_form.dart';
 import 'task_details_meta.dart';
 
@@ -24,8 +25,9 @@ class TaskDetailsEditScreen extends StatefulWidget {
 class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
+    widget.viewModel.editTaskDetails.addListener(_onTaskCloseResult);
+    super.initState();
   }
 
   @override
@@ -34,12 +36,15 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
     oldWidget.viewModel.editTaskDetails.removeListener(
       _onTaskDetailsEditResult,
     );
+    oldWidget.viewModel.editTaskDetails.removeListener(_onTaskCloseResult);
     widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
+    widget.viewModel.editTaskDetails.addListener(_onTaskCloseResult);
   }
 
   @override
   void dispose() {
     widget.viewModel.editTaskDetails.removeListener(_onTaskDetailsEditResult);
+    widget.viewModel.editTaskDetails.removeListener(_onTaskCloseResult);
     super.dispose();
   }
 
@@ -78,6 +83,10 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                             const Separator(),
                             const SizedBox(height: 40),
                             TaskDetailsEditForm(viewModel: widget.viewModel),
+                            const SizedBox(height: 40),
+                            const Separator(),
+                            const SizedBox(height: 40),
+                            TaskCloseButton(viewModel: widget.viewModel),
                           ],
                         ),
                       );
@@ -97,16 +106,34 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
       widget.viewModel.editTaskDetails.clearResult();
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.taskDetailsEditSuccess,
+        message: context.localization.tasksDetailsEditSuccess,
       );
-      context.pop(); // Navigate back to tasks page
     }
 
     if (widget.viewModel.editTaskDetails.error) {
       widget.viewModel.editTaskDetails.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.taskDetailsEditError,
+        message: context.localization.tasksDetailsEditError,
+      );
+    }
+  }
+
+  void _onTaskCloseResult() {
+    if (widget.viewModel.closeTask.completed) {
+      widget.viewModel.closeTask.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.tasksDetailsCloseSuccess,
+      );
+      context.pop(); // Navigate back to tasks page
+    }
+
+    if (widget.viewModel.closeTask.error) {
+      widget.viewModel.closeTask.clearResult();
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.tasksDetailsCloseError,
       );
     }
   }

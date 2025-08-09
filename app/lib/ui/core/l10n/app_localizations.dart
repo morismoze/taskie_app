@@ -158,12 +158,6 @@ abstract class AppLocalizations {
   /// **'Member'**
   String get misc_roleMember;
 
-  /// No description provided for @misc_orSeparator.
-  ///
-  /// In en, this message translates to:
-  /// **'or'**
-  String get misc_orSeparator;
-
   /// No description provided for @misc_ok.
   ///
   /// In en, this message translates to:
@@ -386,6 +380,12 @@ abstract class AppLocalizations {
   /// **'{points} points'**
   String tasksCardPoints(Object points);
 
+  /// No description provided for @tasksDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Task details'**
+  String get tasksDetails;
+
   /// No description provided for @tasksDetailsEdit.
   ///
   /// In en, this message translates to:
@@ -410,6 +410,42 @@ abstract class AppLocalizations {
   /// **'Task created at'**
   String get tasksDetailsEditCreatedAt;
 
+  /// No description provided for @tasksDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited task details'**
+  String get tasksDetailsEditSuccess;
+
+  /// No description provided for @tasksDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing task details'**
+  String get tasksDetailsEditError;
+
+  /// No description provided for @tasksDetailsCloseTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Close task'**
+  String get tasksDetailsCloseTask;
+
+  /// No description provided for @tasksDetailsCloseTaskModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to close this task?'**
+  String get tasksDetailsCloseTaskModalMessage;
+
+  /// No description provided for @tasksDetailsCloseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully closed the task'**
+  String get tasksDetailsCloseSuccess;
+
+  /// No description provided for @tasksDetailsCloseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble closing the task'**
+  String get tasksDetailsCloseError;
+
   /// No description provided for @tasksAssignmentsEdit.
   ///
   /// In en, this message translates to:
@@ -421,6 +457,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status'**
   String get tasksAssignmentsEditStatusLabel;
+
+  /// No description provided for @tasksAssignmentsEditStatusSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Update assignments'**
+  String get tasksAssignmentsEditStatusSubmit;
 
   /// No description provided for @tasksAssignmentsEditAddNewAssignee.
   ///
@@ -1039,18 +1081,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve successfully created new workspace'**
   String get workspaceCreationSuccess;
-
-  /// No description provided for @taskDetailsEditSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Successfully edited task details'**
-  String get taskDetailsEditSuccess;
-
-  /// No description provided for @taskDetailsEditError.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble editing task details'**
-  String get taskDetailsEditError;
 }
 
 class _AppLocalizationsDelegate
