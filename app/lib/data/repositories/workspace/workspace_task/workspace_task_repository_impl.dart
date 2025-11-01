@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../domain/models/created_by.dart';
@@ -8,8 +9,14 @@ import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/paginable_objectives.dart';
+import '../../../services/api/workspace/progress_status.dart';
+import '../../../services/api/workspace/workspace_task/models/request/add_task_assignee_request.dart';
 import '../../../services/api/workspace/workspace_task/models/request/create_task_request.dart';
+import '../../../services/api/workspace/workspace_task/models/request/remove_task_assignee_request.dart';
+import '../../../services/api/workspace/workspace_task/models/request/update_task_assignments_request.dart';
 import '../../../services/api/workspace/workspace_task/models/request/update_task_details_request.dart';
+import '../../../services/api/workspace/workspace_task/models/response/add_task_assignee_response.dart';
+import '../../../services/api/workspace/workspace_task/models/response/update_task_assignment_response.dart';
 import '../../../services/api/workspace/workspace_task/models/response/workspace_task_response.dart';
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import 'workspace_task_repository.dart';
@@ -195,19 +202,166 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
             isNew: existingTask.isNew,
           );
 
-          // Update the existing task in the list by replacing it
-          // with the new updated instance.
           final taskIndex = _cachedTasks!.items.indexWhere(
             (task) => task.id == updatedTask.id,
           );
 
           if (taskIndex != -1) {
+            // Update the existing task in the list by replacing it
+            // with the new updated instance.
             _cachedTasks!.items[taskIndex] = updatedTask;
             notifyListeners();
           }
 
           return const Result.ok(null);
         case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<void>> addTaskAssignee(
+    String workspaceId,
+    String taskId,
+    String assigneeId,
+  ) async {
+    try {
+      final result = await _workspaceTaskApiService.addTaskAssignee(
+        workspaceId: workspaceId,
+        taskId: taskId,
+        payload: AddTaskAssigneeRequest(assigneeId: assigneeId),
+      );
+
+      switch (result) {
+        case Ok<AddTaskAssigneeResponse>():
+          final existingTaskResult =
+              loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
+          final existingTask = existingTaskResult.value;
+          final taskIndex = _cachedTasks!.items.indexWhere(
+            (task) => task.id == existingTask.id,
+          );
+
+          if (taskIndex != -1) {
+            final newAssignee = WorkspaceTaskAssignee(
+              id: result.value.id,
+              firstName: result.value.firstName,
+              lastName: result.value.lastName,
+              profileImageUrl: result.value.profileImageUrl,
+              status: result.value.status,
+            );
+            final updatedTask = existingTask.copyWith(
+              assignees: [...existingTask.assignees, newAssignee],
+            );
+            _cachedTasks!.items[taskIndex] = updatedTask;
+            notifyListeners();
+          }
+
+          return const Result.ok(null);
+        case Error<AddTaskAssigneeResponse>():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<void>> removeTaskAssignee(
+    String workspaceId,
+    String taskId,
+    String assigneeId,
+  ) async {
+    try {
+      final result = await _workspaceTaskApiService.removeTaskAssignee(
+        workspaceId: workspaceId,
+        taskId: taskId,
+        payload: RemoveTaskAssigneeRequest(assigneeId: assigneeId),
+      );
+
+      switch (result) {
+        case Ok():
+          final existingTaskResult =
+              loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
+          final existingTask = existingTaskResult.value;
+          final taskIndex = _cachedTasks!.items.indexWhere(
+            (task) => task.id == existingTask.id,
+          );
+
+          if (taskIndex != -1) {
+            final newAssigneesList = existingTask.assignees
+                .where((assignee) => assignee.id != assigneeId)
+                .toList();
+
+            final updatedTask = existingTask.copyWith(
+              assignees: newAssigneesList,
+            );
+            _cachedTasks!.items[taskIndex] = updatedTask;
+            notifyListeners();
+          }
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<void>> updateTaskAssignments(
+    String workspaceId,
+    String taskId,
+    List<(String assigneeId, ProgressStatus status)> assignments,
+  ) async {
+    try {
+      final result = await _workspaceTaskApiService.updateTaskAssignments(
+        workspaceId: workspaceId,
+        taskId: taskId,
+        payload: UpdateTaskAssignmentsRequest(
+          assignments: assignments
+              .map(
+                (assignee) =>
+                    Assignment(assigneeId: assignee.$1, status: assignee.$2),
+              )
+              .toList(),
+        ),
+      );
+
+      switch (result) {
+        case Ok<List<UpdateTaskAssignmentResponse>>():
+          final existingTaskResult =
+              loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
+          final existingTask = existingTaskResult.value;
+          final taskIndex = _cachedTasks!.items.indexWhere(
+            (task) => task.id == existingTask.id,
+          );
+
+          if (taskIndex != -1) {
+            // Update the existing task in the list by updating the needed assignments
+            // creating new `WorkspaceTaskAssignee` instances and also creating new task instance.
+            final newAssignees = existingTask.assignees.map((assignee) {
+              final change = assignments.firstWhereOrNull(
+                (c) => c.$1 == assignee.id,
+              );
+
+              // Check if the current assignee was updated
+              if (change != null) {
+                return assignee.copyWith(status: change.$2);
+              } else {
+                return assignee;
+              }
+            }).toList();
+            final updatedTask = existingTask.copyWith(assignees: newAssignees);
+            _cachedTasks!.items[taskIndex] = updatedTask;
+            notifyListeners();
+          }
+
+          return const Result.ok(null);
+        case Error<List<UpdateTaskAssignmentResponse>>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

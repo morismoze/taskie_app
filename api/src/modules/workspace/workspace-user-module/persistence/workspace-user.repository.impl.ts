@@ -49,6 +49,21 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
+  async findByIdAndWorkspaceId({
+    id,
+    workspaceId,
+    relations,
+  }: {
+    id: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Nullable<WorkspaceUserEntity>> {
+    return await this.repo.findOne({
+      where: { id, workspace: { id: workspaceId } },
+      relations,
+    });
+  }
+
   async findAllByUserId({
     userId,
     relations,

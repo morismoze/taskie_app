@@ -5,9 +5,13 @@ import '../../api_response.dart';
 import '../../paginable.dart';
 import '../paginable_objectives.dart';
 import '../workspace/models/request/workspace_id_path_param.dart';
+import 'models/request/add_task_assignee_request.dart';
 import 'models/request/create_task_request.dart';
+import 'models/request/update_task_assignments_request.dart';
 import 'models/request/update_task_details_request.dart';
 import 'models/request/workspace_task_id_path_param.dart';
+import 'models/response/add_task_assignee_response.dart';
+import 'models/response/update_task_assignment_response.dart';
 import 'models/response/workspace_task_response.dart';
 
 class WorkspaceTaskApiService {
@@ -79,6 +83,73 @@ class WorkspaceTaskApiService {
         response.data,
         (json) => WorkspaceTaskResponse.fromJson(json as Map<String, dynamic>),
       );
+
+      return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<AddTaskAssigneeResponse>> addTaskAssignee({
+    required WorkspaceIdPathParam workspaceId,
+    required WorkspaceTaskIdPathParam taskId,
+    required AddTaskAssigneeRequest payload,
+  }) async {
+    try {
+      final response = await _apiClient.client.patch(
+        ApiEndpoints.addTaskAssignee(workspaceId, taskId),
+        data: payload.toJson(),
+      );
+
+      final apiResponse = ApiResponse<AddTaskAssigneeResponse>.fromJson(
+        response.data,
+        (json) =>
+            AddTaskAssigneeResponse.fromJson(json as Map<String, dynamic>),
+      );
+
+      return Result.ok(apiResponse.data!);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<void>> removeTaskAssignee({
+    required WorkspaceIdPathParam workspaceId,
+    required WorkspaceTaskIdPathParam taskId,
+    required AddTaskAssigneeRequest payload,
+  }) async {
+    try {
+      await _apiClient.client.patch(
+        ApiEndpoints.removeTaskAssignee(workspaceId, taskId),
+        data: payload.toJson(),
+      );
+
+      return const Result.ok(null);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  Future<Result<List<UpdateTaskAssignmentResponse>>> updateTaskAssignments({
+    required WorkspaceIdPathParam workspaceId,
+    required WorkspaceTaskIdPathParam taskId,
+    required UpdateTaskAssignmentsRequest payload,
+  }) async {
+    try {
+      final response = await _apiClient.client.patch(
+        ApiEndpoints.updateTaskAssignments(workspaceId, taskId),
+        data: payload,
+      );
+
+      final apiResponse =
+          ApiResponse<List<UpdateTaskAssignmentResponse>>.fromJson(
+            response.data,
+            (jsonList) => (jsonList as List)
+                .map<UpdateTaskAssignmentResponse>(
+                  (listItem) => UpdateTaskAssignmentResponse.fromJson(listItem),
+                )
+                .toList(),
+          );
 
       return Result.ok(apiResponse.data!);
     } on Exception catch (e) {

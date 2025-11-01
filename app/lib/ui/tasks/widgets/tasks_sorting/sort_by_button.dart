@@ -58,6 +58,7 @@ class _SortByButtonState extends State<SortByButton> {
   ) {
     AppModalBottomSheet.show(
       context: context,
+      isScrollControlled: true,
       child: AppSelectFieldOptions(
         options: options,
         value: selectedOptions,

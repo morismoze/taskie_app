@@ -20,16 +20,19 @@ import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-u
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { Workspace } from './domain/workspace.domain';
+import { AddTaskAssigneeRequest } from './dto/request/add-task-assignee-request.dto';
 import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
 import { CreateTaskRequest } from './dto/request/create-task-request.dto';
 import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
+import { RemoveTaskAssigneeRequest } from './dto/request/remove-task-assignee-request.dto';
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
-import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-request.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
+import { AddTaskAssigneeResponse } from './dto/response/add-task-assignee-response.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import {
@@ -1057,7 +1060,125 @@ export class WorkspaceService {
     return response;
   }
 
-  async updateTaskAssigments({
+  async addTaskAssignee({
+    workspaceId,
+    taskId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+    payload: AddTaskAssigneeRequest;
+  }): Promise<AddTaskAssigneeResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // We need to check if provided assignee ID exists as this specific workspace user
+    const existingWorkspaceUser =
+      await this.workspaceUserService.findByIdAndWorkspaceIdWithUserAndCreatedByUser(
+        {
+          id: payload.assigneeId,
+          workspaceId,
+        },
+      );
+
+    if (!existingWorkspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const task = await this.taskService.findById(taskId);
+
+    if (!task) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const newTaskAssignment = await this.taskAssignmentService.create({
+      workspaceUserId: payload.assigneeId,
+      status: ProgressStatus.IN_PROGRESS,
+      taskId,
+    });
+
+    return {
+      id: existingWorkspaceUser.id,
+      firstName: existingWorkspaceUser.user.firstName,
+      lastName: existingWorkspaceUser.user.lastName,
+      email: existingWorkspaceUser.user.email,
+      profileImageUrl: existingWorkspaceUser.user.profileImageUrl,
+      role: existingWorkspaceUser.workspaceRole,
+      userId: existingWorkspaceUser.user.id,
+      createdBy:
+        existingWorkspaceUser.createdBy === null
+          ? null
+          : {
+              id: existingWorkspaceUser.createdBy.id,
+              firstName: existingWorkspaceUser.createdBy.firstName,
+              lastName: existingWorkspaceUser.createdBy.lastName,
+              profileImageUrl: existingWorkspaceUser.createdBy.profileImageUrl,
+            },
+      createdAt: DateTime.fromJSDate(existingWorkspaceUser.createdAt).toISO()!,
+      status: newTaskAssignment.status,
+    };
+  }
+
+  async removeTaskAssignee({
+    workspaceId,
+    taskId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+    payload: RemoveTaskAssigneeRequest;
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const task = await this.taskService.findById(taskId);
+
+    if (!task) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.taskAssignmentService.deleteByTaskIdAndAssigneeId({
+      assigneeId: payload.assigneeId,
+      taskId,
+    });
+  }
+
+  async updateTaskAssignments({
     workspaceId,
     taskId,
     assignments,
@@ -1071,6 +1192,20 @@ export class WorkspaceService {
     });
 
     if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
+    });
+
+    if (!task) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1099,7 +1234,7 @@ export class WorkspaceService {
     }
 
     const updatedTaskAssignments =
-      await this.taskAssignmentService.updateAssignessByTaskId({
+      await this.taskAssignmentService.updateAssignmentsByTaskId({
         taskId,
         workspaceId,
         data: assignments,

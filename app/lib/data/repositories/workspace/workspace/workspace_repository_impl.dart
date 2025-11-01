@@ -206,14 +206,13 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       switch (result) {
         case Ok():
           final updatedWorkspace = _mapWorkspaceFromResponse(result.value);
-
-          // Update the existing workspace in the list by replacing it
-          // with the new updated instance.
           final workspaceIndex = _cachedWorkspacesList!.indexWhere(
             (workspace) => workspace.id == updatedWorkspace.id,
           );
 
           if (workspaceIndex != -1) {
+            // Update the existing workspace in the list by replacing it
+            // with the new updated instance.
             _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
             notifyListeners();
           }

@@ -26,22 +26,26 @@ class TaskAssignmentsEditScreen extends StatefulWidget {
 class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void initState() {
-    widget.viewModel.editTaskDetails.addListener(_onTaskAssignmentsEditResult);
+    widget.viewModel.editTaskAssignments.addListener(
+      _onTaskAssignmentsEditResult,
+    );
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant TaskAssignmentsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editTaskDetails.removeListener(
+    oldWidget.viewModel.editTaskAssignments.removeListener(
       _onTaskAssignmentsEditResult,
     );
-    widget.viewModel.editTaskDetails.addListener(_onTaskAssignmentsEditResult);
+    widget.viewModel.editTaskAssignments.addListener(
+      _onTaskAssignmentsEditResult,
+    );
   }
 
   @override
   void dispose() {
-    widget.viewModel.editTaskDetails.removeListener(
+    widget.viewModel.editTaskAssignments.removeListener(
       _onTaskAssignmentsEditResult,
     );
     super.dispose();
@@ -114,8 +118,8 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   }
 
   void _onTaskAssignmentsEditResult() {
-    if (widget.viewModel.editTaskDetails.completed) {
-      widget.viewModel.editTaskDetails.clearResult();
+    if (widget.viewModel.editTaskAssignments.completed) {
+      widget.viewModel.editTaskAssignments.clearResult();
       AppSnackbar.showSuccess(
         context: context,
         message: context.localization.tasksDetailsEditSuccess,
@@ -123,8 +127,8 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       context.pop(); // Navigate back to tasks page
     }
 
-    if (widget.viewModel.editTaskDetails.error) {
-      widget.viewModel.editTaskDetails.clearResult();
+    if (widget.viewModel.editTaskAssignments.error) {
+      widget.viewModel.editTaskAssignments.clearResult();
       AppSnackbar.showError(
         context: context,
         message: context.localization.tasksDetailsEditError,

@@ -28,6 +28,20 @@ class WorkspaceTask {
   /// for differentiating between newly created tasks
   /// and cached ones from origin.
   final bool isNew;
+
+  WorkspaceTask copyWith({List<WorkspaceTaskAssignee>? assignees}) {
+    return WorkspaceTask(
+      id: id,
+      title: title,
+      rewardPoints: rewardPoints,
+      assignees: assignees ?? this.assignees,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      description: description,
+      dueDate: dueDate,
+      isNew: isNew,
+    );
+  }
 }
 
 class WorkspaceTaskAssignee extends Assignee {
@@ -40,4 +54,14 @@ class WorkspaceTaskAssignee extends Assignee {
   });
 
   final ProgressStatus status;
+
+  WorkspaceTaskAssignee copyWith({ProgressStatus? status}) {
+    return WorkspaceTaskAssignee(
+      id: id,
+      firstName: firstName,
+      lastName: lastName,
+      profileImageUrl: profileImageUrl,
+      status: status ?? this.status,
+    );
+  }
 }

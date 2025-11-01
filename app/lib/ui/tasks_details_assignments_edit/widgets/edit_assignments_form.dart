@@ -65,12 +65,12 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
           }),
           const SizedBox(height: 20),
           ListenableBuilder(
-            listenable: widget.viewModel.editTaskDetails,
+            listenable: widget.viewModel.editTaskAssignments,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label:
                   builderContext.localization.tasksAssignmentsEditStatusSubmit,
-              loading: widget.viewModel.addNewAssignees.running,
+              loading: widget.viewModel.editTaskAssignments.running,
             ),
           ),
         ],
@@ -79,6 +79,11 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
   }
 
   void _onSubmit() async {
-    if (_formKey.currentState!.validate()) {}
+    if (_formKey.currentState!.validate()) {
+      final assignments = _assigneesStatuses.entries
+          .map((entry) => (entry.key, entry.value))
+          .toList();
+      widget.viewModel.editTaskAssignments.execute(assignments);
+    }
   }
 }

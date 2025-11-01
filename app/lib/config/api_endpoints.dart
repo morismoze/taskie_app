@@ -30,6 +30,18 @@ abstract final class ApiEndpoints {
     WorkspaceIdPathParam workspaceId,
     WorkspaceTaskIdPathParam taskId,
   ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId';
+  static String addTaskAssignee(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String removeTaskAssignee(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String updateTaskAssignments(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
 
   // Goals
   static String getGoals(WorkspaceIdPathParam workspaceId) =>

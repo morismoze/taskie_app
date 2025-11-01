@@ -151,14 +151,13 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           final updatedWorkspaceUser = _mapWorkspaceUserFromResponse(
             result.value,
           );
-
-          // Update the existing user in the list by replacing it
-          // with the new updated instance.
           final userIndex = _cachedWorkspaceUsersList!.indexWhere(
             (user) => user.id == updatedWorkspaceUser.id,
           );
 
           if (userIndex != -1) {
+            // Update the existing user in the list by replacing it
+            // with the new updated instance.
             _cachedWorkspaceUsersList![userIndex] = updatedWorkspaceUser;
             notifyListeners();
           }

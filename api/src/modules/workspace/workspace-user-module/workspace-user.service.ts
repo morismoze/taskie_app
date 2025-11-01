@@ -125,6 +125,47 @@ export class WorkspaceUserService {
     };
   }
 
+  async findByIdAndWorkspaceIdWithUserAndCreatedByUser({
+    id,
+    workspaceId,
+  }: {
+    id: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<
+    Nullable<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>
+  > {
+    const workspaceUser =
+      await this.workspaceUserRepository.findByIdAndWorkspaceId({
+        id: id,
+        workspaceId,
+        relations: {
+          user: true,
+          createdBy: {
+            user: true,
+          },
+        },
+      });
+
+    if (workspaceUser == null) {
+      return null;
+    }
+
+    const createdBy =
+      workspaceUser.createdBy === null
+        ? null
+        : {
+            id: workspaceUser.createdBy.id,
+            firstName: workspaceUser.createdBy.user.firstName,
+            lastName: workspaceUser.createdBy.user.lastName,
+            profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
+          };
+
+    return {
+      ...workspaceUser,
+      createdBy,
+    };
+  }
+
   /**
    * This function returns workspace user memberships a user has in
    * different workspaces with workspace relation loaded.
