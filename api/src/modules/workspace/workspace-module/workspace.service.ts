@@ -1082,16 +1082,16 @@ export class WorkspaceService {
       );
     }
 
-    // We need to check if provided assignee ID exists as this specific workspace user
-    const existingWorkspaceUser =
-      await this.workspaceUserService.findByIdAndWorkspaceIdWithUserAndCreatedByUser(
+    // We need to check if provided assignee IDs exist as this specific workspace user
+    const existingWorkspaceUsers =
+      await this.workspaceUserService.findByIdsAndWorkspaceIdWithUserAndCreatedByUser(
         {
-          id: payload.assigneeId,
+          ids: payload.assigneeIds,
           workspaceId,
         },
       );
 
-    if (!existingWorkspaceUser) {
+    if (!existingWorkspaceUsers) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1099,6 +1099,9 @@ export class WorkspaceService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    // No need to check if any of the provided assignee IDs are already assigned to the given task
+    // because we have unique constraint on task and assignee in the task assignment entity
 
     const task = await this.taskService.findById(taskId);
 
@@ -1111,32 +1114,36 @@ export class WorkspaceService {
       );
     }
 
-    const newTaskAssignment = await this.taskAssignmentService.create({
-      workspaceUserId: payload.assigneeId,
+    const newTaskAssignment = await this.taskAssignmentService.createMultiple({
+      workspaceUserIds: payload.assigneeIds,
       status: ProgressStatus.IN_PROGRESS,
       taskId,
     });
 
-    return {
-      id: existingWorkspaceUser.id,
-      firstName: existingWorkspaceUser.user.firstName,
-      lastName: existingWorkspaceUser.user.lastName,
-      email: existingWorkspaceUser.user.email,
-      profileImageUrl: existingWorkspaceUser.user.profileImageUrl,
-      role: existingWorkspaceUser.workspaceRole,
-      userId: existingWorkspaceUser.user.id,
-      createdBy:
-        existingWorkspaceUser.createdBy === null
-          ? null
-          : {
-              id: existingWorkspaceUser.createdBy.id,
-              firstName: existingWorkspaceUser.createdBy.firstName,
-              lastName: existingWorkspaceUser.createdBy.lastName,
-              profileImageUrl: existingWorkspaceUser.createdBy.profileImageUrl,
-            },
-      createdAt: DateTime.fromJSDate(existingWorkspaceUser.createdAt).toISO()!,
-      status: newTaskAssignment.status,
-    };
+    const mappedResponse = existingWorkspaceUsers.map((workspaceUser) => {
+      return {
+        id: workspaceUser.id,
+        firstName: workspaceUser.user.firstName,
+        lastName: workspaceUser.user.lastName,
+        email: workspaceUser.user.email,
+        profileImageUrl: workspaceUser.user.profileImageUrl,
+        role: workspaceUser.workspaceRole,
+        userId: workspaceUser.user.id,
+        createdBy:
+          workspaceUser.createdBy === null
+            ? null
+            : {
+                id: workspaceUser.createdBy.id,
+                firstName: workspaceUser.createdBy.firstName,
+                lastName: workspaceUser.createdBy.lastName,
+                profileImageUrl: workspaceUser.createdBy.profileImageUrl,
+              },
+        createdAt: DateTime.fromJSDate(workspaceUser.createdAt).toISO()!,
+        status: ProgressStatus.IN_PROGRESS,
+      };
+    });
+
+    return mappedResponse;
   }
 
   async removeTaskAssignee({

@@ -226,13 +226,13 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   Future<Result<void>> addTaskAssignee(
     String workspaceId,
     String taskId,
-    String assigneeId,
+    List<String> assigneeIds,
   ) async {
     try {
       final result = await _workspaceTaskApiService.addTaskAssignee(
         workspaceId: workspaceId,
         taskId: taskId,
-        payload: AddTaskAssigneeRequest(assigneeId: assigneeId),
+        payload: AddTaskAssigneeRequest(assigneeIds: assigneeIds),
       );
 
       switch (result) {

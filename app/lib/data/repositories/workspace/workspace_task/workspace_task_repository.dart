@@ -43,7 +43,7 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
   Future<Result<void>> addTaskAssignee(
     String workspaceId,
     String taskId,
-    String assigneeId,
+    List<String> assigneeIds,
   );
 
   Future<Result<void>> removeTaskAssignee(

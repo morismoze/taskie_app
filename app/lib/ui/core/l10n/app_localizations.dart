@@ -422,6 +422,54 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble editing task details'**
   String get tasksDetailsEditError;
 
+  /// No description provided for @updateTaskAssignmentsSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully updated task assignments'**
+  String get updateTaskAssignmentsSuccess;
+
+  /// No description provided for @updateTaskAssignmentsUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble updating task assignments'**
+  String get updateTaskAssignmentsUpdateError;
+
+  /// No description provided for @addTaskAssignmentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully added new task assignee'**
+  String get addTaskAssignmentSuccess;
+
+  /// No description provided for @addTaskAssignmentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble adding new task assigee'**
+  String get addTaskAssignmentError;
+
+  /// No description provided for @removeTaskAssignmentModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove this user from task assignments?'**
+  String get removeTaskAssignmentModalMessage;
+
+  /// No description provided for @removeTaskAssignmentModalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeTaskAssignmentModalCta;
+
+  /// No description provided for @removeTaskAssignmentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully removed task assignee'**
+  String get removeTaskAssignmentSuccess;
+
+  /// No description provided for @removeTaskAssignmentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble removing the task assigee'**
+  String get removeTaskAssignmentError;
+
   /// No description provided for @tasksDetailsCloseTask.
   ///
   /// In en, this message translates to:

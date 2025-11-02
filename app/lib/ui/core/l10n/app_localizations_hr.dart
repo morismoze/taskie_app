@@ -186,6 +186,37 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
 
   @override
+  String get updateTaskAssignmentsSuccess =>
+      'Uspješno ste ažurirali dodjele zadatka';
+
+  @override
+  String get updateTaskAssignmentsUpdateError =>
+      'Uh-oh! Došlo je do problema prilikom ažuriranja dodjela zadatka';
+
+  @override
+  String get addTaskAssignmentSuccess =>
+      'Uspješno ste dodjelili zadatak odabranome članu';
+
+  @override
+  String get addTaskAssignmentError =>
+      'Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu';
+
+  @override
+  String get removeTaskAssignmentModalMessage =>
+      'Jeste li sigurni da želite ukloniti ovog korisnika iz dodjele zadatka?';
+
+  @override
+  String get removeTaskAssignmentModalCta => 'Ukloni';
+
+  @override
+  String get removeTaskAssignmentSuccess =>
+      'Uspješno ste uklonili dodjelu s odabranoga člana';
+
+  @override
+  String get removeTaskAssignmentError =>
+      'Uh-oh! Došlo je do problema prilikom uklanjanja dodjele s člana';
+
+  @override
   String get tasksDetailsCloseTask => 'Zatvori zadatak';
 
   @override

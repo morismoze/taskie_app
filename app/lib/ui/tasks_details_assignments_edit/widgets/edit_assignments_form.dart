@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
+import '../../core/ui/app_text_button.dart';
 import '../view_models/task_assignments_edit_screen_view_model.dart';
 import 'task_assignment_form_field.dart';
 
@@ -40,12 +43,6 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
     });
   }
 
-  void _removeAssignee(String workspaceUserId) {
-    setState(() {
-      _assigneesStatuses.remove(workspaceUserId);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -60,21 +57,58 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
               profileImageUrl: assignee.profileImageUrl,
               status: _assigneesStatuses[assignee.id]!,
               onStatusChanged: _onStatusChanged,
-              removeAssignee: _removeAssignee,
+              removeAssignee: _confirmAssigneeRemoval,
             );
           }),
           const SizedBox(height: 20),
           ListenableBuilder(
-            listenable: widget.viewModel.editTaskAssignments,
+            listenable: widget.viewModel.updateTaskAssignments,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label:
                   builderContext.localization.tasksAssignmentsEditStatusSubmit,
-              loading: widget.viewModel.editTaskAssignments.running,
+              loading: widget.viewModel.updateTaskAssignments.running,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _confirmAssigneeRemoval(String assigneeId) {
+    AppDialog.showAlert(
+      context: context,
+      canPop: !widget.viewModel.removeTaskAssignee.running,
+      title: FaIcon(
+        FontAwesomeIcons.circleExclamation,
+        color: Theme.of(context).colorScheme.error,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.removeTaskAssignmentModalMessage,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        ListenableBuilder(
+          listenable: widget.viewModel.removeTaskAssignee,
+          builder: (BuildContext builderContext, _) => AppFilledButton(
+            label: builderContext.localization.removeTaskAssignmentModalCta,
+            onPress: () =>
+                widget.viewModel.removeTaskAssignee.execute(assigneeId),
+            backgroundColor: Theme.of(builderContext).colorScheme.error,
+            loading: widget.viewModel.removeTaskAssignee.running,
+          ),
+        ),
+        ListenableBuilder(
+          listenable: widget.viewModel.removeTaskAssignee,
+          builder: (BuildContext builderContext, _) => AppTextButton(
+            disabled: widget.viewModel.removeTaskAssignee.running,
+            label: builderContext.localization.misc_cancel,
+            onPress: () => Navigator.pop(builderContext),
+          ),
+        ),
+      ],
     );
   }
 
@@ -83,7 +117,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
       final assignments = _assigneesStatuses.entries
           .map((entry) => (entry.key, entry.value))
           .toList();
-      widget.viewModel.editTaskAssignments.execute(assignments);
+      widget.viewModel.updateTaskAssignments.execute(assignments);
     }
   }
 }

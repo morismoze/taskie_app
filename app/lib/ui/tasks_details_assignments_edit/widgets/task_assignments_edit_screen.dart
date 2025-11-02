@@ -26,8 +26,12 @@ class TaskAssignmentsEditScreen extends StatefulWidget {
 class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void initState() {
-    widget.viewModel.editTaskAssignments.addListener(
-      _onTaskAssignmentsEditResult,
+    widget.viewModel.addTaskAssignee.addListener(_onAddTaskAssigneeResult);
+    widget.viewModel.removeTaskAssignee.addListener(
+      _onRemoveTaskAssigneeResult,
+    );
+    widget.viewModel.updateTaskAssignments.addListener(
+      _onUpdateTaskAssignmentsResult,
     );
     super.initState();
   }
@@ -35,18 +39,36 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void didUpdateWidget(covariant TaskAssignmentsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editTaskAssignments.removeListener(
-      _onTaskAssignmentsEditResult,
+    oldWidget.viewModel.updateTaskAssignments.removeListener(
+      _onAddTaskAssigneeResult,
     );
-    widget.viewModel.editTaskAssignments.addListener(
-      _onTaskAssignmentsEditResult,
+    oldWidget.viewModel.updateTaskAssignments.removeListener(
+      _onRemoveTaskAssigneeResult,
+    );
+    oldWidget.viewModel.updateTaskAssignments.removeListener(
+      _onUpdateTaskAssignmentsResult,
+    );
+    widget.viewModel.updateTaskAssignments.addListener(
+      _onAddTaskAssigneeResult,
+    );
+    widget.viewModel.updateTaskAssignments.addListener(
+      _onRemoveTaskAssigneeResult,
+    );
+    widget.viewModel.updateTaskAssignments.addListener(
+      _onUpdateTaskAssignmentsResult,
     );
   }
 
   @override
   void dispose() {
-    widget.viewModel.editTaskAssignments.removeListener(
-      _onTaskAssignmentsEditResult,
+    widget.viewModel.updateTaskAssignments.removeListener(
+      _onAddTaskAssigneeResult,
+    );
+    widget.viewModel.updateTaskAssignments.removeListener(
+      _onRemoveTaskAssigneeResult,
+    );
+    widget.viewModel.updateTaskAssignments.removeListener(
+      _onUpdateTaskAssignmentsResult,
     );
     super.dispose();
   }
@@ -117,21 +139,59 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
     );
   }
 
-  void _onTaskAssignmentsEditResult() {
-    if (widget.viewModel.editTaskAssignments.completed) {
-      widget.viewModel.editTaskAssignments.clearResult();
+  void _onAddTaskAssigneeResult() {
+    if (widget.viewModel.addTaskAssignee.completed) {
+      widget.viewModel.addTaskAssignee.clearResult();
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.tasksDetailsEditSuccess,
+        message: context.localization.addTaskAssignmentSuccess,
       );
       context.pop(); // Navigate back to tasks page
     }
 
-    if (widget.viewModel.editTaskAssignments.error) {
-      widget.viewModel.editTaskAssignments.clearResult();
+    if (widget.viewModel.addTaskAssignee.error) {
+      widget.viewModel.addTaskAssignee.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.tasksDetailsEditError,
+        message: context.localization.addTaskAssignmentError,
+      );
+    }
+  }
+
+  void _onRemoveTaskAssigneeResult() {
+    if (widget.viewModel.addTaskAssignee.completed) {
+      widget.viewModel.addTaskAssignee.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.removeTaskAssignmentSuccess,
+      );
+      context.pop(); // Navigate back to tasks page
+    }
+
+    if (widget.viewModel.addTaskAssignee.error) {
+      widget.viewModel.addTaskAssignee.clearResult();
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.removeTaskAssignmentError,
+      );
+    }
+  }
+
+  void _onUpdateTaskAssignmentsResult() {
+    if (widget.viewModel.updateTaskAssignments.completed) {
+      widget.viewModel.updateTaskAssignments.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.updateTaskAssignmentsSuccess,
+      );
+      context.pop(); // Navigate back to tasks page
+    }
+
+    if (widget.viewModel.updateTaskAssignments.error) {
+      widget.viewModel.updateTaskAssignments.clearResult();
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.updateTaskAssignmentsUpdateError,
       );
     }
   }

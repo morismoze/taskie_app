@@ -72,6 +72,39 @@ export class TaskAssignmentService {
     return newTaskAssignment;
   }
 
+  async createMultiple({
+    workspaceUserIds,
+    taskId,
+    status,
+  }: {
+    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    taskId: TaskAssignment['task']['id'];
+    status: TaskAssignment['status'];
+  }): Promise<Array<TaskAssignmentWithAssigneeUser>> {
+    const newTaskAssignments =
+      await this.taskAssignmentRepository.createMultiple({
+        workspaceUserIds,
+        taskId,
+        status,
+        relations: {
+          assignee: {
+            user: true,
+          },
+        },
+      });
+
+    if (newTaskAssignments.length === 0) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return newTaskAssignments;
+  }
+
   async findByTaskId(
     taskId: TaskAssignment['task']['id'],
   ): Promise<Nullable<TaskAssignmentCore>> {

@@ -1,8 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'add_task_assignee_request.dart';
+part 'remove_task_assignee_request.g.dart';
 
 @JsonSerializable(createFactory: false)
-class RemoveTaskAssigneeRequest extends AddTaskAssigneeRequest {
-  RemoveTaskAssigneeRequest({required super.assigneeId});
+class RemoveTaskAssigneeRequest {
+  RemoveTaskAssigneeRequest({required this.assigneeId});
+
+  final String assigneeId;
+
+  Map<String, dynamic> toJson() => _$RemoveTaskAssigneeRequestToJson(this);
 }

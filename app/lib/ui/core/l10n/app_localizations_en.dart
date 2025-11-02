@@ -186,6 +186,36 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble editing task details';
 
   @override
+  String get updateTaskAssignmentsSuccess =>
+      'Successfully updated task assignments';
+
+  @override
+  String get updateTaskAssignmentsUpdateError =>
+      'Uh-oh! We\'ve had some trouble updating task assignments';
+
+  @override
+  String get addTaskAssignmentSuccess => 'Successfully added new task assignee';
+
+  @override
+  String get addTaskAssignmentError =>
+      'Uh-oh! We\'ve had some trouble adding new task assigee';
+
+  @override
+  String get removeTaskAssignmentModalMessage =>
+      'Are you sure you want to remove this user from task assignments?';
+
+  @override
+  String get removeTaskAssignmentModalCta => 'Remove';
+
+  @override
+  String get removeTaskAssignmentSuccess =>
+      'Successfully removed task assignee';
+
+  @override
+  String get removeTaskAssignmentError =>
+      'Uh-oh! We\'ve had some trouble removing the task assigee';
+
+  @override
   String get tasksDetailsCloseTask => 'Close task';
 
   @override

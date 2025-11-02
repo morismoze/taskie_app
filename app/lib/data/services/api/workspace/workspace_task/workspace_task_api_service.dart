@@ -7,6 +7,7 @@ import '../paginable_objectives.dart';
 import '../workspace/models/request/workspace_id_path_param.dart';
 import 'models/request/add_task_assignee_request.dart';
 import 'models/request/create_task_request.dart';
+import 'models/request/remove_task_assignee_request.dart';
 import 'models/request/update_task_assignments_request.dart';
 import 'models/request/update_task_details_request.dart';
 import 'models/request/workspace_task_id_path_param.dart';
@@ -96,7 +97,7 @@ class WorkspaceTaskApiService {
     required AddTaskAssigneeRequest payload,
   }) async {
     try {
-      final response = await _apiClient.client.patch(
+      final response = await _apiClient.client.post(
         ApiEndpoints.addTaskAssignee(workspaceId, taskId),
         data: payload.toJson(),
       );
@@ -116,10 +117,10 @@ class WorkspaceTaskApiService {
   Future<Result<void>> removeTaskAssignee({
     required WorkspaceIdPathParam workspaceId,
     required WorkspaceTaskIdPathParam taskId,
-    required AddTaskAssigneeRequest payload,
+    required RemoveTaskAssigneeRequest payload,
   }) async {
     try {
-      await _apiClient.client.patch(
+      await _apiClient.client.delete(
         ApiEndpoints.removeTaskAssignee(workspaceId, taskId),
         data: payload.toJson(),
       );

@@ -48,6 +48,41 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     return newEntity;
   }
 
+  async createMultiple({
+    workspaceUserIds,
+    taskId,
+    status,
+    relations,
+  }: {
+    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    taskId: TaskAssignment['task']['id'];
+    status: TaskAssignment['status'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Array<TaskAssignmentEntity>> {
+    const persistenceModel = this.repo.create(
+      workspaceUserIds.map((id) => ({
+        assignee: {
+          id,
+        },
+        task: {
+          id: taskId,
+        },
+        status,
+      })),
+    );
+
+    const savedEntities =
+      await this.transactionalTaskAssignmentRepo.save(persistenceModel);
+    const savedEntitiesIds = savedEntities.map((entity) => entity.id);
+
+    const newEntity = await this.transactionalTaskAssignmentRepo.find({
+      where: { id: In(savedEntitiesIds) },
+      relations,
+    });
+
+    return newEntity;
+  }
+
   async findById({
     id,
     relations,

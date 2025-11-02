@@ -24,7 +24,9 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
-    editTaskAssignments = Command1(_editTaskAssignments);
+    addTaskAssignee = Command1(_addTaskAssignee);
+    removeTaskAssignee = Command1(_removeTaskAssignee);
+    updateTaskAssignments = Command1(_updateTaskAssignments);
   }
 
   final String _activeWorkspaceId;
@@ -33,8 +35,10 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
   final WorkspaceUserRepository _workspaceUserRepository;
   final _log = Logger('TaskAssignmentsEditScreenViewModel');
 
+  late Command1<void, List<String>> addTaskAssignee;
+  late Command1<void, String> removeTaskAssignee;
   late Command1<void, List<(String assigneeId, ProgressStatus status)>>
-  editTaskAssignments;
+  updateTaskAssignments;
   late Command1<void, String> loadWorkspaceMembers;
 
   String get activeWorkspaceId => _activeWorkspaceId;
@@ -91,7 +95,41 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _editTaskAssignments(
+  Future<Result<void>> _addTaskAssignee(List<String> assigneeIds) async {
+    final result = await _workspaceTaskRepository.addTaskAssignee(
+      _activeWorkspaceId,
+      _taskId,
+      assigneeIds,
+    );
+
+    switch (result) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to add task assignee', result.error);
+    }
+
+    return result;
+  }
+
+  Future<Result<void>> _removeTaskAssignee(String assigneeId) async {
+    final result = await _workspaceTaskRepository.removeTaskAssignee(
+      _activeWorkspaceId,
+      _taskId,
+      assigneeId,
+    );
+
+    switch (result) {
+      case Ok():
+        break;
+      case Error():
+        _log.warning('Failed to add task assignee', result.error);
+    }
+
+    return result;
+  }
+
+  Future<Result<void>> _updateTaskAssignments(
     List<(String assigneeId, ProgressStatus status)> assignments,
   ) async {
     final result = await _workspaceTaskRepository.updateTaskAssignments(

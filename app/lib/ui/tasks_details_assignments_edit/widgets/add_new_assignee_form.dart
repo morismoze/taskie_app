@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/services/api/workspace/progress_status.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -94,11 +93,11 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
               ),
               const SizedBox(height: 20),
               ListenableBuilder(
-                listenable: widget.viewModel.editTaskAssignments,
+                listenable: widget.viewModel.addTaskAssignee,
                 builder: (builderContext, _) => AppFilledButton(
                   onPress: _onSubmit,
                   label: builderContext.localization.objectiveAssigneeLabel,
-                  loading: widget.viewModel.editTaskAssignments.running,
+                  loading: widget.viewModel.addTaskAssignee.running,
                 ),
               ),
             ],
@@ -110,10 +109,10 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      final assignments = _selectedAssignees
-          .map((assignee) => (assignee.value.id, ProgressStatus.inProgress))
+      final assigneeIds = _selectedAssignees
+          .map((assignee) => assignee.value.id)
           .toList();
-      widget.viewModel.editTaskAssignments.execute(assignments);
+      widget.viewModel.addTaskAssignee.execute(assigneeIds);
     }
   }
 

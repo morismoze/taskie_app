@@ -125,18 +125,18 @@ export class WorkspaceUserService {
     };
   }
 
-  async findByIdAndWorkspaceIdWithUserAndCreatedByUser({
-    id,
+  async findByIdsAndWorkspaceIdWithUserAndCreatedByUser({
+    ids,
     workspaceId,
   }: {
-    id: WorkspaceUser['user']['id'];
+    ids: Array<WorkspaceUser['user']['id']>;
     workspaceId: WorkspaceUser['workspace']['id'];
   }): Promise<
-    Nullable<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>
+    Nullable<Array<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>>
   > {
-    const workspaceUser =
-      await this.workspaceUserRepository.findByIdAndWorkspaceId({
-        id: id,
+    const workspaceUsers =
+      await this.workspaceUserRepository.findByIdsAndWorkspaceId({
+        ids: ids,
         workspaceId,
         relations: {
           user: true,
@@ -146,24 +146,30 @@ export class WorkspaceUserService {
         },
       });
 
-    if (workspaceUser == null) {
+    // We want to return null in case only some users were find by the provided
+    // IDs. We are going by the logic "all or nothing".
+    if (workspaceUsers.length !== ids.length) {
       return null;
     }
 
-    const createdBy =
-      workspaceUser.createdBy === null
-        ? null
-        : {
-            id: workspaceUser.createdBy.id,
-            firstName: workspaceUser.createdBy.user.firstName,
-            lastName: workspaceUser.createdBy.user.lastName,
-            profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
-          };
+    const mappedUsers = workspaceUsers.map((workspaceUser) => {
+      const createdBy =
+        workspaceUser.createdBy === null
+          ? null
+          : {
+              id: workspaceUser.createdBy.id,
+              firstName: workspaceUser.createdBy.user.firstName,
+              lastName: workspaceUser.createdBy.user.lastName,
+              profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
+            };
 
-    return {
-      ...workspaceUser,
-      createdBy,
-    };
+      return {
+        ...workspaceUser,
+        createdBy,
+      };
+    });
+
+    return mappedUsers;
   }
 
   /**
