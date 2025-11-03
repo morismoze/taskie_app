@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../domain/constants/validation_rules.dart';
+import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
 import '../view_models/task_assignments_edit_screen_view_model.dart';
@@ -80,7 +83,24 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              HeaderBar(title: context.localization.tasksAssignmentsEdit),
+              HeaderBar(
+                title: context.localization.tasksAssignmentsEdit,
+                actions: [
+                  AppHeaderActionButton(
+                    iconData: FontAwesomeIcons.question,
+                    onTap: () {
+                      if (widget.viewModel.taskId != null) {
+                        context.push(
+                          Routes.taskDetailsAssignmentsGuide(
+                            workspaceId: widget.viewModel.activeWorkspaceId,
+                            taskId: widget.viewModel.taskId!,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -106,7 +126,10 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                           ListenableBuilder(
                             listenable: widget.viewModel,
                             builder: (builderContext, _) {
-                              if (widget.viewModel.workspaceMembers.isEmpty ||
+                              if (widget
+                                      .viewModel
+                                      .workspaceMembersNotAssigned
+                                      .isEmpty ||
                                   widget.viewModel.assignees!.length ==
                                       ValidationRules.taskMaxAssigneesCount) {
                                 // Either all the workspace members are assigned to this task
@@ -146,7 +169,6 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
         context: context,
         message: context.localization.addTaskAssignmentSuccess,
       );
-      context.pop(); // Navigate back to tasks page
     }
 
     if (widget.viewModel.addTaskAssignee.error) {
@@ -159,17 +181,17 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   }
 
   void _onRemoveTaskAssigneeResult() {
-    if (widget.viewModel.addTaskAssignee.completed) {
-      widget.viewModel.addTaskAssignee.clearResult();
+    if (widget.viewModel.removeTaskAssignee.completed) {
+      widget.viewModel.removeTaskAssignee.clearResult();
       AppSnackbar.showSuccess(
         context: context,
         message: context.localization.removeTaskAssignmentSuccess,
       );
-      context.pop(); // Navigate back to tasks page
+      context.pop(); // Close confirmation dialog
     }
 
-    if (widget.viewModel.addTaskAssignee.error) {
-      widget.viewModel.addTaskAssignee.clearResult();
+    if (widget.viewModel.removeTaskAssignee.error) {
+      widget.viewModel.removeTaskAssignee.clearResult();
       AppSnackbar.showError(
         context: context,
         message: context.localization.removeTaskAssignmentError,
@@ -184,7 +206,6 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
         context: context,
         message: context.localization.updateTaskAssignmentsSuccess,
       );
-      context.pop(); // Navigate back to tasks page
     }
 
     if (widget.viewModel.updateTaskAssignments.error) {

@@ -236,7 +236,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       );
 
       switch (result) {
-        case Ok<AddTaskAssigneeResponse>():
+        case Ok<List<AddTaskAssigneeResponse>>():
           final existingTaskResult =
               loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
           final existingTask = existingTaskResult.value;
@@ -245,22 +245,26 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           );
 
           if (taskIndex != -1) {
-            final newAssignee = WorkspaceTaskAssignee(
-              id: result.value.id,
-              firstName: result.value.firstName,
-              lastName: result.value.lastName,
-              profileImageUrl: result.value.profileImageUrl,
-              status: result.value.status,
-            );
+            final newAssignees = result.value
+                .map(
+                  (assignee) => WorkspaceTaskAssignee(
+                    id: assignee.id,
+                    firstName: assignee.firstName,
+                    lastName: assignee.lastName,
+                    profileImageUrl: assignee.profileImageUrl,
+                    status: assignee.status,
+                  ),
+                )
+                .toList();
             final updatedTask = existingTask.copyWith(
-              assignees: [...existingTask.assignees, newAssignee],
+              assignees: [...existingTask.assignees, ...newAssignees],
             );
             _cachedTasks!.items[taskIndex] = updatedTask;
             notifyListeners();
           }
 
           return const Result.ok(null);
-        case Error<AddTaskAssigneeResponse>():
+        case Error<List<AddTaskAssigneeResponse>>():
           return Result.error(result.error);
       }
     } on Exception catch (e) {

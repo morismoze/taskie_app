@@ -91,7 +91,7 @@ class WorkspaceTaskApiService {
     }
   }
 
-  Future<Result<AddTaskAssigneeResponse>> addTaskAssignee({
+  Future<Result<List<AddTaskAssigneeResponse>>> addTaskAssignee({
     required WorkspaceIdPathParam workspaceId,
     required WorkspaceTaskIdPathParam taskId,
     required AddTaskAssigneeRequest payload,
@@ -102,10 +102,13 @@ class WorkspaceTaskApiService {
         data: payload.toJson(),
       );
 
-      final apiResponse = ApiResponse<AddTaskAssigneeResponse>.fromJson(
+      final apiResponse = ApiResponse<List<AddTaskAssigneeResponse>>.fromJson(
         response.data,
-        (json) =>
-            AddTaskAssigneeResponse.fromJson(json as Map<String, dynamic>),
+        (jsonList) => (jsonList as List)
+            .map<AddTaskAssigneeResponse>(
+              (listItem) => AddTaskAssigneeResponse.fromJson(listItem),
+            )
+            .toList(),
       );
 
       return Result.ok(apiResponse.data!);

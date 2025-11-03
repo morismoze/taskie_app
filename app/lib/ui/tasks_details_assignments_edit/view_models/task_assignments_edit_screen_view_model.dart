@@ -22,6 +22,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
        _workspaceUserRepository = workspaceUserRepository {
     _loadWorkspaceTaskDetails();
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
+    // This is loading for the select field for adding new assignees
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
     addTaskAssignee = Command1(_addTaskAssignee);
@@ -47,9 +48,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
   List<WorkspaceTaskAssignee>? get assignees => _details?.assignees;
 
+  String? get taskId => _details?.id;
+
   /// Represents workspace members other than those which
   /// are already assignees on this task.
-  List<WorkspaceUser> get workspaceMembers =>
+  List<WorkspaceUser> get workspaceMembersNotAssigned =>
       _workspaceUserRepository.users
           ?.where(
             (user) =>
@@ -104,6 +107,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        _loadWorkspaceTaskDetails();
         break;
       case Error():
         _log.warning('Failed to add task assignee', result.error);
@@ -121,6 +125,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        _loadWorkspaceTaskDetails();
         break;
       case Error():
         _log.warning('Failed to add task assignee', result.error);
@@ -140,6 +145,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        _loadWorkspaceTaskDetails();
         break;
       case Error():
         _log.warning('Failed to edit task assignments', result.error);

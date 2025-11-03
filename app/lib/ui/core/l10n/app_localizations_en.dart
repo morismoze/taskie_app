@@ -243,6 +243,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add additional assignees to this task:';
 
   @override
+  String get tasksAssignmentsGuideMainTitle => 'About task assignments';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentLimitTitle => 'Assignments limit';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentLimitBody =>
+      'Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the X icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesTitle =>
+      'Assignments statuses';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesBody =>
+      '__In Progress__ - the task is currently being worked on\n__Completed__ - the task was successfully completed\n__Completed as Stale__ - the task was completed after the due date has passed (applicable only if the task has a due date set)\n__Not Completed__ - the task was not completed';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesTitle =>
+      'Multiple assignees';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesBody =>
+      'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.';
+
+  @override
   String get appDrawerTitle => 'Workspaces';
 
   @override
@@ -348,7 +374,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUsersGuideMainTitle =>
-      'About Workspace Users';
+      'About workspace users';
 
   @override
   String get workspaceUsersManagementUsersGuideIntroBody =>

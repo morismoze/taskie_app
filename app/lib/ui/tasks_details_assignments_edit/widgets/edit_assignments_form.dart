@@ -23,18 +23,35 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
   // Status per workspace user ID
   final Map<String, ProgressStatus> _assigneesStatuses = {};
 
-  void _initState() {
+  @override
+  void initState() {
+    super.initState();
+
     for (final assignee in widget.viewModel.assignees!) {
-      setState(() {
-        _assigneesStatuses[assignee.id] = assignee.status;
-      });
+      _assigneesStatuses[assignee.id] = assignee.status;
     }
   }
 
   @override
-  void initState() {
-    _initState();
-    super.initState();
+  void didUpdateWidget(covariant EditAssignmentsForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newStatusesMap = <String, ProgressStatus>{};
+
+    // This logic is needed because on the same screen user can add a
+    // new assignee, so we need to listen on that, and update local state.
+    for (final assignee in widget.viewModel.assignees!) {
+      if (_assigneesStatuses.containsKey(assignee.id)) {
+        newStatusesMap[assignee.id] = _assigneesStatuses[assignee.id]!;
+      } else {
+        newStatusesMap[assignee.id] = assignee.status;
+      }
+    }
+
+    setState(() {
+      _assigneesStatuses.clear();
+      _assigneesStatuses.addAll(newStatusesMap);
+    });
   }
 
   void _onStatusChanged(String workspaceUserId, ProgressStatus status) {
@@ -50,25 +67,41 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
       child: Column(
         children: [
           ...widget.viewModel.assignees!.map((assignee) {
-            return TaskAssignmentFormField(
-              assigneeId: assignee.id,
-              firstName: assignee.firstName,
-              lastName: assignee.lastName,
-              profileImageUrl: assignee.profileImageUrl,
-              status: _assigneesStatuses[assignee.id]!,
-              onStatusChanged: _onStatusChanged,
-              removeAssignee: _confirmAssigneeRemoval,
-            );
+            if (_assigneesStatuses[assignee.id] != null) {
+              return TaskAssignmentFormField(
+                assigneeId: assignee.id,
+                firstName: assignee.firstName,
+                lastName: assignee.lastName,
+                profileImageUrl: assignee.profileImageUrl,
+                status: _assigneesStatuses[assignee.id]!,
+                onStatusChanged: _onStatusChanged,
+                removeAssignee: _confirmAssigneeRemoval,
+              );
+            }
+            return const SizedBox.shrink();
           }),
           const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.updateTaskAssignments,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label:
-                  builderContext.localization.tasksAssignmentsEditStatusSubmit,
-              loading: widget.viewModel.updateTaskAssignments.running,
-            ),
+            builder: (builderContext, _) {
+              var dirty = false;
+
+              for (final assignee in widget.viewModel.assignees!) {
+                if (_assigneesStatuses[assignee.id] != assignee.status) {
+                  dirty = true;
+                  break;
+                }
+              }
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext
+                    .localization
+                    .tasksAssignmentsEditStatusSubmit,
+                loading: widget.viewModel.updateTaskAssignments.running,
+                disabled: !dirty,
+              );
+            },
           ),
         ],
       ),

@@ -29,7 +29,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_isInit) {
-      options = widget.viewModel.workspaceMembers.map((user) {
+      options = widget.viewModel.workspaceMembersNotAssigned.map((user) {
         final fullName = UserUtils.constructFullName(
           firstName: user.firstName,
           lastName: user.lastName,
@@ -94,11 +94,16 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
               const SizedBox(height: 20),
               ListenableBuilder(
                 listenable: widget.viewModel.addTaskAssignee,
-                builder: (builderContext, _) => AppFilledButton(
-                  onPress: _onSubmit,
-                  label: builderContext.localization.objectiveAssigneeLabel,
-                  loading: widget.viewModel.addTaskAssignee.running,
-                ),
+                builder: (builderContext, _) {
+                  final isDirty = _selectedAssignees.isNotEmpty;
+
+                  return AppFilledButton(
+                    onPress: _onSubmit,
+                    label: builderContext.localization.objectiveAssigneeLabel,
+                    loading: widget.viewModel.addTaskAssignee.running,
+                    disabled: !isDirty,
+                  );
+                },
               ),
             ],
           ),
@@ -113,6 +118,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
           .map((assignee) => assignee.value.id)
           .toList();
       widget.viewModel.addTaskAssignee.execute(assigneeIds);
+      _selectedAssignees.clear();
     }
   }
 

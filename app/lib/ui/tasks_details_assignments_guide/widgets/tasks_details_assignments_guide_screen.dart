@@ -6,8 +6,8 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/guide_section.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 
-class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
-  const WorkspaceUsersManagementGuideScreen({super.key});
+class TasksDetailsAssignmentsGuideScreen extends StatelessWidget {
+  const TasksDetailsAssignmentsGuideScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +17,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
           child: Column(
             children: [
               HeaderBar(
-                title: context
-                    .localization
-                    .workspaceUsersManagementUsersGuideMainTitle,
+                title: context.localization.tasksAssignmentsGuideMainTitle,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -33,56 +31,31 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          context
+                        GuideSection(
+                          title: context
                               .localization
-                              .workspaceUsersManagementUsersGuideIntroBody,
-                          style: Theme.of(context).textTheme.bodyLarge,
+                              .tasksAssignmentsGuideAssignmentLimitTitle,
+                          body: context
+                              .localization
+                              .tasksAssignmentsGuideAssignmentLimitBody,
                         ),
                         const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
-                              .workspaceUsersManagementUsersGuideTeamMembersTitle,
+                              .tasksAssignmentsGuideAssignmentStatusesTitle,
                           body: context
                               .localization
-                              .workspaceUsersManagementUsersGuideTeamMembersBody,
+                              .tasksAssignmentsGuideAssignmentStatusesBody,
                         ),
                         const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
-                              .workspaceUsersManagementUsersGuideVirtualProfilesTitle,
+                              .tasksAssignmentsGuideMultipleAssigneesTitle,
                           body: context
                               .localization
-                              .workspaceUsersManagementUsersGuideVirtualProfilesBody,
-                        ),
-                        const SizedBox(height: 24),
-                        GuideSection(
-                          title: context
-                              .localization
-                              .workspaceUsersManagementUsersGuideRolesTitle,
-                          body: context
-                              .localization
-                              .workspaceUsersManagementUsersGuideRolesBody,
-                        ),
-                        const SizedBox(height: 24),
-                        GuideSection(
-                          title: context
-                              .localization
-                              .workspaceUsersManagementUsersGuideManagerRoleTitle,
-                          body: context
-                              .localization
-                              .workspaceUsersManagementUsersGuideManagerRoleBody,
-                        ),
-                        const SizedBox(height: 24),
-                        GuideSection(
-                          title: context
-                              .localization
-                              .workspaceUsersManagementUsersGuideMemberRoleTitle,
-                          body: context
-                              .localization
-                              .workspaceUsersManagementUsersGuideMemberRoleBody,
+                              .tasksAssignmentsGuideMultipleAssigneesBody,
                         ),
                       ],
                     ),

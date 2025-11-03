@@ -518,6 +518,48 @@ abstract class AppLocalizations {
   /// **'Add additional assignees to this task:'**
   String get tasksAssignmentsEditAddNewAssignee;
 
+  /// No description provided for @tasksAssignmentsGuideMainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About task assignments'**
+  String get tasksAssignmentsGuideMainTitle;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments limit'**
+  String get tasksAssignmentsGuideAssignmentLimitTitle;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the X icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
+  String get tasksAssignmentsGuideAssignmentLimitBody;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentStatusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments statuses'**
+  String get tasksAssignmentsGuideAssignmentStatusesTitle;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentStatusesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'__In Progress__ - the task is currently being worked on\n__Completed__ - the task was successfully completed\n__Completed as Stale__ - the task was completed after the due date has passed (applicable only if the task has a due date set)\n__Not Completed__ - the task was not completed'**
+  String get tasksAssignmentsGuideAssignmentStatusesBody;
+
+  /// No description provided for @tasksAssignmentsGuideMultipleAssigneesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple assignees'**
+  String get tasksAssignmentsGuideMultipleAssigneesTitle;
+
+  /// No description provided for @tasksAssignmentsGuideMultipleAssigneesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.'**
+  String get tasksAssignmentsGuideMultipleAssigneesBody;
+
   /// No description provided for @appDrawerTitle.
   ///
   /// In en, this message translates to:
@@ -707,7 +749,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementUsersGuideMainTitle.
   ///
   /// In en, this message translates to:
-  /// **'About Workspace Users'**
+  /// **'About workspace users'**
   String get workspaceUsersManagementUsersGuideMainTitle;
 
   /// No description provided for @workspaceUsersManagementUsersGuideIntroBody.

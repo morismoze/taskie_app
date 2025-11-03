@@ -22,6 +22,7 @@ import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
 import '../ui/tasks_create/widgets/create_task_screen.dart';
 import '../ui/tasks_details_assignments_edit/view_models/task_assignments_edit_screen_view_model.dart';
 import '../ui/tasks_details_assignments_edit/widgets/task_assignments_edit_screen.dart';
+import '../ui/tasks_details_assignments_guide/widgets/tasks_details_assignments_guide_screen.dart';
 import '../ui/tasks_details_edit/view_models/task_details_edit_screen_view_model.dart';
 import '../ui/tasks_details_edit/widgets/task_details_edit_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
@@ -65,7 +66,9 @@ final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
 ///       /StatefulShelBranch
 ///         /tasks
 ///           /create (on root navigator)
-///           /:id (on root navigator)
+///           /:id/edit (on root navigator)
+///           /:id/assignments/edit (on root navigator)
+///           /:id/assignments/guide (on root navigator)
 ///       /StatefulShelBranch
 ///         /leaderboard
 ///       /StatefulShelBranch
@@ -355,14 +358,12 @@ GoRouter router({
                           },
                         ),
                         GoRoute(
-                          path: ':taskId',
+                          path:
+                              ':taskId/${Routes.taskDetailsAssignmentsRelative}/${Routes.guideRelative}',
                           parentNavigatorKey: _rootNavigatorKey,
                           pageBuilder: (context, state) {
-                            final workspaceId =
-                                state.pathParameters['workspaceId']!;
-                            final taskId = state.pathParameters['taskId']!;
-
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 400,
                               ),
@@ -381,8 +382,7 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              // TODO: add details screen
-                              child: const Text('Task details'),
+                              child: const TasksDetailsAssignmentsGuideScreen(),
                             );
                           },
                         ),
@@ -534,7 +534,7 @@ GoRouter router({
                   },
                 ),
                 GoRoute(
-                  path: Routes.workspaceUsersGuideRelative,
+                  path: Routes.guideRelative,
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
                       transitionDuration: const Duration(milliseconds: 400),

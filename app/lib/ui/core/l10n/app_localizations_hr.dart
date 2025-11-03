@@ -244,6 +244,32 @@ class AppLocalizationsHr extends AppLocalizations {
       'Dodijelite ovaj zadatak dodatnome članu:';
 
   @override
+  String get tasksAssignmentsGuideMainTitle => 'O dodjelama zadatka';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentLimitTitle =>
+      'Ograničenje broja dodjela';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentLimitBody =>
+      'Svaki zadatak može imati do __10 dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu X pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesTitle => 'Statusi dodjela';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesBody =>
+      '__In Progress__ - zadatak je trenutno u izradi\n__Completed__ - zadatak je uspješno završen\n__Completed as Stale__ - zadatak je završen nakon isteka roka završetka (primjenjivo samo ako zadatak ima postavljen Rok završetka)\n__Not Completed__ - zadatak nije izvršen';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesTitle =>
+      'Višestruke dodjele';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesBody =>
+      'Jedan zadatak može biti dodijeljen većem broju članova iz dva razloga:\n\n__Individualni rad__ - kada želite da više članova radi na istom zadatku samostalno, bez potrebe za stvaranjem duplikata zadatka za svakog člana. Svaki član radi individualno i dobiva iste nagradne bodove.\n\n__Timski rad__ - kada više članova zajednički radi na istom zadatku kao tim. Svaki član također dobiva iste nagradne bodove po završetku.\n\nU oba slučaja, svaki dodijeljeni član dobiva isti broj nagradnih bodova koji je postavljen za zadatak.';
+
+  @override
   String get appDrawerTitle => 'Radni prostori';
 
   @override

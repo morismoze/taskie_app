@@ -8,6 +8,7 @@ abstract final class Routes {
   // Resuable subroutes
   static const createRelative = 'create';
   static const editRelative = 'edit';
+  static const guideRelative = 'guide';
 
   // Private routes
   static const workspacesRelative = 'workspaces';
@@ -37,9 +38,8 @@ abstract final class Routes {
       '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUserId/$editRelative';
   static String workspaceUsersCreate({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$createRelative';
-  static const workspaceUsersGuideRelative = 'guide';
   static String workspaceUsersGuide({required String workspaceId}) =>
-      '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$workspaceUsersGuideRelative';
+      '/$workspacesRelative/$workspaceId/$workspaceUsersRelative/$guideRelative';
 
   static const workspaceSettingsRelative = 'settings';
   static String workspaceSettings({required String workspaceId}) =>
@@ -69,6 +69,11 @@ abstract final class Routes {
     required String taskId,
   }) =>
       '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskDetailsAssignmentsRelative/$editRelative';
+  static String taskDetailsAssignmentsGuide({
+    required String workspaceId,
+    required String taskId,
+  }) =>
+      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskDetailsAssignmentsRelative/$guideRelative';
 
   static const leaderboardRelative = 'leaderboard';
   static String leaderboard({required String workspaceId}) =>
