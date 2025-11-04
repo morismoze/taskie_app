@@ -28,6 +28,7 @@ class TaskCard extends StatelessWidget {
     required this.rewardPoints,
     required this.isNew,
     required this.viewModel,
+    required this.isTaskClosed,
     required this.dueDate,
   });
 
@@ -42,6 +43,7 @@ class TaskCard extends StatelessWidget {
   /// created tasks from existing ones in the list
   final bool isNew;
   final TasksScreenViewModel viewModel;
+  final bool isTaskClosed;
   final DateTime? dueDate;
 
   @override
@@ -145,22 +147,23 @@ class TaskCard extends StatelessWidget {
             label: context.localization.tasksDetails,
             leadingIcon: FontAwesomeIcons.circleInfo,
           ),
-          Rbac(
-            permission: RbacPermission.objectiveEdit,
-            child: AppTextButton(
-              onPress: () {
-                context.pop(); // Close bottom sheet
-                context.push(
-                  Routes.taskDetailsEdit(
-                    workspaceId: activeWorkspaceId,
-                    taskId: taskId,
-                  ),
-                );
-              },
-              label: context.localization.tasksDetailsEdit,
-              leadingIcon: FontAwesomeIcons.pencil,
+          if (!isTaskClosed)
+            Rbac(
+              permission: RbacPermission.objectiveEdit,
+              child: AppTextButton(
+                onPress: () {
+                  context.pop(); // Close bottom sheet
+                  context.push(
+                    Routes.taskDetailsEdit(
+                      workspaceId: activeWorkspaceId,
+                      taskId: taskId,
+                    ),
+                  );
+                },
+                label: context.localization.tasksDetailsEdit,
+                leadingIcon: FontAwesomeIcons.pencil,
+              ),
             ),
-          ),
         ],
       ),
     );

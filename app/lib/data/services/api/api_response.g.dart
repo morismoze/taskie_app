@@ -34,4 +34,5 @@ const _$ApiErrorCodeEnumMap = {
   ApiErrorCode.workspaceInviteExpired: '4',
   ApiErrorCode.workspaceInviteExistingUser: '5',
   ApiErrorCode.notFoundWorkspaceInviteToken: '6',
+  ApiErrorCode.taskClosed: '7',
 };

@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
+
 import '../../../../../config/api_endpoints.dart';
+import '../../../../../utils/api.dart';
 import '../../../../../utils/command.dart';
 import '../../api_client.dart';
 import '../../api_response.dart';
+import '../../exceptions/task_closed_exception.dart';
 import '../../paginable.dart';
 import '../paginable_objectives.dart';
 import '../workspace/models/request/workspace_id_path_param.dart';
@@ -86,7 +90,13 @@ class WorkspaceTaskApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
+    } on DioException catch (e) {
+      final apiError = ApiUtils.getApiErrorResponse(e);
+
+      if (apiError?.code == ApiErrorCode.taskClosed) {
+        return const Result.error(TaskClosedException());
+      }
+
       return Result.error(e);
     }
   }
@@ -112,7 +122,13 @@ class WorkspaceTaskApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
+    } on DioException catch (e) {
+      final apiError = ApiUtils.getApiErrorResponse(e);
+
+      if (apiError?.code == ApiErrorCode.taskClosed) {
+        return const Result.error(TaskClosedException());
+      }
+
       return Result.error(e);
     }
   }
@@ -129,7 +145,13 @@ class WorkspaceTaskApiService {
       );
 
       return const Result.ok(null);
-    } on Exception catch (e) {
+    } on DioException catch (e) {
+      final apiError = ApiUtils.getApiErrorResponse(e);
+
+      if (apiError?.code == ApiErrorCode.taskClosed) {
+        return const Result.error(TaskClosedException());
+      }
+
       return Result.error(e);
     }
   }
@@ -156,7 +178,13 @@ class WorkspaceTaskApiService {
           );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
+    } on DioException catch (e) {
+      final apiError = ApiUtils.getApiErrorResponse(e);
+
+      if (apiError?.code == ApiErrorCode.taskClosed) {
+        return const Result.error(TaskClosedException());
+      }
+
       return Result.error(e);
     }
   }
@@ -169,7 +197,13 @@ class WorkspaceTaskApiService {
       await _apiClient.client.post(ApiEndpoints.closeTask(workspaceId, taskId));
 
       return const Result.ok(null);
-    } on Exception catch (e) {
+    } on DioException catch (e) {
+      final apiError = ApiUtils.getApiErrorResponse(e);
+
+      if (apiError?.code == ApiErrorCode.taskClosed) {
+        return const Result.error(TaskClosedException());
+      }
+
       return Result.error(e);
     }
   }

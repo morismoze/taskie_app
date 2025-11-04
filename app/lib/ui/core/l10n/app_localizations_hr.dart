@@ -51,6 +51,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_new => 'Novo';
 
   @override
+  String get misc_goToHomepage => 'Idi na Početnu stranicu';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -200,6 +203,10 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get addTaskAssignmentError =>
       'Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu';
+
+  @override
+  String get closedTaskError =>
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, odite na početnu stranicu i osvježite svoj popis zadatakaa.';
 
   @override
   String get removeTaskAssignmentModalMessage =>

@@ -10,6 +10,7 @@ class AppSnackbar {
     required BuildContext context,
     required String message,
     AppSnackBarActionData? actionData,
+    Duration? duration,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       _createSnackBar(
@@ -18,6 +19,7 @@ class AppSnackbar {
         backgroundColor: _AppSnackbarStyle.errorBackgroundColor,
         iconData: FontAwesomeIcons.solidCircleXmark,
         actionData: actionData,
+        duration: duration,
       ),
     );
   }
@@ -26,6 +28,7 @@ class AppSnackbar {
     required BuildContext context,
     required String message,
     AppSnackBarActionData? actionData,
+    Duration? duration,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       _createSnackBar(
@@ -34,6 +37,7 @@ class AppSnackbar {
         backgroundColor: _AppSnackbarStyle.successBackgroundColor,
         iconData: FontAwesomeIcons.solidCircleCheck,
         actionData: actionData,
+        duration: duration,
       ),
     );
   }
@@ -42,6 +46,7 @@ class AppSnackbar {
     required BuildContext context,
     required String message,
     AppSnackBarActionData? actionData,
+    Duration? duration,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       _createSnackBar(
@@ -50,6 +55,7 @@ class AppSnackbar {
         backgroundColor: _AppSnackbarStyle.infoBackgroundColor,
         iconData: FontAwesomeIcons.circleInfo,
         actionData: actionData,
+        duration: duration,
       ),
     );
   }
@@ -60,6 +66,7 @@ class AppSnackbar {
     required Color backgroundColor,
     required IconData iconData,
     AppSnackBarActionData? actionData,
+    Duration? duration,
   }) {
     SnackBarAction? snackBarAction;
 
@@ -75,9 +82,7 @@ class AppSnackbar {
       behavior: SnackBarBehavior.floating,
       action: snackBarAction,
       actionOverflowThreshold: 1,
-      duration: actionData != null
-          ? const Duration(seconds: 8)
-          : const Duration(seconds: 4),
+      duration: duration ?? const Duration(seconds: 4),
       backgroundColor: backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

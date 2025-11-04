@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../data/services/api/workspace/progress_status.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
 import 'empty_filtered_tasks.dart';
 import 'task_card/card.dart';
@@ -15,6 +16,10 @@ class TasksList extends StatelessWidget {
       return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           final task = viewModel.tasks!.items[index];
+          final isTaskClosed = task.assignees.every(
+            (assignment) => assignment.status == ProgressStatus.closed,
+          );
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TaskCard(
@@ -25,6 +30,7 @@ class TasksList extends StatelessWidget {
               rewardPoints: task.rewardPoints,
               dueDate: task.dueDate,
               isNew: task.isNew,
+              isTaskClosed: isTaskClosed,
             ),
           );
         }, childCount: viewModel.tasks!.items.length),

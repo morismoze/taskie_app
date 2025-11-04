@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/services/api/exceptions/task_closed_exception.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_dialog.dart';
+import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
@@ -172,11 +176,18 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
     }
 
     if (widget.viewModel.addTaskAssignee.error) {
+      final errorResult = widget.viewModel.addTaskAssignee.result as Error;
       widget.viewModel.addTaskAssignee.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.addTaskAssignmentError,
-      );
+      switch (errorResult.error) {
+        case TaskClosedException():
+          _showClosedTaskDialog();
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.addTaskAssignmentError,
+          );
+      }
     }
   }
 
@@ -191,11 +202,19 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
     }
 
     if (widget.viewModel.removeTaskAssignee.error) {
+      context.pop(); // Close confirmation dialog
+      final errorResult = widget.viewModel.removeTaskAssignee.result as Error;
       widget.viewModel.removeTaskAssignee.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.removeTaskAssignmentError,
-      );
+      switch (errorResult.error) {
+        case TaskClosedException():
+          _showClosedTaskDialog();
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.removeTaskAssignmentError,
+          );
+      }
     }
   }
 
@@ -209,11 +228,47 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
     }
 
     if (widget.viewModel.updateTaskAssignments.error) {
+      final errorResult =
+          widget.viewModel.updateTaskAssignments.result as Error;
       widget.viewModel.updateTaskAssignments.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.updateTaskAssignmentsUpdateError,
-      );
+      switch (errorResult.error) {
+        case TaskClosedException():
+          _showClosedTaskDialog();
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.updateTaskAssignmentsUpdateError,
+          );
+      }
     }
+  }
+
+  void _showClosedTaskDialog() {
+    AppDialog.show(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleInfo,
+        color: Theme.of(context).colorScheme.primary,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.closedTaskError,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        AppFilledButton(
+          label: context.localization.misc_goToHomepage,
+          onPress: () {
+            context.pop(); // Close dialog
+            context.go(
+              Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
+            );
+          },
+        ),
+      ],
+    );
   }
 }

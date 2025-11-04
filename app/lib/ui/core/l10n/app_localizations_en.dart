@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_new => 'New';
 
   @override
+  String get misc_goToHomepage => 'Go to Homepage';
+
+  @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
 
   @override
@@ -199,6 +202,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get addTaskAssignmentError =>
       'Uh-oh! We\'ve had some trouble adding new task assigee';
+
+  @override
+  String get closedTaskError =>
+      'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.';
 
   @override
   String get removeTaskAssignmentModalMessage =>

@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'New'**
   String get misc_new;
 
+  /// No description provided for @misc_goToHomepage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Homepage'**
+  String get misc_goToHomepage;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -445,6 +451,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble adding new task assigee'**
   String get addTaskAssignmentError;
+
+  /// No description provided for @closedTaskError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.'**
+  String get closedTaskError;
 
   /// No description provided for @removeTaskAssignmentModalMessage.
   ///

@@ -1018,6 +1018,10 @@ export class WorkspaceService {
       );
     }
 
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
+
+    // This method internally checks if task exists for taskId/workspaceId combo
     const updatedTask = await this.taskService.updateByTaskIdAndWorkspaceId({
       taskId,
       workspaceId,
@@ -1067,11 +1071,12 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
   }): Promise<void> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
     });
 
-    if (!workspace) {
+    if (!task) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1079,6 +1084,9 @@ export class WorkspaceService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
 
     await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
   }
@@ -1092,11 +1100,12 @@ export class WorkspaceService {
     taskId: Task['id'];
     payload: AddTaskAssigneeRequest;
   }): Promise<AddTaskAssigneeResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
     });
 
-    if (!workspace) {
+    if (!task) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1105,7 +1114,10 @@ export class WorkspaceService {
       );
     }
 
-    // We need to check if provided assignee IDs exist as this specific workspace user
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
+
+    // We need to check if provided assignee IDs exist as this specific workspace users
     const existingWorkspaceUsers =
       await this.workspaceUserService.findByIdsAndWorkspaceIdWithUserAndCreatedByUser(
         {
@@ -1124,20 +1136,9 @@ export class WorkspaceService {
     }
 
     // No need to check if any of the provided assignee IDs are already assigned to the given task
-    // because we have unique constraint on task and assignee in the task assignment entity
+    // because we have unique constraint on task and assignee (workspaceUser) in the task assignment entity
 
-    const task = await this.taskService.findById(taskId);
-
-    if (!task) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    const newTaskAssignment = await this.taskAssignmentService.createMultiple({
+    await this.taskAssignmentService.createMultiple({
       workspaceUserIds: payload.assigneeIds,
       status: ProgressStatus.IN_PROGRESS,
       taskId,
@@ -1178,20 +1179,10 @@ export class WorkspaceService {
     taskId: Task['id'];
     payload: RemoveTaskAssigneeRequest;
   }): Promise<void> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
     });
-
-    if (!workspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    const task = await this.taskService.findById(taskId);
 
     if (!task) {
       throw new ApiHttpException(
@@ -1201,6 +1192,9 @@ export class WorkspaceService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
 
     await this.taskAssignmentService.deleteByTaskIdAndAssigneeId({
       assigneeId: payload.assigneeId,
@@ -1217,11 +1211,12 @@ export class WorkspaceService {
     taskId: Task['id'];
     assignments: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<UpdateTaskAssignmentsStatusesResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
     });
 
-    if (!workspace) {
+    if (!task) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1230,10 +1225,8 @@ export class WorkspaceService {
       );
     }
 
-    const task = await this.taskService.findByTaskIdAndWorkspaceId({
-      taskId,
-      workspaceId,
-    });
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
 
     if (!task) {
       throw new ApiHttpException(
@@ -1345,5 +1338,30 @@ export class WorkspaceService {
     };
 
     return response;
+  }
+
+  private async checkTaskIsClosed(taskId: string) {
+    // Check if the task is closed (all task
+    // assignments have ProgressStatus.Closed status).
+    // It is enough to check if only one assignment
+    // has status set to Closed, because a task can be
+    // closed via special endpoint in which all statuses
+    // are set to Closed. In the updateTaskAssignments
+    // endpoint there is request payload validation
+    // which defines that the status can be set to
+    // any ProgressStatus value except Closed.
+    const taskAssignments =
+      await this.taskAssignmentService.findAllByTaskId(taskId);
+
+    for (const assignment of taskAssignments) {
+      if (assignment.status === ProgressStatus.CLOSED) {
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.TASK_CLOSED,
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
   }
 }

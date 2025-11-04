@@ -80,20 +80,15 @@ export class TaskAssignmentService {
     workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
     taskId: TaskAssignment['task']['id'];
     status: TaskAssignment['status'];
-  }): Promise<Array<TaskAssignmentWithAssigneeUser>> {
+  }): Promise<Array<TaskAssignmentCore>> {
     const newTaskAssignments =
       await this.taskAssignmentRepository.createMultiple({
         workspaceUserIds,
         taskId,
         status,
-        relations: {
-          assignee: {
-            user: true,
-          },
-        },
       });
 
-    if (newTaskAssignments.length === 0) {
+    if (newTaskAssignments.length !== workspaceUserIds.length) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -123,6 +118,14 @@ export class TaskAssignmentService {
           user: true,
         },
       },
+    });
+  }
+
+  async findAllByTaskId(
+    taskId: TaskAssignment['task']['id'],
+  ): Promise<TaskAssignmentWithAssigneeUser[]> {
+    return await this.taskAssignmentRepository.findAllByTaskId({
+      taskId,
     });
   }
 
@@ -183,9 +186,7 @@ export class TaskAssignmentService {
     // Furthermore, a task must have a minimum of 1 assignee, so
     // checking here if there are no assignments by the provided
     // taskId is enough.
-    const assignments = await this.taskAssignmentRepository.findAllByTaskId({
-      taskId,
-    });
+    const assignments = await this.findAllByTaskId(taskId);
 
     if (assignments.length === 0) {
       throw new ApiHttpException(
@@ -196,11 +197,13 @@ export class TaskAssignmentService {
       );
     }
 
-    for (const assignment of assignments) {
-      await this.taskAssignmentRepository.update({
-        id: assignment.id,
-        data: { status: ProgressStatus.CLOSED },
-      });
-    }
+    await this.unitOfWorkService.withTransaction(async () => {
+      for (const assignment of assignments) {
+        await this.taskAssignmentRepository.update({
+          id: assignment.id,
+          data: { status: ProgressStatus.CLOSED },
+        });
+      }
+    });
   }
 }

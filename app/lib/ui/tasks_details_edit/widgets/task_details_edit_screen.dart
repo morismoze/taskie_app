@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/services/api/exceptions/task_closed_exception.dart';
+import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_dialog.dart';
+import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
@@ -111,11 +117,44 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
     }
 
     if (widget.viewModel.editTaskDetails.error) {
+      final errorResult = widget.viewModel.editTaskDetails.result as Error;
       widget.viewModel.editTaskDetails.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.tasksDetailsEditError,
-      );
+      switch (errorResult.error) {
+        case TaskClosedException():
+          AppDialog.show(
+            context: context,
+            canPop: false,
+            title: FaIcon(
+              FontAwesomeIcons.circleInfo,
+              color: Theme.of(context).colorScheme.primary,
+              size: 30,
+            ),
+            content: Text(
+              context.localization.closedTaskError,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              AppFilledButton(
+                label: context.localization.misc_goToHomepage,
+                onPress: () {
+                  context.pop(); // Close dialog
+                  context.go(
+                    Routes.tasks(
+                      workspaceId: widget.viewModel.activeWorkspaceId,
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.tasksDetailsEditError,
+          );
+      }
     }
   }
 
@@ -131,11 +170,21 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
     }
 
     if (widget.viewModel.closeTask.error) {
+      final errorResult = widget.viewModel.closeTask.result as Error;
       widget.viewModel.closeTask.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.tasksDetailsCloseError,
-      );
+      switch (errorResult.error) {
+        case TaskClosedException():
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.closedTaskError,
+          );
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.tasksDetailsEditError,
+          );
+      }
     }
   }
 }

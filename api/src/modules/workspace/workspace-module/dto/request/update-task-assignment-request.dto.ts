@@ -5,6 +5,7 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
+  IsNotIn,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -18,6 +19,11 @@ export class TaskAssignmentUpdate {
 
   @IsNotEmpty()
   @IsEnum(ProgressStatus)
+  // ProgressStatus.Closed is not valid because
+  // closing a task happens on different endpoint
+  // and it is automatically set to ProgressStatus.Closed
+  // for all assignees.
+  @IsNotIn([ProgressStatus.CLOSED])
   status: ProgressStatus;
 
   constructor(assigneeId: string, status: ProgressStatus) {
