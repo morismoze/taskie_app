@@ -4,6 +4,7 @@ import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/utils/extensions.dart';
 import '../view_models/workspace_settings_edit_screen_view_model.dart';
 
 class WorkspaceSettingsEditForm extends StatefulWidget {
@@ -80,9 +81,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
       final trimmedName = _nameController.text.trim();
       final name = trimmedName.isNotEmpty ? trimmedName : null;
       final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
+      final description = trimmedDescription.nullIfEmpty;
 
       widget.viewModel.editWorkspaceDetails.execute((name, description));
     }

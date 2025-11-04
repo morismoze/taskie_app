@@ -267,6 +267,20 @@ export class WorkspaceController {
     });
   }
 
+  @Post(':workspaceId/tasks/:taskId/close')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  closeTask(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+  ): Promise<void> {
+    return this.workspaceService.closeTask({
+      workspaceId,
+      taskId,
+    });
+  }
+
   @Post(':workspaceId/tasks/:taskId/assignments')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)

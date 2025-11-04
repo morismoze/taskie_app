@@ -182,9 +182,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
+      final description = trimmedDescription.nullIfEmpty;
 
       widget.viewModel.editTaskDetails.execute((
         title,

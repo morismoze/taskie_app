@@ -75,6 +75,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        _loadWorkspaceTaskDetails();
         return const Result.ok(null);
       case Error():
         _log.warning('Failed to update task details', result.error);
@@ -83,6 +84,16 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _closeTask() async {
-    return const Result.ok(null);
+    final result = await _workspaceTaskRepository.closeTask(
+      workspaceId: activeWorkspaceId,
+      taskId: _taskId,
+    );
+
+    switch (result) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        return result;
+    }
   }
 }

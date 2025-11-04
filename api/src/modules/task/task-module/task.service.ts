@@ -164,18 +164,16 @@ export class TaskService {
       );
     }
 
-    let dueDate: Date | null = null;
-    if (data.dueDate !== null && data.dueDate !== undefined) {
-      dueDate = DateTime.fromISO(data.dueDate).toUTC().toJSDate();
-    }
-
     const updatedTask = await this.taskRepository.update({
       id: taskId,
       data: {
         title: data.title,
         description: data.description,
         rewardPoints: data.rewardPoints,
-        dueDate: dueDate,
+        dueDate:
+          data.dueDate !== null && data.dueDate !== undefined
+            ? DateTime.fromISO(data.dueDate).toUTC().toJSDate()
+            : data.dueDate,
       },
       relations: {
         taskAssignments: {

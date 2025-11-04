@@ -374,6 +374,44 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   }
 
   @override
+  Future<Result<void>> closeTask({
+    required String workspaceId,
+    required String taskId,
+  }) async {
+    try {
+      final result = await _workspaceTaskApiService.closeTask(
+        workspaceId: workspaceId,
+        taskId: taskId,
+      );
+
+      switch (result) {
+        case Ok():
+          final taskIndex = _cachedTasks!.items.indexWhere(
+            (task) => task.id == taskId,
+          );
+
+          if (taskIndex != -1) {
+            final existingTaskResult =
+                loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
+            final existingTask = existingTaskResult.value;
+            final newAssignees = existingTask.assignees.map((assignee) {
+              return assignee.copyWith(status: ProgressStatus.closed);
+            }).toList();
+            final updatedTask = existingTask.copyWith(assignees: newAssignees);
+            _cachedTasks!.items[taskIndex] = updatedTask;
+            notifyListeners();
+          }
+
+          return const Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
   void purgeTasksCache() {
     _isFilterSearch = false;
     _cachedTasks = null;

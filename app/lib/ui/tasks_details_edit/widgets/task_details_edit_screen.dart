@@ -26,7 +26,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   @override
   void initState() {
     widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
-    widget.viewModel.editTaskDetails.addListener(_onTaskCloseResult);
+    widget.viewModel.closeTask.addListener(_onTaskCloseResult);
     super.initState();
   }
 
@@ -36,15 +36,15 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
     oldWidget.viewModel.editTaskDetails.removeListener(
       _onTaskDetailsEditResult,
     );
-    oldWidget.viewModel.editTaskDetails.removeListener(_onTaskCloseResult);
+    oldWidget.viewModel.closeTask.removeListener(_onTaskCloseResult);
     widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
-    widget.viewModel.editTaskDetails.addListener(_onTaskCloseResult);
+    widget.viewModel.closeTask.addListener(_onTaskCloseResult);
   }
 
   @override
   void dispose() {
     widget.viewModel.editTaskDetails.removeListener(_onTaskDetailsEditResult);
-    widget.viewModel.editTaskDetails.removeListener(_onTaskCloseResult);
+    widget.viewModel.closeTask.removeListener(_onTaskCloseResult);
     super.dispose();
   }
 
@@ -126,6 +126,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
         context: context,
         message: context.localization.tasksDetailsCloseSuccess,
       );
+      context.pop(); // Close dialog
       context.pop(); // Navigate back to tasks page
     }
 

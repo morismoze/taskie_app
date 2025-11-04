@@ -1060,6 +1060,29 @@ export class WorkspaceService {
     return response;
   }
 
+  async closeTask({
+    workspaceId,
+    taskId,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
+  }
+
   async addTaskAssignee({
     workspaceId,
     taskId,

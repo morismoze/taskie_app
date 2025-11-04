@@ -479,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksDetailsCloseTaskModalMessage.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to close this task?'**
+  /// **'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees.\nIn addition, you will no longer be able to update it.'**
   String get tasksDetailsCloseTaskModalMessage;
 
   /// No description provided for @tasksDetailsCloseSuccess.

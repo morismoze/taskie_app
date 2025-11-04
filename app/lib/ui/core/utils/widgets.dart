@@ -22,7 +22,7 @@ abstract final class WidgetsUtils {
     var lastIndex = 0;
 
     for (final match in matches) {
-      // Dodaj tekst prije matcha
+      // Add text before match
       if (match.start > lastIndex) {
         spans.add(
           TextSpan(

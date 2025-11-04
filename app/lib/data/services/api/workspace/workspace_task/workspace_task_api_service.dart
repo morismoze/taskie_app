@@ -160,4 +160,17 @@ class WorkspaceTaskApiService {
       return Result.error(e);
     }
   }
+
+  Future<Result<void>> closeTask({
+    required WorkspaceIdPathParam workspaceId,
+    required WorkspaceTaskIdPathParam taskId,
+  }) async {
+    try {
+      await _apiClient.client.post(ApiEndpoints.closeTask(workspaceId, taskId));
+
+      return const Result.ok(null);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
 }

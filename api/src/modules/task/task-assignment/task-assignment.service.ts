@@ -176,4 +176,31 @@ export class TaskAssignmentService {
       assigneeIds: [assigneeId],
     });
   }
+
+  async closeAssignmentsByTaskId(taskId: string): Promise<void> {
+    // Not using TaskService class to check taskId validity here
+    // because I don't want this class to depend on that service.
+    // Furthermore, a task must have a minimum of 1 assignee, so
+    // checking here if there are no assignments by the provided
+    // taskId is enough.
+    const assignments = await this.taskAssignmentRepository.findAllByTaskId({
+      taskId,
+    });
+
+    if (assignments.length === 0) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    for (const assignment of assignments) {
+      await this.taskAssignmentRepository.update({
+        id: assignment.id,
+        data: { status: ProgressStatus.CLOSED },
+      });
+    }
+  }
 }

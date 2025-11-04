@@ -220,7 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksDetailsCloseTaskModalMessage =>
-      'Are you sure you want to close this task?';
+      'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees.\nIn addition, you will no longer be able to update it.';
 
   @override
   String get tasksDetailsCloseSuccess => 'Successfully closed the task';

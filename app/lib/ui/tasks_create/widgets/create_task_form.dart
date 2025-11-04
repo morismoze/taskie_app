@@ -12,6 +12,7 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/separator.dart';
+import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 import '../view_models/create_task_screen_viewmodel.dart';
 
@@ -155,9 +156,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
+      final description = trimmedDescription.nullIfEmpty;
       final assigneesIds = _selectedAssignees
           .map((assignee) => assignee.value.id)
           .toList();

@@ -42,6 +42,10 @@ abstract final class ApiEndpoints {
     WorkspaceIdPathParam workspaceId,
     WorkspaceTaskIdPathParam taskId,
   ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String closeTask(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/close';
 
   // Goals
   static String getGoals(WorkspaceIdPathParam workspaceId) =>

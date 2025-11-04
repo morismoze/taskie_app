@@ -58,5 +58,10 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
     List<(String assigneeId, ProgressStatus status)> assignments,
   );
 
+  Future<Result<void>> closeTask({
+    required String workspaceId,
+    required String taskId,
+  });
+
   void purgeTasksCache();
 }
