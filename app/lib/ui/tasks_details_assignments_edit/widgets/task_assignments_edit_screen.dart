@@ -127,32 +127,19 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                         ),
                         children: [
                           EditAssignmentsForm(viewModel: widget.viewModel),
-                          ListenableBuilder(
-                            listenable: widget.viewModel,
-                            builder: (builderContext, _) {
-                              if (widget
-                                      .viewModel
-                                      .workspaceMembersNotAssigned
-                                      .isEmpty ||
-                                  widget.viewModel.assignees!.length ==
-                                      ValidationRules.taskMaxAssigneesCount) {
-                                // Either all the workspace members are assigned to this task
-                                // or the number of assignees is already maxed out.
-                                return const SizedBox.shrink();
-                              }
-
-                              return Column(
-                                children: [
-                                  const SizedBox(height: 40),
-                                  const Separator(),
-                                  const SizedBox(height: 30),
-                                  AddNewAssigneeForm(
-                                    viewModel: widget.viewModel,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
+                          if (widget.viewModel.assignees!.length ==
+                              ValidationRules.taskMaxAssigneesCount)
+                            // The number of assignees is already maxed out
+                            const SizedBox.shrink()
+                          else
+                            Column(
+                              children: [
+                                const SizedBox(height: 40),
+                                const Separator(),
+                                const SizedBox(height: 30),
+                                AddNewAssigneeForm(viewModel: widget.viewModel),
+                              ],
+                            ),
                         ],
                       );
                     },

@@ -20,31 +20,43 @@ class AddNewAssigneeForm extends StatefulWidget {
 }
 
 class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
-  final bool _isInit = true; // First init flag
   final _formKey = GlobalKey<FormState>();
   List<AppSelectFieldOption<WorkspaceUser>> options = [];
   List<AppSelectFieldOption<WorkspaceUser>> _selectedAssignees = [];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_isInit) {
-      options = widget.viewModel.workspaceMembersNotAssigned.map((user) {
-        final fullName = UserUtils.constructFullName(
+  void initState() {
+    super.initState();
+    // Doesn't need setState because widget is not yet built
+    // meaning build() method is not yet invoked
+    _updateOptions();
+  }
+
+  @override
+  void didUpdateWidget(covariant AddNewAssigneeForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Needs setState because widget is already build and needs rebuild
+    setState(() {
+      _updateOptions();
+    });
+  }
+
+  void _updateOptions() {
+    options = widget.viewModel.workspaceMembersNotAssigned.map((user) {
+      final fullName = UserUtils.constructFullName(
+        firstName: user.firstName,
+        lastName: user.lastName,
+      );
+      return AppSelectFieldOption<WorkspaceUser>(
+        label: fullName,
+        value: user,
+        leading: AppAvatar(
+          hashString: user.id,
           firstName: user.firstName,
-          lastName: user.lastName,
-        );
-        return AppSelectFieldOption<WorkspaceUser>(
-          label: fullName,
-          value: user,
-          leading: AppAvatar(
-            hashString: user.id,
-            firstName: user.firstName,
-            imageUrl: user.profileImageUrl,
-          ),
-        );
-      }).toList();
-    }
+          imageUrl: user.profileImageUrl,
+        ),
+      );
+    }).toList();
   }
 
   void _onAssigneesSelected(

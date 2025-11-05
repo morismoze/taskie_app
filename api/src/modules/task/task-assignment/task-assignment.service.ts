@@ -5,6 +5,7 @@ import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { UpdateTaskAssignmentsRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignment-request.dto';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';
+import { TASK_MAXIMUM_ASSIGNEES_COUNT } from '../task-module/domain/task.constants';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
 import { TaskAssignmentWithAssigneeUser } from './domain/task-assignment-with-assignee-user.domain';
 import { TaskAssignment } from './domain/task-assignment.domain';
@@ -81,12 +82,28 @@ export class TaskAssignmentService {
     taskId: TaskAssignment['task']['id'];
     status: TaskAssignment['status'];
   }): Promise<Array<TaskAssignmentCore>> {
+    // Check if there already are 10 assignees assigned (= 10 assignments)
+    const taskAssignments = await this.findAllByTaskId(taskId);
+
+    if (taskAssignments.length === TASK_MAXIMUM_ASSIGNEES_COUNT) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNEES_COUNT_MAXED_OUT,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     const newTaskAssignments =
       await this.taskAssignmentRepository.createMultiple({
         workspaceUserIds,
         taskId,
         status,
       });
+
+    // Maybe also somehow detect that unique constraint on the
+    // entity has triggered because someone tried to add a
+    // assignee which was already assigned?
 
     if (newTaskAssignments.length !== workspaceUserIds.length) {
       throw new ApiHttpException(

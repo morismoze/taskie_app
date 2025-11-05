@@ -1170,6 +1170,16 @@ export class WorkspaceService {
     return mappedResponse;
   }
 
+  /**
+   * This is idempotennt solution because it uses Typeorm's
+   * delete funtion, which doesn't check if the record actually
+   * exists. This is actually a good solution for the case
+   * when a Manager2 tries to remove a assignee which was already
+   * removed by Manager1 (Manager2 had stale tasks response). In
+   * that case, 204 status will be sent to Manager2 (even though
+   * there was no actual deletion) and frontend will then manually
+   * remove that assignee from the tasks cache.
+   */
   async removeTaskAssignee({
     workspaceId,
     taskId,

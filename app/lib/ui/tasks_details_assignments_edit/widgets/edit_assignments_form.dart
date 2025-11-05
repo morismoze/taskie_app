@@ -42,6 +42,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
     // new assignee, so we need to listen on that, and update local state.
     for (final assignee in widget.viewModel.assignees!) {
       if (_assigneesStatuses.containsKey(assignee.id)) {
+        // Keep current status which may have been modified by the Manager
         newStatusesMap[assignee.id] = _assigneesStatuses[assignee.id]!;
       } else {
         newStatusesMap[assignee.id] = assignee.status;

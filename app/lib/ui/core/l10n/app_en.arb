@@ -75,7 +75,7 @@
   "tasksAssignmentsEditAddNewAssignee": "Add additional assignees to this task:",
   "tasksAssignmentsGuideMainTitle": "About task assignments",
   "tasksAssignmentsGuideAssignmentLimitTitle": "Assignments limit",
-  "tasksAssignmentsGuideAssignmentLimitBody": "Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the X icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.",
+  "tasksAssignmentsGuideAssignmentLimitBody": "Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.",
   "tasksAssignmentsGuideAssignmentStatusesTitle": "Assignments statuses",
   "tasksAssignmentsGuideAssignmentStatusesBody": "__In Progress__ - the task is currently being worked on\n__Completed__ - the task was successfully completed\n__Completed as Stale__ - the task was completed after the due date has passed (applicable only if the task has a due date set)\n__Not Completed__ - the task was not completed",
   "tasksAssignmentsGuideMultipleAssigneesTitle": "Multiple assignees",

@@ -545,7 +545,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAssignmentsGuideAssignmentLimitBody.
   ///
   /// In en, this message translates to:
-  /// **'Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the X icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
+  /// **'Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
   String get tasksAssignmentsGuideAssignmentLimitBody;
 
   /// No description provided for @tasksAssignmentsGuideAssignmentStatusesTitle.

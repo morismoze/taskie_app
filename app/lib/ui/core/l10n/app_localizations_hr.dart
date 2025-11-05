@@ -259,7 +259,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksAssignmentsGuideAssignmentLimitBody =>
-      'Svaki zadatak može imati do __10 dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu X pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+      'Svaki zadatak može imati do __10 dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
 
   @override
   String get tasksAssignmentsGuideAssignmentStatusesTitle => 'Statusi dodjela';

@@ -75,7 +75,7 @@
   "tasksAssignmentsEditAddNewAssignee": "Dodijelite ovaj zadatak dodatnome članu:",
   "tasksAssignmentsGuideMainTitle": "O dodjelama zadatka",
   "tasksAssignmentsGuideAssignmentLimitTitle": "Ograničenje broja dodjela",
-  "tasksAssignmentsGuideAssignmentLimitBody": "Svaki zadatak može imati do __10 dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu X pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.",
+  "tasksAssignmentsGuideAssignmentLimitBody": "Svaki zadatak može imati do __10 dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.",
   "tasksAssignmentsGuideAssignmentStatusesTitle": "Statusi dodjela",
   "tasksAssignmentsGuideAssignmentStatusesBody": "__In Progress__ - zadatak je trenutno u izradi\n__Completed__ - zadatak je uspješno završen\n__Completed as Stale__ - zadatak je završen nakon isteka roka završetka (primjenjivo samo ako zadatak ima postavljen Rok završetka)\n__Not Completed__ - zadatak nije izvršen",
   "tasksAssignmentsGuideMultipleAssigneesTitle": "Višestruke dodjele",

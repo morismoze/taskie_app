@@ -21,6 +21,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
        _workspaceTaskRepository = workspaceTaskRepository,
        _workspaceUserRepository = workspaceUserRepository {
     _loadWorkspaceTaskDetails();
+    _workspaceTaskRepository.addListener(_onWorkspaceTasksChanged);
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     // This is loading for the select field for adding new assignees
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
@@ -63,8 +64,14 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
           .toList() ??
       [];
 
+  // We need this because workspace users can be first-loaded
+  // (meaning they are not loaded yet) for adding new assignee list.
   void _onWorkspaceUsersChanged() {
     notifyListeners();
+  }
+
+  void _onWorkspaceTasksChanged() {
+    _loadWorkspaceTaskDetails();
   }
 
   Result<void> _loadWorkspaceTaskDetails() {
@@ -107,7 +114,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _loadWorkspaceTaskDetails();
         break;
       case Error():
         _log.warning('Failed to add task assignee', result.error);
@@ -125,7 +131,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _loadWorkspaceTaskDetails();
         break;
       case Error():
         _log.warning('Failed to add task assignee', result.error);
@@ -145,7 +150,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _loadWorkspaceTaskDetails();
         break;
       case Error():
         _log.warning('Failed to edit task assignments', result.error);
@@ -157,6 +161,7 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _workspaceUserRepository.removeListener(_onWorkspaceUsersChanged);
+    _workspaceTaskRepository.removeListener(_onWorkspaceTasksChanged);
     super.dispose();
   }
 }
