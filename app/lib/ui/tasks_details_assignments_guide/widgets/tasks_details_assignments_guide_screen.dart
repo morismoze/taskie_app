@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
@@ -35,9 +36,10 @@ class TasksDetailsAssignmentsGuideScreen extends StatelessWidget {
                           title: context
                               .localization
                               .tasksAssignmentsGuideAssignmentLimitTitle,
-                          body: context
-                              .localization
-                              .tasksAssignmentsGuideAssignmentLimitBody,
+                          body: context.localization
+                              .tasksAssignmentsGuideAssignmentLimitBody(
+                                ValidationRules.taskMaxAssigneesCount,
+                              ),
                         ),
                         const SizedBox(height: 24),
                         GuideSection(

@@ -129,8 +129,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksHello => 'Hello!';
 
   @override
-  String get taskskNoTasks =>
-      'It looks like your workspace doesn\'t have any task yet. Try creating your first one!';
+  String get tasksNoTasks =>
+      'It looks like your workspace doesn\'t have any task yet. Try creating your first one using the main **+** button below!';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -189,37 +189,42 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble editing task details';
 
   @override
-  String get updateTaskAssignmentsSuccess =>
+  String get tasksUpdateTaskAssignmentsSuccess =>
       'Successfully updated task assignments';
 
   @override
-  String get updateTaskAssignmentsUpdateError =>
+  String get tasksUpdateTaskAssignmentsUpdateError =>
       'Uh-oh! We\'ve had some trouble updating task assignments';
 
   @override
-  String get addTaskAssignmentSuccess => 'Successfully added new task assignee';
+  String get tasksAddTaskAssignmentSuccess =>
+      'Successfully added new task assignee';
 
   @override
-  String get addTaskAssignmentError =>
+  String get tasksAddTaskAssignmentError =>
       'Uh-oh! We\'ve had some trouble adding new task assigee';
 
   @override
-  String get closedTaskError =>
+  String get tasksClosedTaskError =>
       'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.';
 
   @override
-  String get removeTaskAssignmentModalMessage =>
+  String get tasksAmendedAssigneesError =>
+      'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.';
+
+  @override
+  String get tasksRemoveTaskAssignmentModalMessage =>
       'Are you sure you want to remove this user from task assignments?';
 
   @override
-  String get removeTaskAssignmentModalCta => 'Remove';
+  String get tasksRemoveTaskAssignmentModalCta => 'Remove';
 
   @override
-  String get removeTaskAssignmentSuccess =>
+  String get tasksRemoveTaskAssignmentSuccess =>
       'Successfully removed task assignee';
 
   @override
-  String get removeTaskAssignmentError =>
+  String get tasksRemoveTaskAssignmentError =>
       'Uh-oh! We\'ve had some trouble removing the task assigee';
 
   @override
@@ -256,8 +261,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksAssignmentsGuideAssignmentLimitTitle => 'Assignments limit';
 
   @override
-  String get tasksAssignmentsGuideAssignmentLimitBody =>
-      'Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.';
+  String tasksAssignmentsGuideAssignmentLimitBody(
+    Object taskAssigneesMaxCount,
+  ) {
+    return 'Each task can have up to __$taskAssigneesMaxCount assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.';
+  }
 
   @override
   String get tasksAssignmentsGuideAssignmentStatusesTitle =>

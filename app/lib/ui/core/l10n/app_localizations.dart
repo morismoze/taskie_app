@@ -320,11 +320,11 @@ abstract class AppLocalizations {
   /// **'Hello!'**
   String get tasksHello;
 
-  /// No description provided for @taskskNoTasks.
+  /// No description provided for @tasksNoTasks.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one!'**
-  String get taskskNoTasks;
+  /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one using the main **+** button below!'**
+  String get tasksNoTasks;
 
   /// No description provided for @taskskNoFilteredTasks.
   ///
@@ -428,59 +428,65 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble editing task details'**
   String get tasksDetailsEditError;
 
-  /// No description provided for @updateTaskAssignmentsSuccess.
+  /// No description provided for @tasksUpdateTaskAssignmentsSuccess.
   ///
   /// In en, this message translates to:
   /// **'Successfully updated task assignments'**
-  String get updateTaskAssignmentsSuccess;
+  String get tasksUpdateTaskAssignmentsSuccess;
 
-  /// No description provided for @updateTaskAssignmentsUpdateError.
+  /// No description provided for @tasksUpdateTaskAssignmentsUpdateError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble updating task assignments'**
-  String get updateTaskAssignmentsUpdateError;
+  String get tasksUpdateTaskAssignmentsUpdateError;
 
-  /// No description provided for @addTaskAssignmentSuccess.
+  /// No description provided for @tasksAddTaskAssignmentSuccess.
   ///
   /// In en, this message translates to:
   /// **'Successfully added new task assignee'**
-  String get addTaskAssignmentSuccess;
+  String get tasksAddTaskAssignmentSuccess;
 
-  /// No description provided for @addTaskAssignmentError.
+  /// No description provided for @tasksAddTaskAssignmentError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble adding new task assigee'**
-  String get addTaskAssignmentError;
+  String get tasksAddTaskAssignmentError;
 
-  /// No description provided for @closedTaskError.
+  /// No description provided for @tasksClosedTaskError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.'**
-  String get closedTaskError;
+  String get tasksClosedTaskError;
 
-  /// No description provided for @removeTaskAssignmentModalMessage.
+  /// No description provided for @tasksAmendedAssigneesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.'**
+  String get tasksAmendedAssigneesError;
+
+  /// No description provided for @tasksRemoveTaskAssignmentModalMessage.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to remove this user from task assignments?'**
-  String get removeTaskAssignmentModalMessage;
+  String get tasksRemoveTaskAssignmentModalMessage;
 
-  /// No description provided for @removeTaskAssignmentModalCta.
+  /// No description provided for @tasksRemoveTaskAssignmentModalCta.
   ///
   /// In en, this message translates to:
   /// **'Remove'**
-  String get removeTaskAssignmentModalCta;
+  String get tasksRemoveTaskAssignmentModalCta;
 
-  /// No description provided for @removeTaskAssignmentSuccess.
+  /// No description provided for @tasksRemoveTaskAssignmentSuccess.
   ///
   /// In en, this message translates to:
   /// **'Successfully removed task assignee'**
-  String get removeTaskAssignmentSuccess;
+  String get tasksRemoveTaskAssignmentSuccess;
 
-  /// No description provided for @removeTaskAssignmentError.
+  /// No description provided for @tasksRemoveTaskAssignmentError.
   ///
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble removing the task assigee'**
-  String get removeTaskAssignmentError;
+  String get tasksRemoveTaskAssignmentError;
 
   /// No description provided for @tasksDetailsCloseTask.
   ///
@@ -545,8 +551,8 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAssignmentsGuideAssignmentLimitBody.
   ///
   /// In en, this message translates to:
-  /// **'Each task can have up to __10 assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
-  String get tasksAssignmentsGuideAssignmentLimitBody;
+  /// **'Each task can have up to __{taskAssigneesMaxCount} assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
+  String tasksAssignmentsGuideAssignmentLimitBody(Object taskAssigneesMaxCount);
 
   /// No description provided for @tasksAssignmentsGuideAssignmentStatusesTitle.
   ///

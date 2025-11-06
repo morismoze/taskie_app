@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
-import '../../core/ui/app_outlined_button.dart';
+import '../../core/utils/extensions.dart';
 
 class EmptyTasks extends StatelessWidget {
-  const EmptyTasks({super.key, required this.activeWorkspaceId});
-
-  final String activeWorkspaceId;
+  const EmptyTasks({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +14,12 @@ class EmptyTasks extends StatelessWidget {
       children: [
         FractionallySizedBox(
           widthFactor: 0.9,
-          child: Text(
-            context.localization.taskskNoTasks,
+          child: context.localization.tasksNoTasks.format(
+            style: Theme.of(context).textTheme.bodyMedium!,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
         const SizedBox(height: 20),
-        AppOutlinedButton(
-          label: context.localization.taskCreateNew,
-          onPress: () =>
-              context.push(Routes.taskCreate(workspaceId: activeWorkspaceId)),
-        ),
       ],
     );
   }

@@ -5,6 +5,9 @@ import '../../../../../utils/api.dart';
 import '../../../../../utils/command.dart';
 import '../../api_client.dart';
 import '../../api_response.dart';
+import '../../exceptions/task_assignees_already_exist_exception.dart';
+import '../../exceptions/task_assignees_count_maxed_out_exception.dart';
+import '../../exceptions/task_assignees_invalid_exception.dart';
 import '../../exceptions/task_closed_exception.dart';
 import '../../paginable.dart';
 import '../paginable_objectives.dart';
@@ -129,6 +132,14 @@ class WorkspaceTaskApiService {
         return const Result.error(TaskClosedException());
       }
 
+      if (apiError?.code == ApiErrorCode.taskAssigneesCountMaxedOut) {
+        return const Result.error(TaskAssigneesCountMaxedOutException());
+      }
+
+      if (apiError?.code == ApiErrorCode.taskAssigneesAlreadyExist) {
+        return const Result.error(TaskAssigneesAlreadyExistException());
+      }
+
       return Result.error(e);
     }
   }
@@ -183,6 +194,10 @@ class WorkspaceTaskApiService {
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
         return const Result.error(TaskClosedException());
+      }
+
+      if (apiError?.code == ApiErrorCode.taskAssigneesInvalid) {
+        return const Result.error(TaskAssigneesInvalidException());
       }
 
       return Result.error(e);

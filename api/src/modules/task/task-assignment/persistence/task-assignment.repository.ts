@@ -45,6 +45,16 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 
+  abstract findAllByTaskIdAndAssigneeId({
+    taskId,
+    assigneeIds,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<TaskAssignmentEntity[]>;
+
   abstract findByTaskId({
     id,
     relations,

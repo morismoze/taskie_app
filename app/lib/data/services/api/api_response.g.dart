@@ -35,4 +35,7 @@ const _$ApiErrorCodeEnumMap = {
   ApiErrorCode.workspaceInviteExistingUser: '5',
   ApiErrorCode.notFoundWorkspaceInviteToken: '6',
   ApiErrorCode.taskClosed: '7',
+  ApiErrorCode.taskAssigneesCountMaxedOut: '8',
+  ApiErrorCode.taskAssigneesInvalid: '9',
+  ApiErrorCode.taskAssigneesAlreadyExist: '10',
 };

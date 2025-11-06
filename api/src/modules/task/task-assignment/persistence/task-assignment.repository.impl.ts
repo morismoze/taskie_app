@@ -109,6 +109,21 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     });
   }
 
+  async findAllByTaskIdAndAssigneeId({
+    taskId,
+    assigneeIds,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<TaskAssignmentEntity[]> {
+    return await this.repo.find({
+      where: { task: { id: taskId }, assignee: { id: In(assigneeIds) } },
+      relations,
+    });
+  }
+
   async findByTaskId({
     id,
     relations,

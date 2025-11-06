@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/services/api/exceptions/task_assignees_already_exist_exception.dart';
+import '../../../data/services/api/exceptions/task_assignees_count_maxed_out_exception.dart';
+import '../../../data/services/api/exceptions/task_assignees_invalid_exception.dart';
 import '../../../data/services/api/exceptions/task_closed_exception.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../routing/routes.dart';
@@ -158,7 +161,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.addTaskAssignee.clearResult();
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.addTaskAssignmentSuccess,
+        message: context.localization.tasksAddTaskAssignmentSuccess,
       );
     }
 
@@ -167,12 +170,16 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.addTaskAssignee.clearResult();
       switch (errorResult.error) {
         case TaskClosedException():
-          _showClosedTaskDialog();
+          _showClosedTaskErrorDialog();
+          break;
+        case TaskAssigneesCountMaxedOutException():
+        case TaskAssigneesAlreadyExistException():
+          _showAssigneesWereAmendedErrorDialog();
           break;
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.addTaskAssignmentError,
+            message: context.localization.tasksAddTaskAssignmentError,
           );
       }
     }
@@ -183,7 +190,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.removeTaskAssignee.clearResult();
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.removeTaskAssignmentSuccess,
+        message: context.localization.tasksRemoveTaskAssignmentSuccess,
       );
       context.pop(); // Close confirmation dialog
     }
@@ -194,12 +201,12 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.removeTaskAssignee.clearResult();
       switch (errorResult.error) {
         case TaskClosedException():
-          _showClosedTaskDialog();
+          _showClosedTaskErrorDialog();
           break;
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.removeTaskAssignmentError,
+            message: context.localization.tasksRemoveTaskAssignmentError,
           );
       }
     }
@@ -210,7 +217,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.updateTaskAssignments.clearResult();
       AppSnackbar.showSuccess(
         context: context,
-        message: context.localization.updateTaskAssignmentsSuccess,
+        message: context.localization.tasksUpdateTaskAssignmentsSuccess,
       );
     }
 
@@ -220,18 +227,21 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       widget.viewModel.updateTaskAssignments.clearResult();
       switch (errorResult.error) {
         case TaskClosedException():
-          _showClosedTaskDialog();
+          _showClosedTaskErrorDialog();
+          break;
+        case TaskAssigneesInvalidException():
+          _showAssigneesWereAmendedErrorDialog();
           break;
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.updateTaskAssignmentsUpdateError,
+            message: context.localization.tasksUpdateTaskAssignmentsUpdateError,
           );
       }
     }
   }
 
-  void _showClosedTaskDialog() {
+  void _showClosedTaskErrorDialog() {
     AppDialog.show(
       context: context,
       canPop: false,
@@ -241,7 +251,35 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
         size: 30,
       ),
       content: Text(
-        context.localization.closedTaskError,
+        context.localization.tasksClosedTaskError,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        AppFilledButton(
+          label: context.localization.misc_goToHomepage,
+          onPress: () {
+            context.pop(); // Close dialog
+            context.go(
+              Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  void _showAssigneesWereAmendedErrorDialog() {
+    AppDialog.show(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleInfo,
+        color: Theme.of(context).colorScheme.primary,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.tasksAmendedAssigneesError,
         style: Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.center,
       ),

@@ -119,7 +119,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
         size: 30,
       ),
       content: Text(
-        context.localization.removeTaskAssignmentModalMessage,
+        context.localization.tasksRemoveTaskAssignmentModalMessage,
         style: Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.center,
       ),
@@ -127,7 +127,8 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
         ListenableBuilder(
           listenable: widget.viewModel.removeTaskAssignee,
           builder: (BuildContext builderContext, _) => AppFilledButton(
-            label: builderContext.localization.removeTaskAssignmentModalCta,
+            label:
+                builderContext.localization.tasksRemoveTaskAssignmentModalCta,
             onPress: () =>
                 widget.viewModel.removeTaskAssignee.execute(assigneeId),
             backgroundColor: Theme.of(builderContext).colorScheme.error,

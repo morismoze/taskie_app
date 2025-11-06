@@ -94,6 +94,22 @@ export class TaskAssignmentService {
       );
     }
 
+    // Check if any of the provided assignee IDs already exists as assignment
+    const existingTaskAssignments = await this.findAllByTaskIdAndAssigneeIds({
+      taskId,
+      assigneeIds: workspaceUserIds,
+    });
+
+    if (existingTaskAssignments.length > 0) {
+      // One or more provided assignee IDs already exist in task assignments for the given task
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNEES_ALREADY_EXIST,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     const newTaskAssignments =
       await this.taskAssignmentRepository.createMultiple({
         workspaceUserIds,
@@ -140,9 +156,22 @@ export class TaskAssignmentService {
 
   async findAllByTaskId(
     taskId: TaskAssignment['task']['id'],
-  ): Promise<TaskAssignmentWithAssigneeUser[]> {
+  ): Promise<TaskAssignmentCore[]> {
     return await this.taskAssignmentRepository.findAllByTaskId({
       taskId,
+    });
+  }
+
+  async findAllByTaskIdAndAssigneeIds({
+    taskId,
+    assigneeIds,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+  }): Promise<TaskAssignmentCore[]> {
+    return await this.taskAssignmentRepository.findAllByTaskIdAndAssigneeId({
+      taskId,
+      assigneeIds,
     });
   }
 
@@ -184,6 +213,16 @@ export class TaskAssignmentService {
     return this.findAllByTaskIdWithAssigneeUser(taskId);
   }
 
+  /**
+   * This is idempotennt solution because it uses Typeorm's
+   * delete funtion, which doesn't check if the record actually
+   * exists. This is actually a good solution for the case
+   * when a Manager2 tries to remove a assignee which was already
+   * removed by Manager1 (Manager2 had stale tasks response). In
+   * that case, 204 status will be sent to Manager2 (even though
+   * there was no actual deletion) and frontend will then manually
+   * remove that assignee from the tasks cache.
+   */
   async deleteByTaskIdAndAssigneeId({
     assigneeId,
     taskId,

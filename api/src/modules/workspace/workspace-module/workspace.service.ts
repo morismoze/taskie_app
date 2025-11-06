@@ -1131,12 +1131,9 @@ export class WorkspaceService {
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
-    // No need to check if any of the provided assignee IDs are already assigned to the given task
-    // because we have unique constraint on task and assignee (workspaceUser) in the task assignment entity
 
     await this.taskAssignmentService.createMultiple({
       workspaceUserIds: payload.assigneeIds,
@@ -1243,26 +1240,25 @@ export class WorkspaceService {
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    // We need to check if provided assignee IDs exist as workspace users
+    // We need to check if provided assignee IDs exist as this specific task assignments
     const providedAssigneeIds = assignments.map((item) => item.assigneeId);
-    const existingWorkspaceUsers = await this.workspaceUserService.findAllByIds(
-      {
-        workspaceId,
-        ids: providedAssigneeIds,
-      },
-    );
+    const existingTaskAssignments =
+      await this.taskAssignmentService.findAllByTaskIdAndAssigneeIds({
+        taskId,
+        assigneeIds: providedAssigneeIds,
+      });
 
-    if (existingWorkspaceUsers.length !== providedAssigneeIds.length) {
-      // One or more provided assignee IDs don't exist as workspace users for provided workspace
+    if (existingTaskAssignments.length !== providedAssigneeIds.length) {
+      // One or more provided assignee IDs doesn't exist in task assignments for the given task
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.INVALID_PAYLOAD,
+          code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 

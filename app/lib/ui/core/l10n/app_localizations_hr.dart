@@ -129,8 +129,8 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksHello => 'Pozdrav!';
 
   @override
-  String get taskskNoTasks =>
-      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!';
+  String get tasksNoTasks =>
+      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -189,38 +189,42 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
 
   @override
-  String get updateTaskAssignmentsSuccess =>
+  String get tasksUpdateTaskAssignmentsSuccess =>
       'Uspješno ste ažurirali dodjele zadatka';
 
   @override
-  String get updateTaskAssignmentsUpdateError =>
+  String get tasksUpdateTaskAssignmentsUpdateError =>
       'Uh-oh! Došlo je do problema prilikom ažuriranja dodjela zadatka';
 
   @override
-  String get addTaskAssignmentSuccess =>
+  String get tasksAddTaskAssignmentSuccess =>
       'Uspješno ste dodjelili zadatak odabranome članu';
 
   @override
-  String get addTaskAssignmentError =>
+  String get tasksAddTaskAssignmentError =>
       'Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu';
 
   @override
-  String get closedTaskError =>
-      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, odite na početnu stranicu i osvježite svoj popis zadatakaa.';
+  String get tasksClosedTaskError =>
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadatakaa.';
 
   @override
-  String get removeTaskAssignmentModalMessage =>
+  String get tasksAmendedAssigneesError =>
+      'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
+
+  @override
+  String get tasksRemoveTaskAssignmentModalMessage =>
       'Jeste li sigurni da želite ukloniti ovog korisnika iz dodjele zadatka?';
 
   @override
-  String get removeTaskAssignmentModalCta => 'Ukloni';
+  String get tasksRemoveTaskAssignmentModalCta => 'Ukloni';
 
   @override
-  String get removeTaskAssignmentSuccess =>
+  String get tasksRemoveTaskAssignmentSuccess =>
       'Uspješno ste uklonili dodjelu s odabranoga člana';
 
   @override
-  String get removeTaskAssignmentError =>
+  String get tasksRemoveTaskAssignmentError =>
       'Uh-oh! Došlo je do problema prilikom uklanjanja dodjele s člana';
 
   @override
@@ -258,8 +262,11 @@ class AppLocalizationsHr extends AppLocalizations {
       'Ograničenje broja dodjela';
 
   @override
-  String get tasksAssignmentsGuideAssignmentLimitBody =>
-      'Svaki zadatak može imati do __10 dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+  String tasksAssignmentsGuideAssignmentLimitBody(
+    Object taskAssigneesMaxCount,
+  ) {
+    return 'Svaki zadatak može imati do $taskAssigneesMaxCount dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+  }
 
   @override
   String get tasksAssignmentsGuideAssignmentStatusesTitle => 'Statusi dodjela';

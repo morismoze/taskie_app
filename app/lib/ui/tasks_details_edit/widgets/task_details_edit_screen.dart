@@ -130,7 +130,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
               size: 30,
             ),
             content: Text(
-              context.localization.closedTaskError,
+              context.localization.tasksClosedTaskError,
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -176,7 +176,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
         case TaskClosedException():
           AppSnackbar.showError(
             context: context,
-            message: context.localization.closedTaskError,
+            message: context.localization.tasksClosedTaskError,
           );
           break;
         default:

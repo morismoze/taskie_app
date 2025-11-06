@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/widgets.dart';
+import '../utils/extensions.dart';
 
 class GuideSection extends StatelessWidget {
   const GuideSection({super.key, required this.title, required this.body});
@@ -10,12 +10,6 @@ class GuideSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyFormattedWidget = WidgetsUtils.buildFormattedText(
-      context: context,
-      text: body,
-      style: Theme.of(context).textTheme.bodyLarge!,
-    );
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,7 +20,7 @@ class GuideSection extends StatelessWidget {
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        bodyFormattedWidget,
+        body.format(style: Theme.of(context).textTheme.bodyLarge!),
       ],
     );
   }

@@ -11,6 +11,66 @@ extension StringExtension on String {
   }
 
   String? get nullIfEmpty => isEmpty ? null : this;
+
+  Widget format({required TextStyle style, TextAlign? textAlign}) {
+    // ** is parsed as bold
+    // __ (double underscore) is parsed as underline
+    // * is parsed as italic
+    final regex = RegExp(r'\*\*(.*?)\*\*|__(.*?)__|(?<!\*)\*(.*?)\*(?!\*)');
+    final matches = regex.allMatches(this);
+
+    if (matches.isEmpty) {
+      return Text(this, textAlign: textAlign, style: style);
+    }
+
+    final spans = <TextSpan>[];
+    var lastIndex = 0;
+
+    for (final match in matches) {
+      // Add text before match
+      if (match.start > lastIndex) {
+        spans.add(
+          TextSpan(text: substring(lastIndex, match.start), style: style),
+        );
+      }
+
+      final boldText = match.group(1);
+      final underlineText = match.group(2);
+      final italicText = match.group(3);
+
+      if (boldText != null) {
+        spans.add(
+          TextSpan(
+            text: boldText,
+            style: style.copyWith(fontWeight: FontWeight.bold),
+          ),
+        );
+      } else if (underlineText != null) {
+        spans.add(
+          TextSpan(
+            text: underlineText,
+            style: style.copyWith(decoration: TextDecoration.underline),
+          ),
+        );
+      } else if (italicText != null) {
+        spans.add(
+          TextSpan(
+            text: italicText,
+            style: style.copyWith(fontStyle: FontStyle.italic),
+          ),
+        );
+      }
+
+      lastIndex = match.end;
+    }
+
+    // Add remaining text
+    if (lastIndex < length) {
+      spans.add(TextSpan(text: substring(lastIndex), style: style));
+    }
+
+    return Text.rich(TextSpan(children: spans), textAlign: textAlign);
+  }
 }
 
 extension WorkspaceRoleLocalization on WorkspaceRole {
