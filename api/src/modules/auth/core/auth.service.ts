@@ -55,7 +55,7 @@ export class AuthService {
         });
 
         if (user) {
-          // User has already "registered" via a social auth provider so
+          // User has already "registered" via the social auth provider so
           // we check if there are any properties retrieved by the auth service
           // that have changed.
           let email: SocialLogin['email'] | undefined = undefined;

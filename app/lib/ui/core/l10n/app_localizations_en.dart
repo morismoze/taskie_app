@@ -130,7 +130,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksNoTasks =>
-      'It looks like your workspace doesn\'t have any task yet. Try creating your first one using the main **+** button below!';
+      'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!';
 
   @override
   String get taskskNoFilteredTasks =>

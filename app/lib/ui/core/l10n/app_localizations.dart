@@ -323,7 +323,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksNoTasks.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one using the main **+** button below!'**
+  /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!'**
   String get tasksNoTasks;
 
   /// No description provided for @taskskNoFilteredTasks.

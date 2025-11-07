@@ -728,6 +728,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
     return Routes.entry;
   }
 
+  // if the user is not part of any workspace, redirect the user to the initial workspace creation page
   if (hasNoWorkspaces != null && hasNoWorkspaces) {
     return Routes.workspaceCreateInitial;
   }

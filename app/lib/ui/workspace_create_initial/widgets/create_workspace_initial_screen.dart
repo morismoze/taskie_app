@@ -64,8 +64,11 @@ class _CreateWorkspaceInitialScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Image(
-                        image: AssetImage(Assets.createWorkspaceIllustration),
+                      const FractionallySizedBox(
+                        widthFactor: 0.8,
+                        child: Image(
+                          image: AssetImage(Assets.createWorkspaceIllustration),
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Column(

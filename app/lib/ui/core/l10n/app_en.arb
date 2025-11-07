@@ -38,7 +38,7 @@
   "workspaceCreateDescriptionMaxLength": "Description can have at most 250 characters",
   "workspaceCreateError": "Uh-oh! We've had some trouble creating your workspace",
   "tasksHello": "Hello!",
-  "tasksNoTasks": "It looks like your workspace doesn't have any task yet. Try creating your first one using the main **+** button below!",
+  "tasksNoTasks": "It looks like your workspace doesn't have any tasks yet. Try creating your first one using the main **+** button below!",
   "taskskNoFilteredTasks": "Uh-oh! It looks like there aren't any tasks for the chosen filters. Try different ones!",
   "objectiveStatusFilterAll": "All statuses",
   "progressStatusInProgress": "In Progress",

@@ -66,7 +66,10 @@ class _SignInScreenState extends State<SignInScreen> {
               children: [
                 const Expanded(
                   flex: 3,
-                  child: Image(image: AssetImage(Assets.signInIllustration)),
+                  child: FractionallySizedBox(
+                    widthFactor: 0.85,
+                    child: Image(image: AssetImage(Assets.signInIllustration)),
+                  ),
                 ),
                 const SizedBox(height: 50),
                 Expanded(
