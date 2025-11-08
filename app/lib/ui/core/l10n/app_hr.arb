@@ -68,7 +68,7 @@
   "tasksRemoveTaskAssignmentSuccess": "Uspješno ste uklonili dodjelu s odabranoga člana",
   "tasksRemoveTaskAssignmentError": "Uh-oh! Došlo je do problema prilikom uklanjanja dodjele s člana",
   "tasksDetailsCloseTask": "Zatvori zadatak",
-  "tasksDetailsCloseTaskModalMessage": "Jeste li sigurni da želite zatvoriti ovaj zadatak?\nKada zatvorite zadatak, zadatak će se zatvoriti za sve dodijeljene članove.\nDodatno, neće ga više biti moguće ažurirati.",
+  "tasksDetailsCloseTaskModalMessage": "Jeste li sigurni da želite zatvoriti ovaj zadatak?\nKada zatvorite zadatak, zadatak će se zatvoriti za sve dodijeljene članove. Dodatno, neće ga više biti moguće ažurirati.",
   "tasksDetailsCloseSuccess": "Uspješno ste zatvorili zadatak",
   "tasksDetailsCloseError": "Uh-oh! Došlo je do problema prilikom zatvaranja zadatka",
   "tasksAssignmentsEdit": "Uređivanje dodjela zadatka",

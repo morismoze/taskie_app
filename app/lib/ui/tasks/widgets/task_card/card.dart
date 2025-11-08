@@ -131,7 +131,6 @@ class TaskCard extends StatelessWidget {
     AppModalBottomSheet.show(
       context: context,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           AppTextButton(

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_text_button.dart';
 import '../view_models/task_details_edit_screen_view_model.dart';
 
 class TaskCloseButton extends StatelessWidget {
@@ -37,22 +37,16 @@ class TaskCloseButton extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       actions: [
-        ListenableBuilder(
-          listenable: viewModel.closeTask,
-          builder: (BuildContext builderContext, _) => AppFilledButton(
-            label: builderContext.localization.tasksDetailsCloseTask,
-            onPress: () => viewModel.closeTask.execute(),
-            backgroundColor: Theme.of(builderContext).colorScheme.error,
-            loading: viewModel.closeTask.running,
-          ),
-        ),
-        ListenableBuilder(
-          listenable: viewModel.closeTask,
-          builder: (BuildContext builderContext, _) => AppTextButton(
-            disabled: viewModel.closeTask.running,
-            label: builderContext.localization.misc_cancel,
-            onPress: () => Navigator.pop(builderContext),
-          ),
+        ActionButtonBar.withCommand(
+          command: viewModel.closeTask,
+          onSubmit: (BuildContext builderContext) =>
+              viewModel.closeTask.execute(),
+          onCancel: (BuildContext builderContext) =>
+              Navigator.pop(builderContext),
+          submitButtonText: (BuildContext builderContext) =>
+              builderContext.localization.tasksDetailsCloseTask,
+          submitButtonColor: (BuildContext builderContext) =>
+              Theme.of(builderContext).colorScheme.error,
         ),
       ],
     );

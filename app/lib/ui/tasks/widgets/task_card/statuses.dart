@@ -35,6 +35,27 @@ class TaskStatuses extends StatelessWidget {
       );
     }
 
+    if (assignees.every(
+      (assignee) => assignee.status == ProgressStatus.closed,
+    )) {
+      final (textColor, backgroundColor) = _getStatusMeta(
+        ProgressStatus.closed,
+        context,
+      );
+
+      return Badge(
+        backgroundColor: backgroundColor,
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+        label: Text(
+          ProgressStatus.closed.l10n(context),
+          style: Theme.of(context).textTheme.labelSmall!.copyWith(
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+      );
+    }
+
     return Row(
       spacing: 4,
       children: assignees.mapIndexed((index, assignee) {

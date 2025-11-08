@@ -33,6 +33,25 @@ class SortByStatusButton extends StatelessWidget {
       label: context.localization.objectiveStatusFilterAll,
       value: null,
     );
+    final valuesList = [
+      noSortByStatusOption,
+      AppSelectFieldOption(
+        label: ProgressStatus.inProgress.l10n(context),
+        value: ProgressStatus.inProgress,
+      ),
+      AppSelectFieldOption(
+        label: ProgressStatus.completed.l10n(context),
+        value: ProgressStatus.completed,
+      ),
+      AppSelectFieldOption(
+        label: ProgressStatus.completedAsStale.l10n(context),
+        value: ProgressStatus.completedAsStale,
+      ),
+      AppSelectFieldOption(
+        label: ProgressStatus.closed.l10n(context),
+        value: ProgressStatus.closed,
+      ),
+    ];
     final activeValue = viewModel.activeFilter.status != null
         ? AppSelectFieldOption(
             label: viewModel.activeFilter.status!.l10n(context),
@@ -41,25 +60,7 @@ class SortByStatusButton extends StatelessWidget {
         : noSortByStatusOption;
 
     return SortByButton(
-      options: [
-        noSortByStatusOption,
-        AppSelectFieldOption(
-          label: ProgressStatus.inProgress.l10n(context),
-          value: ProgressStatus.inProgress,
-        ),
-        AppSelectFieldOption(
-          label: ProgressStatus.completed.l10n(context),
-          value: ProgressStatus.completed,
-        ),
-        AppSelectFieldOption(
-          label: ProgressStatus.completedAsStale.l10n(context),
-          value: ProgressStatus.completedAsStale,
-        ),
-        AppSelectFieldOption(
-          label: ProgressStatus.closed.l10n(context),
-          value: ProgressStatus.closed,
-        ),
-      ],
+      options: valuesList,
       activeValue: activeValue,
       onSubmit: onSubmit,
     );

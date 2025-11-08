@@ -497,7 +497,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksDetailsCloseTaskModalMessage.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees.\nIn addition, you will no longer be able to update it.'**
+  /// **'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees. In addition, you will no longer be able to update it.'**
   String get tasksDetailsCloseTaskModalMessage;
 
   /// No description provided for @tasksDetailsCloseSuccess.
@@ -605,7 +605,7 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerNotActiveWorkspace.
   ///
   /// In en, this message translates to:
-  /// **'To see additional options, make this workspace active by clicking on its icon in the top list.'**
+  /// **'To see additional options, make this workspace active by clicking on its icon in the list above.'**
   String get appDrawerNotActiveWorkspace;
 
   /// No description provided for @appDrawerLeaveWorkspace.
@@ -947,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementUserDetailsEditRoleBlocked.
   ///
   /// In en, this message translates to:
-  /// **'Virtual users always have the Member role and cannot be changed.'**
+  /// **'Virtual users always have the Member role and it can\'t be amended.'**
   String get workspaceUsersManagementUserDetailsEditRoleBlocked;
 
   /// No description provided for @editDetailsSubmit.

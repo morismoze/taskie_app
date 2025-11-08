@@ -24,6 +24,7 @@ import 'workspace_task_repository.dart';
 const _kDefaultPaginablePage = 1;
 const _kDefaultPaginableLimit = 15;
 const _kDefaultPaginableSort = SortBy.newestFirst;
+const _kDefaultPaginableStatus = ProgressStatus.inProgress;
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   WorkspaceTaskRepositoryImpl({
@@ -43,6 +44,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     page: _kDefaultPaginablePage,
     limit: _kDefaultPaginableLimit,
     sort: _kDefaultPaginableSort,
+    status: _kDefaultPaginableStatus,
   );
 
   @override
@@ -419,7 +421,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       page: _kDefaultPaginablePage,
       limit: _kDefaultPaginableLimit,
       search: null,
-      status: null,
+      status: _kDefaultPaginableStatus,
       sort: _kDefaultPaginableSort,
     );
   }

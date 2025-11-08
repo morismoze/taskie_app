@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
-import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_button.dart';
 import '../view_models/workspace_users_management_screen_viewmodel.dart';
 
@@ -44,27 +44,19 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       actions: [
-        ListenableBuilder(
-          listenable: viewModel.deleteWorkspaceUser,
-          builder: (BuildContext builderContext, _) => AppFilledButton(
-            label: builderContext
-                .localization
-                .workspaceUsersManagementDeleteUserModalCta,
-            onPress: () => viewModel.deleteWorkspaceUser.execute((
-              workspaceId,
-              workspaceUserId,
-            )),
-            backgroundColor: Theme.of(builderContext).colorScheme.error,
-            loading: viewModel.deleteWorkspaceUser.running,
-          ),
-        ),
-        ListenableBuilder(
-          listenable: viewModel.deleteWorkspaceUser,
-          builder: (BuildContext builderContext, _) => AppTextButton(
-            disabled: viewModel.deleteWorkspaceUser.running,
-            label: builderContext.localization.misc_cancel,
-            onPress: () => Navigator.pop(builderContext),
-          ),
+        ActionButtonBar.withCommand(
+          command: viewModel.deleteWorkspaceUser,
+          onSubmit: (_) => viewModel.deleteWorkspaceUser.execute((
+            workspaceId,
+            workspaceUserId,
+          )),
+          onCancel: (BuildContext builderContext) =>
+              Navigator.pop(builderContext),
+          submitButtonText: (BuildContext builderContext) => builderContext
+              .localization
+              .workspaceUsersManagementDeleteUserModalCta,
+          submitButtonColor: (BuildContext builderContext) =>
+              Theme.of(builderContext).colorScheme.error,
         ),
       ],
     );

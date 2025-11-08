@@ -11,8 +11,6 @@ class AppModalBottomSheet {
   static const _notchLineWidth = 50.0;
   static const _notchLineHeight = 2.0;
 
-  /// The [shrinkWrap] parameter defines if the sheet content should
-  /// take just the needed vertical space. Defaults to true.
   static Future<T?> show<T>({
     required BuildContext context,
     required Widget child,
@@ -20,7 +18,6 @@ class AppModalBottomSheet {
     bool isDismissable = true,
     bool isDetached = false,
     bool isScrollControlled = false,
-    VoidCallback? onDismiss,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -64,8 +61,7 @@ class AppModalBottomSheet {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.centerLeft,
+          Flexible(
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                 Dimens.paddingHorizontal,

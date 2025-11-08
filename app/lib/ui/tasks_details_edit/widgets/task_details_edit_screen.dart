@@ -134,19 +134,15 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
-            actions: [
-              AppFilledButton(
-                label: context.localization.misc_goToHomepage,
-                onPress: () {
-                  context.pop(); // Close dialog
-                  context.go(
-                    Routes.tasks(
-                      workspaceId: widget.viewModel.activeWorkspaceId,
-                    ),
-                  );
-                },
-              ),
-            ],
+            actions: AppFilledButton(
+              label: context.localization.misc_goToHomepage,
+              onPress: () {
+                context.pop(); // Close dialog
+                context.go(
+                  Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
+                );
+              },
+            ),
           );
           break;
         default:

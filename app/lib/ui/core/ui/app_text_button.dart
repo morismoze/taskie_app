@@ -26,7 +26,6 @@ class AppTextButton extends StatelessWidget {
         padding: const EdgeInsets.all(0),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           if (leadingIcon != null) ...[
             SizedBox(

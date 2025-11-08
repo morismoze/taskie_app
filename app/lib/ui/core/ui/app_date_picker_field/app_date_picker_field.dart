@@ -4,12 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../l10n/l10n_extensions.dart';
 import '../../theme/colors.dart';
+import '../../theme/dimens.dart';
+import '../action_button_bar.dart';
 import '../app_field_button.dart';
-import '../app_filled_button.dart';
 import '../app_modal_bottom_sheet.dart';
-import '../app_text_button.dart';
 
 class AppDatePickerField extends StatefulWidget {
   const AppDatePickerField({
@@ -147,7 +146,7 @@ class _AppDatePickerState extends State<_AppDatePicker> {
     });
   }
 
-  void _onClose() {
+  void _onCancel() {
     context.pop();
   }
 
@@ -186,18 +185,11 @@ class _AppDatePickerState extends State<_AppDatePicker> {
             onDateTimeChanged: _onDateTimeChanged,
           ),
         ),
-        const SizedBox(height: 20),
-        Column(
-          children: [
-            AppFilledButton(
-              onPress: _onSubmit,
-              label: context.localization.misc_submit,
-            ),
-            AppTextButton(
-              onPress: _onClose,
-              label: context.localization.misc_close,
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: Dimens.paddingVertical / 2,
+          ),
+          child: ActionButtonBar(onSubmit: _onSubmit, onCancel: _onCancel),
         ),
       ],
     );

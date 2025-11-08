@@ -3,9 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_text_button.dart';
 import '../view_models/task_assignments_edit_screen_view_model.dart';
 import 'task_assignment_form_field.dart';
 
@@ -124,24 +124,16 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
         textAlign: TextAlign.center,
       ),
       actions: [
-        ListenableBuilder(
-          listenable: widget.viewModel.removeTaskAssignee,
-          builder: (BuildContext builderContext, _) => AppFilledButton(
-            label:
-                builderContext.localization.tasksRemoveTaskAssignmentModalCta,
-            onPress: () =>
-                widget.viewModel.removeTaskAssignee.execute(assigneeId),
-            backgroundColor: Theme.of(builderContext).colorScheme.error,
-            loading: widget.viewModel.removeTaskAssignee.running,
-          ),
-        ),
-        ListenableBuilder(
-          listenable: widget.viewModel.removeTaskAssignee,
-          builder: (BuildContext builderContext, _) => AppTextButton(
-            disabled: widget.viewModel.removeTaskAssignee.running,
-            label: builderContext.localization.misc_cancel,
-            onPress: () => Navigator.pop(builderContext),
-          ),
+        ActionButtonBar.withCommand(
+          command: widget.viewModel.removeTaskAssignee,
+          onSubmit: (BuildContext builderContext) =>
+              widget.viewModel.removeTaskAssignee.execute(assigneeId),
+          onCancel: (BuildContext builderContext) =>
+              Navigator.pop(builderContext),
+          submitButtonText: (BuildContext builderContext) =>
+              builderContext.localization.tasksRemoveTaskAssignmentModalCta,
+          submitButtonColor: (BuildContext builderContext) =>
+              Theme.of(builderContext).colorScheme.error,
         ),
       ],
     );

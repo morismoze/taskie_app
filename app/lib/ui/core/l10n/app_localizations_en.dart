@@ -232,7 +232,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksDetailsCloseTaskModalMessage =>
-      'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees.\nIn addition, you will no longer be able to update it.';
+      'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees. In addition, you will no longer be able to update it.';
 
   @override
   String get tasksDetailsCloseSuccess => 'Successfully closed the task';
@@ -298,7 +298,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerNotActiveWorkspace =>
-      'To see additional options, make this workspace active by clicking on its icon in the top list.';
+      'To see additional options, make this workspace active by clicking on its icon in the list above.';
 
   @override
   String get appDrawerLeaveWorkspace => 'Leave workspace';
@@ -505,7 +505,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
-      'Virtual users always have the Member role and cannot be changed.';
+      'Virtual users always have the Member role and it can\'t be amended.';
 
   @override
   String get editDetailsSubmit => 'Edit details';

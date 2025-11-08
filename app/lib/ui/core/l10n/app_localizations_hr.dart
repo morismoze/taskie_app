@@ -232,7 +232,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksDetailsCloseTaskModalMessage =>
-      'Jeste li sigurni da želite zatvoriti ovaj zadatak?\nKada zatvorite zadatak, zadatak će se zatvoriti za sve dodijeljene članove.\nDodatno, neće ga više biti moguće ažurirati.';
+      'Jeste li sigurni da želite zatvoriti ovaj zadatak?\nKada zatvorite zadatak, zadatak će se zatvoriti za sve dodijeljene članove. Dodatno, neće ga više biti moguće ažurirati.';
 
   @override
   String get tasksDetailsCloseSuccess => 'Uspješno ste zatvorili zadatak';

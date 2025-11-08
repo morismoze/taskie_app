@@ -168,7 +168,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
               return AppFilledButton(
                 onPress: _onSubmit,
                 label: builderContext.localization.editDetailsSubmit,
-                loading: widget.viewModel.editTaskDetails.running,
+                loading: !widget.viewModel.editTaskDetails.running,
                 disabled: !dirty,
               );
             },

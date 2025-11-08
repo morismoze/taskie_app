@@ -6,23 +6,25 @@ class AppOutlinedButton extends StatelessWidget {
     super.key,
     required this.onPress,
     required this.label,
-    this.borderColor,
+    this.disabled = false,
+    this.color,
     this.leadingIcon,
   });
 
   final void Function() onPress;
   final String label;
-  final Color? borderColor;
+  final bool disabled;
+  final Color? color;
   final IconData? leadingIcon;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: onPress,
+      onPressed: disabled ? null : onPress,
       style: ButtonStyle(
         side: WidgetStatePropertyAll(
           BorderSide(
-            color: borderColor ?? Theme.of(context).colorScheme.primary,
+            color: color ?? Theme.of(context).colorScheme.primary,
             width: 1,
             style: BorderStyle.solid,
           ),
@@ -44,7 +46,7 @@ class AppOutlinedButton extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: Theme.of(context).colorScheme.primary,
+                color: color ?? Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),

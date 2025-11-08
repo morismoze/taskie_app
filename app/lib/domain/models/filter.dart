@@ -39,6 +39,7 @@ class ObjectiveFilter extends Filter {
     required super.limit,
     super.search,
     required this.sort,
+    // Status can be null because we have All statuses option
     this.status,
   });
 

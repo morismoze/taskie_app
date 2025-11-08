@@ -3,10 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core/ui/action_button_bar.dart';
 import '../../../../core/ui/app_dialog.dart';
-import '../../../../core/ui/app_filled_button.dart';
 import '../../../../core/ui/app_radio_list_tile.dart';
-import '../../../../core/ui/app_text_button.dart';
 import '../../../../core/utils/intl.dart';
 import '../../../view_models/preferences_screen_viewmodel.dart';
 import '../../preferences_section_option.dart';
@@ -58,54 +57,41 @@ class _LocalizationLanguageOptionState
             context.localization.preferencesLocalizationLanguage,
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 400),
-            child: StatefulBuilder(
-              builder: (BuildContext builderContext, StateSetter setState) {
-                void onDialogLanguageSelected(Locale? locale) {
-                  // This just makes StatefulBuilder re-execute builder method again
-                  setState(() {
-                    dialogSelectedLocale = locale!;
-                  });
-                }
+          content: StatefulBuilder(
+            builder: (BuildContext builderContext, StateSetter setState) {
+              void onDialogLanguageSelected(Locale? locale) {
+                // This just makes StatefulBuilder re-execute builder method again
+                setState(() {
+                  dialogSelectedLocale = locale!;
+                });
+              }
 
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: IntlUtils.supportedLanguages.map((language) {
-                    return AppRadioListTile(
-                      value: language.locale,
-                      title: Text(
-                        language.name,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium!.copyWith(fontSize: 16),
-                      ),
-                      groupValue: dialogSelectedLocale,
-                      onChanged: onDialogLanguageSelected,
-                    );
-                  }).toList(),
-                );
-              },
-            ),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: IntlUtils.supportedLanguages.map((language) {
+                  return AppRadioListTile(
+                    value: language.locale,
+                    title: Text(
+                      language.name,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium!.copyWith(fontSize: 16),
+                    ),
+                    groupValue: dialogSelectedLocale,
+                    onChanged: onDialogLanguageSelected,
+                  );
+                }).toList(),
+              );
+            },
           ),
-          actions: [
-            ListenableBuilder(
-              listenable: widget.viewModel.setAppLocale,
-              builder: (BuildContext builderContext, _) => AppFilledButton(
-                label: builderContext.localization.misc_submit,
-                onPress: () => _onSubmit(dialogSelectedLocale),
-                loading: widget.viewModel.setAppLocale.running,
-              ),
-            ),
-            ListenableBuilder(
-              listenable: widget.viewModel.setAppLocale,
-              builder: (BuildContext builderContext, _) => AppTextButton(
-                disabled: widget.viewModel.setAppLocale.running,
-                label: builderContext.localization.misc_cancel,
-                onPress: () => Navigator.pop(builderContext),
-              ),
-            ),
-          ],
+          actions: ActionButtonBar.withCommand(
+            command: widget.viewModel.setAppLocale,
+            onSubmit: (BuildContext builderContext) =>
+                _onSubmit(dialogSelectedLocale),
+            onCancel: (BuildContext builderContext) =>
+                Navigator.pop(builderContext),
+          ),
         );
       },
     );

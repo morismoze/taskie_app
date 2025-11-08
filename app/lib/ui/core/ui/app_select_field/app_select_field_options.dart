@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../l10n/l10n_extensions.dart';
 import '../../theme/dimens.dart';
+import '../action_button_bar.dart';
 import '../app_checkbox.dart';
-import '../app_filled_button.dart';
-import '../app_text_button.dart';
 import 'app_select_field.dart';
 
 class AppSelectFieldOptions<T> extends StatefulWidget {
@@ -65,7 +63,7 @@ class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
     });
   }
 
-  void _onClose() {
+  void _onCancel() {
     context.pop();
   }
 
@@ -100,19 +98,11 @@ class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
             },
           ),
         ),
-        const SizedBox(height: Dimens.paddingVertical),
-        Column(
-          children: [
-            AppFilledButton(
-              onPress: _onSubmit,
-              loading: widget.isSubmitLoading,
-              label: context.localization.misc_submit,
-            ),
-            AppTextButton(
-              onPress: _onClose,
-              label: context.localization.misc_close,
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: Dimens.paddingVertical / 2,
+          ),
+          child: ActionButtonBar(onSubmit: _onSubmit, onCancel: _onCancel),
         ),
       ],
     );
