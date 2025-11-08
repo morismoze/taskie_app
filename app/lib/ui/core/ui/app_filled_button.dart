@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../theme/colors.dart';
 import 'activity_indicator.dart';
 
 class AppFilledButton extends StatelessWidget {
@@ -32,6 +31,8 @@ class AppFilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveFontSize =
         fontSize ?? Theme.of(context).textTheme.titleMedium!.fontSize;
+    final effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.primary;
 
     return FilledButton(
       onPressed: loading || disabled ? null : onPress,
@@ -41,14 +42,12 @@ class AppFilledButton extends StatelessWidget {
                 WidgetState.any: EdgeInsets.symmetric(horizontal: 10),
               })
             : null, // Default styles
-        backgroundColor: backgroundColor != null
-            ? WidgetStatePropertyAll(backgroundColor)
-            : WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.disabled)) {
-                  return AppColors.purple1Light;
-                }
-                return Theme.of(context).colorScheme.primary;
-              }),
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return Color.lerp(effectiveBackgroundColor, Colors.white, 0.85)!;
+          }
+          return effectiveBackgroundColor;
+        }),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
@@ -99,7 +98,7 @@ class AppFilledButton extends StatelessWidget {
             visible: loading,
             child: ActivityIndicator(
               radius: 11,
-              color: Theme.of(context).colorScheme.primary,
+              color: effectiveBackgroundColor,
             ),
           ),
         ],
