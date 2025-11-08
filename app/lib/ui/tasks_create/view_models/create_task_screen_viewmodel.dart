@@ -59,12 +59,11 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to load workspace users', result.error);
+        return result;
     }
-
-    return result;
   }
 
   Future<Result<void>> _createTask(
@@ -89,12 +88,11 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to create new task', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

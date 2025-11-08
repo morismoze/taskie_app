@@ -97,12 +97,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to load workspace users', result.error);
+        return result;
     }
-
-    return result;
   }
 
   Future<Result<void>> _addTaskAssignee(List<String> assigneeIds) async {
@@ -114,12 +113,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to add task assignee', result.error);
+        return result;
     }
-
-    return result;
   }
 
   Future<Result<void>> _removeTaskAssignee(String assigneeId) async {
@@ -131,12 +129,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to add task assignee', result.error);
+        return result;
     }
-
-    return result;
   }
 
   Future<Result<void>> _updateTaskAssignments(
@@ -150,12 +147,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to edit task assignments', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

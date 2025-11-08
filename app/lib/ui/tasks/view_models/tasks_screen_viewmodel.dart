@@ -108,12 +108,11 @@ class TasksScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to load tasks', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

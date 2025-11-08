@@ -19,11 +19,10 @@ class SignInViewModel {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to sign the user in via Google', result.error);
+        return result;
     }
-
-    return result;
   }
 }

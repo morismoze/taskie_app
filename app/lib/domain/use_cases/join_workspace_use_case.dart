@@ -27,7 +27,7 @@ class JoinWorkspaceUseCase {
   /// On workspace join we need to do two things:
   /// 1. Join the workspace,
   /// 2. Refresh the access token, since we keep role per workspace in it,
-  /// 3. Re-fetch the user with updated roles (new workspace with Manager role)
+  /// 3. Re-fetch the user with updated roles (new workspace with Member role)
   /// 3. Add the joined workspace to [WorkspaceRepository]'s cache
   ///
   /// This is made into separate use-case because the same logic is used on
@@ -70,9 +70,16 @@ class JoinWorkspaceUseCase {
     }
 
     final newWorkspace = resultJoin.value;
+    final resultAddWorkspace = await _workspaceRepository.addWorkspace(
+      workspace: newWorkspace,
+    );
 
-    _workspaceRepository.addWorkspace(workspace: newWorkspace);
-
-    return Result.ok(newWorkspace.id);
+    switch (resultAddWorkspace) {
+      case Ok():
+        return Result.ok(newWorkspace.id);
+      case Error():
+        _log.warning('Failed to add new workspace', resultAddWorkspace.error);
+        return Result.error(resultAddWorkspace.error);
+    }
   }
 }

@@ -61,12 +61,11 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to load workspace users', result.error);
+        return result;
     }
-
-    return result;
   }
 
   Future<Result<void>> _loadWorkspaceUserAccumulatedPoints(
@@ -104,12 +103,11 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to create new goal', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

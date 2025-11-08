@@ -15,6 +15,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
        _taskId = taskId,
        _workspaceTaskRepository = workspaceTaskRepository {
     _loadWorkspaceTaskDetails();
+    _workspaceTaskRepository.addListener(_onWorkspaceTasksChanged);
     editTaskDetails = Command1(_editTaskDetails);
     closeTask = Command0(_closeTask);
   }
@@ -36,6 +37,10 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
   WorkspaceTask? _details;
 
   WorkspaceTask? get details => _details;
+
+  void _onWorkspaceTasksChanged() {
+    _loadWorkspaceTaskDetails();
+  }
 
   Result<void> _loadWorkspaceTaskDetails() {
     final result = _workspaceTaskRepository.loadWorkspaceTaskDetails(
@@ -75,7 +80,6 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _loadWorkspaceTaskDetails();
         return const Result.ok(null);
       case Error():
         _log.warning('Failed to update task details', result.error);
@@ -95,5 +99,11 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
       case Error():
         return result;
     }
+  }
+
+  @override
+  void dispose() {
+    _workspaceTaskRepository.removeListener(_onWorkspaceTasksChanged);
+    super.dispose();
   }
 }
