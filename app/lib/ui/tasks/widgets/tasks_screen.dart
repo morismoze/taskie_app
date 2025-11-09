@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/objectives_list_view.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
 import 'empty_tasks.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';
+import 'tasks_sorting/tasks_sorting_header_delegate.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key, required this.viewModel});
@@ -21,23 +23,13 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   @override
   void initState() {
-    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-  }
-
-  @override
-  void didUpdateWidget(covariant TasksScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    super.initState();
   }
 
   @override
@@ -45,15 +37,7 @@ class _TasksScreenState extends State<TasksScreen> {
     return BlurredCirclesBackground(
       child: Column(
         children: [
-          ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (builderContext, _) {
-              if (widget.viewModel.user != null) {
-                return TasksHeader(viewModel: widget.viewModel);
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+          TasksHeader(viewModel: widget.viewModel),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(
@@ -62,7 +46,16 @@ class _TasksScreenState extends State<TasksScreen> {
               child: ListenableBuilder(
                 listenable: widget.viewModel,
                 builder: (builderContext, _) {
-                  // If the tasks are still null show activity indicator.
+                  // If the tasks are null (before initial load) amd there was an error while fetching
+                  // from origin, display error prompt. In other cases, old list will still be shown, but
+                  // we will show a error snackbar.
+                  if (widget.viewModel.tasks == null &&
+                      widget.viewModel.loadTasks.error) {
+                    // TODO: Usage of a generic error prompt widget
+                    return const SizedBox.shrink();
+                  }
+
+                  // If the tasks are null (before initial load) show activity indicator.
                   if (widget.viewModel.tasks == null) {
                     return ActivityIndicator(
                       radius: 16,
@@ -70,26 +63,15 @@ class _TasksScreenState extends State<TasksScreen> {
                     );
                   }
 
-                  // If there was an error while fetching from origin, display error prompt
-                  // only on initial load. In other cases, old list will still be shown, but
-                  // we will show snackbar.
-                  if (widget.viewModel.isInitialLoad &&
-                      widget.viewModel.loadTasks.error) {
-                    // TODO: Usage of a generic error prompt widget
-                    return const SizedBox.shrink();
-                  }
-
                   // If it is initial load and tasks are empty (not null),
                   // show Create new task prompt
-                  if (widget.viewModel.isInitialLoad &&
+                  if (!widget.viewModel.isFilterSearch &&
                       widget.viewModel.tasks!.total == 0) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Dimens.paddingHorizontal,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Dimens.of(context).paddingScreenHorizontal,
                       ),
-                      child: EmptyTasks(
-                        activeWorkspaceId: widget.viewModel.activeWorkspaceId,
-                      ),
+                      child: const EmptyTasks(),
                     );
                   }
 
@@ -103,7 +85,22 @@ class _TasksScreenState extends State<TasksScreen> {
                     onRefresh: () async {
                       widget.viewModel.loadTasks.execute((null, true));
                     },
-                    child: TasksList(viewModel: widget.viewModel),
+                    child: ObjectivesListView(
+                      headerDelegate: TasksSortingHeaderDelegate(
+                        viewModel: widget.viewModel,
+                        height: 50,
+                      ),
+                      list: TasksList(viewModel: widget.viewModel),
+                      totalPages: widget.viewModel.tasks!.totalPages,
+                      onPageChange: (page) {
+                        final updatedFilter = widget.viewModel.activeFilter
+                            .copyWith(page: page + 1);
+                        widget.viewModel.loadTasks.execute((
+                          updatedFilter,
+                          null,
+                        ));
+                      },
+                    ),
                   );
                 },
               ),

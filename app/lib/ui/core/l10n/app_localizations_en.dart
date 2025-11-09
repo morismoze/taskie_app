@@ -39,9 +39,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_roleMember => 'Member';
 
   @override
-  String get misc_orSeparator => 'or';
-
-  @override
   String get misc_ok => 'Ok';
 
   @override
@@ -52,6 +49,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get misc_new => 'New';
+
+  @override
+  String get misc_goToHomepage => 'Go to Homepage';
 
   @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
@@ -129,15 +129,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksHello => 'Hello!';
 
   @override
-  String get taskskNoTasks =>
-      'It looks like your workspace doesn\'t have any task yet. Try creating your first one!';
+  String get tasksNoTasks =>
+      'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!';
 
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
 
   @override
-  String get objectiveStatusFilterAll => 'All';
+  String get objectiveStatusFilterAll => 'All statuses';
 
   @override
   String get progressStatusInProgress => 'In Progress';
@@ -147,6 +147,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressStatusCompletedAsStale => 'Completed as Stale';
+
+  @override
+  String get progressStatusNotCompleted => 'Not Completed';
 
   @override
   String get progressStatusClosed => 'Closed';
@@ -163,6 +166,124 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tasksDetails => 'Task details';
+
+  @override
+  String get tasksDetailsEdit => 'Edit task details';
+
+  @override
+  String get tasksDetailsEditCreatedBy => 'Task created by';
+
+  @override
+  String get tasksDetailsEditCreatedByDeletedAccount =>
+      'Creator deleted their account';
+
+  @override
+  String get tasksDetailsEditCreatedAt => 'Task created at';
+
+  @override
+  String get tasksDetailsEditSuccess => 'Successfully edited task details';
+
+  @override
+  String get tasksDetailsEditError =>
+      'Uh-oh! We\'ve had some trouble editing task details';
+
+  @override
+  String get tasksUpdateTaskAssignmentsSuccess =>
+      'Successfully updated task assignments';
+
+  @override
+  String get tasksUpdateTaskAssignmentsUpdateError =>
+      'Uh-oh! We\'ve had some trouble updating task assignments';
+
+  @override
+  String get tasksAddTaskAssignmentSuccess =>
+      'Successfully added new task assignee';
+
+  @override
+  String get tasksAddTaskAssignmentError =>
+      'Uh-oh! We\'ve had some trouble adding new task assigee';
+
+  @override
+  String get tasksClosedTaskError =>
+      'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.';
+
+  @override
+  String get tasksAmendedAssigneesError =>
+      'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.';
+
+  @override
+  String get tasksRemoveTaskAssignmentModalMessage =>
+      'Are you sure you want to remove this user from task assignments?';
+
+  @override
+  String get tasksRemoveTaskAssignmentModalCta => 'Remove';
+
+  @override
+  String get tasksRemoveTaskAssignmentSuccess =>
+      'Successfully removed task assignee';
+
+  @override
+  String get tasksRemoveTaskAssignmentError =>
+      'Uh-oh! We\'ve had some trouble removing the task assigee';
+
+  @override
+  String get tasksDetailsCloseTask => 'Close task';
+
+  @override
+  String get tasksDetailsCloseTaskModalMessage =>
+      'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees. In addition, you will no longer be able to update it.';
+
+  @override
+  String get tasksDetailsCloseSuccess => 'Successfully closed the task';
+
+  @override
+  String get tasksDetailsCloseError =>
+      'Uh-oh! We\'ve had some trouble closing the task';
+
+  @override
+  String get tasksAssignmentsEdit => 'Edit task assignments';
+
+  @override
+  String get tasksAssignmentsEditStatusLabel => 'Status';
+
+  @override
+  String get tasksAssignmentsEditStatusSubmit => 'Update assignments';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssignee =>
+      'Add additional assignees to this task:';
+
+  @override
+  String get tasksAssignmentsGuideMainTitle => 'About task assignments';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentLimitTitle => 'Assignments limit';
+
+  @override
+  String tasksAssignmentsGuideAssignmentLimitBody(
+    Object taskAssigneesMaxCount,
+  ) {
+    return 'Each task can have up to __$taskAssigneesMaxCount assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.';
+  }
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesTitle =>
+      'Assignments statuses';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesBody =>
+      '__In Progress__ - the task is currently being worked on\n__Completed__ - the task was successfully completed\n__Completed as Stale__ - the task was completed after the due date has passed (applicable only if the task has a due date set)\n__Not Completed__ - the task was not completed';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesTitle =>
+      'Multiple assignees';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesBody =>
+      'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.';
+
+  @override
   String get appDrawerTitle => 'Workspaces';
 
   @override
@@ -170,14 +291,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble changing workspace';
 
   @override
-  String get appDrawerEditWorkspace => 'Workspace setttings';
+  String get appDrawerEditWorkspace => 'Workspace settings';
 
   @override
   String get appDrawerManageUsers => 'Workspace users';
 
   @override
   String get appDrawerNotActiveWorkspace =>
-      'To see additional options, make this workspace active by clicking on its icon in the top list.';
+      'To see additional options, make this workspace active by clicking on its icon in the list above.';
 
   @override
   String get appDrawerLeaveWorkspace => 'Leave workspace';
@@ -268,7 +389,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUsersGuideMainTitle =>
-      'About Workspace Users';
+      'About workspace users';
 
   @override
   String get workspaceUsersManagementUsersGuideIntroBody =>
@@ -384,10 +505,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagementUserDetailsEditRoleBlocked =>
-      'Virtual users always have the Member role and cannot be changed.';
+      'Virtual users always have the Member role and it can\'t be amended.';
 
   @override
-  String get workspaceUsersManagementUserDetailsEditSubmit => 'Edit details';
+  String get editDetailsSubmit => 'Edit details';
 
   @override
   String get workspaceUsersManagementUserDetailsEditSuccess =>
@@ -462,9 +583,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceSettingsEdit => 'Edit workspace details';
-
-  @override
-  String get workspaceSettingsEditSubmit => 'Edit details';
 
   @override
   String get workspaceSettingsEditSuccess =>

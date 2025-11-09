@@ -44,15 +44,15 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
   int? get workspaceUserAccumulatedPoints => _workspaceUserAccumulatedPoints;
 
-  void _onWorkspaceUsersChanged() {
-    notifyListeners();
-  }
-
   List<WorkspaceUser> get workspaceMembers =>
       _workspaceUserRepository.users
           ?.where((user) => user.role == WorkspaceRole.member)
           .toList() ??
       [];
+
+  void _onWorkspaceUsersChanged() {
+    notifyListeners();
+  }
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
@@ -61,12 +61,11 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to load workspace users', result.error);
+        return result;
     }
-
-    return result;
   }
 
   Future<Result<void>> _loadWorkspaceUserAccumulatedPoints(
@@ -104,12 +103,11 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to create new goal', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

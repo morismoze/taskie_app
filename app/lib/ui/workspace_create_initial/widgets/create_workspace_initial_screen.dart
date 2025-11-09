@@ -25,7 +25,6 @@ class _CreateWorkspaceInitialScreenState
     extends State<CreateWorkspaceInitialScreen> {
   @override
   void initState() {
-    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
@@ -35,6 +34,7 @@ class _CreateWorkspaceInitialScreenState
       ),
     );
     widget.viewModel.createWorkspace.addListener(_onResult);
+    super.initState();
   }
 
   @override
@@ -64,8 +64,11 @@ class _CreateWorkspaceInitialScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Image(
-                        image: AssetImage(Assets.createWorkspaceIllustration),
+                      const FractionallySizedBox(
+                        widthFactor: 0.8,
+                        child: Image(
+                          image: AssetImage(Assets.createWorkspaceIllustration),
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Column(

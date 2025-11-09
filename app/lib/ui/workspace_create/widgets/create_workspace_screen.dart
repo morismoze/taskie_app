@@ -11,7 +11,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../../core/ui/or_separator.dart';
+import '../../core/ui/separator.dart';
 import '../view_models/create_workspace_screen_viewmodel.dart';
 import 'create_workspace_form.dart';
 import 'join_workspace_via_invite_form.dart';
@@ -28,11 +28,11 @@ class CreateWorkspaceScreen extends StatefulWidget {
 class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
     widget.viewModel.joinWorkspaceViaInviteLink.addListener(
       _onWorkspaceJoinResult,
     );
+    super.initState();
   }
 
   @override
@@ -69,17 +69,16 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
               HeaderBar(title: context.localization.workspaceCreate),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    top: Dimens.paddingVertical,
-                    left: Dimens.of(context).paddingScreenHorizontal,
-                    right: Dimens.of(context).paddingScreenHorizontal,
-                    bottom: Dimens.paddingVertical,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Dimens.of(context).paddingScreenVertical,
+                    horizontal: Dimens.of(context).paddingScreenHorizontal,
                   ),
                   child: Column(
-                    spacing: 10,
                     children: [
                       CreateWorkspaceForm(viewModel: widget.viewModel),
-                      const OrSeparator(),
+                      const SizedBox(height: 40),
+                      const Separator(),
+                      const SizedBox(height: 30),
                       JoinWorkspaceViaInviteForm(viewModel: widget.viewModel),
                     ],
                   ),

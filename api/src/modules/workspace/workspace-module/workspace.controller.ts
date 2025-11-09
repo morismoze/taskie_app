@@ -17,24 +17,26 @@ import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.
 import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { RequireWorkspaceUserRole } from './decorators/workspace-role.decorator';
+import { AddTaskAssigneeRequest } from './dto/request/add-task-assignee-request.dto';
 import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
 import { CreateTaskRequest } from './dto/request/create-task-request.dto';
 import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
 import { GoalIdRequestPathParam } from './dto/request/goal-id-path-param-request.dto';
+import { RemoveTaskAssigneeRequest } from './dto/request/remove-task-assignee-request.dto';
 import { TaskIdRequestPathParam } from './dto/request/task-id-path-param-request.dto';
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
-import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-request.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
-import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
 import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace-user-id-path-param-request.dto';
+import { AddTaskAssigneeResponse } from './dto/response/add-task-assignee-response.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
-import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -225,7 +227,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getTasks(
     @Param() params: WorkspaceIdRequestPathParam,
-    @Query() query: WorkspaceItemRequestQuery,
+    @Query() query: WorkspaceObjectiveRequestQuery,
   ): Promise<WorkspaceTasksResponse> {
     return this.workspaceService.getWorkspaceTasks({
       workspaceId: params.workspaceId,
@@ -242,9 +244,6 @@ export class WorkspaceController {
     @Req() request: RequestWithUser,
     @Body() data: CreateTaskRequest,
   ): Promise<WorkspaceTaskResponse> {
-    // Returning nothing in the response because tasks are paginable and sortable by
-    // different query params, so it doesn't make sense to return a newly created task
-    // in the response if it won't be usable for task list state update in the app
     return this.workspaceService.createTask({
       workspaceId: params.workspaceId,
       createdById: request.user.sub,
@@ -260,10 +259,54 @@ export class WorkspaceController {
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
     @Body() payload: UpdateTaskRequest,
-  ): Promise<UpdateTaskResponse> {
-    // This endpoint doesn't return WorkspaceTaskResponse because this endpoints
-    // doesn't update assignees - we do that via updateTaskAssigments endpoint
+  ): Promise<WorkspaceTaskResponse> {
     return this.workspaceService.updateTask({
+      workspaceId,
+      taskId,
+      payload,
+    });
+  }
+
+  @Post(':workspaceId/tasks/:taskId/close')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  closeTask(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+  ): Promise<void> {
+    return this.workspaceService.closeTask({
+      workspaceId,
+      taskId,
+    });
+  }
+
+  @Post(':workspaceId/tasks/:taskId/assignments')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.OK)
+  addTaskAssignee(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+    @Body() payload: AddTaskAssigneeRequest,
+  ): Promise<AddTaskAssigneeResponse> {
+    return this.workspaceService.addTaskAssignee({
+      workspaceId,
+      taskId,
+      payload,
+    });
+  }
+
+  @Delete(':workspaceId/tasks/:taskId/assignments')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeTaskAssignee(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { taskId }: TaskIdRequestPathParam,
+    @Body() payload: RemoveTaskAssigneeRequest,
+  ): Promise<void> {
+    return this.workspaceService.removeTaskAssignee({
       workspaceId,
       taskId,
       payload,
@@ -274,12 +317,12 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
-  updateTaskAssigments(
+  updateTaskAssignments(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
     @Body() { assignments }: UpdateTaskAssignmentsRequest,
   ): Promise<UpdateTaskAssignmentsStatusesResponse> {
-    return this.workspaceService.updateTaskAssigments({
+    return this.workspaceService.updateTaskAssignments({
       workspaceId,
       taskId,
       assignments,
@@ -307,7 +350,7 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   getGoals(
     @Param() params: WorkspaceIdRequestPathParam,
-    @Query() query: WorkspaceItemRequestQuery,
+    @Query() query: WorkspaceObjectiveRequestQuery,
   ): Promise<WorkspaceGoalsResponse> {
     return this.workspaceService.getWorkspaceGoals({
       workspaceId: params.workspaceId,

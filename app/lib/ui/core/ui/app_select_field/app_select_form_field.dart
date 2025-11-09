@@ -3,23 +3,24 @@ import 'package:flutter/material.dart';
 import '../../theme/theme.dart';
 import 'app_select_field.dart';
 
-class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
+class AppSelectFormField<T> extends FormField<List<AppSelectFieldOption<T>>> {
   AppSelectFormField({
     super.key,
     super.validator,
     super.enabled,
-    super.initialValue,
-    required List<AppSelectFieldOption> options,
+    required List<AppSelectFieldOption<T>> options,
     required String label,
-    required void Function(List<AppSelectFieldOption> selectedOptions)
-    onSelected,
-    required final void Function() onCleared,
+    required void Function(List<AppSelectFieldOption<T>> selectedOptions)
+    onChanged,
+    List<AppSelectFieldOption<T>> value = const [],
     bool multiple = false,
     bool required = true,
-    String? disabledWidgetTrailingTooltipMessage,
+    final void Function()? onCleared,
     int? max,
+    Widget? trailing,
   }) : super(
-         builder: (FormFieldState<List<AppSelectFieldOption>> state) {
+         initialValue: value,
+         builder: (FormFieldState<List<AppSelectFieldOption<T>>> state) {
            final context = state.context;
            final errorText = state.errorText;
            final selectedCount = state.value?.length ?? 0;
@@ -28,26 +29,27 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
            return Column(
              crossAxisAlignment: CrossAxisAlignment.start,
              children: [
-               AppSelectField(
+               AppSelectField<T>(
                  options: options,
                  label: label,
                  multiple: multiple,
                  required: required,
-                 onSelected: (selected) {
+                 onChanged: (selected) {
                    state.didChange(selected);
-                   onSelected(selected);
+                   onChanged(selected);
                    state.validate();
                  },
-                 onCleared: () {
-                   state.didChange([]);
-                   onCleared();
-                   state.validate();
-                 },
-                 initialValue: initialValue,
+                 onCleared: onCleared != null
+                     ? () {
+                         state.didChange([]);
+                         onCleared();
+                         state.validate();
+                       }
+                     : null,
+                 value: state.value ?? [],
                  enabled: enabled,
-                 disabledWidgetTrailingTooltipMessage:
-                     disabledWidgetTrailingTooltipMessage,
                  max: max,
+                 trailing: trailing,
                ),
                Padding(
                  padding: EdgeInsets.only(
@@ -79,4 +81,37 @@ class AppSelectFormField extends FormField<List<AppSelectFieldOption>> {
            );
          },
        );
+
+  /// Single-selection select field
+  factory AppSelectFormField.single({
+    Key? key,
+    String? Function(List<AppSelectFieldOption<T>>?)? validator,
+    bool enabled = true,
+    required List<AppSelectFieldOption<T>> options,
+    required String label,
+    AppSelectFieldOption<T>? value,
+    required void Function(AppSelectFieldOption<T> selectedOption) onChanged,
+    void Function()? onCleared,
+    bool required = true,
+    bool isSubmitLoading = false,
+    Widget? trailing,
+  }) {
+    return AppSelectFormField<T>(
+      key: key,
+      validator: validator,
+      enabled: enabled,
+      options: options,
+      label: label,
+      onChanged: (selectedList) {
+        if (selectedList.isNotEmpty) {
+          onChanged(selectedList.first);
+        }
+      },
+      multiple: false,
+      required: required,
+      onCleared: onCleared,
+      value: value != null ? [value] : [],
+      trailing: trailing,
+    );
+  }
 }

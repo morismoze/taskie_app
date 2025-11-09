@@ -11,7 +11,7 @@ export class UpdateWorkspaceRequest {
 
   @IsOptional()
   @IsValidWorkspaceDescription()
-  description?: string;
+  description?: string | null;
 
   constructor(name?: string, description?: string) {
     this.name = name;

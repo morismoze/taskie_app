@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/guide_section.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 
 class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
@@ -23,11 +24,9 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.only(
-                      top: Dimens.paddingVertical,
-                      left: Dimens.of(context).paddingScreenHorizontal,
-                      right: Dimens.of(context).paddingScreenHorizontal,
-                      bottom: Dimens.paddingVertical,
+                    padding: EdgeInsets.symmetric(
+                      vertical: Dimens.of(context).paddingScreenVertical,
+                      horizontal: Dimens.of(context).paddingScreenHorizontal,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +38,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         const SizedBox(height: 24),
-                        _Section(
+                        GuideSection(
                           title: context
                               .localization
                               .workspaceUsersManagementUsersGuideTeamMembersTitle,
@@ -48,7 +47,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .workspaceUsersManagementUsersGuideTeamMembersBody,
                         ),
                         const SizedBox(height: 24),
-                        _Section(
+                        GuideSection(
                           title: context
                               .localization
                               .workspaceUsersManagementUsersGuideVirtualProfilesTitle,
@@ -57,7 +56,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .workspaceUsersManagementUsersGuideVirtualProfilesBody,
                         ),
                         const SizedBox(height: 24),
-                        _Section(
+                        GuideSection(
                           title: context
                               .localization
                               .workspaceUsersManagementUsersGuideRolesTitle,
@@ -66,7 +65,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .workspaceUsersManagementUsersGuideRolesBody,
                         ),
                         const SizedBox(height: 24),
-                        _Section(
+                        GuideSection(
                           title: context
                               .localization
                               .workspaceUsersManagementUsersGuideManagerRoleTitle,
@@ -75,7 +74,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .workspaceUsersManagementUsersGuideManagerRoleBody,
                         ),
                         const SizedBox(height: 24),
-                        _Section(
+                        GuideSection(
                           title: context
                               .localization
                               .workspaceUsersManagementUsersGuideMemberRoleTitle,
@@ -92,30 +91,6 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(body, style: Theme.of(context).textTheme.bodyLarge),
-      ],
     );
   }
 }

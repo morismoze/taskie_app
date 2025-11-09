@@ -90,7 +90,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     query: {
       page: number;
       limit: number;
-      status: ProgressStatus;
+      status: ProgressStatus | null;
       search: string | null;
       sort: SortBy | null;
     };
@@ -106,8 +106,13 @@ export class TaskRepositoryImpl implements TaskRepository {
       .leftJoinAndSelect('task.taskAssignments', 'assignment')
       .leftJoinAndSelect('assignment.assignee', 'assignee')
       .leftJoinAndSelect('assignee.user', 'user')
-      .where('task.workspace.id = :workspaceId', { workspaceId })
-      .andWhere('assignment.status = :status', { status });
+      .leftJoinAndSelect('task.createdBy', 'createdBy')
+      .leftJoinAndSelect('createdBy.user', 'createdByUser')
+      .where('task.workspace.id = :workspaceId', { workspaceId });
+
+    if (status) {
+      qb.andWhere('assignment.status = :status', { status });
+    }
 
     if (search) {
       qb.andWhere('LOWER(task.title) LIKE :search', {

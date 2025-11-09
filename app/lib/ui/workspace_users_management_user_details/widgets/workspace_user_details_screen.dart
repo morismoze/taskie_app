@@ -13,7 +13,8 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../../core/ui/labeled_data.dart';
+import '../../core/ui/labeled_data/labeled_data.dart';
+import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
 import '../../core/utils/user.dart';
@@ -49,7 +50,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                       }
 
                       return Rbac(
-                        permission: RbacPermission.workspaceManageUsers,
+                        permission: RbacPermission.workspaceUsersEditDetails,
                         child: AppHeaderActionButton(
                           iconData: FontAwesomeIcons.pencil,
                           onTap: () {
@@ -71,11 +72,9 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                 ],
               ),
               SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  top: Dimens.paddingVertical,
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
+                padding: EdgeInsets.symmetric(
+                  vertical: Dimens.of(context).paddingScreenVertical,
+                  horizontal: Dimens.of(context).paddingScreenHorizontal,
                 ),
                 child: ListenableBuilder(
                   listenable: viewModel,
@@ -97,11 +96,14 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                     return Column(
                       children: [
                         // First section
-                        AppAvatar(
-                          hashString: details.id,
-                          firstName: details.firstName,
-                          imageUrl: details.profileImageUrl,
-                          size: 100,
+                        Hero(
+                          tag: 'workspace-user-${details.id}',
+                          child: AppAvatar(
+                            hashString: details.id,
+                            firstName: details.firstName,
+                            imageUrl: details.profileImageUrl,
+                            size: 100,
+                          ),
                         ),
                         const SizedBox(height: 30),
                         // Second section
@@ -129,9 +131,11 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                           label: context
                               .localization
                               .workspaceUsersManagementUserDetailsCreatedAt,
-                          data: DateFormat.yMd(
-                            Localizations.localeOf(context).toString(),
-                          ).format(details.createdAt),
+                          child: LabeledDataText(
+                            data: DateFormat.yMd(
+                              Localizations.localeOf(context).toString(),
+                            ).format(details.createdAt),
+                          ),
                         ),
                         if (details.createdBy != null) ...[
                           const SizedBox(height: 15),
@@ -139,13 +143,21 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                             label: context
                                 .localization
                                 .workspaceUsersManagementUserDetailsCreatedBy,
-                            leading: AppAvatar(
-                              hashString: details.id,
-                              firstName: details.firstName,
-                              imageUrl: details.createdBy!.profileImageUrl,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AppAvatar(
+                                  hashString: details.createdBy!.id,
+                                  firstName: details.createdBy!.firstName,
+                                  imageUrl: details.createdBy!.profileImageUrl,
+                                ),
+                                const SizedBox(width: 8),
+                                LabeledDataText(
+                                  data:
+                                      '${details.createdBy!.firstName} ${details.createdBy!.lastName}',
+                                ),
+                              ],
                             ),
-                            data:
-                                '${details.createdBy!.firstName} ${details.createdBy!.lastName}',
                           ),
                         ],
                       ],

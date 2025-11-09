@@ -1,4 +1,5 @@
 import { Nullable } from 'src/common/types/nullable.type';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { FindOptionsRelations } from 'typeorm';
 import { ProgressStatus } from '../domain/progress-status.enum';
 import { Task } from '../domain/task.domain';
@@ -48,8 +49,9 @@ export abstract class TaskRepository {
     query: {
       page: number;
       limit: number;
-      status: ProgressStatus;
+      status: ProgressStatus | null;
       search: string | null;
+      sort: SortBy | null;
     };
   }): Promise<{
     data: TaskEntity[];

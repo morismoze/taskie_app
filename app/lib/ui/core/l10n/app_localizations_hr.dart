@@ -39,9 +39,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_roleMember => 'Član';
 
   @override
-  String get misc_orSeparator => 'ili';
-
-  @override
   String get misc_ok => 'U redu';
 
   @override
@@ -52,6 +49,9 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get misc_new => 'Novo';
+
+  @override
+  String get misc_goToHomepage => 'Idi na Početnu stranicu';
 
   @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
@@ -129,15 +129,15 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksHello => 'Pozdrav!';
 
   @override
-  String get taskskNoTasks =>
-      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi!';
+  String get tasksNoTasks =>
+      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
 
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
 
   @override
-  String get objectiveStatusFilterAll => 'Svi';
+  String get objectiveStatusFilterAll => 'Svi statusi';
 
   @override
   String get progressStatusInProgress => 'U tijeku';
@@ -147,6 +147,9 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get progressStatusCompletedAsStale => 'Dovršeno (zastarjelo)';
+
+  @override
+  String get progressStatusNotCompleted => 'Nedovršeno';
 
   @override
   String get progressStatusClosed => 'Zatvoreno';
@@ -161,6 +164,124 @@ class AppLocalizationsHr extends AppLocalizations {
   String tasksCardPoints(Object points) {
     return '$points bodova';
   }
+
+  @override
+  String get tasksDetails => 'Detalji zadatka';
+
+  @override
+  String get tasksDetailsEdit => 'Uređivanje detalja zadatka';
+
+  @override
+  String get tasksDetailsEditCreatedBy => 'Zadatak kreirao/la';
+
+  @override
+  String get tasksDetailsEditCreatedByDeletedAccount =>
+      'Kreator je izbrisao račun';
+
+  @override
+  String get tasksDetailsEditCreatedAt => 'Zadatak kreiran';
+
+  @override
+  String get tasksDetailsEditSuccess => 'Uspješno ste uredili detalje zadatka';
+
+  @override
+  String get tasksDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
+
+  @override
+  String get tasksUpdateTaskAssignmentsSuccess =>
+      'Uspješno ste ažurirali dodjele zadatka';
+
+  @override
+  String get tasksUpdateTaskAssignmentsUpdateError =>
+      'Uh-oh! Došlo je do problema prilikom ažuriranja dodjela zadatka';
+
+  @override
+  String get tasksAddTaskAssignmentSuccess =>
+      'Uspješno ste dodjelili zadatak odabranome članu';
+
+  @override
+  String get tasksAddTaskAssignmentError =>
+      'Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu';
+
+  @override
+  String get tasksClosedTaskError =>
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadatakaa.';
+
+  @override
+  String get tasksAmendedAssigneesError =>
+      'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
+
+  @override
+  String get tasksRemoveTaskAssignmentModalMessage =>
+      'Jeste li sigurni da želite ukloniti ovog korisnika iz dodjele zadatka?';
+
+  @override
+  String get tasksRemoveTaskAssignmentModalCta => 'Ukloni';
+
+  @override
+  String get tasksRemoveTaskAssignmentSuccess =>
+      'Uspješno ste uklonili dodjelu s odabranoga člana';
+
+  @override
+  String get tasksRemoveTaskAssignmentError =>
+      'Uh-oh! Došlo je do problema prilikom uklanjanja dodjele s člana';
+
+  @override
+  String get tasksDetailsCloseTask => 'Zatvori zadatak';
+
+  @override
+  String get tasksDetailsCloseTaskModalMessage =>
+      'Jeste li sigurni da želite zatvoriti ovaj zadatak?\nKada zatvorite zadatak, zadatak će se zatvoriti za sve dodijeljene članove. Dodatno, neće ga više biti moguće ažurirati.';
+
+  @override
+  String get tasksDetailsCloseSuccess => 'Uspješno ste zatvorili zadatak';
+
+  @override
+  String get tasksDetailsCloseError =>
+      'Uh-oh! Došlo je do problema prilikom zatvaranja zadatka';
+
+  @override
+  String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
+
+  @override
+  String get tasksAssignmentsEditStatusLabel => 'Status';
+
+  @override
+  String get tasksAssignmentsEditStatusSubmit => 'Ažuriraj dodjele';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssignee =>
+      'Dodijelite ovaj zadatak dodatnome članu:';
+
+  @override
+  String get tasksAssignmentsGuideMainTitle => 'O dodjelama zadatka';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentLimitTitle =>
+      'Ograničenje broja dodjela';
+
+  @override
+  String tasksAssignmentsGuideAssignmentLimitBody(
+    Object taskAssigneesMaxCount,
+  ) {
+    return 'Svaki zadatak može imati do $taskAssigneesMaxCount dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+  }
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesTitle => 'Statusi dodjela';
+
+  @override
+  String get tasksAssignmentsGuideAssignmentStatusesBody =>
+      '__In Progress__ - zadatak je trenutno u izradi\n__Completed__ - zadatak je uspješno završen\n__Completed as Stale__ - zadatak je završen nakon isteka roka završetka (primjenjivo samo ako zadatak ima postavljen Rok završetka)\n__Not Completed__ - zadatak nije izvršen';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesTitle =>
+      'Višestruke dodjele';
+
+  @override
+  String get tasksAssignmentsGuideMultipleAssigneesBody =>
+      'Jedan zadatak može biti dodijeljen većem broju članova iz dva razloga:\n\n__Individualni rad__ - kada želite da više članova radi na istom zadatku samostalno, bez potrebe za stvaranjem duplikata zadatka za svakog člana. Svaki član radi individualno i dobiva iste nagradne bodove.\n\n__Timski rad__ - kada više članova zajednički radi na istom zadatku kao tim. Svaki član također dobiva iste nagradne bodove po završetku.\n\nU oba slučaja, svaki dodijeljeni član dobiva isti broj nagradnih bodova koji je postavljen za zadatak.';
 
   @override
   String get appDrawerTitle => 'Radni prostori';
@@ -389,7 +510,7 @@ class AppLocalizationsHr extends AppLocalizations {
       'Virtualnim korisnicima je uvijek dodijeljena uloga Člana i nije ju moguće promijeniti.';
 
   @override
-  String get workspaceUsersManagementUserDetailsEditSubmit => 'Uredi podatke';
+  String get editDetailsSubmit => 'Uredi detalje';
 
   @override
   String get workspaceUsersManagementUserDetailsEditSuccess =>
@@ -464,10 +585,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get workspaceSettingsCreatedAt => 'Radni prostor kreiran';
 
   @override
-  String get workspaceSettingsEdit => 'Uređivanje podataka radnog prostora';
-
-  @override
-  String get workspaceSettingsEditSubmit => 'Uredi podatke';
+  String get workspaceSettingsEdit => 'Uređivanje detalja radnog prostora';
 
   @override
   String get workspaceSettingsEditSuccess =>

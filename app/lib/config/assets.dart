@@ -3,4 +3,6 @@ abstract final class Assets {
   static const createWorkspaceIllustration =
       'assets/images/create_workspace_illustration.png';
   static const appIcon = 'assets/images/app_icon.png';
+  static const emptyObjectivesIllustration =
+      'assets/images/empty_objectives_illustration.png';
 }

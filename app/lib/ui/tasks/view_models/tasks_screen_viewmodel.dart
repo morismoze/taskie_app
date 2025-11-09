@@ -24,6 +24,7 @@ class TasksScreenViewModel extends ChangeNotifier {
     _userRepository.addListener(_onUserChanged);
     // Repository defines default values for ObjectiveFilter, so we use null here for it
     loadTasks = Command1(_loadTasks)..execute((null, null));
+    _userNotifier.value = _userRepository.user;
   }
 
   final String _activeWorkspaceId;
@@ -36,7 +37,14 @@ class TasksScreenViewModel extends ChangeNotifier {
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  bool get isInitialLoad => _workspaceTaskRepository.isInitialLoad;
+  /// [appLocale] in [PreferencesRepository] is set up in AppStartup.
+  Locale get appLocale => _preferencesRepository.appLocale!;
+
+  final ValueNotifier<User?> _userNotifier = ValueNotifier(null);
+
+  ValueNotifier<User?> get userNotifier => _userNotifier;
+
+  bool get isFilterSearch => _workspaceTaskRepository.isFilterSearch;
 
   ObjectiveFilter get activeFilter => _workspaceTaskRepository.activeFilter;
 
@@ -79,19 +87,13 @@ class TasksScreenViewModel extends ChangeNotifier {
     return clonedTasks;
   }
 
-  /// [appLocale] in [PreferencesRepository] is set up in AppStartup.
-  Locale get appLocale => _preferencesRepository.appLocale!;
-
-  User? get user => _userRepository.user;
-
   void _onTasksChanged() {
     // Forward the change notification from repository to the viewmodel
     notifyListeners();
   }
 
   void _onUserChanged() {
-    // Forward the change notification from repository to the viewmodel
-    notifyListeners();
+    _userNotifier.value = _userRepository.user;
   }
 
   Future<Result<void>> _loadTasks(
@@ -106,12 +108,11 @@ class TasksScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to load tasks', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

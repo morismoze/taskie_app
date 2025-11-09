@@ -26,8 +26,8 @@ class CreateTaskScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.createTask.addListener(_onResult);
+    super.initState();
   }
 
   @override
@@ -71,10 +71,8 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
             // space left after HeaderBar is painted.
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.of(context).paddingScreenHorizontal,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel.loadWorkspaceMembers,
@@ -130,9 +128,8 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: EdgeInsets.only(
-                          top: Dimens.paddingVertical,
-                          bottom: MediaQuery.of(context).padding.bottom,
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.of(context).paddingScreenVertical,
                         ),
                         child: CreateTaskForm(viewModel: widget.viewModel),
                       );

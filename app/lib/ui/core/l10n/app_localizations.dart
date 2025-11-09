@@ -158,12 +158,6 @@ abstract class AppLocalizations {
   /// **'Member'**
   String get misc_roleMember;
 
-  /// No description provided for @misc_orSeparator.
-  ///
-  /// In en, this message translates to:
-  /// **'or'**
-  String get misc_orSeparator;
-
   /// No description provided for @misc_ok.
   ///
   /// In en, this message translates to:
@@ -187,6 +181,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New'**
   String get misc_new;
+
+  /// No description provided for @misc_goToHomepage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Homepage'**
+  String get misc_goToHomepage;
 
   /// No description provided for @signInTitleStart.
   ///
@@ -320,11 +320,11 @@ abstract class AppLocalizations {
   /// **'Hello!'**
   String get tasksHello;
 
-  /// No description provided for @taskskNoTasks.
+  /// No description provided for @tasksNoTasks.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any task yet. Try creating your first one!'**
-  String get taskskNoTasks;
+  /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!'**
+  String get tasksNoTasks;
 
   /// No description provided for @taskskNoFilteredTasks.
   ///
@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @objectiveStatusFilterAll.
   ///
   /// In en, this message translates to:
-  /// **'All'**
+  /// **'All statuses'**
   String get objectiveStatusFilterAll;
 
   /// No description provided for @progressStatusInProgress.
@@ -355,6 +355,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Completed as Stale'**
   String get progressStatusCompletedAsStale;
+
+  /// No description provided for @progressStatusNotCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Completed'**
+  String get progressStatusNotCompleted;
 
   /// No description provided for @progressStatusClosed.
   ///
@@ -380,6 +386,198 @@ abstract class AppLocalizations {
   /// **'{points} points'**
   String tasksCardPoints(Object points);
 
+  /// No description provided for @tasksDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Task details'**
+  String get tasksDetails;
+
+  /// No description provided for @tasksDetailsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit task details'**
+  String get tasksDetailsEdit;
+
+  /// No description provided for @tasksDetailsEditCreatedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created by'**
+  String get tasksDetailsEditCreatedBy;
+
+  /// No description provided for @tasksDetailsEditCreatedByDeletedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator deleted their account'**
+  String get tasksDetailsEditCreatedByDeletedAccount;
+
+  /// No description provided for @tasksDetailsEditCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created at'**
+  String get tasksDetailsEditCreatedAt;
+
+  /// No description provided for @tasksDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited task details'**
+  String get tasksDetailsEditSuccess;
+
+  /// No description provided for @tasksDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing task details'**
+  String get tasksDetailsEditError;
+
+  /// No description provided for @tasksUpdateTaskAssignmentsSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully updated task assignments'**
+  String get tasksUpdateTaskAssignmentsSuccess;
+
+  /// No description provided for @tasksUpdateTaskAssignmentsUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble updating task assignments'**
+  String get tasksUpdateTaskAssignmentsUpdateError;
+
+  /// No description provided for @tasksAddTaskAssignmentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully added new task assignee'**
+  String get tasksAddTaskAssignmentSuccess;
+
+  /// No description provided for @tasksAddTaskAssignmentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble adding new task assigee'**
+  String get tasksAddTaskAssignmentError;
+
+  /// No description provided for @tasksClosedTaskError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.'**
+  String get tasksClosedTaskError;
+
+  /// No description provided for @tasksAmendedAssigneesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.'**
+  String get tasksAmendedAssigneesError;
+
+  /// No description provided for @tasksRemoveTaskAssignmentModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove this user from task assignments?'**
+  String get tasksRemoveTaskAssignmentModalMessage;
+
+  /// No description provided for @tasksRemoveTaskAssignmentModalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get tasksRemoveTaskAssignmentModalCta;
+
+  /// No description provided for @tasksRemoveTaskAssignmentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully removed task assignee'**
+  String get tasksRemoveTaskAssignmentSuccess;
+
+  /// No description provided for @tasksRemoveTaskAssignmentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble removing the task assigee'**
+  String get tasksRemoveTaskAssignmentError;
+
+  /// No description provided for @tasksDetailsCloseTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Close task'**
+  String get tasksDetailsCloseTask;
+
+  /// No description provided for @tasksDetailsCloseTaskModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to close this task?\nOnce a task is closed, it will be closed for all assignees. In addition, you will no longer be able to update it.'**
+  String get tasksDetailsCloseTaskModalMessage;
+
+  /// No description provided for @tasksDetailsCloseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully closed the task'**
+  String get tasksDetailsCloseSuccess;
+
+  /// No description provided for @tasksDetailsCloseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble closing the task'**
+  String get tasksDetailsCloseError;
+
+  /// No description provided for @tasksAssignmentsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit task assignments'**
+  String get tasksAssignmentsEdit;
+
+  /// No description provided for @tasksAssignmentsEditStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get tasksAssignmentsEditStatusLabel;
+
+  /// No description provided for @tasksAssignmentsEditStatusSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Update assignments'**
+  String get tasksAssignmentsEditStatusSubmit;
+
+  /// No description provided for @tasksAssignmentsEditAddNewAssignee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add additional assignees to this task:'**
+  String get tasksAssignmentsEditAddNewAssignee;
+
+  /// No description provided for @tasksAssignmentsGuideMainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About task assignments'**
+  String get tasksAssignmentsGuideMainTitle;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments limit'**
+  String get tasksAssignmentsGuideAssignmentLimitTitle;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each task can have up to __{taskAssigneesMaxCount} assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
+  String tasksAssignmentsGuideAssignmentLimitBody(Object taskAssigneesMaxCount);
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentStatusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments statuses'**
+  String get tasksAssignmentsGuideAssignmentStatusesTitle;
+
+  /// No description provided for @tasksAssignmentsGuideAssignmentStatusesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'__In Progress__ - the task is currently being worked on\n__Completed__ - the task was successfully completed\n__Completed as Stale__ - the task was completed after the due date has passed (applicable only if the task has a due date set)\n__Not Completed__ - the task was not completed'**
+  String get tasksAssignmentsGuideAssignmentStatusesBody;
+
+  /// No description provided for @tasksAssignmentsGuideMultipleAssigneesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple assignees'**
+  String get tasksAssignmentsGuideMultipleAssigneesTitle;
+
+  /// No description provided for @tasksAssignmentsGuideMultipleAssigneesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.'**
+  String get tasksAssignmentsGuideMultipleAssigneesBody;
+
   /// No description provided for @appDrawerTitle.
   ///
   /// In en, this message translates to:
@@ -395,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerEditWorkspace.
   ///
   /// In en, this message translates to:
-  /// **'Workspace setttings'**
+  /// **'Workspace settings'**
   String get appDrawerEditWorkspace;
 
   /// No description provided for @appDrawerManageUsers.
@@ -407,7 +605,7 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerNotActiveWorkspace.
   ///
   /// In en, this message translates to:
-  /// **'To see additional options, make this workspace active by clicking on its icon in the top list.'**
+  /// **'To see additional options, make this workspace active by clicking on its icon in the list above.'**
   String get appDrawerNotActiveWorkspace;
 
   /// No description provided for @appDrawerLeaveWorkspace.
@@ -569,7 +767,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementUsersGuideMainTitle.
   ///
   /// In en, this message translates to:
-  /// **'About Workspace Users'**
+  /// **'About workspace users'**
   String get workspaceUsersManagementUsersGuideMainTitle;
 
   /// No description provided for @workspaceUsersManagementUsersGuideIntroBody.
@@ -749,14 +947,14 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceUsersManagementUserDetailsEditRoleBlocked.
   ///
   /// In en, this message translates to:
-  /// **'Virtual users always have the Member role and cannot be changed.'**
+  /// **'Virtual users always have the Member role and it can\'t be amended.'**
   String get workspaceUsersManagementUserDetailsEditRoleBlocked;
 
-  /// No description provided for @workspaceUsersManagementUserDetailsEditSubmit.
+  /// No description provided for @editDetailsSubmit.
   ///
   /// In en, this message translates to:
   /// **'Edit details'**
-  String get workspaceUsersManagementUserDetailsEditSubmit;
+  String get editDetailsSubmit;
 
   /// No description provided for @workspaceUsersManagementUserDetailsEditSuccess.
   ///
@@ -889,12 +1087,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit workspace details'**
   String get workspaceSettingsEdit;
-
-  /// No description provided for @workspaceSettingsEditSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit details'**
-  String get workspaceSettingsEditSubmit;
 
   /// No description provided for @workspaceSettingsEditSuccess.
   ///

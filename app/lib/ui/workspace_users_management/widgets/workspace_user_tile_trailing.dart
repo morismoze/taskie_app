@@ -42,7 +42,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
           RoleChip(role: role),
           if (!isCurrentUser)
             Rbac(
-              permission: RbacPermission.workspaceManageUsers,
+              permission: RbacPermission.workspaceUsersRemove,
               child: InkWell(
                 onTap: () => _userOptionsTap(
                   context,

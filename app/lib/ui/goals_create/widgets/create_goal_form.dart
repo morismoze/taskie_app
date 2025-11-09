@@ -11,6 +11,7 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/info_icon_with_tooltip.dart';
+import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
 import 'workspace_user_accumulated_points.dart';
@@ -30,14 +31,16 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _requiredPointsController =
       TextEditingController();
-  WorkspaceUser? _selectedAssignee;
+  AppSelectFieldOption<WorkspaceUser>? _selectedAssignee;
 
-  void _onAssigneeSelected(List<AppSelectFieldOption> selectedOptions) {
+  void _onAssigneeSelected(
+    AppSelectFieldOption<WorkspaceUser> selectedOptions,
+  ) {
     setState(() {
-      _selectedAssignee = selectedOptions[0].value as WorkspaceUser;
+      _selectedAssignee = selectedOptions;
     });
     widget.viewModel.loadWorkspaceUserAccumulatedPoints.execute(
-      _selectedAssignee!.id,
+      _selectedAssignee!.value.id,
     );
   }
 
@@ -90,9 +93,10 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
-          AppSelectFormField(
+          AppSelectFormField.single(
             options: options,
-            onSelected: _onAssigneeSelected,
+            value: _selectedAssignee,
+            onChanged: _onAssigneeSelected,
             onCleared: _onAssigneeCleared,
             label: context.localization.objectiveAssigneeLabel,
             validator: (assignee) => _validateAssignee(context, assignee),
@@ -100,7 +104,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
           if (_selectedAssignee != null) ...[
             WorkspaceUserAccumulatedPoints(
               viewModel: widget.viewModel,
-              selectedAssignee: _selectedAssignee!,
+              selectedAssignee: _selectedAssignee!.value,
             ),
             const SizedBox(height: 10),
           ],
@@ -117,13 +121,13 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.createGoal,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label: builderContext.localization.goalCreateNew,
-              isLoading: widget.viewModel.createGoal.running,
+              loading: widget.viewModel.createGoal.running,
             ),
           ),
         ],
@@ -135,12 +139,11 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
+      final description = trimmedDescription.nullIfEmpty;
       final requiredPoints = int.tryParse(
         _requiredPointsController.text.trim(),
       );
+      final assignee = _selectedAssignee!.value.id;
 
       if (requiredPoints == null) {
         // should be non-triggerable case, do something
@@ -150,7 +153,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
       widget.viewModel.createGoal.execute((
         title,
         description,
-        _selectedAssignee!.id,
+        assignee,
         requiredPoints,
       ));
     }

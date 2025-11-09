@@ -27,8 +27,8 @@ class _SortByButtonState extends State<SortByButton> {
 
   @override
   void initState() {
-    super.initState();
     _selectedOptions = List.from([widget.activeValue]);
+    super.initState();
   }
 
   void _onSubmit(List<AppSelectFieldOption> selectedOptions) {
@@ -58,9 +58,10 @@ class _SortByButtonState extends State<SortByButton> {
   ) {
     AppModalBottomSheet.show(
       context: context,
+      isScrollControlled: true,
       child: AppSelectFieldOptions(
         options: options,
-        selectedOptions: selectedOptions,
+        value: selectedOptions,
         onSubmit: _onSubmit,
       ),
     );

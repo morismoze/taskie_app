@@ -8,7 +8,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../../core/ui/or_separator.dart';
+import '../../core/ui/separator.dart';
 import '../view_models/create_workspace_user_screen_viewmodel.dart';
 import 'create_virtual_user_form.dart';
 import 'workspace_invite_section.dart';
@@ -28,7 +28,6 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
   @override
   void initState() {
-    super.initState();
     widget.viewModel.createWorkspaceInviteLink.addListener(
       _onInviteLinkCreateResult,
     );
@@ -36,6 +35,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
       _onInviteLinkShareResult,
     );
     widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+    super.initState();
   }
 
   @override
@@ -86,20 +86,19 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    top: Dimens.paddingVertical,
-                    left: Dimens.of(context).paddingScreenHorizontal,
-                    right: Dimens.of(context).paddingScreenHorizontal,
-                    bottom: Dimens.paddingVertical,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Dimens.of(context).paddingScreenVertical,
+                    horizontal: Dimens.of(context).paddingScreenHorizontal,
                   ),
                   child: Column(
-                    spacing: 10,
                     children: [
                       WorkspaceInviteSection(
                         viewModel: widget.viewModel,
                         controller: _workspaceInviteLinkController,
                       ),
-                      const OrSeparator(),
+                      const SizedBox(height: 40),
+                      const Separator(),
+                      const SizedBox(height: 30),
                       CreateVirtualUserForm(viewModel: widget.viewModel),
                     ],
                   ),

@@ -11,6 +11,9 @@ enum ProgressStatus {
   @JsonValue('COMPLETED_AS_STALE')
   completedAsStale('COMPLETED_AS_STALE'),
 
+  @JsonValue('NOT_COMPLETED')
+  notCompleted('NOT_COMPLETED'),
+
   @JsonValue('CLOSED')
   closed('CLOSED');
 

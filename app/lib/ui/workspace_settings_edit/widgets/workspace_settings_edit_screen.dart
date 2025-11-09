@@ -24,10 +24,10 @@ class _WorkspaceSettingsEditScreenState
     extends State<WorkspaceSettingsEditScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.editWorkspaceDetails.addListener(
       _onWorkspaceDetailsEditResult,
     );
+    super.initState();
   }
 
   @override
@@ -58,10 +58,8 @@ class _WorkspaceSettingsEditScreenState
             HeaderBar(title: context.localization.workspaceSettingsEdit),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.of(context).paddingScreenHorizontal,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel,
@@ -74,8 +72,8 @@ class _WorkspaceSettingsEditScreenState
                     }
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.only(
-                        top: Dimens.paddingVertical,
+                      padding: EdgeInsets.symmetric(
+                        vertical: Dimens.of(context).paddingScreenVertical,
                       ),
                       child: WorkspaceSettingsEditForm(
                         viewModel: widget.viewModel,

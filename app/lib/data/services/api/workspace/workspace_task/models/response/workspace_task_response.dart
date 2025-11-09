@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../assignee_response.dart';
+import '../../../created_by_response.dart';
 import '../../../progress_status.dart';
 
 part 'workspace_task_response.g.dart';
@@ -13,6 +14,7 @@ class WorkspaceTaskResponse {
     required this.rewardPoints,
     required this.assignees,
     required this.createdAt,
+    required this.createdBy,
     required this.description,
     required this.dueDate,
   });
@@ -22,6 +24,7 @@ class WorkspaceTaskResponse {
   final int rewardPoints;
   final List<TaskAssigneeResponse> assignees;
   final DateTime createdAt;
+  final CreatedByResponse? createdBy;
   final String? description;
   final DateTime? dueDate;
 

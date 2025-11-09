@@ -8,8 +8,8 @@ class AppFilledButton extends StatelessWidget {
     super.key,
     required this.onPress,
     required this.label,
-    this.isLoading = false,
-    this.isDisabled = false,
+    this.loading = false,
+    this.disabled = false,
     this.shrinkWrap = false,
     this.backgroundColor,
     this.leadingIcon,
@@ -19,8 +19,8 @@ class AppFilledButton extends StatelessWidget {
 
   final void Function() onPress;
   final String label;
-  final bool isLoading;
-  final bool isDisabled;
+  final bool loading;
+  final bool disabled;
   final bool shrinkWrap;
   final Color? backgroundColor;
   final IconData? leadingIcon;
@@ -31,24 +31,32 @@ class AppFilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveFontSize =
         fontSize ?? Theme.of(context).textTheme.titleMedium!.fontSize;
+    final effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.primary;
 
     return FilledButton(
-      onPressed: isLoading || isDisabled ? () {} : onPress,
-      style: Theme.of(context).filledButtonTheme.style!.copyWith(
+      onPressed: loading || disabled ? null : onPress,
+      style: ButtonStyle(
         padding: shrinkWrap
             ? const WidgetStateProperty<EdgeInsetsGeometry>.fromMap({
                 WidgetState.any: EdgeInsets.symmetric(horizontal: 10),
               })
-            : Theme.of(context).filledButtonTheme.style!.padding,
-        backgroundColor: backgroundColor != null
-            ? WidgetStateProperty.all(backgroundColor)
-            : Theme.of(context).filledButtonTheme.style!.backgroundColor,
+            : null, // Default styles
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return Color.lerp(effectiveBackgroundColor, Colors.white, 0.85)!;
+          }
+          return effectiveBackgroundColor;
+        }),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           Visibility(
-            visible: !isLoading,
+            visible: !loading,
             maintainState: true,
             maintainSize: true,
             maintainAnimation: true,
@@ -87,8 +95,11 @@ class AppFilledButton extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: isLoading,
-            child: const ActivityIndicator(radius: 11),
+            visible: loading,
+            child: ActivityIndicator(
+              radius: 11,
+              color: effectiveBackgroundColor,
+            ),
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/utils/extensions.dart';
 import '../view_models/workspace_settings_edit_screen_view_model.dart';
 
 class WorkspaceSettingsEditForm extends StatefulWidget {
@@ -23,9 +24,9 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
 
   @override
   void initState() {
-    super.initState();
     _nameController.text = widget.viewModel.details!.name;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
+    super.initState();
   }
 
   @override
@@ -61,13 +62,13 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             required: false,
             maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.editWorkspaceDetails,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
-              label: builderContext.localization.workspaceSettingsEditSubmit,
-              isLoading: widget.viewModel.editWorkspaceDetails.running,
+              label: builderContext.localization.editDetailsSubmit,
+              loading: widget.viewModel.editWorkspaceDetails.running,
             ),
           ),
         ],
@@ -80,15 +81,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
       final trimmedName = _nameController.text.trim();
       final name = trimmedName.isNotEmpty ? trimmedName : null;
       final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
-
-      // Don't invoke API request if the data stayed the same
-      if (name == widget.viewModel.details!.name &&
-          description == widget.viewModel.details!.description) {
-        return;
-      }
+      final description = trimmedDescription.nullIfEmpty;
 
       widget.viewModel.editWorkspaceDetails.execute((name, description));
     }

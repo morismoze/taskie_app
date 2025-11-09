@@ -17,7 +17,7 @@ class BlurredCirclesBackground extends StatelessWidget {
           child: _BlurredCircle(
             color: Colors.yellow.withValues(alpha: 0.15),
             radius: 80,
-            blurSigma: 40,
+            blurSigma: 35,
           ),
         ),
         Positioned(
@@ -26,7 +26,7 @@ class BlurredCirclesBackground extends StatelessWidget {
           child: _BlurredCircle(
             color: Colors.greenAccent.withValues(alpha: 0.15),
             radius: 80,
-            blurSigma: 30,
+            blurSigma: 25,
           ),
         ),
         Positioned(
@@ -35,7 +35,7 @@ class BlurredCirclesBackground extends StatelessWidget {
           child: _BlurredCircle(
             color: Colors.blue.withValues(alpha: 0.15),
             radius: 80,
-            blurSigma: 45,
+            blurSigma: 40,
           ),
         ),
         Positioned(
@@ -44,7 +44,7 @@ class BlurredCirclesBackground extends StatelessWidget {
           child: _BlurredCircle(
             color: Colors.lightBlue.withValues(alpha: 0.1),
             radius: 75,
-            blurSigma: 45,
+            blurSigma: 40,
           ),
         ),
         Positioned(
@@ -53,7 +53,7 @@ class BlurredCirclesBackground extends StatelessWidget {
           child: _BlurredCircle(
             color: Colors.yellow.withValues(alpha: 0.15),
             radius: 50,
-            blurSigma: 35,
+            blurSigma: 30,
           ),
         ),
         child,
@@ -75,12 +75,14 @@ class _BlurredCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ImageFiltered(
-      imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-      child: Container(
-        width: radius * 2,
-        height: radius * 2,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    return RepaintBoundary(
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+        child: Container(
+          width: radius * 2,
+          height: radius * 2,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
       ),
     );
   }

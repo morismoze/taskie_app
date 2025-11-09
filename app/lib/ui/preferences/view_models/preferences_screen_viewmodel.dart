@@ -29,12 +29,11 @@ class PreferencesScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.severe('Failed to set app locale', result.error);
+        return result;
     }
-
-    return result;
   }
 
   @override

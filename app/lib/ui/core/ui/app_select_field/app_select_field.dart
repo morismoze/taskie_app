@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../theme/colors.dart';
-import '../app_field_button.dart';
 import '../app_modal_bottom_sheet.dart';
-import '../info_icon_with_tooltip.dart';
 import 'app_select_field_options.dart';
+import 'app_select_field_selected_options.dart';
 
-class AppSelectFieldOption {
+class AppSelectFieldOption<T> {
   const AppSelectFieldOption({
     required this.label,
     required this.value,
@@ -15,7 +14,7 @@ class AppSelectFieldOption {
   });
 
   final String label;
-  final Object? value;
+  final T value;
   final Widget? leading;
 
   @override
@@ -24,7 +23,7 @@ class AppSelectFieldOption {
       return true;
     }
 
-    return other is AppSelectFieldOption && other.value == value;
+    return other is AppSelectFieldOption<T> && other.value == value;
   }
 
   @override
@@ -34,164 +33,123 @@ class AppSelectFieldOption {
 /// When field is set as disabled ([enabled] = false), a info trailing
 /// icon with tooltip will be added automatically if [disabledWidgetTrailingTooltipMessage]
 /// is passed.
-class AppSelectField extends StatefulWidget {
+class AppSelectField<T> extends StatelessWidget {
   const AppSelectField({
     super.key,
     required this.options,
-    required this.onSelected,
-    required this.onCleared,
+    required this.onChanged,
     required this.label,
-    this.multiple = false,
+    this.value = const [],
+    this.onCleared,
+    this.multiple = true,
     this.required = true,
     this.enabled = true,
-    this.initialValue,
-    this.disabledWidgetTrailingTooltipMessage,
+    this.isSubmitLoading = false,
     this.max,
+    this.trailing,
   });
 
-  final List<AppSelectFieldOption> options;
-  final void Function(List<AppSelectFieldOption> selectedOptions) onSelected;
-  final void Function() onCleared;
+  /// Single-selection select field
+  factory AppSelectField.single({
+    Key? key,
+    required List<AppSelectFieldOption<T>> options,
+    required String label,
+    AppSelectFieldOption<T>? value,
+    required void Function(AppSelectFieldOption<T> selectedOption) onChanged,
+    void Function()? onCleared,
+    bool required = true,
+    bool enabled = true,
+    bool isSubmitLoading = false,
+    Widget? trailing,
+  }) {
+    return AppSelectField<T>(
+      key: key,
+      options: options,
+      onChanged: (selectedOptions) {
+        if (selectedOptions.isNotEmpty) {
+          onChanged(selectedOptions.first);
+        }
+      },
+      label: label,
+      multiple: false,
+      required: required,
+      enabled: enabled,
+      isSubmitLoading: isSubmitLoading,
+      onCleared: onCleared,
+      trailing: trailing,
+      value: value != null ? [value] : [],
+    );
+  }
+
+  final List<AppSelectFieldOption<T>> options;
+  final void Function(List<AppSelectFieldOption<T>> selectedOptions) onChanged;
   final String label;
+
+  final List<AppSelectFieldOption<T>> value;
 
   /// Defines if this is a multiple option selection field.
   final bool multiple;
   final bool required;
   final bool enabled;
-  final List<AppSelectFieldOption>? initialValue;
-  final String? disabledWidgetTrailingTooltipMessage;
+  final bool isSubmitLoading;
+
+  /// 'Clear" trailing icon will be displayed if this method is passed
+  /// (and if the field is enabled).
+  final void Function()? onCleared;
 
   /// Defines how many options can be selected when [multiple] is true.
   final int? max;
 
-  @override
-  State<AppSelectField> createState() => _AppSelectFieldState();
-}
-
-class _AppSelectFieldState extends State<AppSelectField> {
-  late List<AppSelectFieldOption> _selectedOptions;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedOptions = List.from(widget.initialValue ?? []);
-  }
-
-  void _clearSelections() {
-    setState(() {
-      // Clear local state
-      _selectedOptions.clear();
-      // Clear caller state
-      widget.onCleared();
-    });
-  }
-
-  void _onSubmit(List<AppSelectFieldOption> options) {
-    setState(() {
-      _selectedOptions = options;
-    });
-    widget.onSelected(_selectedOptions);
-  }
+  /// This is mostly used in disabled state.
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = _selectedOptions.isNotEmpty;
+    final hasSelection = value.isNotEmpty;
 
-    Widget? trailing = const FaIcon(
-      FontAwesomeIcons.sort,
-      color: AppColors.black1,
-      size: 17,
-    );
-    if (!widget.enabled) {
-      trailing = widget.disabledWidgetTrailingTooltipMessage != null
-          ? InfoIconWithTooltip(
-              message: widget.disabledWidgetTrailingTooltipMessage!,
-            )
-          : null;
-    } else {
-      if (hasSelection) {
-        trailing = InkWell(
-          onTap: _clearSelections,
-          child: const FaIcon(
-            FontAwesomeIcons.solidCircleXmark,
-            color: AppColors.black1,
-            size: 17,
-          ),
-        );
-      }
+    Widget? trailingWidget =
+        trailing ??
+        const FaIcon(FontAwesomeIcons.sort, color: AppColors.black1, size: 17);
+    // Clearing is enabled if:
+    // 1. field is enabled
+    // 2. `onCleared` was passed
+    if (enabled && onCleared != null && hasSelection) {
+      // Clear selections icon
+      trailingWidget = InkWell(
+        onTap: onCleared,
+        child: const FaIcon(
+          FontAwesomeIcons.solidCircleXmark,
+          color: AppColors.black1,
+          size: 17,
+        ),
+      );
     }
 
-    return AppFieldButton(
-      label: widget.label,
-      required: widget.required,
+    return AppSelectFieldSelectedOptions(
+      label: label,
+      selectedOptions: value,
       isFieldFocused: hasSelection,
       onTap: () {
-        if (widget.enabled) {
+        if (enabled) {
           _openOptions(context);
         }
       },
-      trailing: trailing,
-      child: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: _selectedOptions
-            .map(
-              (option) => _AppSelectFieldSelectedOption(
-                label: option.label,
-                isFieldEnabled: widget.enabled,
-              ),
-            )
-            .toList(),
-      ),
+      trailing: trailingWidget,
+      enabled: enabled,
+      required: required,
     );
   }
 
   void _openOptions(BuildContext context) {
     AppModalBottomSheet.show(
       context: context,
-      child: AppSelectFieldOptions(
-        options: widget.options,
-        selectedOptions: _selectedOptions,
-        onSubmit: _onSubmit,
-        multiple: widget.multiple,
-        max: widget.max,
-      ),
-    );
-  }
-}
-
-class _AppSelectFieldSelectedOption extends StatelessWidget {
-  const _AppSelectFieldSelectedOption({
-    required this.label,
-    this.isFieldEnabled = true,
-  });
-
-  final String label;
-  final bool isFieldEnabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 150),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: isFieldEnabled
-                ? AppColors.grey2
-                : Theme.of(context).disabledColor,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall!.copyWith(color: AppColors.white1),
-            ),
-          ),
-        ),
+      isScrollControlled: true,
+      child: AppSelectFieldOptions<T>(
+        options: options,
+        value: value,
+        onSubmit: onChanged,
+        multiple: multiple,
+        max: max,
       ),
     );
   }

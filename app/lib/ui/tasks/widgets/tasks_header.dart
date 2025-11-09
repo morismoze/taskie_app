@@ -13,47 +13,46 @@ class TasksHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dart can infer a local variable is not null after if-statement assertion
-    final user = viewModel.user;
-
-    if (user == null) {
-      return const SizedBox();
-    }
-
-    final fullName = UserUtils.constructFullName(
-      firstName: user.firstName,
-      lastName: user.lastName,
-    );
-
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: EdgeInsets.only(
-          left: Dimens.of(context).paddingScreenHorizontal,
-          right: Dimens.of(context).paddingScreenHorizontal,
-          top: Dimens.paddingVertical / 2,
-          bottom: Dimens.paddingVertical / 2,
+        padding: EdgeInsets.symmetric(
+          horizontal: Dimens.of(context).paddingScreenHorizontal,
+          vertical: Dimens.of(context).paddingScreenVertical / 2,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.localization.tasksHello,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelLarge!.copyWith(fontSize: 14),
-                ),
-                Text(
-                  fullName,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
+            ValueListenableBuilder(
+              valueListenable: viewModel.userNotifier,
+              builder: (builderContext, userValue, _) {
+                if (userValue != null) {
+                  final fullName = UserUtils.constructFullName(
+                    firstName: userValue.firstName,
+                    lastName: userValue.lastName,
+                  );
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.localization.tasksHello,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.labelLarge!.copyWith(fontSize: 14),
+                      ),
+                      Text(
+                        fullName,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
             const WorkspaceSwitcher(),
           ],

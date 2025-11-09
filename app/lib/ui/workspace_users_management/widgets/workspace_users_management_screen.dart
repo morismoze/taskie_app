@@ -28,13 +28,13 @@ class _WorkspaceUsersManagementScreenState
     extends State<WorkspaceUsersManagementScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.loadWorkspaceMembers.addListener(
       _onWorkspaceUsersLoadResult,
     );
     widget.viewModel.deleteWorkspaceUser.addListener(
       _onWorkspaceUserDeleteResult,
     );
+    super.initState();
   }
 
   @override
@@ -76,7 +76,7 @@ class _WorkspaceUsersManagementScreenState
                 title: context.localization.workspaceUsersManagement,
                 actions: [
                   Rbac(
-                    permission: RbacPermission.workspaceManageUsers,
+                    permission: RbacPermission.workspaceUsersCreate,
                     child: AppHeaderActionButton(
                       iconData: FontAwesomeIcons.plus,
                       onTap: () {
@@ -143,7 +143,6 @@ class _WorkspaceUsersManagementScreenState
                         itemBuilder: (_, index) {
                           final workspaceUser = widget.viewModel.users![index];
                           final currentUser = widget.viewModel.currentUser;
-
                           final isCurrentUser =
                               currentUser.id == workspaceUser.userId;
 

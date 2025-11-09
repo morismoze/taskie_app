@@ -19,8 +19,8 @@ class HeaderBar extends StatelessWidget {
         padding: EdgeInsets.only(
           left: Dimens.of(context).paddingScreenHorizontal,
           right: Dimens.of(context).paddingScreenHorizontal,
-          top: Dimens.paddingVertical,
-          bottom: Dimens.paddingVertical / 2,
+          top: Dimens.of(context).paddingScreenVertical,
+          bottom: Dimens.of(context).paddingScreenVertical / 2,
         ),
         child: Row(
           children: [

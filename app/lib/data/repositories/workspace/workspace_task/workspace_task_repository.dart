@@ -4,16 +4,11 @@ import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/value_patch.dart';
+import '../../../services/api/workspace/progress_status.dart';
 
-/// This is a [ChangeNotifier] beacuse of 2 reasons:
-///
-/// 1. when creating new tasks, those tasks are pushed into the
-/// current cached list of tasks,
-///
-/// 2. when user does pull-to-refresh, cached list of tasks
-/// will be updated
 abstract class WorkspaceTaskRepository extends ChangeNotifier {
-  bool get isInitialLoad;
+  bool get isFilterSearch;
 
   ObjectiveFilter get activeFilter;
 
@@ -32,6 +27,40 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
     required int rewardPoints,
     String? description,
     DateTime? dueDate,
+  });
+
+  Result<WorkspaceTask> loadWorkspaceTaskDetails({required String taskId});
+
+  Future<Result<void>> updateTaskDetails(
+    String workspaceId,
+    String taskId, {
+    ValuePatch<String>? title,
+    ValuePatch<String?>? description,
+    ValuePatch<int>? rewardPoints,
+    ValuePatch<DateTime?>? dueDate,
+  });
+
+  Future<Result<void>> addTaskAssignee(
+    String workspaceId,
+    String taskId,
+    List<String> assigneeIds,
+  );
+
+  Future<Result<void>> removeTaskAssignee(
+    String workspaceId,
+    String taskId,
+    String assigneeId,
+  );
+
+  Future<Result<void>> updateTaskAssignments(
+    String workspaceId,
+    String taskId,
+    List<(String assigneeId, ProgressStatus status)> assignments,
+  );
+
+  Future<Result<void>> closeTask({
+    required String workspaceId,
+    required String taskId,
   });
 
   void purgeTasksCache();

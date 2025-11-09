@@ -1,6 +1,6 @@
 import { RootBaseEntity } from 'src/common/entity/root-base.entity';
 import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
 import { TaskEntity } from '../../task-module/persistence/task.entity';
 
@@ -14,6 +14,7 @@ import { TaskEntity } from '../../task-module/persistence/task.entity';
  */
 
 @Entity({ name: 'task_assignment' })
+@Unique('UQ_task_assignment', ['task', 'assignee'])
 export class TaskAssignmentEntity extends RootBaseEntity {
   @ManyToOne(() => TaskEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'task_id' })

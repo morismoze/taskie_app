@@ -20,19 +20,21 @@ import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-u
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { Workspace } from './domain/workspace.domain';
+import { AddTaskAssigneeRequest } from './dto/request/add-task-assignee-request.dto';
 import { CreateGoalRequest } from './dto/request/create-goal-request.dto';
 import { CreateTaskRequest } from './dto/request/create-task-request.dto';
 import { CreateVirtualWorkspaceUserRequest } from './dto/request/create-virtual-workspace-user-request.dto';
 import { CreateWorkspaceRequest } from './dto/request/create-workspace-request.dto';
+import { RemoveTaskAssigneeRequest } from './dto/request/remove-task-assignee-request.dto';
 import { UpdateGoalRequest } from './dto/request/update-goal-request.dto';
-import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-status-request.dto';
+import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignment-request.dto';
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
-import { WorkspaceItemRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
+import { AddTaskAssigneeResponse } from './dto/response/add-task-assignee-response.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
 import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
-import { UpdateTaskResponse } from './dto/response/update-task-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -120,6 +122,7 @@ export class WorkspaceService {
         newWorkspace.createdBy === null
           ? null
           : {
+              id: newWorkspace.createdBy.id,
               firstName: newWorkspace.createdBy.firstName,
               lastName: newWorkspace.createdBy.lastName,
               profileImageUrl: newWorkspace.createdBy.profileImageUrl,
@@ -181,6 +184,7 @@ export class WorkspaceService {
         updatedWorkspace.createdBy === null
           ? null
           : {
+              id: updatedWorkspace.createdBy.id,
               firstName: updatedWorkspace.createdBy.firstName,
               lastName: updatedWorkspace.createdBy.lastName,
               profileImageUrl: updatedWorkspace.createdBy.profileImageUrl,
@@ -255,6 +259,7 @@ export class WorkspaceService {
         workspaceInvite.workspace.createdBy === null
           ? null
           : {
+              id: workspaceInvite.workspace.createdBy.id,
               firstName: workspaceInvite.workspace.createdBy.firstName,
               lastName: workspaceInvite.workspace.createdBy.lastName,
               profileImageUrl:
@@ -288,6 +293,7 @@ export class WorkspaceService {
         updatedWorkspaceInvite.workspace.createdBy === null
           ? null
           : {
+              id: updatedWorkspaceInvite.workspace.createdBy.id,
               firstName: updatedWorkspaceInvite.workspace.createdBy.firstName,
               lastName: updatedWorkspaceInvite.workspace.createdBy.lastName,
               profileImageUrl:
@@ -362,7 +368,15 @@ export class WorkspaceService {
       profileImageUrl: null,
       role: newWorkspaceUser.workspaceRole,
       userId: newUser.id,
-      createdBy: newWorkspaceUser.createdBy,
+      createdBy:
+        newWorkspaceUser.createdBy === null
+          ? null
+          : {
+              id: newWorkspaceUser.createdBy.id,
+              firstName: newWorkspaceUser.createdBy.firstName,
+              lastName: newWorkspaceUser.createdBy.lastName,
+              profileImageUrl: newWorkspaceUser.createdBy.profileImageUrl,
+            },
       createdAt: DateTime.fromJSDate(newWorkspaceUser.createdAt).toISO()!,
     };
 
@@ -389,6 +403,7 @@ export class WorkspaceService {
         workspace.createdBy === null
           ? null
           : {
+              id: workspace.createdBy.id,
               firstName: workspace.createdBy.firstName,
               lastName: workspace.createdBy.lastName,
               profileImageUrl: workspace.createdBy.profileImageUrl,
@@ -435,6 +450,7 @@ export class WorkspaceService {
           member.createdBy === null
             ? null
             : {
+                id: member.createdBy.id,
                 firstName: member.createdBy.user.firstName,
                 lastName: member.createdBy.user.lastName,
                 profileImageUrl: member.createdBy.user.profileImageUrl,
@@ -463,7 +479,7 @@ export class WorkspaceService {
     query,
   }: {
     workspaceId: Workspace['id'];
-    query: WorkspaceItemRequestQuery;
+    query: WorkspaceObjectiveRequestQuery;
   }): Promise<WorkspaceTasksResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -510,6 +526,15 @@ export class WorkspaceService {
           profileImageUrl: assignee.profileImageUrl,
           status: assignee.status,
         })),
+        createdBy:
+          task.createdBy === null
+            ? null
+            : {
+                id: task.createdBy.id,
+                firstName: task.createdBy.firstName,
+                lastName: task.createdBy.lastName,
+                profileImageUrl: task.createdBy.profileImageUrl,
+              },
         createdAt: DateTime.fromJSDate(task.createdAt).toISO()!,
       })),
       totalPages,
@@ -524,7 +549,7 @@ export class WorkspaceService {
     query,
   }: {
     workspaceId: Workspace['id'];
-    query: WorkspaceItemRequestQuery;
+    query: WorkspaceObjectiveRequestQuery;
   }): Promise<WorkspaceGoalsResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
@@ -632,7 +657,16 @@ export class WorkspaceService {
           newTask.dueDate === null
             ? null
             : DateTime.fromJSDate(newTask.dueDate).toISO()!,
-        assignees: [],
+        assignees: [], // This is filled in the code below
+        createdBy:
+          newTask.createdBy === null
+            ? null
+            : {
+                id: newTask.createdBy.id,
+                firstName: newTask.createdBy.firstName,
+                lastName: newTask.createdBy.lastName,
+                profileImageUrl: newTask.createdBy.profileImageUrl,
+              },
         createdAt: DateTime.fromJSDate(newTask.createdAt).toISO()!,
       };
 
@@ -872,6 +906,7 @@ export class WorkspaceService {
         updatedWorkspaceUser.createdBy === null
           ? null
           : {
+              id: updatedWorkspaceUser.createdBy.id,
               firstName: updatedWorkspaceUser.createdBy.firstName,
               lastName: updatedWorkspaceUser.createdBy.lastName,
               profileImageUrl: updatedWorkspaceUser.createdBy.profileImageUrl,
@@ -969,7 +1004,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
     payload: UpdateTaskRequest;
-  }): Promise<UpdateTaskResponse> {
+  }): Promise<WorkspaceTaskResponse> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -983,6 +1018,10 @@ export class WorkspaceService {
       );
     }
 
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
+
+    // This method internally checks if task exists for taskId/workspaceId combo
     const updatedTask = await this.taskService.updateByTaskIdAndWorkspaceId({
       taskId,
       workspaceId,
@@ -994,7 +1033,7 @@ export class WorkspaceService {
       },
     });
 
-    const response: UpdateTaskResponse = {
+    const response: WorkspaceTaskResponse = {
       id: updatedTask.id,
       title: updatedTask.title,
       rewardPoints: updatedTask.rewardPoints,
@@ -1003,12 +1042,174 @@ export class WorkspaceService {
         updatedTask.dueDate === null
           ? null
           : DateTime.fromJSDate(updatedTask.dueDate).toISO()!,
+      assignees: updatedTask.assignees.map((assignee) => ({
+        id: assignee.id,
+        firstName: assignee.firstName,
+        lastName: assignee.lastName,
+        profileImageUrl: assignee.profileImageUrl,
+        status: assignee.status,
+      })),
+      createdBy:
+        updatedTask.createdBy === null
+          ? null
+          : {
+              id: updatedTask.createdBy.id,
+              firstName: updatedTask.createdBy.firstName,
+              lastName: updatedTask.createdBy.lastName,
+              profileImageUrl: updatedTask.createdBy.profileImageUrl,
+            },
+      createdAt: DateTime.fromJSDate(updatedTask.createdAt).toISO()!,
     };
 
     return response;
   }
 
-  async updateTaskAssigments({
+  async closeTask({
+    workspaceId,
+    taskId,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+  }): Promise<void> {
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
+    });
+
+    if (!task) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
+
+    await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
+  }
+
+  async addTaskAssignee({
+    workspaceId,
+    taskId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+    payload: AddTaskAssigneeRequest;
+  }): Promise<AddTaskAssigneeResponse> {
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
+    });
+
+    if (!task) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
+
+    // We need to check if provided assignee IDs exist as this specific workspace users
+    const existingWorkspaceUsers =
+      await this.workspaceUserService.findByIdsAndWorkspaceIdWithUserAndCreatedByUser(
+        {
+          ids: payload.assigneeIds,
+          workspaceId,
+        },
+      );
+
+    if (!existingWorkspaceUsers) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    await this.taskAssignmentService.createMultiple({
+      workspaceUserIds: payload.assigneeIds,
+      status: ProgressStatus.IN_PROGRESS,
+      taskId,
+    });
+
+    const mappedResponse = existingWorkspaceUsers.map((workspaceUser) => {
+      return {
+        id: workspaceUser.id,
+        firstName: workspaceUser.user.firstName,
+        lastName: workspaceUser.user.lastName,
+        email: workspaceUser.user.email,
+        profileImageUrl: workspaceUser.user.profileImageUrl,
+        role: workspaceUser.workspaceRole,
+        userId: workspaceUser.user.id,
+        createdBy:
+          workspaceUser.createdBy === null
+            ? null
+            : {
+                id: workspaceUser.createdBy.id,
+                firstName: workspaceUser.createdBy.firstName,
+                lastName: workspaceUser.createdBy.lastName,
+                profileImageUrl: workspaceUser.createdBy.profileImageUrl,
+              },
+        createdAt: DateTime.fromJSDate(workspaceUser.createdAt).toISO()!,
+        status: ProgressStatus.IN_PROGRESS,
+      };
+    });
+
+    return mappedResponse;
+  }
+
+  /**
+   * This is idempotennt solution because it uses Typeorm's
+   * delete funtion, which doesn't check if the record actually
+   * exists. This is actually a good solution for the case
+   * when a Manager2 tries to remove a assignee which was already
+   * removed by Manager1 (Manager2 had stale tasks response). In
+   * that case, 204 status will be sent to Manager2 (even though
+   * there was no actual deletion) and frontend will then manually
+   * remove that assignee from the tasks cache.
+   */
+  async removeTaskAssignee({
+    workspaceId,
+    taskId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    taskId: Task['id'];
+    payload: RemoveTaskAssigneeRequest;
+  }): Promise<void> {
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
+    });
+
+    if (!task) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
+
+    await this.taskAssignmentService.deleteByTaskIdAndAssigneeId({
+      assigneeId: payload.assigneeId,
+      taskId,
+    });
+  }
+
+  async updateTaskAssignments({
     workspaceId,
     taskId,
     assignments,
@@ -1017,11 +1218,12 @@ export class WorkspaceService {
     taskId: Task['id'];
     assignments: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<UpdateTaskAssignmentsStatusesResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
+    const task = await this.taskService.findByTaskIdAndWorkspaceId({
+      taskId,
+      workspaceId,
     });
 
-    if (!workspace) {
+    if (!task) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1030,27 +1232,38 @@ export class WorkspaceService {
       );
     }
 
-    // We need to check if provided assignee IDs exist as workspace users
-    const providedAssigneeIds = assignments.map((item) => item.assigneeId);
-    const existingWorkspaceUsers = await this.workspaceUserService.findAllByIds(
-      {
-        workspaceId,
-        ids: providedAssigneeIds,
-      },
-    );
+    // Closed task can't be updated
+    await this.checkTaskIsClosed(taskId);
 
-    if (existingWorkspaceUsers.length !== providedAssigneeIds.length) {
-      // One or more provided assignee IDs don't exist as workspace users for provided workspace
+    if (!task) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    // We need to check if provided assignee IDs exist as this specific task assignments
+    const providedAssigneeIds = assignments.map((item) => item.assigneeId);
+    const existingTaskAssignments =
+      await this.taskAssignmentService.findAllByTaskIdAndAssigneeIds({
+        taskId,
+        assigneeIds: providedAssigneeIds,
+      });
+
+    if (existingTaskAssignments.length !== providedAssigneeIds.length) {
+      // One or more provided assignee IDs doesn't exist in task assignments for the given task
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
     const updatedTaskAssignments =
-      await this.taskAssignmentService.updateAssignessByTaskId({
+      await this.taskAssignmentService.updateAssignmentsByTaskId({
         taskId,
         workspaceId,
         data: assignments,
@@ -1131,5 +1344,30 @@ export class WorkspaceService {
     };
 
     return response;
+  }
+
+  private async checkTaskIsClosed(taskId: string) {
+    // Check if the task is closed (all task
+    // assignments have ProgressStatus.Closed status).
+    // It is enough to check if only one assignment
+    // has status set to Closed, because a task can be
+    // closed via special endpoint in which all statuses
+    // are set to Closed. In the updateTaskAssignments
+    // endpoint there is request payload validation
+    // which defines that the status can be set to
+    // any ProgressStatus value except Closed.
+    const taskAssignments =
+      await this.taskAssignmentService.findAllByTaskId(taskId);
+
+    for (const assignment of taskAssignments) {
+      if (assignment.status === ProgressStatus.CLOSED) {
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.TASK_CLOSED,
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
   }
 }

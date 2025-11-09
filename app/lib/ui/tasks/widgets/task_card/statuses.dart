@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../data/services/api/workspace/progress_status.dart';
 import '../../../../domain/models/workspace_task.dart';
-import '../../../core/theme/colors.dart';
-import '../../../core/utils/extensions.dart';
+import '../../../core/ui/objective_status_chip.dart';
+import '../../../core/utils/color.dart';
 
 /// If the task has only one assignee, this will show full chip
 /// with status text and corresponding color. If there is more
@@ -19,28 +19,38 @@ class TaskStatuses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (assignees.length == 1) {
-      final (textColor, backgroundColor, text) = _getStatusMeta(
-        assignees[0].status,
-        context,
+      final status = assignees[0].status;
+      final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(
+        status,
       );
 
-      return Badge(
+      return ObjectiveStatusChip(
+        status: status,
+        textColor: textColor,
         backgroundColor: backgroundColor,
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-        label: Text(
-          text,
-          style: Theme.of(context).textTheme.labelSmall!.copyWith(
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
-        ),
+      );
+    }
+
+    if (assignees.every(
+      (assignee) => assignee.status == ProgressStatus.closed,
+    )) {
+      final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(
+        ProgressStatus.closed,
+      );
+
+      return ObjectiveStatusChip(
+        status: ProgressStatus.closed,
+        textColor: textColor,
+        backgroundColor: backgroundColor,
       );
     }
 
     return Row(
       spacing: 4,
       children: assignees.mapIndexed((index, assignee) {
-        final (textColor, _, _) = _getStatusMeta(assignee.status, context);
+        final (textColor, _) = ColorsUtils.getProgressStatusColors(
+          assignee.status,
+        );
 
         return Container(
           width: 6,
@@ -52,29 +62,5 @@ class TaskStatuses extends StatelessWidget {
         );
       }).toList(),
     );
-  }
-
-  (Color textColor, Color backgroundColor, String text) _getStatusMeta(
-    ProgressStatus status,
-    BuildContext context,
-  ) {
-    switch (status) {
-      case ProgressStatus.inProgress:
-        return (
-          AppColors.orange1,
-          AppColors.orange1Light,
-          status.l10n(context),
-        );
-      case ProgressStatus.completed:
-        return (AppColors.green1, AppColors.green1Light, status.l10n(context));
-      case ProgressStatus.completedAsStale:
-        return (AppColors.pink1, AppColors.pink1Light, status.l10n(context));
-      case ProgressStatus.closed:
-        return (
-          Theme.of(context).colorScheme.primary,
-          AppColors.purple1Light,
-          status.l10n(context),
-        );
-    }
   }
 }

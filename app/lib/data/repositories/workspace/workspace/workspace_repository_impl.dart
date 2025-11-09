@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
+import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/request/create_workspace_request.dart';
@@ -181,10 +182,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
   @override
   Result<Workspace> loadWorkspaceDetails(String workspaceId) {
-    final workspaceDetails = _cachedWorkspacesList!.firstWhere(
+    final details = _cachedWorkspacesList!.firstWhere(
       (workspace) => workspace.id == workspaceId,
     );
-    return Result.ok(workspaceDetails);
+    return Result.ok(details);
   }
 
   @override
@@ -205,14 +206,13 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       switch (result) {
         case Ok():
           final updatedWorkspace = _mapWorkspaceFromResponse(result.value);
-
-          // Update the existing workspace in the list by replacing it
-          // with the new updated instance.
           final workspaceIndex = _cachedWorkspacesList!.indexWhere(
             (workspace) => workspace.id == updatedWorkspace.id,
           );
 
           if (workspaceIndex != -1) {
+            // Update the existing workspace in the list by replacing it
+            // with the new updated instance.
             _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
             notifyListeners();
           }
@@ -246,7 +246,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       pictureUrl: workspace.pictureUrl,
       createdBy: workspace.createdBy == null
           ? null
-          : WorkspaceCreatedBy(
+          : CreatedBy(
+              id: workspace.createdBy!.id,
               firstName: workspace.createdBy!.firstName,
               lastName: workspace.createdBy!.lastName,
               profileImageUrl: workspace.createdBy!.profileImageUrl,

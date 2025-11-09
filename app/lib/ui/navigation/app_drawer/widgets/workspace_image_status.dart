@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../core/utils/constants.dart';
+
 class WorkspaceImageStatus extends StatelessWidget {
   const WorkspaceImageStatus({
     super.key,
@@ -16,11 +18,10 @@ class WorkspaceImageStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconSize = imageSize * 0.3;
-    final iconBorderThickness = imageSize * 0.05;
-    const iconBottomPaddingAdjustment = 0.0;
+    final iconBorderThickness = 2.5;
     final iconContainerTotalSize = iconSize + (2 * iconBorderThickness);
-    final iconContainerBorderRadius = iconContainerTotalSize / 2;
-    final imageBorderRadius = imageSize * 0.225;
+    final imageBorderRadius =
+        imageSize * MiscConstants.appIconBorderRadiusSizePercentage;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -39,19 +40,17 @@ class WorkspaceImageStatus extends StatelessWidget {
                 height: iconContainerTotalSize,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(
-                    iconContainerBorderRadius,
-                  ),
+                  shape: BoxShape.circle,
                   border: Border.all(
                     color: Theme.of(context).colorScheme.surface,
                     width: iconBorderThickness,
                   ),
                 ),
                 child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: iconBottomPaddingAdjustment,
-                    ),
+                  child: Transform.translate(
+                    // For some reason the icon is vertically half a pixel to
+                    // the bottom. This translation compensates for that.
+                    offset: const Offset(0, -0.5),
                     child: FaIcon(
                       FontAwesomeIcons.solidCircleCheck,
                       color: Theme.of(context).colorScheme.primary,

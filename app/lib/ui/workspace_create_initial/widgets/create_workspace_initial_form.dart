@@ -4,6 +4,7 @@ import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/utils/extensions.dart';
 import '../view_models/create_workspace_initial_screen_viewmodel.dart';
 
 class CreateWorkspaceInitialForm extends StatefulWidget {
@@ -54,13 +55,13 @@ class _CreateWorkspaceInitialFormState
             required: false,
             maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.createWorkspace,
             builder: (builderContext, _) => AppFilledButton(
               onPress: _onSubmit,
               label: builderContext.localization.workspaceCreateLabel,
-              isLoading: widget.viewModel.createWorkspace.running,
+              loading: widget.viewModel.createWorkspace.running,
             ),
           ),
         ],
@@ -72,9 +73,7 @@ class _CreateWorkspaceInitialFormState
     if (_formKey.currentState!.validate()) {
       final name = _nameController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.isNotEmpty
-          ? trimmedDescription
-          : null;
+      final description = trimmedDescription.nullIfEmpty;
       widget.viewModel.createWorkspace.execute((name, description));
     }
   }

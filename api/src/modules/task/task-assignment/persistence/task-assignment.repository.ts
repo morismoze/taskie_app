@@ -17,6 +17,18 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
+  abstract createMultiple({
+    workspaceUserIds,
+    taskId,
+    status,
+    relations,
+  }: {
+    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    taskId: TaskAssignment['task']['id'];
+    status: TaskAssignment['status'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Array<TaskAssignmentEntity>>;
+
   abstract findById({
     id,
     relations,
@@ -30,6 +42,16 @@ export abstract class TaskAssignmentRepository {
     relations,
   }: {
     taskId: TaskAssignment['task']['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<TaskAssignmentEntity[]>;
+
+  abstract findAllByTaskIdAndAssigneeId({
+    taskId,
+    assigneeIds,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 

@@ -12,6 +12,7 @@ export interface WorkspaceUserResponse {
   // Will be null in the case workspace user was the one
   // who created the workspace
   createdBy: {
+    id: WorkspaceUserResponse['id'];
     firstName: WorkspaceUserResponse['firstName'];
     lastName: WorkspaceUserResponse['lastName'];
     profileImageUrl: WorkspaceUserResponse['profileImageUrl'];

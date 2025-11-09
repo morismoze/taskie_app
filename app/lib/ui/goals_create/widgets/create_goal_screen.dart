@@ -26,8 +26,8 @@ class CreateGoalScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   void initState() {
-    super.initState();
     widget.viewModel.createGoal.addListener(_onResult);
+    super.initState();
   }
 
   @override
@@ -66,10 +66,8 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
-                  bottom: Dimens.paddingVertical,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.of(context).paddingScreenHorizontal,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel.loadWorkspaceMembers,
@@ -125,9 +123,8 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: EdgeInsets.only(
-                          top: Dimens.paddingVertical,
-                          bottom: MediaQuery.of(context).padding.bottom,
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.of(context).paddingScreenVertical,
                         ),
                         child: CreateGoalForm(viewModel: widget.viewModel),
                       );

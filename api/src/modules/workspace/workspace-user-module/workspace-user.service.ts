@@ -58,6 +58,7 @@ export class WorkspaceUserService {
       workspaceUser.createdBy === null
         ? null
         : {
+            id: workspaceUser.createdBy.id,
             firstName: workspaceUser.createdBy.user.firstName,
             lastName: workspaceUser.createdBy.user.lastName,
             profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
@@ -112,6 +113,7 @@ export class WorkspaceUserService {
       workspaceUser.createdBy === null
         ? null
         : {
+            id: workspaceUser.createdBy.id,
             firstName: workspaceUser.createdBy.user.firstName,
             lastName: workspaceUser.createdBy.user.lastName,
             profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
@@ -121,6 +123,53 @@ export class WorkspaceUserService {
       ...workspaceUser,
       createdBy,
     };
+  }
+
+  async findByIdsAndWorkspaceIdWithUserAndCreatedByUser({
+    ids,
+    workspaceId,
+  }: {
+    ids: Array<WorkspaceUser['user']['id']>;
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<
+    Nullable<Array<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>>
+  > {
+    const workspaceUsers =
+      await this.workspaceUserRepository.findByIdsAndWorkspaceId({
+        ids: ids,
+        workspaceId,
+        relations: {
+          user: true,
+          createdBy: {
+            user: true,
+          },
+        },
+      });
+
+    // We want to return null in case only some users were find by the provided
+    // IDs. We are going by the logic "all or nothing".
+    if (workspaceUsers.length !== ids.length) {
+      return null;
+    }
+
+    const mappedUsers = workspaceUsers.map((workspaceUser) => {
+      const createdBy =
+        workspaceUser.createdBy === null
+          ? null
+          : {
+              id: workspaceUser.createdBy.id,
+              firstName: workspaceUser.createdBy.user.firstName,
+              lastName: workspaceUser.createdBy.user.lastName,
+              profileImageUrl: workspaceUser.createdBy.user.profileImageUrl,
+            };
+
+      return {
+        ...workspaceUser,
+        createdBy,
+      };
+    });
+
+    return mappedUsers;
   }
 
   /**

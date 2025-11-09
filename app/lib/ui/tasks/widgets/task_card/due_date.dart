@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
+
+import '../../../core/utils/intl.dart';
 
 class TaskDueDate extends StatelessWidget {
   const TaskDueDate({
@@ -14,9 +15,10 @@ class TaskDueDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDate = DateFormat.yMd(
-      Localizations.localeOf(context).toString(),
-    ).format(dueDate);
+    final formattedDate = IntlUtils.mapDateTimeToLocalTimeZoneFormat(
+      context,
+      dueDate,
+    );
 
     return Row(
       spacing: 5,

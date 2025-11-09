@@ -123,11 +123,10 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
         _log.warning('Failed to create virtual user', result.error);
+        return result;
     }
-
-    return result;
   }
 }

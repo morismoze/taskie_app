@@ -78,7 +78,7 @@ class _JoinWorkspaceViaInviteFormState
                 validator: _validateInviteLink,
                 textInputAction: TextInputAction.done,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               ListenableBuilder(
                 listenable: widget.viewModel.joinWorkspaceViaInviteLink,
                 builder: (builderContext, _) => AppFilledButton(
@@ -86,8 +86,7 @@ class _JoinWorkspaceViaInviteFormState
                   label: builderContext
                       .localization
                       .workspaceCreateJoinViaInviteLinkSubmit,
-                  isLoading:
-                      widget.viewModel.joinWorkspaceViaInviteLink.running,
+                  loading: widget.viewModel.joinWorkspaceViaInviteLink.running,
                 ),
               ),
             ],

@@ -61,7 +61,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
                 textInputAction: TextInputAction.done,
                 maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               ListenableBuilder(
                 listenable: widget.viewModel.createVirtualUser,
                 builder: (builderContext, _) => AppFilledButton(
@@ -69,7 +69,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
                   label: builderContext
                       .localization
                       .workspaceUsersManagementCreateVirtualUserSubmit,
-                  isLoading: widget.viewModel.createVirtualUser.running,
+                  loading: widget.viewModel.createVirtualUser.running,
                 ),
               ),
             ],

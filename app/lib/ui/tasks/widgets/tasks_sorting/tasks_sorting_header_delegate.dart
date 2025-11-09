@@ -13,15 +13,8 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double height;
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return ListenableBuilder(
-      listenable: viewModel,
-      builder: (_, _) => TasksSortingHeader(viewModel: viewModel),
-    );
+  Widget build(_, _, _) {
+    return TasksSortingHeader(viewModel: viewModel);
   }
 
   @override
@@ -32,6 +25,7 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant TasksSortingHeaderDelegate oldDelegate) {
-    return viewModel.activeFilter != oldDelegate.viewModel.activeFilter;
+    return viewModel.activeFilter != oldDelegate.viewModel.activeFilter ||
+        viewModel.loadTasks.running != oldDelegate.viewModel.loadTasks.running;
   }
 }

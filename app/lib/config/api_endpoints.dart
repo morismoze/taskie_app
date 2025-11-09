@@ -1,4 +1,5 @@
 import '../data/services/api/workspace/workspace/models/request/workspace_id_path_param.dart';
+import '../data/services/api/workspace/workspace_task/models/request/workspace_task_id_path_param.dart';
 import '../data/services/api/workspace/workspace_task/models/request/workspace_user_id_path_param.dart';
 
 abstract final class ApiEndpoints {
@@ -25,6 +26,26 @@ abstract final class ApiEndpoints {
       '$_prefix/workspaces/$workspaceId/tasks';
   static String createTask(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/tasks';
+  static String updateTaskDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId';
+  static String addTaskAssignee(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String removeTaskAssignee(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String updateTaskAssignments(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String closeTask(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/close';
 
   // Goals
   static String getGoals(WorkspaceIdPathParam workspaceId) =>

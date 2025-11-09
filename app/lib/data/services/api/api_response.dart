@@ -46,7 +46,19 @@ enum ApiErrorCode {
   workspaceInviteExistingUser(5),
 
   @JsonValue('6')
-  notFoundWorkspaceInviteToken(6);
+  notFoundWorkspaceInviteToken(6),
+
+  @JsonValue('7')
+  taskClosed(7),
+
+  @JsonValue('8')
+  taskAssigneesCountMaxedOut(8),
+
+  @JsonValue('9')
+  taskAssigneesInvalid(9),
+
+  @JsonValue('10')
+  taskAssigneesAlreadyExist(10);
 
   const ApiErrorCode(this.code);
 
