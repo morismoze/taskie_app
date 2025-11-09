@@ -61,9 +61,8 @@ class _WorkspaceUserDetailsEditScreenState
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.of(context).paddingScreenHorizontal,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel,
@@ -76,8 +75,8 @@ class _WorkspaceUserDetailsEditScreenState
                     }
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Dimens.paddingVertical,
+                      padding: EdgeInsets.symmetric(
+                        vertical: Dimens.of(context).paddingScreenVertical,
                       ),
                       child: Column(
                         spacing: 30,

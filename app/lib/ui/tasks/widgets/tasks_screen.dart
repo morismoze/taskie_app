@@ -67,11 +67,11 @@ class _TasksScreenState extends State<TasksScreen> {
                   // show Create new task prompt
                   if (!widget.viewModel.isFilterSearch &&
                       widget.viewModel.tasks!.total == 0) {
-                    return const Padding(
+                    return Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: Dimens.paddingHorizontal,
+                        horizontal: Dimens.of(context).paddingScreenHorizontal,
                       ),
-                      child: EmptyTasks(),
+                      child: const EmptyTasks(),
                     );
                   }
 

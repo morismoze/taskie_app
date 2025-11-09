@@ -64,9 +64,8 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
               HeaderBar(title: context.localization.tasksDetailsEdit),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(
-                    left: Dimens.of(context).paddingScreenHorizontal,
-                    right: Dimens.of(context).paddingScreenHorizontal,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Dimens.of(context).paddingScreenHorizontal,
                   ),
                   child: ListenableBuilder(
                     listenable: widget.viewModel,
@@ -79,8 +78,8 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Dimens.paddingVertical,
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.of(context).paddingScreenVertical,
                         ),
                         child: Column(
                           children: [

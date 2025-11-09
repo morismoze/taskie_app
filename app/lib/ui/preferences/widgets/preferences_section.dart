@@ -15,7 +15,9 @@ class PreferencesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.paddingHorizontal),
+      padding: EdgeInsets.symmetric(
+        horizontal: Dimens.of(context).paddingScreenHorizontal,
+      ),
       child: Column(
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,

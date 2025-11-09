@@ -20,6 +20,8 @@ import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
 import '../ui/tasks_create/widgets/create_task_screen.dart';
+import '../ui/tasks_details/view_models/task_details_screen_view_model.dart';
+import '../ui/tasks_details/widgets/task_details_screen.dart';
 import '../ui/tasks_details_assignments_edit/view_models/task_assignments_edit_screen_view_model.dart';
 import '../ui/tasks_details_assignments_edit/widgets/task_assignments_edit_screen.dart';
 import '../ui/tasks_details_assignments_guide/widgets/tasks_details_assignments_guide_screen.dart';
@@ -282,16 +284,22 @@ GoRouter router({
                           },
                         ),
                         GoRoute(
-                          path: ':taskId/${Routes.editRelative}',
+                          path: ':taskId',
                           parentNavigatorKey: _rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
                             final taskId = state.pathParameters['taskId']!;
 
+                            // We are not using the view model memoization here because we
+                            // want the task details repository call to fire everytime we
+                            // land on this route, so we get fresh data for specific task
+                            // ID - this is important as Managers can edit task data
+                            // and we are not listening to entire workspace task repository
+                            // listenable value on this route, as that would be unnecessary.
                             return CustomTransitionPage(
                               transitionDuration: const Duration(
-                                milliseconds: 400,
+                                milliseconds: 250,
                               ),
                               transitionsBuilder:
                                   (
@@ -304,12 +312,12 @@ GoRouter router({
                                       animation: animation,
                                       secondaryAnimation: secondaryAnimation,
                                       transitionType:
-                                          SharedAxisTransitionType.horizontal,
+                                          SharedAxisTransitionType.scaled,
                                       child: child,
                                     );
                                   },
-                              child: TaskDetailsEditScreen(
-                                viewModel: TaskDetailsEditScreenViewModel(
+                              child: TaskDetailsScreen(
+                                viewModel: TaskDetailsScreenViewModel(
                                   workspaceId: workspaceId,
                                   taskId: taskId,
                                   workspaceTaskRepository: context.read(),
@@ -317,74 +325,123 @@ GoRouter router({
                               ),
                             );
                           },
-                        ),
-                        GoRoute(
-                          path:
-                              ':taskId/${Routes.taskDetailsAssignmentsRelative}/${Routes.editRelative}',
-                          parentNavigatorKey: _rootNavigatorKey,
-                          pageBuilder: (context, state) {
-                            final workspaceId =
-                                state.pathParameters['workspaceId']!;
-                            final taskId = state.pathParameters['taskId']!;
+                          routes: [
+                            GoRoute(
+                              path: Routes.editRelative,
+                              parentNavigatorKey: _rootNavigatorKey,
+                              pageBuilder: (context, state) {
+                                final workspaceId =
+                                    state.pathParameters['workspaceId']!;
+                                final taskId = state.pathParameters['taskId']!;
 
-                            return CustomTransitionPage(
-                              transitionDuration: const Duration(
-                                milliseconds: 400,
-                              ),
-                              transitionsBuilder:
-                                  (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    child,
-                                  ) {
-                                    return SharedAxisTransition(
-                                      animation: animation,
-                                      secondaryAnimation: secondaryAnimation,
-                                      transitionType:
-                                          SharedAxisTransitionType.horizontal,
-                                      child: child,
-                                    );
-                                  },
-                              child: TaskAssignmentsEditScreen(
-                                viewModel: TaskAssignmentsEditScreenViewModel(
-                                  workspaceId: workspaceId,
-                                  taskId: taskId,
-                                  workspaceTaskRepository: context.read(),
-                                  workspaceUserRepository: context.read(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        GoRoute(
-                          path:
-                              ':taskId/${Routes.taskDetailsAssignmentsRelative}/${Routes.guideRelative}',
-                          parentNavigatorKey: _rootNavigatorKey,
-                          pageBuilder: (context, state) {
-                            return CustomTransitionPage(
-                              key: state.pageKey,
-                              transitionDuration: const Duration(
-                                milliseconds: 400,
-                              ),
-                              transitionsBuilder:
-                                  (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    child,
-                                  ) {
-                                    return SharedAxisTransition(
-                                      animation: animation,
-                                      secondaryAnimation: secondaryAnimation,
-                                      transitionType:
-                                          SharedAxisTransitionType.horizontal,
-                                      child: child,
-                                    );
-                                  },
-                              child: const TasksDetailsAssignmentsGuideScreen(),
-                            );
-                          },
+                                return CustomTransitionPage(
+                                  transitionDuration: const Duration(
+                                    milliseconds: 400,
+                                  ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return SharedAxisTransition(
+                                          animation: animation,
+                                          secondaryAnimation:
+                                              secondaryAnimation,
+                                          transitionType:
+                                              SharedAxisTransitionType
+                                                  .horizontal,
+                                          child: child,
+                                        );
+                                      },
+                                  child: TaskDetailsEditScreen(
+                                    viewModel: TaskDetailsEditScreenViewModel(
+                                      workspaceId: workspaceId,
+                                      taskId: taskId,
+                                      workspaceTaskRepository: context.read(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            GoRoute(
+                              path:
+                                  '${Routes.taskDetailsAssignmentsRelative}/${Routes.editRelative}',
+                              parentNavigatorKey: _rootNavigatorKey,
+                              pageBuilder: (context, state) {
+                                final workspaceId =
+                                    state.pathParameters['workspaceId']!;
+                                final taskId = state.pathParameters['taskId']!;
+
+                                return CustomTransitionPage(
+                                  transitionDuration: const Duration(
+                                    milliseconds: 400,
+                                  ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return SharedAxisTransition(
+                                          animation: animation,
+                                          secondaryAnimation:
+                                              secondaryAnimation,
+                                          transitionType:
+                                              SharedAxisTransitionType
+                                                  .horizontal,
+                                          child: child,
+                                        );
+                                      },
+                                  child: TaskAssignmentsEditScreen(
+                                    viewModel:
+                                        TaskAssignmentsEditScreenViewModel(
+                                          workspaceId: workspaceId,
+                                          taskId: taskId,
+                                          workspaceTaskRepository: context
+                                              .read(),
+                                          workspaceUserRepository: context
+                                              .read(),
+                                        ),
+                                  ),
+                                );
+                              },
+                            ),
+                            GoRoute(
+                              path:
+                                  '${Routes.taskDetailsAssignmentsRelative}/${Routes.guideRelative}',
+                              parentNavigatorKey: _rootNavigatorKey,
+                              pageBuilder: (context, state) {
+                                return CustomTransitionPage(
+                                  key: state.pageKey,
+                                  transitionDuration: const Duration(
+                                    milliseconds: 400,
+                                  ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return SharedAxisTransition(
+                                          animation: animation,
+                                          secondaryAnimation:
+                                              secondaryAnimation,
+                                          transitionType:
+                                              SharedAxisTransitionType
+                                                  .horizontal,
+                                          child: child,
+                                        );
+                                      },
+                                  child:
+                                      const TasksDetailsAssignmentsGuideScreen(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),

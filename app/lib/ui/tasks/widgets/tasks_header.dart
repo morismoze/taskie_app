@@ -16,11 +16,9 @@ class TasksHeader extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: EdgeInsets.only(
-          left: Dimens.of(context).paddingScreenHorizontal,
-          right: Dimens.of(context).paddingScreenHorizontal,
-          top: Dimens.paddingVertical / 2,
-          bottom: Dimens.paddingVertical / 2,
+        padding: EdgeInsets.symmetric(
+          horizontal: Dimens.of(context).paddingScreenHorizontal,
+          vertical: Dimens.of(context).paddingScreenVertical / 2,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

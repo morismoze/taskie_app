@@ -33,11 +33,11 @@ class PreferencesScreen extends StatelessWidget {
                   vertical: Dimens.paddingVertical,
                 ),
                 itemCount: preferencesSections.length,
-                separatorBuilder: (_, _) => const Padding(
+                separatorBuilder: (_, _) => Padding(
                   padding: EdgeInsets.symmetric(
-                    vertical: Dimens.paddingVertical / 2,
+                    vertical: Dimens.of(context).paddingScreenVertical / 2,
                   ),
-                  child: Divider(
+                  child: const Divider(
                     height: 10,
                     thickness: 1,
                     indent: 0,

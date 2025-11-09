@@ -66,9 +66,8 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: Dimens.of(context).paddingScreenHorizontal,
-                  right: Dimens.of(context).paddingScreenHorizontal,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.of(context).paddingScreenHorizontal,
                 ),
                 child: ListenableBuilder(
                   listenable: widget.viewModel.loadWorkspaceMembers,
@@ -124,8 +123,8 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                       }
 
                       return SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Dimens.paddingVertical,
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.of(context).paddingScreenVertical,
                         ),
                         child: CreateGoalForm(viewModel: widget.viewModel),
                       );

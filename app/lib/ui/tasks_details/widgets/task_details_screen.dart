@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../domain/constants/rbac.dart';
-import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
-import '../../core/ui/rbac.dart';
 import '../../core/utils/user.dart';
-import '../../navigation/app_drawer/widgets/workspace_image.dart';
-import '../view_models/workspace_settings_screen_viewmodel.dart';
+import '../view_models/task_details_screen_view_model.dart';
+import 'task_assignments_details.dart';
 
-class WorkspaceSettingsScreen extends StatelessWidget {
-  const WorkspaceSettingsScreen({super.key, required this.viewModel});
+class TaskDetailsScreen extends StatelessWidget {
+  const TaskDetailsScreen({super.key, required this.viewModel});
 
-  final WorkspaceSettingsScreenViewModel viewModel;
+  final TaskDetailsScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -32,28 +26,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              HeaderBar(
-                title: context.localization.workspaceSettings,
-                actions: [
-                  Rbac(
-                    permission: RbacPermission.workspaceSettingsManage,
-                    child: AppHeaderActionButton(
-                      iconData: FontAwesomeIcons.pencil,
-                      onTap: () {
-                        final workspaceId = viewModel.details?.id;
-
-                        if (workspaceId != null) {
-                          context.push(
-                            Routes.workspaceSettingsEditWorkspaceSettings(
-                              workspaceId: viewModel.activeWorkspaceId,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              HeaderBar(title: context.localization.tasksDetails),
               SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
                   vertical: Dimens.of(context).paddingScreenVertical,
@@ -61,12 +34,12 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                 ),
                 child: ListenableBuilder(
                   listenable: viewModel,
-                  builder: (builderContext, _) {
+                  builder: (builderContext, child) {
                     final details = viewModel.details;
 
                     if (details == null) {
                       return ActivityIndicator(
-                        radius: 11,
+                        radius: 16,
                         color: Theme.of(builderContext).colorScheme.primary,
                       );
                     }
@@ -83,13 +56,10 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                     return Column(
                       children: [
                         // First section
-                        const WorkspaceImage(isActive: false, size: 100),
-                        const SizedBox(height: 30),
-                        // Second section
                         FractionallySizedBox(
                           widthFactor: 0.8,
                           child: Text(
-                            details.name,
+                            details.title,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
@@ -107,10 +77,29 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                           ),
                         ],
                         const SizedBox(height: 30),
-                        // Third section
+                        // Second section
                         LabeledData(
-                          label:
-                              context.localization.workspaceSettingsCreatedAt,
+                          label: context.localization.taskRewardPointsLabel,
+                          child: LabeledDataText(
+                            data: details.rewardPoints.toString(),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        TaskAssignmentsDetails(assignments: details.assignees),
+                        if (details.dueDate != null) ...[
+                          const SizedBox(height: 15),
+                          LabeledData(
+                            label: context.localization.taskDueDateLabel,
+                            child: LabeledDataText(
+                              data: DateFormat.yMd(
+                                Localizations.localeOf(context).toString(),
+                              ).format(details.dueDate!),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 30),
+                        LabeledData(
+                          label: context.localization.tasksDetailsEditCreatedAt,
                           child: LabeledDataText(
                             data: DateFormat.yMd(
                               Localizations.localeOf(context).toString(),
@@ -119,8 +108,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 15),
                         LabeledData(
-                          label:
-                              context.localization.workspaceSettingsCreatedBy,
+                          label: context.localization.tasksDetailsEditCreatedBy,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             spacing: 8,

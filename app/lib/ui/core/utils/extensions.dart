@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../../../data/services/api/paginable.dart';
 import '../../../data/services/api/user/models/response/user_response.dart';
@@ -104,5 +104,12 @@ extension SortByLocalisation on SortBy {
       case SortBy.oldestFirst:
         return context.localization.sortByOldest;
     }
+  }
+}
+
+extension ColorBrightness on Color {
+  Color lighten([double amount = 0.85]) {
+    assert(amount >= 0 && amount <= 1);
+    return Color.lerp(this, Colors.white, amount)!;
   }
 }

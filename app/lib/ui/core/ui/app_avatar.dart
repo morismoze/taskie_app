@@ -25,7 +25,7 @@ class AppAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = ColorGenerator.generateColorFromString(hashString);
+    final backgroundColor = ColorsUtils.generateColorFromString(hashString);
     final firstNameFirstLetter = firstName[0];
     final radius = size / 2;
     final textFontSize = radius / 2 <= 20 ? radius * 1.2 : radius * 0.95;

@@ -24,11 +24,9 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.only(
-                      top: Dimens.paddingVertical,
-                      left: Dimens.of(context).paddingScreenHorizontal,
-                      right: Dimens.of(context).paddingScreenHorizontal,
-                      bottom: Dimens.paddingVertical,
+                    padding: EdgeInsets.symmetric(
+                      vertical: Dimens.of(context).paddingScreenVertical,
+                      horizontal: Dimens.of(context).paddingScreenHorizontal,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

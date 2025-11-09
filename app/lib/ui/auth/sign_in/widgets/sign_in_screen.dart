@@ -57,8 +57,8 @@ class _SignInScreenState extends State<SignInScreen> {
         child: SafeArea(
           child: Padding(
             padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
-              top: Dimens.paddingVertical,
-              bottom: Dimens.paddingVertical * 2,
+              top: Dimens.of(context).paddingScreenVertical,
+              bottom: Dimens.of(context).paddingScreenVertical * 2,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
