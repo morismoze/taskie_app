@@ -1,0 +1,71 @@
+import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
+
+import '../../../data/repositories/workspace/leaderboard/workspace_leaderboard_repository.dart';
+import '../../../domain/models/workspace_leaderboard_user.dart';
+import '../../../utils/command.dart';
+
+class LeaderboardScreenViewModel extends ChangeNotifier {
+  LeaderboardScreenViewModel({
+    required String workspaceId,
+    required WorkspaceLeaderboardRepository workspaceLeaderboardRepository,
+  }) : _activeWorkspaceId = workspaceId,
+       _workspaceLeaderboardRepository = workspaceLeaderboardRepository {
+    _workspaceLeaderboardRepository.addListener(_onLeaderboardChanged);
+    loadLeaderboard = Command1(_loadLeaderboard)..execute(null);
+  }
+
+  final String _activeWorkspaceId;
+  final WorkspaceLeaderboardRepository _workspaceLeaderboardRepository;
+  final _log = Logger('LeaderboardScreenViewModel');
+
+  late Command1<void, bool?> loadLeaderboard;
+
+  String get activeWorkspaceId => _activeWorkspaceId;
+
+  List<WorkspaceLeaderboardUser>? get leaderboard {
+    final leaderbard = _workspaceLeaderboardRepository.leaderboard;
+
+    if (leaderbard == null) {
+      return null;
+    }
+
+    final sortedLeaderboard = List<WorkspaceLeaderboardUser>.from(leaderbard);
+    sortedLeaderboard.sort((l1, l2) {
+      if (l1.accumulatedPoints > l2.accumulatedPoints) {
+        return -1;
+      } else if (l1.accumulatedPoints < l2.accumulatedPoints) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    return sortedLeaderboard;
+  }
+
+  void _onLeaderboardChanged() {
+    notifyListeners();
+  }
+
+  Future<Result<void>> _loadLeaderboard(bool? forceFetch) async {
+    final result = await _workspaceLeaderboardRepository.loadLeaderboard(
+      workspaceId: activeWorkspaceId,
+      forceFetch: forceFetch ?? false,
+    );
+
+    switch (result) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        _log.warning('Failed to load workspace leaderboard', result.error);
+        return result;
+    }
+  }
+
+  @override
+  void dispose() {
+    _workspaceLeaderboardRepository.removeListener(_onLeaderboardChanged);
+    super.dispose();
+  }
+}

@@ -775,27 +775,14 @@ export class WorkspaceService {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['id'];
   }): Promise<WorkspaceUserAccumulatedPointsResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
-    });
-
-    if (!workspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     const accumulatedPoints =
       await this.workspaceUserService.getWorkspaceUserAccumulatedPoints({
         workspaceId,
         workspaceUserId,
       });
 
-    // getWorkspaceUserAccumulatedPoints will also in the SQL query check if
-    // the provided workspace user ID exists
+    // getWorkspaceUserAccumulatedPoints will check in the SQL query if
+    // the provided workspace user ID exists together with the workspace ID
     if (accumulatedPoints == null) {
       throw new ApiHttpException(
         {

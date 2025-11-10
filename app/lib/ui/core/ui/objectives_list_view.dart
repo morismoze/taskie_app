@@ -43,35 +43,32 @@ class ObjectivesListView extends StatelessWidget {
           ),
           sliver: list,
         ),
-        if (totalPages > 0)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom:
-                    Dimens.paddingVertical * 1.5 + kAppFloatingActionButtonSize,
-                left: Dimens.of(context).paddingScreenHorizontal,
-                right: Dimens.of(context).paddingScreenHorizontal,
-              ),
-              child: NumberPaginator(
-                numberPages: totalPages,
-                // [page] param starts from 0
-                onPageChange: onPageChange,
-                child: const SizedBox(
-                  height: 48,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      PrevButton(),
-                      Flexible(
-                        child: ScrollableNumberContent(shrinkWrap: true),
-                      ),
-                      NextButton(),
-                    ],
-                  ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom:
+                  Dimens.paddingVertical * 1.5 + kAppFloatingActionButtonSize,
+              left: Dimens.of(context).paddingScreenHorizontal,
+              right: Dimens.of(context).paddingScreenHorizontal,
+            ),
+            child: NumberPaginator(
+              numberPages: totalPages,
+              // [page] param starts from 0
+              onPageChange: onPageChange,
+              child: const SizedBox(
+                height: 48,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PrevButton(),
+                    Flexible(child: ScrollableNumberContent(shrinkWrap: true)),
+                    NextButton(),
+                  ],
                 ),
               ),
             ),
           ),
+        ),
       ],
     );
   }

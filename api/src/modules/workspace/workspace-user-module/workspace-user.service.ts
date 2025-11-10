@@ -269,8 +269,13 @@ export class WorkspaceUserService {
   async getLeaderboardData(
     workspaceId: WorkspaceUser['workspace']['id'],
   ): Promise<WorkspaceLeaderboardResponse> {
-    const leaderboard =
-      this.workspaceUserRepository.getWorkspaceLeaderboard(workspaceId);
-    return leaderboard;
+    const leaderboardData =
+      await this.workspaceUserRepository.getWorkspaceLeaderboard(workspaceId);
+
+    return leaderboardData.map((row) => ({
+      ...row,
+      accumulatedPoints: Number(row.accumulatedPoints),
+      completedTasks: Number(row.completedTasks),
+    }));
   }
 }

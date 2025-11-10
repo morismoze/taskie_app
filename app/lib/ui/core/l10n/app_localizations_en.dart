@@ -54,6 +54,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_goToHomepage => 'Go to Homepage';
 
   @override
+  String get misc_pointsAbbr => 'pts';
+
+  @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
 
   @override
@@ -81,7 +84,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bottomNavigationBarTasksLabel => 'Tasks';
 
   @override
-  String get bottomNavigationBarLeaderboardLabel => 'Leaderboard';
+  String get leaderboardLabel => 'Leaderboard';
 
   @override
   String get bottomNavigationBarGoalsLabel => 'Goals';
@@ -644,4 +647,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workspaceCreationSuccess =>
       'You\'ve successfully created new workspace';
+
+  @override
+  String get leaderboardLoadError =>
+      'Uh-oh! We\'ve had some trouble loading up the leaderboard';
+
+  @override
+  String get leaderboardSubtitle => 'Who’s leading the race?';
 }

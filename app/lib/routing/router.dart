@@ -11,6 +11,8 @@ import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
 import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
+import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
+import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
@@ -452,9 +454,17 @@ GoRouter router({
                     GoRoute(
                       path: Routes.leaderboardRelative,
                       pageBuilder: (context, state) {
+                        final workspaceId =
+                            state.pathParameters['workspaceId']!;
+
                         return NoTransitionPage(
                           key: state.pageKey,
-                          child: const Text('leaderboard'),
+                          child: LeaderboardScreen(
+                            viewModel: LeaderboardScreenViewModel(
+                              workspaceId: workspaceId,
+                              workspaceLeaderboardRepository: context.read(),
+                            ),
+                          ),
                         );
                       },
                     ),

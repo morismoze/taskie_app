@@ -63,7 +63,7 @@ class AppBottomNavigationBar extends StatelessWidget {
             _buildTabItem(
               context: context,
               icon: FontAwesomeIcons.trophy,
-              label: context.localization.bottomNavigationBarLeaderboardLabel,
+              label: context.localization.leaderboardLabel,
               isActive: currentIndex == 1,
               onPressed: () => navigationShell.goBranch(1),
             ),

@@ -188,6 +188,12 @@ abstract class AppLocalizations {
   /// **'Go to Homepage'**
   String get misc_goToHomepage;
 
+  /// No description provided for @misc_pointsAbbr.
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get misc_pointsAbbr;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -236,11 +242,11 @@ abstract class AppLocalizations {
   /// **'Tasks'**
   String get bottomNavigationBarTasksLabel;
 
-  /// No description provided for @bottomNavigationBarLeaderboardLabel.
+  /// No description provided for @leaderboardLabel.
   ///
   /// In en, this message translates to:
   /// **'Leaderboard'**
-  String get bottomNavigationBarLeaderboardLabel;
+  String get leaderboardLabel;
 
   /// No description provided for @bottomNavigationBarGoalsLabel.
   ///
@@ -1189,6 +1195,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve successfully created new workspace'**
   String get workspaceCreationSuccess;
+
+  /// No description provided for @leaderboardLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble loading up the leaderboard'**
+  String get leaderboardLoadError;
+
+  /// No description provided for @leaderboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who’s leading the race?'**
+  String get leaderboardSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -174,10 +174,7 @@ class _WorkspaceUsersManagementScreenState
       widget.viewModel.loadWorkspaceMembers.clearResult();
     }
 
-    // Showing snackbar only on subsequest pull-to-refreshes
-    // and not on initial load.
-    if (widget.viewModel.loadWorkspaceMembers.error &&
-        widget.viewModel.users != null) {
+    if (widget.viewModel.loadWorkspaceMembers.error) {
       widget.viewModel.loadWorkspaceMembers.clearResult();
       AppSnackbar.showError(
         context: context,
