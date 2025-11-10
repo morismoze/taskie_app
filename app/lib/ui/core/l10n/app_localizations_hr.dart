@@ -658,4 +658,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get leaderboardSubtitle => 'Tko vodi utrku?';
+
+  @override
+  String get leaderboardCompletedTasksLabel => 'Dovršeno zadataka:';
 }

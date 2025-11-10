@@ -654,4 +654,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardSubtitle => 'Who’s leading the race?';
+
+  @override
+  String get leaderboardCompletedTasksLabel => 'Completed tasks:';
 }

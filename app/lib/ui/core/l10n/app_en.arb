@@ -185,5 +185,6 @@
   "workspaceCreateJoinViaInviteLinkExistingUser": "You are already part of this workspace",
   "workspaceCreationSuccess": "You've successfully created new workspace",
   "leaderboardLoadError": "Uh-oh! We've had some trouble loading up the leaderboard",
-  "leaderboardSubtitle": "Who’s leading the race?"
+  "leaderboardSubtitle": "Who’s leading the race?",
+  "leaderboardCompletedTasksLabel": "Completed tasks:"
 }

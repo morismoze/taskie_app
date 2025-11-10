@@ -185,5 +185,6 @@
   "workspaceCreateJoinViaInviteLinkExistingUser": "Već ste član ovog radnog prostora",
   "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor",
   "leaderboardLoadError": "Uh-oh! Došlo je do problema prilikom dohvata ljestvice",
-  "leaderboardSubtitle": "Tko vodi utrku?"
+  "leaderboardSubtitle": "Tko vodi utrku?",
+  "leaderboardCompletedTasksLabel": "Dovršeno zadataka:"
 }

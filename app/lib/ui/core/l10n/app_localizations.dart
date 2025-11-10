@@ -1207,6 +1207,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Who’s leading the race?'**
   String get leaderboardSubtitle;
+
+  /// No description provided for @leaderboardCompletedTasksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed tasks:'**
+  String get leaderboardCompletedTasksLabel;
 }
 
 class _AppLocalizationsDelegate

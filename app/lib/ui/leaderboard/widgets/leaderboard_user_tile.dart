@@ -4,6 +4,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
+import '../../core/ui/card_container.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 
@@ -34,47 +35,64 @@ class LeaderboardUserTile extends StatelessWidget {
       lastName: lastName,
     );
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: Dimens.paddingVertical / 2,
-        horizontal: Dimens.paddingHorizontal,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.white1,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          const BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
-            blurRadius: 12,
-            spreadRadius: 0,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
+    return CardContainer(
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.symmetric(
+          vertical: Dimens.paddingVertical / 2.5,
+        ),
+        shape: const Border(), // Remove black lines/dividers on feedback
+        expandedAlignment: Alignment.centerRight,
+        showTrailingIcon: false,
+        title: Row(
+          children: [
+            _Placement(placement: placement),
+            const SizedBox(width: 15),
+            AppAvatar(
+              hashString: userId,
+              firstName: firstName,
+              imageUrl: profileImageUrl,
+              size: 50,
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Text(
+                fullName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                textAlign: TextAlign.left,
+                style: Theme.of(context).textTheme.titleLarge!
+                    .copyWith(color: AppColors.grey2)
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              '${accumulatedPoints.toString()} ${context.localization.misc_pointsAbbr}',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge!.copyWith(color: AppColors.grey2),
+            ),
+          ],
+        ),
         children: [
-          _Placement(placement: placement),
-          const SizedBox(width: 15),
-          AppAvatar(
-            hashString: userId,
-            firstName: firstName,
-            imageUrl: profileImageUrl,
-            size: 50,
-          ),
-          const SizedBox(width: 15),
-          Text(
-            fullName,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge!
-                .copyWith(color: AppColors.grey2)
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
-          const Spacer(),
-          Text(
-            '${accumulatedPoints.toString()} ${context.localization.misc_pointsAbbr}',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge!.copyWith(color: AppColors.grey2),
+          Text.rich(
+            TextSpan(
+              text: context.localization.leaderboardCompletedTasksLabel,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge!.copyWith(color: AppColors.grey2),
+              children: [
+                const TextSpan(text: ' '),
+                TextSpan(
+                  text: completedTasks.toString(),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
