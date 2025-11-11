@@ -137,10 +137,22 @@ List<SingleChildWidget> get providers {
       ),
     ),
     Provider(
+      create: (context) =>
+          WorkspaceLeaderboardApiService(apiClient: context.read()),
+    ),
+    ChangeNotifierProvider(
+      create: (context) =>
+          WorkspaceLeaderboardRepositoryImpl(
+                workspaceLeaderboardApiService: context.read(),
+              )
+              as WorkspaceLeaderboardRepository,
+    ),
+    Provider(
       create: (context) => ActiveWorkspaceChangeUseCase(
         workspaceRepository: context.read(),
         workspaceUserRepository: context.read(),
         workspaceTaskRepository: context.read(),
+        workspaceLeaderboardRepository: context.read(),
         workspaceGoalRepository: context.read(),
       ),
     ),
@@ -164,16 +176,5 @@ List<SingleChildWidget> get providers {
       create: (context) => RbacService(userRepository: context.read()),
     ),
     Provider(lazy: true, create: (_) => ShareWorkspaceInviteLinkUseCase()),
-    Provider(
-      create: (context) =>
-          WorkspaceLeaderboardApiService(apiClient: context.read()),
-    ),
-    ChangeNotifierProvider(
-      create: (context) =>
-          WorkspaceLeaderboardRepositoryImpl(
-                workspaceLeaderboardApiService: context.read(),
-              )
-              as WorkspaceLeaderboardRepository,
-    ),
   ];
 }

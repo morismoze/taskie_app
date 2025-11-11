@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../config/assets.dart';
+import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/objectives_list_view.dart';
+import '../../core/utils/extensions.dart';
+import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
-import 'empty_tasks.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';
 import 'tasks_sorting/tasks_sorting_header_delegate.dart';
@@ -40,8 +44,10 @@ class _TasksScreenState extends State<TasksScreen> {
           TasksHeader(viewModel: widget.viewModel),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: kBottomNavigationBarHeight,
+              padding: EdgeInsets.only(
+                bottom: kAppBottomNavigationBarHeight,
+                left: Dimens.of(context).paddingScreenHorizontal,
+                right: Dimens.of(context).paddingScreenHorizontal,
               ),
               child: ListenableBuilder(
                 listenable: widget.viewModel,
@@ -68,10 +74,16 @@ class _TasksScreenState extends State<TasksScreen> {
                   if (!widget.viewModel.isFilterSearch &&
                       widget.viewModel.tasks!.total == 0) {
                     return Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Dimens.of(context).paddingScreenHorizontal,
+                      padding: const EdgeInsets.only(
+                        bottom: kAppBottomNavigationBarHeight,
                       ),
-                      child: const EmptyTasks(),
+                      child: EmptyDataPlaceholder(
+                        assetImage: Assets.emptyObjectivesIllustration,
+                        child: context.localization.tasksNoTasks.format(
+                          style: Theme.of(context).textTheme.bodyMedium!,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     );
                   }
 

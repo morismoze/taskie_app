@@ -5,6 +5,10 @@ abstract final class Assets {
   static const appIcon = 'assets/images/app_icon.png';
   static const emptyObjectivesIllustration =
       'assets/images/empty_objectives_illustration.png';
+  static const emptyLeaderboardIllustration =
+      'assets/images/empty_leaderboard_illustration.png';
+  static const emptyMembersIllustration =
+      'assets/images/empty_members_illustration.png';
   static const laurelWreathLeft = 'assets/images/laurel_wreath_left.png';
   static const laurelWreathRight = 'assets/images/laurel_wreath_right.png';
 }

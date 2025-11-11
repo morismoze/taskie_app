@@ -1213,6 +1213,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Completed tasks:'**
   String get leaderboardCompletedTasksLabel;
+
+  /// No description provided for @leaderboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!'**
+  String get leaderboardEmpty;
 }
 
 class _AppLocalizationsDelegate

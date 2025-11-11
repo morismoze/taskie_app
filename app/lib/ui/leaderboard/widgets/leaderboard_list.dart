@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/models/workspace_leaderboard_user.dart';
 import '../../core/theme/dimens.dart';
+import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../../navigation/app_fab/widgets/app_floating_action_button.dart';
 import 'leaderboard_user_tile.dart';
 
@@ -20,7 +21,7 @@ class LeaderboardList extends StatelessWidget {
         bottom:
             Dimens.paddingVertical * 1.5 +
             kAppFloatingActionButtonSize +
-            kBottomNavigationBarHeight,
+            kAppBottomNavigationBarHeight,
       ),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {

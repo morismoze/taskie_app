@@ -7,6 +7,7 @@ import '../../../../utils/command.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_snackbar.dart';
+import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'footer.dart';
 import 'workspaces_list.dart';
@@ -60,7 +61,7 @@ class _AppDrawerState extends State<AppDrawer> {
         child: Padding(
           padding: const EdgeInsets.only(
             top: Dimens.paddingVertical * 2,
-            bottom: kBottomNavigationBarHeight + Dimens.paddingVertical / 2,
+            bottom: kAppBottomNavigationBarHeight + Dimens.paddingVertical / 2,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

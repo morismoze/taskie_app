@@ -657,4 +657,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardCompletedTasksLabel => 'Completed tasks:';
+
+  @override
+  String get leaderboardEmpty =>
+      'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!';
 }

@@ -186,5 +186,6 @@
   "workspaceCreationSuccess": "You've successfully created new workspace",
   "leaderboardLoadError": "Uh-oh! We've had some trouble loading up the leaderboard",
   "leaderboardSubtitle": "Who’s leading the race?",
-  "leaderboardCompletedTasksLabel": "Completed tasks:"
+  "leaderboardCompletedTasksLabel": "Completed tasks:",
+  "leaderboardEmpty": "It looks like your workspace doesn't have any Completed tasks yet. Try updating and completing some to get started!"
 }

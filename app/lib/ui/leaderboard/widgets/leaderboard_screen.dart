@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../config/assets.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/empty_data_placeholder.dart';
 import '../view_models/leaderboard_screen_view_model.dart';
 import 'leaderboard_header_content.dart';
 import 'leaderboard_list.dart';
@@ -105,6 +107,24 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
                         child: ActivityIndicator(
                           radius: 16,
                           color: Theme.of(builderContext).colorScheme.primary,
+                        ),
+                      ),
+                    )
+                  else if (widget.viewModel.leaderboard!.isEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: Dimens.of(context).paddingScreenHorizontal,
+                          right: Dimens.of(context).paddingScreenHorizontal,
+                          top: Dimens.paddingVertical * 2,
+                        ),
+                        child: EmptyDataPlaceholder(
+                          assetImage: Assets.emptyLeaderboardIllustration,
+                          child: Text(
+                            context.localization.leaderboardEmpty,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     )

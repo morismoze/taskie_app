@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../config/assets.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_outlined_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
@@ -90,35 +91,20 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                     listenable: widget.viewModel,
                     builder: (innerBuilderContext, _) {
                       if (widget.viewModel.workspaceMembers.isEmpty) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FractionallySizedBox(
-                              widthFactor: 0.9,
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).padding.bottom * 2,
+                          ),
+                          child: Center(
+                            child: EmptyDataPlaceholder(
+                              assetImage: Assets.emptyMembersIllustration,
                               child: Text(
-                                innerBuilderContext
-                                    .localization
-                                    .createNewGoalNoMembers,
+                                context.localization.createNewGoalNoMembers,
+                                style: Theme.of(context).textTheme.bodyMedium,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(
-                                  innerBuilderContext,
-                                ).textTheme.bodyMedium,
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            AppOutlinedButton(
-                              label: innerBuilderContext
-                                  .localization
-                                  .objectiveNoMembersCta,
-                              onPress: () => innerBuilderContext.push(
-                                Routes.workspaceUsers(
-                                  workspaceId:
-                                      widget.viewModel.activeWorkspaceId,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         );
                       }
 

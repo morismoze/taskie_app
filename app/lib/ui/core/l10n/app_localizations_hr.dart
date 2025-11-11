@@ -661,4 +661,8 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get leaderboardCompletedTasksLabel => 'Dovršeno zadataka:';
+
+  @override
+  String get leaderboardEmpty =>
+      'Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!';
 }
