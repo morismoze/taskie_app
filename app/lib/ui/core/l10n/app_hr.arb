@@ -186,6 +186,13 @@
   "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor",
   "leaderboardLoadError": "Uh-oh! Došlo je do problema prilikom dohvata ljestvice",
   "leaderboardSubtitle": "Tko vodi utrku?",
-  "leaderboardCompletedTasksLabel": "Dovršeno zadataka:",
+  "leaderboardCompletedTasksLabel": "{numberOfCompletedTasks, plural, =0{Završeno 0 zadataka} =1{Završen 1 zadatak} few{Završena {numberOfCompletedTasks} zadatka} other{Završeno {numberOfCompletedTasks} zadataka}}",
+  "@leaderboardCompletedTasksLabel": {
+    "placeholders": {
+      "numberOfCompletedTasks": {
+        "type": "int"
+      }
+    }
+  },
   "leaderboardEmpty": "Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!"
 }

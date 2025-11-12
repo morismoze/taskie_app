@@ -656,7 +656,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardSubtitle => 'Who’s leading the race?';
 
   @override
-  String get leaderboardCompletedTasksLabel => 'Completed tasks:';
+  String leaderboardCompletedTasksLabel(int numberOfCompletedTasks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      numberOfCompletedTasks,
+      locale: localeName,
+      other: 'Completed $numberOfCompletedTasks tasks',
+      one: 'Completed 1 task',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get leaderboardEmpty =>

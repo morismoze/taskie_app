@@ -87,8 +87,8 @@ class _AppDrawerState extends State<AppDrawer> {
 
   void _onActiveWorkspaceChangeResult() {
     if (widget.viewModel.changeActiveWorkspace.completed) {
-      // Re-navigate to the same screen, but with different workspaceId path param.
-      // That re-navigation will cause UI rebuild.
+      // Re-navigate to the same screen, but with different workspaceId path param
+      // Using context.go so previous workspaceId tasks screen is not reachable.
       final newActiveWorkspaceId =
           (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
       widget.viewModel.changeActiveWorkspace.clearResult();

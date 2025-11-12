@@ -1211,8 +1211,8 @@ abstract class AppLocalizations {
   /// No description provided for @leaderboardCompletedTasksLabel.
   ///
   /// In en, this message translates to:
-  /// **'Completed tasks:'**
-  String get leaderboardCompletedTasksLabel;
+  /// **'{numberOfCompletedTasks, plural, one{Completed 1 task} other{Completed {numberOfCompletedTasks} tasks}}'**
+  String leaderboardCompletedTasksLabel(int numberOfCompletedTasks);
 
   /// No description provided for @leaderboardEmpty.
   ///

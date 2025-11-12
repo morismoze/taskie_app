@@ -660,7 +660,17 @@ class AppLocalizationsHr extends AppLocalizations {
   String get leaderboardSubtitle => 'Tko vodi utrku?';
 
   @override
-  String get leaderboardCompletedTasksLabel => 'Dovršeno zadataka:';
+  String leaderboardCompletedTasksLabel(int numberOfCompletedTasks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      numberOfCompletedTasks,
+      locale: localeName,
+      other: 'Završeno $numberOfCompletedTasks zadataka',
+      few: 'Završena $numberOfCompletedTasks zadatka',
+      one: 'Završen 1 zadatak',
+      zero: 'Završeno 0 zadataka',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get leaderboardEmpty =>
