@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../domain/models/user.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
@@ -44,38 +45,46 @@ class AppBottomNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _buildTabItem(
-              context: context,
+            _TabItem(
               icon: FontAwesomeIcons.house,
               label: context.localization.bottomNavigationBarTasksLabel,
               isActive: currentIndex == 0,
-              onPressed: () => navigationShell.goBranch(0),
+              onPressed: () => _navigateToBranch(0),
             ),
-            _buildTabItem(
-              context: context,
+            _TabItem(
               icon: FontAwesomeIcons.solidFlag,
               label: context.localization.bottomNavigationBarGoalsLabel,
               isActive: currentIndex == 2,
-              onPressed: () => navigationShell.goBranch(2),
+              onPressed: () => _navigateToBranch(1),
             ),
             if (canCreateObjective)
               const SizedBox(width: kAppFloatingActionButtonSize),
-            _buildTabItem(
-              context: context,
+            _TabItem(
               icon: FontAwesomeIcons.trophy,
-              label: context.localization.bottomNavigationBarLeaderboardLabel,
+              label: context.localization.leaderboardLabel,
               isActive: currentIndex == 1,
-              onPressed: () => navigationShell.goBranch(1),
+              onPressed: () => _navigateToBranch(2),
             ),
-            _buildAvatarTabItem(
-              context: context,
+            _AvatarTabItem(
               isActive: currentIndex == 3,
-              onPressed: () => navigationShell.goBranch(3),
+              onPressed: () => _navigateToBranch(3),
+              user: viewModel.user!,
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _navigateToBranch(int index) {
+    if (viewModel.needsReset(index)) {
+      // Workspace was changed - we need to reset the state of the branch
+      navigationShell.goBranch(index, initialLocation: true);
+      viewModel.markVisited(index);
+    } else {
+      // Workspace was not changed - keep the branch's state
+      navigationShell.goBranch(index);
+    }
   }
 
   int _getCurrentTabIndex(BuildContext context) {
@@ -87,14 +96,23 @@ class AppBottomNavigationBar extends StatelessWidget {
       _ => 0,
     };
   }
+}
 
-  Widget _buildTabItem({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
-    required bool isActive,
-    required VoidCallback onPressed,
-  }) {
+class _TabItem extends StatelessWidget {
+  const _TabItem({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
     final color = isActive
         ? Theme.of(context).colorScheme.primary
         : Theme.of(context).colorScheme.primary.withValues(alpha: 0.4);
@@ -123,12 +141,21 @@ class AppBottomNavigationBar extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildAvatarTabItem({
-    required BuildContext context,
-    required bool isActive,
-    required VoidCallback onPressed,
-  }) {
+class _AvatarTabItem extends StatelessWidget {
+  const _AvatarTabItem({
+    required this.isActive,
+    required this.onPressed,
+    required this.user,
+  });
+
+  final bool isActive;
+  final VoidCallback onPressed;
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: InkWell(
         onTap: onPressed,
@@ -149,9 +176,9 @@ class AppBottomNavigationBar extends StatelessWidget {
                       )
                     : null,
                 child: AppAvatar(
-                  hashString: viewModel.user!.id,
-                  firstName: viewModel.user!.firstName,
-                  imageUrl: viewModel.user!.profileImageUrl,
+                  hashString: user.id,
+                  firstName: user.firstName,
+                  imageUrl: user.profileImageUrl,
                   size: 20,
                 ),
               ),

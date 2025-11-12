@@ -112,4 +112,9 @@ extension ColorBrightness on Color {
     assert(amount >= 0 && amount <= 1);
     return Color.lerp(this, Colors.white, amount)!;
   }
+
+  Color darken([double amount = 0.15]) {
+    assert(amount >= 0 && amount <= 1);
+    return Color.lerp(this, Colors.black, amount)!;
+  }
 }

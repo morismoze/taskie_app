@@ -54,6 +54,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_goToHomepage => 'Idi na Početnu stranicu';
 
   @override
+  String get misc_pointsAbbr => 'bod.';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -81,7 +84,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get bottomNavigationBarTasksLabel => 'Zadatci';
 
   @override
-  String get bottomNavigationBarLeaderboardLabel => 'Ljestvica';
+  String get leaderboardLabel => 'Ljestvica';
 
   @override
   String get bottomNavigationBarGoalsLabel => 'Ciljevi';
@@ -648,4 +651,28 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get workspaceCreationSuccess =>
       'Uspješno ste kreirali novi radni prostor';
+
+  @override
+  String get leaderboardLoadError =>
+      'Uh-oh! Došlo je do problema prilikom dohvata ljestvice';
+
+  @override
+  String get leaderboardSubtitle => 'Tko vodi utrku?';
+
+  @override
+  String leaderboardCompletedTasksLabel(int numberOfCompletedTasks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      numberOfCompletedTasks,
+      locale: localeName,
+      other: 'Završeno $numberOfCompletedTasks zadataka',
+      few: 'Završena $numberOfCompletedTasks zadatka',
+      one: 'Završen 1 zadatak',
+      zero: 'Završeno 0 zadataka',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get leaderboardEmpty =>
+      'Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!';
 }

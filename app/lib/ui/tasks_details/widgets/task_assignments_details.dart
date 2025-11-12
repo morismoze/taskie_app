@@ -34,9 +34,10 @@ class TaskAssignmentsDetails extends StatelessWidget {
                       lastName: assignment.lastName,
                     ),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium!
-                        .copyWith(color: AppColors.grey2)
-                        .copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: AppColors.grey2,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

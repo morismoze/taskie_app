@@ -14,8 +14,9 @@
   "misc_comingSoon": "Uskoro",
   "misc_profile": "Profil",
   "misc_new": "Novo",
-  "@@comment": "Specific-case translations",
   "misc_goToHomepage": "Idi na Početnu stranicu",
+  "misc_pointsAbbr": "bod.",
+  "@@comment": "Specific-case translations",
   "signInTitleStart": "Organizirajte zadatke, ostvarite ciljeve.",
   "signInTitleEnd": "Uspješno.",
   "signInSubtitle": "Učinkovito upravljajte obavezama, potaknite angažman i proslavite svaki uspjeh.",
@@ -24,7 +25,7 @@
   "signInGoogleCanceled": "Google prijava otkazana. Molimo pokušajte ponovno.",
   "errorOnInitialLoad": "Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora",
   "bottomNavigationBarTasksLabel": "Zadatci",
-  "bottomNavigationBarLeaderboardLabel": "Ljestvica",
+  "leaderboardLabel": "Ljestvica",
   "bottomNavigationBarGoalsLabel": "Ciljevi",
   "taskCreateNew": "Kreiraj novi zadatak",
   "goalCreateNew": "Kreiraj novi cilj",
@@ -182,5 +183,16 @@
   "workspaceCreateJoinViaInviteLinkNotFound": "Uneseni pozivni link nije važeći",
   "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "Uneseni pozivni link je istekao ili je već iskorišten",
   "workspaceCreateJoinViaInviteLinkExistingUser": "Već ste član ovog radnog prostora",
-  "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor"
+  "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor",
+  "leaderboardLoadError": "Uh-oh! Došlo je do problema prilikom dohvata ljestvice",
+  "leaderboardSubtitle": "Tko vodi utrku?",
+  "leaderboardCompletedTasksLabel": "{numberOfCompletedTasks, plural, =0{Završeno 0 zadataka} =1{Završen 1 zadatak} few{Završena {numberOfCompletedTasks} zadatka} other{Završeno {numberOfCompletedTasks} zadataka}}",
+  "@leaderboardCompletedTasksLabel": {
+    "placeholders": {
+      "numberOfCompletedTasks": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardEmpty": "Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!"
 }

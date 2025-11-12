@@ -7,6 +7,7 @@ abstract final class AppColors {
   static const orange1 = Color(0xFFFF9142);
   static Color green1 = Colors.green[800]!;
   static Color green1Light = Colors.green.shade50;
+  static const Color green2 = Color(0xFF21CF29);
   static const white1 = Color(0xFFFFFFFF);
   static const grey1 = Color.fromARGB(255, 225, 225, 225);
   static const grey2 = Color(0xFF4D4D4D);
@@ -15,6 +16,8 @@ abstract final class AppColors {
   static const blackTransparent = Color(0x4D000000);
   static const red1 = Color(0xFFE74C3C);
   static Color golden = Colors.amber[600]!;
+  static const Color silver = Color(0xFFB5C9D8);
+  static const Color bronze = Color(0xFFC47A38);
   static Color fieldFillColor = grey2.withValues(alpha: 0.075);
   static Color fieldUnfocusedLabelColor = grey2.withValues(alpha: 0.5);
 

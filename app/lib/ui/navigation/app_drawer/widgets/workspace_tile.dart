@@ -30,7 +30,7 @@ class WorkspaceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.all(0),
+      contentPadding: EdgeInsets.zero,
       leading: InkWell(
         onTap: () {
           if (viewModel.activeWorkspaceId != id) {

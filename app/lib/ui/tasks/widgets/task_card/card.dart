@@ -6,10 +6,9 @@ import '../../../../domain/constants/rbac.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
-import '../../../core/theme/colors.dart';
-import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_text_button.dart';
+import '../../../core/ui/card_container.dart';
 import '../../../core/ui/new_objective_badge.dart';
 import '../../../core/ui/rbac.dart';
 import '../../view_models/tasks_screen_viewmodel.dart';
@@ -51,23 +50,7 @@ class TaskCard extends StatelessWidget {
     return InkWell(
       onTap: () =>
           _onTap(context, viewModel, viewModel.activeWorkspaceId, taskId),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: Dimens.paddingVertical / 2,
-          horizontal: Dimens.paddingHorizontal,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white1,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            const BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.1),
-              blurRadius: 12,
-              spreadRadius: 0,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
+      child: CardContainer(
         child: Column(
           spacing: 10,
           children: [

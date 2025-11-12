@@ -47,15 +47,10 @@ class WorkspaceImageStatus extends StatelessWidget {
                   ),
                 ),
                 child: Center(
-                  child: Transform.translate(
-                    // For some reason the icon is vertically half a pixel to
-                    // the bottom. This translation compensates for that.
-                    offset: const Offset(0, -0.5),
-                    child: FaIcon(
-                      FontAwesomeIcons.solidCircleCheck,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: iconSize,
-                    ),
+                  child: FaIcon(
+                    FontAwesomeIcons.solidCircleCheck,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: iconSize,
                   ),
                 ),
               ),

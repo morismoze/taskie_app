@@ -80,7 +80,7 @@ class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
         Flexible(
           child: ListView.separated(
             shrinkWrap: true,
-            padding: const EdgeInsets.all(0),
+            padding: EdgeInsets.zero,
             itemCount: widget.options.length,
             separatorBuilder: (_, _) =>
                 const SizedBox(height: Dimens.paddingVertical / 2),

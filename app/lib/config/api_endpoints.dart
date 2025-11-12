@@ -46,6 +46,8 @@ abstract final class ApiEndpoints {
     WorkspaceIdPathParam workspaceId,
     WorkspaceTaskIdPathParam taskId,
   ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/close';
+  static String getLeaderboard(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/leaderboard';
 
   // Goals
   static String getGoals(WorkspaceIdPathParam workspaceId) =>

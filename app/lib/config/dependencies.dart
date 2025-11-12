@@ -9,6 +9,8 @@ import '../data/repositories/preferences/preferences_repository.dart';
 import '../data/repositories/preferences/preferences_repository_impl.dart';
 import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/user/user_repository_impl.dart';
+import '../data/repositories/workspace/leaderboard/workspace_leaderboard_repository.dart';
+import '../data/repositories/workspace/leaderboard/workspace_leaderboard_repository_impl.dart';
 import '../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../data/repositories/workspace/workspace/workspace_repository_impl.dart';
 import '../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
@@ -26,6 +28,7 @@ import '../data/services/api/user/user_api_service.dart';
 import '../data/services/api/workspace/workspace/workspace_api_service.dart';
 import '../data/services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
 import '../data/services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
+import '../data/services/api/workspace/workspace_leaderboard/workspace_leaderboard_api_service.dart';
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
@@ -134,10 +137,22 @@ List<SingleChildWidget> get providers {
       ),
     ),
     Provider(
+      create: (context) =>
+          WorkspaceLeaderboardApiService(apiClient: context.read()),
+    ),
+    ChangeNotifierProvider(
+      create: (context) =>
+          WorkspaceLeaderboardRepositoryImpl(
+                workspaceLeaderboardApiService: context.read(),
+              )
+              as WorkspaceLeaderboardRepository,
+    ),
+    Provider(
       create: (context) => ActiveWorkspaceChangeUseCase(
         workspaceRepository: context.read(),
         workspaceUserRepository: context.read(),
         workspaceTaskRepository: context.read(),
+        workspaceLeaderboardRepository: context.read(),
         workspaceGoalRepository: context.read(),
       ),
     ),

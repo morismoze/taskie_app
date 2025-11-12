@@ -11,6 +11,8 @@ import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
 import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
+import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
+import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
@@ -188,12 +190,10 @@ GoRouter router({
 
                 return MultiProvider(
                   // Both of these view models are wrapped in providers, because we want to limit
-                  // reinstantianting them on every navigation inside the shell route. Same keys for
-                  // both ChangeNotifierProvider is okay since they are different due to the different
-                  // generic type.
+                  // reinstantianting them on every navigation inside the shell route.
                   providers: [
                     ChangeNotifierProvider(
-                      key: ValueKey(workspaceId),
+                      key: ValueKey('bottom_nav_bar_$workspaceId'),
                       create: (notifierContext) =>
                           AppBottomNavigationBarViewModel(
                             workspaceId: workspaceId,
@@ -202,7 +202,7 @@ GoRouter router({
                           ),
                     ),
                     ChangeNotifierProvider(
-                      key: ValueKey(workspaceId),
+                      key: ValueKey('app_drawer_$workspaceId'),
                       create: (notifierContext) => AppDrawerViewModel(
                         workspaceId: workspaceId,
                         workspaceRepository: notifierContext.read(),
@@ -227,21 +227,13 @@ GoRouter router({
                             state.pathParameters['workspaceId']!;
 
                         return NoTransitionPage(
-                          key: state.pageKey,
-                          child: ChangeNotifierProvider(
-                            key: ValueKey(workspaceId),
-                            create: (context) => TasksScreenViewModel(
+                          key: ValueKey('tasks_page_$workspaceId'),
+                          child: TasksScreen(
+                            viewModel: TasksScreenViewModel(
                               workspaceId: workspaceId,
                               userRepository: context.read(),
                               workspaceTaskRepository: context.read(),
                               preferencesRepository: context.read(),
-                            ),
-                            child: Builder(
-                              builder: (builderContext) {
-                                return TasksScreen(
-                                  viewModel: builderContext.read(),
-                                );
-                              },
                             ),
                           ),
                         );
@@ -450,23 +442,12 @@ GoRouter router({
                 StatefulShellBranch(
                   routes: [
                     GoRoute(
-                      path: Routes.leaderboardRelative,
-                      pageBuilder: (context, state) {
-                        return NoTransitionPage(
-                          key: state.pageKey,
-                          child: const Text('leaderboard'),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                StatefulShellBranch(
-                  routes: [
-                    GoRoute(
                       path: Routes.goalsRelative,
                       pageBuilder: (context, state) {
+                        final workspaceId =
+                            state.pathParameters['workspaceId']!;
                         return NoTransitionPage(
-                          key: state.pageKey,
+                          key: ValueKey('goals_page_$workspaceId'),
                           child: const Text('goals'),
                         );
                       },
@@ -511,6 +492,27 @@ GoRouter router({
                     ),
                   ],
                 ),
+                StatefulShellBranch(
+                  routes: [
+                    GoRoute(
+                      path: Routes.leaderboardRelative,
+                      pageBuilder: (context, state) {
+                        final workspaceId =
+                            state.pathParameters['workspaceId']!;
+
+                        return NoTransitionPage(
+                          key: ValueKey('leaderboard_page_$workspaceId'),
+                          child: LeaderboardScreen(
+                            viewModel: LeaderboardScreenViewModel(
+                              workspaceId: workspaceId,
+                              workspaceLeaderboardRepository: context.read(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
             GoRoute(
@@ -529,29 +531,11 @@ GoRouter router({
                           child: child,
                         );
                       },
-                  child: ChangeNotifierProvider(
-                    key: ValueKey(workspaceId),
-                    create: (context) =>
-                        WorkspaceUsersManagementScreenViewModel(
-                          workspaceId: workspaceId,
-                          userRepository: context.read(),
-                          workspaceUserRepository: context.read(),
-                        ),
-                    // Without the Builder here, reading `WorkspaceUsersScreenManagementViewModel`
-                    // would result in an error saying its provider is not defined, and that's
-                    // because the used `context` is not yet at that moment defined inside the
-                    // scope of the `ChangeNotifierProvider<WorkspaceUsersScreenManagementViewModel>`
-                    // provider. Builder helps to give a new `context` which is inside the Provider
-                    // scope. The end goal of this was to memoize the `WorkspaceUsersScreenManagementViewModel`
-                    // view model, as there is no need for it to be instantiated on every route change.
-                    //
-                    // `create` and `child` evaluate at almost the same time, hence why without Builder
-                    // `context` would not yet see the new InheritedWidget (Provider).
-                    child: Builder(
-                      builder: (builderContext) =>
-                          WorkspaceUsersManagementScreen(
-                            viewModel: builderContext.read(),
-                          ),
+                  child: WorkspaceUsersManagementScreen(
+                    viewModel: WorkspaceUsersManagementScreenViewModel(
+                      workspaceId: workspaceId,
+                      userRepository: context.read(),
+                      workspaceUserRepository: context.read(),
                     ),
                   ),
                 );

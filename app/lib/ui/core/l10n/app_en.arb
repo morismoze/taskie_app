@@ -15,6 +15,7 @@
   "misc_profile": "Profile",
   "misc_new": "New",
   "misc_goToHomepage": "Go to Homepage",
+  "misc_pointsAbbr": "pts",
   "@@comment": "Specific-case translations",
   "signInTitleStart": "Organize Tasks, Achieve Goals.",
   "signInTitleEnd": "Successfully.",
@@ -24,7 +25,7 @@
   "signInGoogleCanceled": "Google sign-in cancelled. Please try again.",
   "errorOnInitialLoad": "Uh-oh! We've had some trouble loading up your workspace",
   "bottomNavigationBarTasksLabel": "Tasks",
-  "bottomNavigationBarLeaderboardLabel": "Leaderboard",
+  "leaderboardLabel": "Leaderboard",
   "bottomNavigationBarGoalsLabel": "Goals",
   "taskCreateNew": "Create new task",
   "goalCreateNew": "Create new goal",
@@ -182,5 +183,16 @@
   "workspaceCreateJoinViaInviteLinkNotFound": "The provided link is invalid",
   "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "The provided link has expired or was already used",
   "workspaceCreateJoinViaInviteLinkExistingUser": "You are already part of this workspace",
-  "workspaceCreationSuccess": "You've successfully created new workspace"
+  "workspaceCreationSuccess": "You've successfully created new workspace",
+  "leaderboardLoadError": "Uh-oh! We've had some trouble loading up the leaderboard",
+  "leaderboardSubtitle": "Who’s leading the race?",
+  "leaderboardCompletedTasksLabel": "{numberOfCompletedTasks, plural, one{Completed 1 task} other{Completed {numberOfCompletedTasks} tasks}}",
+  "@leaderboardCompletedTasksLabel": {
+    "placeholders": {
+      "numberOfCompletedTasks": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardEmpty": "It looks like your workspace doesn't have any Completed tasks yet. Try updating and completing some to get started!"
 }

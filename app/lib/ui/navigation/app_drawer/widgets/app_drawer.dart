@@ -7,6 +7,7 @@ import '../../../../utils/command.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_snackbar.dart';
+import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'footer.dart';
 import 'workspaces_list.dart';
@@ -60,7 +61,7 @@ class _AppDrawerState extends State<AppDrawer> {
         child: Padding(
           padding: const EdgeInsets.only(
             top: Dimens.paddingVertical * 2,
-            bottom: kBottomNavigationBarHeight + Dimens.paddingVertical / 2,
+            bottom: kAppBottomNavigationBarHeight + Dimens.paddingVertical / 2,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,8 +87,8 @@ class _AppDrawerState extends State<AppDrawer> {
 
   void _onActiveWorkspaceChangeResult() {
     if (widget.viewModel.changeActiveWorkspace.completed) {
-      // Re-navigate to the same screen, but with different workspaceId path param.
-      // That re-navigation will cause UI rebuild.
+      // Re-navigate to the same screen, but with different workspaceId path param
+      // Using context.go so previous workspaceId tasks screen is not reachable.
       final newActiveWorkspaceId =
           (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
       widget.viewModel.changeActiveWorkspace.clearResult();

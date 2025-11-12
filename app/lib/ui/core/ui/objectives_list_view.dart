@@ -26,52 +26,40 @@ class ObjectivesListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: Dimens.of(context).paddingScreenHorizontal,
-          ),
-          sliver: SliverPersistentHeader(
-            delegate: headerDelegate,
-            pinned: false,
-            floating: true,
-          ),
+        SliverPersistentHeader(
+          delegate: headerDelegate,
+          pinned: false,
+          floating: true,
         ),
         SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: Dimens.of(context).paddingScreenHorizontal,
-            vertical: Dimens.paddingVertical,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: Dimens.paddingVertical),
           sliver: list,
         ),
-        if (totalPages > 0)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom:
-                    Dimens.paddingVertical * 1.5 + kAppFloatingActionButtonSize,
-                left: Dimens.of(context).paddingScreenHorizontal,
-                right: Dimens.of(context).paddingScreenHorizontal,
-              ),
-              child: NumberPaginator(
-                numberPages: totalPages,
-                // [page] param starts from 0
-                onPageChange: onPageChange,
-                child: const SizedBox(
-                  height: 48,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      PrevButton(),
-                      Flexible(
-                        child: ScrollableNumberContent(shrinkWrap: true),
-                      ),
-                      NextButton(),
-                    ],
-                  ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: Dimens.paddingVertical / 2,
+              bottom:
+                  Dimens.paddingVertical * 1.5 + kAppFloatingActionButtonSize,
+            ),
+            child: NumberPaginator(
+              numberPages: totalPages,
+              // [page] param starts from 0
+              onPageChange: onPageChange,
+              child: const SizedBox(
+                height: 48,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PrevButton(),
+                    Flexible(child: ScrollableNumberContent(shrinkWrap: true)),
+                    NextButton(),
+                  ],
                 ),
               ),
             ),
           ),
+        ),
       ],
     );
   }

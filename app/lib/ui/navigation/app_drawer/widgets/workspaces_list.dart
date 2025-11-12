@@ -20,7 +20,7 @@ class WorkspacesList extends StatelessWidget {
           listenable: viewModel,
           builder: (_, _) {
             return ListView.separated(
-              padding: const EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
               itemCount: viewModel.workspaces.length,
               separatorBuilder: (_, _) =>
                   const SizedBox(height: Dimens.paddingVertical / 1.75),

@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 
+import '../../data/repositories/workspace/leaderboard/workspace_leaderboard_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
 import '../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
@@ -11,17 +12,18 @@ class ActiveWorkspaceChangeUseCase {
     required WorkspaceRepository workspaceRepository,
     required WorkspaceUserRepository workspaceUserRepository,
     required WorkspaceTaskRepository workspaceTaskRepository,
-    // TODO: update when WorkspaceLeaderboardRepository is added: required WorkspaceLeaderboardRepository workspaceLeaderboardRepository,
+    required WorkspaceLeaderboardRepository workspaceLeaderboardRepository,
     required WorkspaceGoalRepository workspaceGoalRepository,
   }) : _workspaceRepository = workspaceRepository,
        _workspaceUserRepository = workspaceUserRepository,
        _workspaceTaskRepository = workspaceTaskRepository,
+       _workspaceLeaderboardRepository = workspaceLeaderboardRepository,
        _workspaceGoalRepository = workspaceGoalRepository;
 
   final WorkspaceRepository _workspaceRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  // final WorkspaceLeaderboardRepository _workspaceLeaderboardRepository;
+  final WorkspaceLeaderboardRepository _workspaceLeaderboardRepository;
   final WorkspaceGoalRepository _workspaceGoalRepository;
 
   final _log = Logger('ActiveWorkspaceChangeUseCase');
@@ -42,7 +44,7 @@ class ActiveWorkspaceChangeUseCase {
   Future<Result<void>> handleWorkspaceChange(String workspaceId) async {
     _workspaceUserRepository.purgeWorkspaceUsersCache();
     _workspaceTaskRepository.purgeTasksCache();
-    // _workspaceLeaderboardRepository.purgeLeaderboardCache();
+    _workspaceLeaderboardRepository.purgeLeaderboardCache();
     _workspaceGoalRepository.purgeGoalsCache();
 
     final resultSetActive = await _workspaceRepository.setActiveWorkspaceId(
