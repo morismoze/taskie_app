@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../routing/routes.dart';
-import '../../core/theme/colors.dart';
 import '../../core/ui/app_avatar.dart';
+import '../../core/ui/card_container.dart';
 import '../../core/utils/user.dart';
 import '../view_models/workspace_users_management_screen_viewmodel.dart';
 import 'workspace_user_tile_trailing.dart';
@@ -46,24 +46,10 @@ class WorkspaceUserTile extends StatelessWidget {
           workspaceUserId: id,
         ),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white1,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            const BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.1),
-              blurRadius: 12,
-              spreadRadius: 0,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
+      child: CardContainer(
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: 12,
-          ),
+          contentPadding: EdgeInsets.zero,
+          dense: true,
           leading: Hero(
             tag: 'workspace-user-$id',
             child: AppAvatar(

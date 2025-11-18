@@ -37,6 +37,9 @@ export class GoalService {
         assignee: {
           user: true,
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -50,11 +53,20 @@ export class GoalService {
         requiredPoints: goal.requiredPoints,
         status: goal.status,
         assignee: {
-          id: goal.assignee.user.id,
+          id: goal.assignee.id, // Workspace user ID
           firstName: goal.assignee.user.firstName,
           lastName: goal.assignee.user.lastName,
           profileImageUrl: goal.assignee.user.profileImageUrl,
         },
+        createdBy:
+          goal.createdBy === null
+            ? null
+            : {
+                id: goal.createdBy.id,
+                firstName: goal.createdBy.user.firstName,
+                lastName: goal.createdBy.user.lastName,
+                profileImageUrl: goal.createdBy.user.profileImageUrl,
+              },
         createdAt: goal.createdAt,
         deletedAt: goal.deletedAt,
         updatedAt: goal.updatedAt,
@@ -90,6 +102,9 @@ export class GoalService {
         assignee: {
           user: true,
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -104,8 +119,17 @@ export class GoalService {
 
     return {
       ...newGoal,
+      createdBy:
+        newGoal.createdBy === null
+          ? null
+          : {
+              id: newGoal.createdBy.id, // Workspace user ID
+              firstName: newGoal.createdBy.user.firstName,
+              lastName: newGoal.createdBy.user.lastName,
+              profileImageUrl: newGoal.createdBy.user.profileImageUrl,
+            },
       assignee: {
-        id: newGoal.assignee.id,
+        id: newGoal.assignee.id, // Workspace user ID
         firstName: newGoal.assignee.user.firstName,
         lastName: newGoal.assignee.user.lastName,
         profileImageUrl: newGoal.assignee.user.profileImageUrl,
@@ -165,6 +189,9 @@ export class GoalService {
         assignee: {
           user: true,
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -184,11 +211,20 @@ export class GoalService {
       requiredPoints: newGoal.requiredPoints,
       status: newGoal.status,
       assignee: {
-        id: newGoal.assignee.user.id,
+        id: newGoal.assignee.id, // Workspace user ID
         firstName: newGoal.assignee.user.firstName,
         lastName: newGoal.assignee.user.lastName,
         profileImageUrl: newGoal.assignee.user.profileImageUrl,
       },
+      createdBy:
+        newGoal.createdBy === null
+          ? null
+          : {
+              id: newGoal.createdBy.id, // Workspace user ID
+              firstName: newGoal.createdBy.user.firstName,
+              lastName: newGoal.createdBy.user.lastName,
+              profileImageUrl: newGoal.createdBy.user.profileImageUrl,
+            },
       createdAt: newGoal.createdAt,
       deletedAt: newGoal.deletedAt,
       updatedAt: newGoal.updatedAt,

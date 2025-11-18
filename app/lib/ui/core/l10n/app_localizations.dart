@@ -248,12 +248,6 @@ abstract class AppLocalizations {
   /// **'Leaderboard'**
   String get leaderboardLabel;
 
-  /// No description provided for @bottomNavigationBarGoalsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Goals'**
-  String get bottomNavigationBarGoalsLabel;
-
   /// No description provided for @taskCreateNew.
   ///
   /// In en, this message translates to:
@@ -1219,6 +1213,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!'**
   String get leaderboardEmpty;
+
+  /// No description provided for @goalsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get goalsLabel;
+
+  /// No description provided for @goalsNoGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!'**
+  String get goalsNoGoals;
+
+  /// No description provided for @goalsNoFilteredGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
+  String get goalsNoFilteredGoals;
 }
 
 class _AppLocalizationsDelegate

@@ -54,7 +54,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                   profileImageUrl,
                 ),
                 child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: FaIcon(
                     FontAwesomeIcons.ellipsisVertical,
                     color: AppColors.grey2,

@@ -53,7 +53,7 @@ class AppBottomNavigationBar extends StatelessWidget {
             ),
             _TabItem(
               icon: FontAwesomeIcons.solidFlag,
-              label: context.localization.bottomNavigationBarGoalsLabel,
+              label: context.localization.goalsLabel,
               isActive: currentIndex == 2,
               onPressed: () => _navigateToBranch(1),
             ),

@@ -87,9 +87,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardLabel => 'Leaderboard';
 
   @override
-  String get bottomNavigationBarGoalsLabel => 'Goals';
-
-  @override
   String get taskCreateNew => 'Create new task';
 
   @override
@@ -669,4 +666,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get leaderboardEmpty =>
       'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!';
+
+  @override
+  String get goalsLabel => 'Goals';
+
+  @override
+  String get goalsNoGoals =>
+      'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!';
+
+  @override
+  String get goalsNoFilteredGoals =>
+      'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
 }

@@ -9,6 +9,8 @@ import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
+import '../ui/goals/view_models/goals_screen_viewmodel.dart';
+import '../ui/goals/widgets/goals_screen.dart';
 import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
 import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
@@ -448,7 +450,14 @@ GoRouter router({
                             state.pathParameters['workspaceId']!;
                         return NoTransitionPage(
                           key: ValueKey('goals_page_$workspaceId'),
-                          child: const Text('goals'),
+                          child: GoalsScreen(
+                            viewModel: GoalsScreenViewmodel(
+                              workspaceId: workspaceId,
+                              userRepository: context.read(),
+                              workspaceGoalRepository: context.read(),
+                              preferencesRepository: context.read(),
+                            ),
+                          ),
                         );
                       },
                       routes: [

@@ -194,5 +194,8 @@
       }
     }
   },
-  "leaderboardEmpty": "Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!"
+  "leaderboardEmpty": "Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!",
+  "goalsLabel": "Ciljevi",
+  "goalsNoGoals": "Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!",
+  "goalsNoFilteredGoals": "Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!"
 }

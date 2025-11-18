@@ -26,7 +26,6 @@
   "errorOnInitialLoad": "Uh-oh! We've had some trouble loading up your workspace",
   "bottomNavigationBarTasksLabel": "Tasks",
   "leaderboardLabel": "Leaderboard",
-  "bottomNavigationBarGoalsLabel": "Goals",
   "taskCreateNew": "Create new task",
   "goalCreateNew": "Create new goal",
   "workspaceNameLabel": "Workspace name",
@@ -194,5 +193,8 @@
       }
     }
   },
-  "leaderboardEmpty": "It looks like your workspace doesn't have any Completed tasks yet. Try updating and completing some to get started!"
+  "leaderboardEmpty": "It looks like your workspace doesn't have any Completed tasks yet. Try updating and completing some to get started!",
+  "goalsLabel": "Goals",
+  "goalsNoGoals": "It looks like your workspace doesn't have any goals yet. Try creating your first one using the main **+** button below!",
+  "goalsNoFilteredGoals": "Uh-oh! It looks like there aren't any goals for the chosen filters. Try different ones!"
 }

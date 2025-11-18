@@ -1,17 +1,17 @@
 import '../../../../value_patch.dart';
 
-class UpdateTaskDetailsRequest {
-  UpdateTaskDetailsRequest({
+class UpdateGoalDetailsRequest {
+  UpdateGoalDetailsRequest({
     this.title,
     this.description,
-    this.rewardPoints,
-    this.dueDate,
+    this.requiredPoints,
+    this.assigneeId,
   });
 
   final ValuePatch<String>? title;
   final ValuePatch<String?>? description;
-  final ValuePatch<int>? rewardPoints;
-  final ValuePatch<DateTime?>? dueDate;
+  final ValuePatch<int>? requiredPoints;
+  final ValuePatch<String?>? assigneeId; // Workspace user ID
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
@@ -22,11 +22,11 @@ class UpdateTaskDetailsRequest {
     if (description != null) {
       json['description'] = description!.value;
     }
-    if (rewardPoints != null) {
-      json['rewardPoints'] = rewardPoints!.value;
+    if (requiredPoints != null) {
+      json['requiredPoints'] = requiredPoints!.value;
     }
-    if (dueDate != null) {
-      json['dueDate'] = dueDate!.value?.toIso8601String();
+    if (assigneeId != null) {
+      json['assigneeId'] = assigneeId!.value;
     }
 
     return json;

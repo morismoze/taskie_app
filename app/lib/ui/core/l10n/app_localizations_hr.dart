@@ -87,9 +87,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get leaderboardLabel => 'Ljestvica';
 
   @override
-  String get bottomNavigationBarGoalsLabel => 'Ciljevi';
-
-  @override
   String get taskCreateNew => 'Kreiraj novi zadatak';
 
   @override
@@ -675,4 +672,15 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get leaderboardEmpty =>
       'Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!';
+
+  @override
+  String get goalsLabel => 'Ciljevi';
+
+  @override
+  String get goalsNoGoals =>
+      'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+
+  @override
+  String get goalsNoFilteredGoals =>
+      'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
 }

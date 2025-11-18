@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../assignee_response.dart';
+import '../../../created_by_response.dart';
 import '../../../progress_status.dart';
 
 part 'workspace_goal_response.g.dart';
@@ -12,8 +13,10 @@ class WorkspaceGoalResponse {
     required this.title,
     required this.requiredPoints,
     required this.accumulatedPoints,
+    required this.createdAt,
     required this.status,
     required this.assignee,
+    required this.createdBy,
     required this.description,
   });
 
@@ -23,6 +26,8 @@ class WorkspaceGoalResponse {
   final int accumulatedPoints;
   final AssigneeResponse assignee;
   final ProgressStatus status;
+  final DateTime createdAt;
+  final CreatedByResponse? createdBy;
   final String? description;
 
   factory WorkspaceGoalResponse.fromJson(Map<String, dynamic> json) =>

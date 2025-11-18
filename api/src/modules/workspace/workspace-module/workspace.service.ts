@@ -544,68 +544,6 @@ export class WorkspaceService {
     return response;
   }
 
-  async getWorkspaceGoals({
-    workspaceId,
-    query,
-  }: {
-    workspaceId: Workspace['id'];
-    query: WorkspaceObjectiveRequestQuery;
-  }): Promise<WorkspaceGoalsResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
-    });
-
-    if (!workspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    const {
-      data: goals,
-      totalPages,
-      total,
-    } = await this.goalService.findPaginatedByWorkspaceWithAssignee({
-      workspaceId,
-      query,
-    });
-
-    const responseData: WorkspaceGoalsResponse['items'] = [];
-
-    for (const goal of goals) {
-      const accumulatedPoints =
-        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
-          workspaceUserId: goal.assignee.id,
-          workspaceId,
-        });
-      responseData.push({
-        id: goal.id,
-        assignee: {
-          id: goal.assignee.id,
-          firstName: goal.assignee.firstName,
-          lastName: goal.assignee.lastName,
-          profileImageUrl: goal.assignee.profileImageUrl,
-        },
-        title: goal.title,
-        description: goal.description,
-        requiredPoints: goal.requiredPoints,
-        status: goal.status,
-        accumulatedPoints,
-      });
-    }
-
-    const response: WorkspaceGoalsResponse = {
-      items: responseData,
-      totalPages,
-      total,
-    };
-
-    return response;
-  }
-
   async createTask({
     workspaceId,
     createdById,
@@ -763,6 +701,166 @@ export class WorkspaceService {
         profileImageUrl: newGoal.assignee.profileImageUrl,
       },
       status: newGoal.status,
+      createdBy:
+        newGoal.createdBy === null
+          ? null
+          : {
+              id: newGoal.createdBy.id,
+              firstName: newGoal.createdBy.firstName,
+              lastName: newGoal.createdBy.lastName,
+              profileImageUrl: newGoal.createdBy.profileImageUrl,
+            },
+      createdAt: DateTime.fromJSDate(newGoal.createdAt).toISO()!,
+    };
+
+    return response;
+  }
+
+  async getWorkspaceGoals({
+    workspaceId,
+    query,
+  }: {
+    workspaceId: Workspace['id'];
+    query: WorkspaceObjectiveRequestQuery;
+  }): Promise<WorkspaceGoalsResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const {
+      data: goals,
+      totalPages,
+      total,
+    } = await this.goalService.findPaginatedByWorkspaceWithAssignee({
+      workspaceId,
+      query,
+    });
+
+    const responseData: WorkspaceGoalsResponse['items'] = [];
+
+    for (const goal of goals) {
+      const accumulatedPoints =
+        await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
+          workspaceUserId: goal.assignee.id,
+          workspaceId,
+        });
+      responseData.push({
+        id: goal.id,
+        assignee: {
+          id: goal.assignee.id,
+          firstName: goal.assignee.firstName,
+          lastName: goal.assignee.lastName,
+          profileImageUrl: goal.assignee.profileImageUrl,
+        },
+        title: goal.title,
+        description: goal.description,
+        requiredPoints: goal.requiredPoints,
+        status: goal.status,
+        accumulatedPoints,
+        createdBy:
+          goal.createdBy === null
+            ? null
+            : {
+                id: goal.createdBy.id,
+                firstName: goal.createdBy.firstName,
+                lastName: goal.createdBy.lastName,
+                profileImageUrl: goal.createdBy.profileImageUrl,
+              },
+        createdAt: DateTime.fromJSDate(goal.createdAt).toISO()!,
+      });
+    }
+
+    const response: WorkspaceGoalsResponse = {
+      items: responseData,
+      totalPages,
+      total,
+    };
+
+    return response;
+  }
+
+  async updateGoal({
+    workspaceId,
+    goalId,
+    payload,
+  }: {
+    workspaceId: Workspace['id'];
+    goalId: Goal['id'];
+    payload: UpdateGoalRequest;
+  }): Promise<WorkspaceGoalResponse> {
+    const workspace = await this.workspaceRepository.findById({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (payload.assigneeId) {
+      // We need to check if provided assignee ID exists as a workspace user
+      const workspaceUser = this.workspaceUserService.findById(
+        payload.assigneeId,
+      );
+
+      if (!workspaceUser) {
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.INVALID_PAYLOAD,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
+    const updatedGoal = await this.goalService.updateByGoalIdAndWorkspaceId({
+      goalId,
+      workspaceId,
+      data: payload,
+    });
+
+    const accumulatedPoints =
+      await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
+        workspaceUserId: updatedGoal.assignee.id,
+        workspaceId,
+      });
+
+    const response: WorkspaceGoalResponse = {
+      id: updatedGoal.id,
+      title: updatedGoal.title,
+      description: updatedGoal.description,
+      requiredPoints: updatedGoal.requiredPoints,
+      assignee: {
+        id: updatedGoal.assignee.id,
+        firstName: updatedGoal.assignee.firstName,
+        lastName: updatedGoal.assignee.lastName,
+        profileImageUrl: updatedGoal.assignee.profileImageUrl,
+      },
+      status: updatedGoal.status,
+      accumulatedPoints,
+      createdBy:
+        updatedGoal.createdBy === null
+          ? null
+          : {
+              id: updatedGoal.createdBy.id,
+              firstName: updatedGoal.createdBy.firstName,
+              lastName: updatedGoal.createdBy.lastName,
+              profileImageUrl: updatedGoal.createdBy.profileImageUrl,
+            },
+      createdAt: DateTime.fromJSDate(updatedGoal.createdAt).toISO()!,
     };
 
     return response;
@@ -1261,74 +1359,6 @@ export class WorkspaceService {
         assigneeId: taskAssignment.assignee.id,
         status: taskAssignment.status,
       }));
-
-    return response;
-  }
-
-  async updateGoal({
-    workspaceId,
-    goalId,
-    payload,
-  }: {
-    workspaceId: Workspace['id'];
-    goalId: Goal['id'];
-    payload: UpdateGoalRequest;
-  }): Promise<WorkspaceGoalResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
-    });
-
-    if (!workspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    if (payload.assigneeId) {
-      // We need to check if provided assignee ID exists as a workspace user
-      const workspaceUser = this.workspaceUserService.findById(
-        payload.assigneeId,
-      );
-
-      if (!workspaceUser) {
-        throw new ApiHttpException(
-          {
-            code: ApiErrorCode.INVALID_PAYLOAD,
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
-    }
-
-    const updatedGoal = await this.goalService.updateByGoalIdAndWorkspaceId({
-      goalId,
-      workspaceId,
-      data: payload,
-    });
-
-    const accumulatedPoints =
-      await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
-        workspaceUserId: updatedGoal.assignee.id,
-        workspaceId,
-      });
-
-    const response: WorkspaceGoalResponse = {
-      id: updatedGoal.id,
-      title: updatedGoal.title,
-      description: updatedGoal.description,
-      requiredPoints: updatedGoal.requiredPoints,
-      assignee: {
-        id: updatedGoal.assignee.id,
-        firstName: updatedGoal.assignee.firstName,
-        lastName: updatedGoal.assignee.lastName,
-        profileImageUrl: updatedGoal.assignee.profileImageUrl,
-      },
-      status: updatedGoal.status,
-      accumulatedPoints,
-    };
 
     return response;
   }

@@ -10,21 +10,21 @@ import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/objectives_list_view.dart';
 import '../../core/utils/extensions.dart';
 import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
-import '../view_models/tasks_screen_viewmodel.dart';
-import 'tasks_header.dart';
-import 'tasks_list.dart';
-import 'tasks_sorting/tasks_sorting_header_delegate.dart';
+import '../view_models/goals_screen_viewmodel.dart';
+import 'goals_header.dart';
+import 'goals_list.dart';
+import 'goals_sorting/goals_sorting_header_delegate.dart';
 
-class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key, required this.viewModel});
+class GoalsScreen extends StatefulWidget {
+  const GoalsScreen({super.key, required this.viewModel});
 
-  final TasksScreenViewModel viewModel;
+  final GoalsScreenViewmodel viewModel;
 
   @override
-  State<StatefulWidget> createState() => _TasksScreenState();
+  State<StatefulWidget> createState() => _GoalssScreenState();
 }
 
-class _TasksScreenState extends State<TasksScreen> {
+class _GoalssScreenState extends State<GoalsScreen> {
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
@@ -41,7 +41,7 @@ class _TasksScreenState extends State<TasksScreen> {
     return BlurredCirclesBackground(
       child: Column(
         children: [
-          TasksHeader(viewModel: widget.viewModel),
+          GoalsHeader(viewModel: widget.viewModel),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(
@@ -50,27 +50,27 @@ class _TasksScreenState extends State<TasksScreen> {
               child: ListenableBuilder(
                 listenable: widget.viewModel,
                 builder: (builderContext, _) {
-                  // If the tasks are null (before initial load) amd there was an error while fetching
+                  // If the goals are null (before initial load) amd there was an error while fetching
                   // from origin, display error prompt. In other cases, old list will still be shown, but
                   // we will show a error snackbar.
-                  if (widget.viewModel.tasks == null &&
-                      widget.viewModel.loadTasks.error) {
+                  if (widget.viewModel.goals == null &&
+                      widget.viewModel.loadGoals.error) {
                     // TODO: Usage of a generic error prompt widget
                     return const SizedBox.shrink();
                   }
 
-                  // If the tasks are null (before initial load) show activity indicator.
-                  if (widget.viewModel.tasks == null) {
+                  // If the goals are null (before initial load) show activity indicator.
+                  if (widget.viewModel.goals == null) {
                     return ActivityIndicator(
                       radius: 16,
                       color: Theme.of(builderContext).colorScheme.primary,
                     );
                   }
 
-                  // If it is initial load and tasks are empty (not null),
-                  // show Create new task prompt
+                  // If it is initial load and goals are empty (not null),
+                  // show Create new goal prompt
                   if (!widget.viewModel.isFilterSearch &&
-                      widget.viewModel.tasks!.total == 0) {
+                      widget.viewModel.goals!.total == 0) {
                     return Padding(
                       padding: EdgeInsets.only(
                         bottom: kAppBottomNavigationBarHeight,
@@ -79,7 +79,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       ),
                       child: EmptyDataPlaceholder(
                         assetImage: Assets.emptyObjectivesIllustration,
-                        child: context.localization.tasksNoTasks.format(
+                        child: context.localization.goalsNoGoals.format(
                           style: Theme.of(context).textTheme.bodyMedium!,
                           textAlign: TextAlign.center,
                         ),
@@ -95,19 +95,19 @@ class _TasksScreenState extends State<TasksScreen> {
                   // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
                   return RefreshIndicator(
                     onRefresh: () async {
-                      widget.viewModel.loadTasks.execute((null, true));
+                      widget.viewModel.loadGoals.execute((null, true));
                     },
                     child: ObjectivesListView(
-                      headerDelegate: TasksSortingHeaderDelegate(
+                      headerDelegate: GoalsSortingHeaderDelegate(
                         viewModel: widget.viewModel,
                         height: 50,
                       ),
-                      list: TasksList(viewModel: widget.viewModel),
-                      totalPages: widget.viewModel.tasks!.totalPages,
+                      list: GoalsList(viewModel: widget.viewModel),
+                      totalPages: widget.viewModel.goals!.totalPages,
                       onPageChange: (page) {
                         final updatedFilter = widget.viewModel.activeFilter
                             .copyWith(page: page + 1);
-                        widget.viewModel.loadTasks.execute((
+                        widget.viewModel.loadGoals.execute((
                           updatedFilter,
                           null,
                         ));
