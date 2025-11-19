@@ -206,7 +206,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksClosedTaskError =>
-      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadatakaa.';
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadataka.';
 
   @override
   String get tasksAmendedAssigneesError =>
@@ -683,4 +683,45 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
+
+  @override
+  String get goalsDetails => 'Detalji cilja';
+
+  @override
+  String get goalsDetailsEdit => 'Uređivanje detalja zadatka';
+
+  @override
+  String get goalsDetailsEditCreatedBy => 'Cilj kreirao/la';
+
+  @override
+  String get goalsDetailsEditCreatedByDeletedAccount =>
+      'Kreator je izbrisao račun';
+
+  @override
+  String get goalsDetailsEditCreatedAt => 'Cilj kreiran';
+
+  @override
+  String get goalsDetailsEditSuccess => 'Uspješno ste uredili detalje cilja';
+
+  @override
+  String get goalsDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja detalja cilja';
+
+  @override
+  String get goalsDetailsCloseGoal => 'Zatvori cilj';
+
+  @override
+  String get goalsDetailsCloseGoalModalMessage =>
+      'Jeste li sigurni da želite zatvoriti ovaj cilj?\nKada zatvorite cilj neće ga više biti moguće ažurirati.';
+
+  @override
+  String get goalsDetailsCloseSuccess => 'Uspješno ste zatvorili cilj';
+
+  @override
+  String get goalsDetailsCloseError =>
+      'Uh-oh! Došlo je do problema prilikom zatvaranja cilja';
+
+  @override
+  String get goalsClosedGoalError =>
+      'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva.';
 }

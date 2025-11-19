@@ -62,7 +62,7 @@
   "tasksUpdateTaskAssignmentsUpdateError": "Uh-oh! Došlo je do problema prilikom ažuriranja dodjela zadatka",
   "tasksAddTaskAssignmentSuccess": "Uspješno ste dodjelili zadatak odabranome članu",
   "tasksAddTaskAssignmentError": "Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu",
-  "tasksClosedTaskError": "Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadatakaa.",
+  "tasksClosedTaskError": "Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadataka.",
   "tasksAmendedAssigneesError": "Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.",
   "tasksRemoveTaskAssignmentModalMessage": "Jeste li sigurni da želite ukloniti ovog korisnika iz dodjele zadatka?",
   "tasksRemoveTaskAssignmentModalCta": "Ukloni",
@@ -197,5 +197,17 @@
   "leaderboardEmpty": "Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!",
   "goalsLabel": "Ciljevi",
   "goalsNoGoals": "Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!",
-  "goalsNoFilteredGoals": "Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!"
+  "goalsNoFilteredGoals": "Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!",
+  "goalsDetails": "Detalji cilja",
+  "goalsDetailsEdit": "Uređivanje detalja zadatka",
+  "goalsDetailsEditCreatedBy": "Cilj kreirao/la",
+  "goalsDetailsEditCreatedByDeletedAccount": "Kreator je izbrisao račun",
+  "goalsDetailsEditCreatedAt": "Cilj kreiran",
+  "goalsDetailsEditSuccess": "Uspješno ste uredili detalje cilja",
+  "goalsDetailsEditError": "Uh-oh! Došlo je do problema prilikom uređivanja detalja cilja",
+  "goalsDetailsCloseGoal": "Zatvori cilj",
+  "goalsDetailsCloseGoalModalMessage": "Jeste li sigurni da želite zatvoriti ovaj cilj?\nKada zatvorite cilj neće ga više biti moguće ažurirati.",
+  "goalsDetailsCloseSuccess": "Uspješno ste zatvorili cilj",
+  "goalsDetailsCloseError": "Uh-oh! Došlo je do problema prilikom zatvaranja cilja",
+  "goalsClosedGoalError": "Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva."
 }

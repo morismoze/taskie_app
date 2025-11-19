@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
 
 const kProgressBarHeight = 12.0;
+const kProgressBadgePadding = 12.0;
 
 class GoalProgress extends StatelessWidget {
   const GoalProgress({
@@ -16,26 +17,49 @@ class GoalProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = accumulatedPoints / requiredPoints;
+    final progress = (accumulatedPoints / requiredPoints).clamp(0.0, 1.0);
 
     return Column(
       spacing: 8,
       children: [
         LayoutBuilder(
           builder: (context, constraints) {
+            final badgeText = accumulatedPoints.toString();
             final trackWidth = constraints.maxWidth;
-            final badgePosition = trackWidth * progress;
+            // End of the green progress track - x-coordinate of the end
+            final progressTrackEnd = trackWidth * progress;
+            // Badge width: text + padding
+            final estimatedBadgeWidth = _estimateBadgeWidth(context, badgeText);
+            // Represents the ideal position of the left border of the badge since we want
+            // its center to be on the progress track end.
+            final baseBadgeLeftBorderPosition =
+                progressTrackEnd - estimatedBadgeWidth / 2;
+            // Position represents position of the left border of the badge
+            final position = baseBadgeLeftBorderPosition.clamp(
+              0.0,
+              trackWidth - estimatedBadgeWidth,
+            );
 
             return Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.centerLeft,
               children: [
-                const _Track(),
-                _Progress(progress: progress),
-                _ProgressBadge(
-                  position: badgePosition,
-                  accumulatedPoints: accumulatedPoints,
+                // Clipping only the track and progress track because
+                // we want to keep the progress badge as whole.
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(kProgressBarHeight),
+                  child: SizedBox(
+                    height: kProgressBarHeight,
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        const _Track(),
+                        _Progress(progress: progress),
+                      ],
+                    ),
+                  ),
                 ),
+                _ProgressBadge(position: position, text: badgeText),
               ],
             );
           },
@@ -62,6 +86,21 @@ class GoalProgress extends StatelessWidget {
       ],
     );
   }
+
+  double _estimateBadgeWidth(BuildContext context, String text) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: Theme.of(
+          context,
+        ).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    // Text width + horizontal padding (12 * 2)
+    return textPainter.width + kProgressBadgePadding * 2;
+  }
 }
 
 class _Track extends StatelessWidget {
@@ -72,10 +111,7 @@ class _Track extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: kProgressBarHeight,
-      decoration: BoxDecoration(
-        color: AppColors.grey1,
-        borderRadius: BorderRadius.circular(kProgressBarHeight),
-      ),
+      color: AppColors.grey1,
     );
   }
 }
@@ -89,52 +125,42 @@ class _Progress extends StatelessWidget {
   Widget build(BuildContext context) {
     return FractionallySizedBox(
       widthFactor: progress,
-      child: Container(
-        height: kProgressBarHeight,
-        decoration: BoxDecoration(
-          color: AppColors.green2,
-          borderRadius: BorderRadius.circular(kProgressBarHeight),
-        ),
-      ),
+      child: Container(height: kProgressBarHeight, color: AppColors.green2),
     );
   }
 }
 
 class _ProgressBadge extends StatelessWidget {
-  const _ProgressBadge({
-    required this.accumulatedPoints,
-    required this.position,
-  });
+  const _ProgressBadge({required this.text, required this.position});
 
-  final int accumulatedPoints;
+  final String text;
   final double position;
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
       left: position,
-      child: FractionalTranslation(
-        translation: const Offset(-0.5, 0),
-        child: Container(
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.25),
-                blurRadius: 12,
-                spreadRadius: 0,
-                offset: Offset(0, 4),
-              ),
-            ],
+      child: Container(
+        decoration: const BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.25),
+              blurRadius: 12,
+              spreadRadius: 0,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Badge(
+          backgroundColor: AppColors.green2,
+          padding: const EdgeInsets.symmetric(
+            horizontal: kProgressBadgePadding,
           ),
-          child: Badge(
-            backgroundColor: AppColors.green2,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            label: Text(
-              accumulatedPoints.toString(),
-              style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.white1,
-              ),
+          label: Text(
+            text,
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.white1,
             ),
           ),
         ),

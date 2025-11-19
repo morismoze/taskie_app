@@ -97,6 +97,7 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
+        _log.warning('Failed to close the task', result.error);
         return result;
     }
   }

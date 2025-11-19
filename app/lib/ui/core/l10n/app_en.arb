@@ -196,5 +196,17 @@
   "leaderboardEmpty": "It looks like your workspace doesn't have any Completed tasks yet. Try updating and completing some to get started!",
   "goalsLabel": "Goals",
   "goalsNoGoals": "It looks like your workspace doesn't have any goals yet. Try creating your first one using the main **+** button below!",
-  "goalsNoFilteredGoals": "Uh-oh! It looks like there aren't any goals for the chosen filters. Try different ones!"
+  "goalsNoFilteredGoals": "Uh-oh! It looks like there aren't any goals for the chosen filters. Try different ones!",
+  "goalsDetails": "Goal details",
+  "goalsDetailsEdit": "Edit goal details",
+  "goalsDetailsEditCreatedBy": "Goal created by",
+  "goalsDetailsEditCreatedByDeletedAccount": "Creator deleted their account",
+  "goalsDetailsEditCreatedAt": "Goal created at",
+  "goalsDetailsEditSuccess": "Successfully edited goal details",
+  "goalsDetailsEditError": "Uh-oh! We've had some trouble editing goal details",
+  "goalsDetailsCloseGoal": "Close goal",
+  "goalsDetailsCloseGoalModalMessage": "Are you sure you want to close this goal?\nOnce a goal is closed you will no longer be able to update it.",
+  "goalsDetailsCloseSuccess": "Successfully closed the goal",
+  "goalsDetailsCloseError": "Uh-oh! We've had some trouble closing the goal",
+  "goalsClosedGoalError": "Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed."
 }

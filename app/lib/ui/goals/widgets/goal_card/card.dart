@@ -97,7 +97,7 @@ class GoalCard extends StatelessWidget {
                 ),
               );
             },
-            label: context.localization.tasksDetails,
+            label: context.localization.goalsDetails,
             leadingIcon: FontAwesomeIcons.circleInfo,
           ),
           if (!isGoalClosed)
@@ -107,13 +107,13 @@ class GoalCard extends StatelessWidget {
                 onPress: () {
                   context.pop(); // Close bottom sheet
                   context.push(
-                    Routes.taskDetailsEdit(
+                    Routes.goalDetailsEdit(
                       workspaceId: activeWorkspaceId,
-                      taskId: goalId,
+                      goalId: goalId,
                     ),
                   );
                 },
-                label: context.localization.tasksDetailsEdit,
+                label: context.localization.goalsDetailsEdit,
                 leadingIcon: FontAwesomeIcons.pencil,
               ),
             ),

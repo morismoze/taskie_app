@@ -1231,6 +1231,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
   String get goalsNoFilteredGoals;
+
+  /// No description provided for @goalsDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal details'**
+  String get goalsDetails;
+
+  /// No description provided for @goalsDetailsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal details'**
+  String get goalsDetailsEdit;
+
+  /// No description provided for @goalsDetailsEditCreatedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal created by'**
+  String get goalsDetailsEditCreatedBy;
+
+  /// No description provided for @goalsDetailsEditCreatedByDeletedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator deleted their account'**
+  String get goalsDetailsEditCreatedByDeletedAccount;
+
+  /// No description provided for @goalsDetailsEditCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal created at'**
+  String get goalsDetailsEditCreatedAt;
+
+  /// No description provided for @goalsDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited goal details'**
+  String get goalsDetailsEditSuccess;
+
+  /// No description provided for @goalsDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing goal details'**
+  String get goalsDetailsEditError;
+
+  /// No description provided for @goalsDetailsCloseGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Close goal'**
+  String get goalsDetailsCloseGoal;
+
+  /// No description provided for @goalsDetailsCloseGoalModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to close this goal?\nOnce a goal is closed you will no longer be able to update it.'**
+  String get goalsDetailsCloseGoalModalMessage;
+
+  /// No description provided for @goalsDetailsCloseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully closed the goal'**
+  String get goalsDetailsCloseSuccess;
+
+  /// No description provided for @goalsDetailsCloseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble closing the goal'**
+  String get goalsDetailsCloseError;
+
+  /// No description provided for @goalsClosedGoalError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.'**
+  String get goalsClosedGoalError;
 }
 
 class _AppLocalizationsDelegate

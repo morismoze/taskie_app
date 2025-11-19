@@ -677,4 +677,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
+
+  @override
+  String get goalsDetails => 'Goal details';
+
+  @override
+  String get goalsDetailsEdit => 'Edit goal details';
+
+  @override
+  String get goalsDetailsEditCreatedBy => 'Goal created by';
+
+  @override
+  String get goalsDetailsEditCreatedByDeletedAccount =>
+      'Creator deleted their account';
+
+  @override
+  String get goalsDetailsEditCreatedAt => 'Goal created at';
+
+  @override
+  String get goalsDetailsEditSuccess => 'Successfully edited goal details';
+
+  @override
+  String get goalsDetailsEditError =>
+      'Uh-oh! We\'ve had some trouble editing goal details';
+
+  @override
+  String get goalsDetailsCloseGoal => 'Close goal';
+
+  @override
+  String get goalsDetailsCloseGoalModalMessage =>
+      'Are you sure you want to close this goal?\nOnce a goal is closed you will no longer be able to update it.';
+
+  @override
+  String get goalsDetailsCloseSuccess => 'Successfully closed the goal';
+
+  @override
+  String get goalsDetailsCloseError =>
+      'Uh-oh! We\'ve had some trouble closing the goal';
+
+  @override
+  String get goalsClosedGoalError =>
+      'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.';
 }

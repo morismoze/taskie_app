@@ -13,6 +13,8 @@ import '../ui/goals/view_models/goals_screen_viewmodel.dart';
 import '../ui/goals/widgets/goals_screen.dart';
 import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
+import '../ui/goals_details_edit/view_models/goal_details_edit_screen_view_model.dart';
+import '../ui/goals_details_edit/widgets/goal_details_edit_screen.dart';
 import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
 import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
@@ -285,12 +287,6 @@ GoRouter router({
                                 state.pathParameters['workspaceId']!;
                             final taskId = state.pathParameters['taskId']!;
 
-                            // We are not using the view model memoization here because we
-                            // want the task details repository call to fire everytime we
-                            // land on this route, so we get fresh data for specific task
-                            // ID - this is important as Managers can edit task data
-                            // and we are not listening to entire workspace task repository
-                            // listenable value on this route, as that would be unnecessary.
                             return CustomTransitionPage(
                               transitionDuration: const Duration(
                                 milliseconds: 250,
@@ -496,6 +492,84 @@ GoRouter router({
                               ),
                             );
                           },
+                        ),
+                        GoRoute(
+                          path: ':goalId',
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+                            final taskId = state.pathParameters['taskId']!;
+
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 250,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.scaled,
+                                      child: child,
+                                    );
+                                  },
+                              child: TaskDetailsScreen(
+                                viewModel: TaskDetailsScreenViewModel(
+                                  workspaceId: workspaceId,
+                                  taskId: taskId,
+                                  workspaceTaskRepository: context.read(),
+                                ),
+                              ),
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                              path: Routes.editRelative,
+                              parentNavigatorKey: _rootNavigatorKey,
+                              pageBuilder: (context, state) {
+                                final workspaceId =
+                                    state.pathParameters['workspaceId']!;
+                                final goalId = state.pathParameters['goalId']!;
+
+                                return CustomTransitionPage(
+                                  transitionDuration: const Duration(
+                                    milliseconds: 400,
+                                  ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return SharedAxisTransition(
+                                          animation: animation,
+                                          secondaryAnimation:
+                                              secondaryAnimation,
+                                          transitionType:
+                                              SharedAxisTransitionType
+                                                  .horizontal,
+                                          child: child,
+                                        );
+                                      },
+                                  child: GoalDetailsEditScreen(
+                                    viewModel: GoalDetailsEditScreenViewModel(
+                                      workspaceId: workspaceId,
+                                      goalId: goalId,
+                                      workspaceGoalRepository: context.read(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
