@@ -92,7 +92,7 @@ class TaskAssignmentFormField extends StatelessWidget {
           options: options,
           value: activeStatus,
           onChanged: (status) => onStatusChanged(assigneeId, status.value),
-          label: context.localization.tasksAssignmentsEditStatusLabel,
+          label: context.localization.progressStatusLabel,
         ),
       ],
     );

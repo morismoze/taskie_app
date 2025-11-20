@@ -41,7 +41,7 @@ abstract class WorkspaceGoalRepository extends ChangeNotifier {
     String goalId, {
     ValuePatch<String>? title,
     ValuePatch<String?>? description,
-    ValuePatch<String?>? assigneeId,
+    ValuePatch<String>? assigneeId,
     ValuePatch<int>? requiredPoints,
   });
 

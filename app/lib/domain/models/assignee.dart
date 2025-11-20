@@ -6,7 +6,7 @@ class Assignee {
     required this.profileImageUrl,
   });
 
-  final String id;
+  final String id; // Workspace user ID
   final String firstName;
   final String lastName;
   final String? profileImageUrl;

@@ -245,7 +245,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
-  String get tasksAssignmentsEditStatusLabel => 'Status';
+  String get progressStatusLabel => 'Status';
 
   @override
   String get tasksAssignmentsEditStatusSubmit => 'Update assignments';
@@ -718,4 +718,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsClosedGoalError =>
       'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.';
+
+  @override
+  String get goalsDetailsAssignedTo => 'Goal assigned to';
 }

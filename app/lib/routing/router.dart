@@ -13,6 +13,8 @@ import '../ui/goals/view_models/goals_screen_viewmodel.dart';
 import '../ui/goals/widgets/goals_screen.dart';
 import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
+import '../ui/goals_details/view_models/goal_details_screen_view_model.dart';
+import '../ui/goals_details/widgets/goal_details_screen.dart';
 import '../ui/goals_details_edit/view_models/goal_details_edit_screen_view_model.dart';
 import '../ui/goals_details_edit/widgets/goal_details_edit_screen.dart';
 import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
@@ -499,7 +501,7 @@ GoRouter router({
                           pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
-                            final taskId = state.pathParameters['taskId']!;
+                            final goalId = state.pathParameters['goalId']!;
 
                             return CustomTransitionPage(
                               transitionDuration: const Duration(
@@ -520,11 +522,11 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: TaskDetailsScreen(
-                                viewModel: TaskDetailsScreenViewModel(
+                              child: GoalDetailsScreen(
+                                viewModel: GoalDetailsScreenViewModel(
                                   workspaceId: workspaceId,
-                                  taskId: taskId,
-                                  workspaceTaskRepository: context.read(),
+                                  goalId: goalId,
+                                  workspaceGoalRepository: context.read(),
                                 ),
                               ),
                             );
@@ -564,6 +566,7 @@ GoRouter router({
                                       workspaceId: workspaceId,
                                       goalId: goalId,
                                       workspaceGoalRepository: context.read(),
+                                      workspaceUserRepository: context.read(),
                                     ),
                                   ),
                                 );

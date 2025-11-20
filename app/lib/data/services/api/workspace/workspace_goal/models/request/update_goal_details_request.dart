@@ -11,7 +11,7 @@ class UpdateGoalDetailsRequest {
   final ValuePatch<String>? title;
   final ValuePatch<String?>? description;
   final ValuePatch<int>? requiredPoints;
-  final ValuePatch<String?>? assigneeId; // Workspace user ID
+  final ValuePatch<String>? assigneeId; // Workspace user ID
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};

@@ -70,7 +70,7 @@ export abstract class GoalRepository {
     data: Partial<
       Omit<
         Goal,
-        'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'assignee'
+        'id' | 'status' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'assignee'
       > & { assigneeId: Goal['assignee']['id'] }
     >;
     relations?: FindOptionsRelations<GoalEntity>;

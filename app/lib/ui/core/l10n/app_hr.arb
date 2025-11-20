@@ -55,7 +55,7 @@
   "tasksDetailsEditCreatedBy": "Zadatak kreirao/la",
   "tasksDetailsEditCreatedByDeletedAccount": "Kreator je izbrisao račun",
   "tasksDetailsEditCreatedAt": "Zadatak kreiran",
-  "tasksAssignmentsEditStatusLabel": "Status",
+  "progressStatusLabel": "Status",
   "tasksDetailsEditSuccess": "Uspješno ste uredili detalje zadatka",
   "tasksDetailsEditError": "Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka",
   "tasksUpdateTaskAssignmentsSuccess": "Uspješno ste ažurirali dodjele zadatka",
@@ -209,5 +209,6 @@
   "goalsDetailsCloseGoalModalMessage": "Jeste li sigurni da želite zatvoriti ovaj cilj?\nKada zatvorite cilj neće ga više biti moguće ažurirati.",
   "goalsDetailsCloseSuccess": "Uspješno ste zatvorili cilj",
   "goalsDetailsCloseError": "Uh-oh! Došlo je do problema prilikom zatvaranja cilja",
-  "goalsClosedGoalError": "Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva."
+  "goalsClosedGoalError": "Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva.",
+  "goalsDetailsAssignedTo": "Cilj dodijeljen"
 }

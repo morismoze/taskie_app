@@ -1,44 +1,29 @@
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsOptional, NotEquals, ValidateIf } from 'class-validator';
 import {
   IsValidGoalAssignee,
   IsValidGoalDescription,
   IsValidGoalRequiredPoints,
   IsValidGoalTitle,
 } from 'src/common/decorators/request-validation-decorators';
-import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
 export class UpdateGoalRequest {
-  @IsOptional()
   @IsValidGoalTitle()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   title?: string;
 
   @IsOptional()
   @IsValidGoalDescription()
+  // Can be set to null - resets it
   description?: string | null;
 
-  @IsOptional()
   @IsValidGoalRequiredPoints()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   requiredPoints?: number;
 
-  @IsOptional()
   @IsValidGoalAssignee()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   assigneeId?: string; // WorkspaceUser ID
-
-  @IsOptional()
-  @IsEnum(ProgressStatus)
-  status?: ProgressStatus;
-
-  constructor(
-    title?: string,
-    requiredPoints?: number,
-    assigneeId?: string,
-    status?: ProgressStatus,
-    description?: string,
-  ) {
-    this.title = title;
-    this.requiredPoints = requiredPoints;
-    this.assigneeId = assigneeId;
-    this.description = description;
-    this.status = status;
-  }
 }

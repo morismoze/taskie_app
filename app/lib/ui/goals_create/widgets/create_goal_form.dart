@@ -52,7 +52,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
 
   @override
   Widget build(BuildContext context) {
-    final options = widget.viewModel.workspaceMembers.map((user) {
+    final members = widget.viewModel.workspaceMembers.map((user) {
       final fullName = UserUtils.constructFullName(
         firstName: user.firstName,
         lastName: user.lastName,
@@ -94,7 +94,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
           ),
           const SizedBox(height: 10),
           AppSelectFormField.single(
-            options: options,
+            options: members,
             value: _selectedAssignee,
             onChanged: _onAssigneeSelected,
             onCleared: _onAssigneeCleared,

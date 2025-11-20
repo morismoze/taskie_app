@@ -91,9 +91,9 @@ class GoalCard extends StatelessWidget {
             onPress: () {
               context.pop(); // Close bottom sheet
               context.push(
-                Routes.taskDetails(
+                Routes.goalDetails(
                   workspaceId: activeWorkspaceId,
-                  taskId: goalId,
+                  goalId: goalId,
                 ),
               );
             },

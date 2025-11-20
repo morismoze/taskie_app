@@ -162,6 +162,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
   @override
   Result<WorkspaceGoal> loadGoalDetails({required String goalId}) {
+    print('aloo $goalId');
     final details = _cachedGoals!.items.firstWhere((goal) => goal.id == goalId);
     return Result.ok(details);
   }
@@ -172,7 +173,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     String goalId, {
     ValuePatch<String>? title,
     ValuePatch<String?>? description,
-    ValuePatch<String?>? assigneeId,
+    ValuePatch<String>? assigneeId,
     ValuePatch<int>? requiredPoints,
   }) async {
     try {

@@ -70,7 +70,8 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
                   child: ListenableBuilder(
                     listenable: widget.viewModel,
                     builder: (builderContext, child) {
-                      if (widget.viewModel.details == null) {
+                      if (widget.viewModel.details == null ||
+                          widget.viewModel.workspaceMembers.isEmpty) {
                         return ActivityIndicator(
                           radius: 16,
                           color: Theme.of(builderContext).colorScheme.primary,

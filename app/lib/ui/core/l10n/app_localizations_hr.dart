@@ -245,7 +245,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
-  String get tasksAssignmentsEditStatusLabel => 'Status';
+  String get progressStatusLabel => 'Status';
 
   @override
   String get tasksAssignmentsEditStatusSubmit => 'Ažuriraj dodjele';
@@ -724,4 +724,7 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsClosedGoalError =>
       'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva.';
+
+  @override
+  String get goalsDetailsAssignedTo => 'Cilj dodijeljen';
 }

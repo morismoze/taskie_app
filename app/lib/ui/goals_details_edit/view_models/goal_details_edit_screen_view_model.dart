@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
+import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
+import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../data/services/api/value_patch.dart';
 import '../../../domain/models/workspace_goal.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
 class GoalDetailsEditScreenViewModel extends ChangeNotifier {
@@ -11,11 +14,17 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
     required String workspaceId,
     required String goalId,
     required WorkspaceGoalRepository workspaceGoalRepository,
+    required WorkspaceUserRepository workspaceUserRepository,
   }) : _activeWorkspaceId = workspaceId,
        _goalId = goalId,
-       _workspaceGoalRepository = workspaceGoalRepository {
+       _workspaceGoalRepository = workspaceGoalRepository,
+       _workspaceUserRepository = workspaceUserRepository {
     _loadWorkspaceGoalDetails();
+    _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     workspaceGoalRepository.addListener(_onWorkspaceGoalsChanged);
+    // This is loading for the select field for adding new assignees
+    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
+      ..execute(workspaceId);
     editGoalDetails = Command1(_editGoalDetails);
     closeGoal = Command0(_closeGoal);
   }
@@ -23,8 +32,10 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final String _goalId;
   final WorkspaceGoalRepository _workspaceGoalRepository;
+  final WorkspaceUserRepository _workspaceUserRepository;
   final _log = Logger('GoalDetailsEditScreenViewModel');
 
+  late Command1<void, String> loadWorkspaceMembers;
   late Command0 closeGoal;
   late Command1<
     void,
@@ -43,6 +54,16 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
 
   WorkspaceGoal? get details => _details;
 
+  List<WorkspaceUser> get workspaceMembers =>
+      _workspaceUserRepository.users
+          ?.where((user) => user.role == WorkspaceRole.member)
+          .toList() ??
+      [];
+
+  void _onWorkspaceUsersChanged() {
+    notifyListeners();
+  }
+
   void _onWorkspaceGoalsChanged() {
     _loadWorkspaceGoalDetails();
   }
@@ -57,6 +78,20 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
         return const Result.ok(null);
       case Error():
         _log.warning('Failed to load goal details', result.error);
+        return result;
+    }
+  }
+
+  Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
+    final result = await _workspaceUserRepository.loadWorkspaceUsers(
+      workspaceId: workspaceId,
+    );
+
+    switch (result) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -85,7 +120,7 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
       requiredPoints: hasRequiredPointsChanged
           ? ValuePatch(requiredPoints!)
           : null,
-      assigneeId: hasAssigneeChanged ? ValuePatch(assigneeId) : null,
+      assigneeId: hasAssigneeChanged ? ValuePatch(assigneeId!) : null,
     );
 
     switch (result) {
@@ -115,6 +150,7 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _workspaceGoalRepository.removeListener(_onWorkspaceGoalsChanged);
+    _workspaceUserRepository.removeListener(_onWorkspaceUsersChanged);
     super.dispose();
   }
 }

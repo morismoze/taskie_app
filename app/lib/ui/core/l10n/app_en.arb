@@ -71,7 +71,7 @@
   "tasksDetailsCloseSuccess": "Successfully closed the task",
   "tasksDetailsCloseError": "Uh-oh! We've had some trouble closing the task",
   "tasksAssignmentsEdit": "Edit task assignments",
-  "tasksAssignmentsEditStatusLabel": "Status",
+  "progressStatusLabel": "Status",
   "tasksAssignmentsEditStatusSubmit": "Update assignments",
   "tasksAssignmentsEditAddNewAssignee": "Add additional assignees to this task:",
   "tasksAssignmentsGuideMainTitle": "About task assignments",
@@ -208,5 +208,6 @@
   "goalsDetailsCloseGoalModalMessage": "Are you sure you want to close this goal?\nOnce a goal is closed you will no longer be able to update it.",
   "goalsDetailsCloseSuccess": "Successfully closed the goal",
   "goalsDetailsCloseError": "Uh-oh! We've had some trouble closing the goal",
-  "goalsClosedGoalError": "Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed."
+  "goalsClosedGoalError": "Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.",
+  "goalsDetailsAssignedTo": "Goal assigned to"
 }

@@ -17,26 +17,22 @@ class GoalDetailsMeta extends StatefulWidget {
 }
 
 class _GoalDetailsMetaState extends State<GoalDetailsMeta> {
-  bool _isInit = true; // First init flag
   final TextEditingController _createdByController = TextEditingController();
   final TextEditingController _createdAtController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_isInit) {
-      _createdByController.text = widget.viewModel.details!.createdBy != null
-          ? UserUtils.constructFullName(
-              firstName: widget.viewModel.details!.createdBy!.firstName,
-              lastName: widget.viewModel.details!.createdBy!.lastName,
-            )
-          : context.localization.goalsDetailsEditCreatedByDeletedAccount;
-      _createdAtController.text = IntlUtils.mapDateTimeToLocalTimeZoneFormat(
-        context,
-        widget.viewModel.details!.createdAt,
-      );
-    }
-    _isInit = false;
+    _createdByController.text = widget.viewModel.details!.createdBy != null
+        ? UserUtils.constructFullName(
+            firstName: widget.viewModel.details!.createdBy!.firstName,
+            lastName: widget.viewModel.details!.createdBy!.lastName,
+          )
+        : context.localization.goalsDetailsEditCreatedByDeletedAccount;
+    _createdAtController.text = IntlUtils.mapDateTimeToLocalTimeZoneFormat(
+      context,
+      widget.viewModel.details!.createdAt,
+    );
   }
 
   @override

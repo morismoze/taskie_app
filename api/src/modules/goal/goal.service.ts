@@ -176,13 +176,12 @@ export class GoalService {
       );
     }
 
-    const newGoal = await this.goalRepository.update({
+    const updatedGoal = await this.goalRepository.update({
       id: goalId,
       data: {
         title: data.title,
         description: data.description,
         requiredPoints: data.requiredPoints,
-        status: data.status,
         assigneeId: data.assigneeId,
       },
       relations: {
@@ -195,7 +194,7 @@ export class GoalService {
       },
     });
 
-    if (!newGoal) {
+    if (!updatedGoal) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -205,29 +204,29 @@ export class GoalService {
     }
 
     return {
-      id: newGoal.id,
-      title: newGoal.title,
-      description: newGoal.description,
-      requiredPoints: newGoal.requiredPoints,
-      status: newGoal.status,
+      id: updatedGoal.id,
+      title: updatedGoal.title,
+      description: updatedGoal.description,
+      requiredPoints: updatedGoal.requiredPoints,
+      status: updatedGoal.status,
       assignee: {
-        id: newGoal.assignee.id, // Workspace user ID
-        firstName: newGoal.assignee.user.firstName,
-        lastName: newGoal.assignee.user.lastName,
-        profileImageUrl: newGoal.assignee.user.profileImageUrl,
+        id: updatedGoal.assignee.id, // Workspace user ID
+        firstName: updatedGoal.assignee.user.firstName,
+        lastName: updatedGoal.assignee.user.lastName,
+        profileImageUrl: updatedGoal.assignee.user.profileImageUrl,
       },
       createdBy:
-        newGoal.createdBy === null
+        updatedGoal.createdBy === null
           ? null
           : {
-              id: newGoal.createdBy.id, // Workspace user ID
-              firstName: newGoal.createdBy.user.firstName,
-              lastName: newGoal.createdBy.user.lastName,
-              profileImageUrl: newGoal.createdBy.user.profileImageUrl,
+              id: updatedGoal.createdBy.id, // Workspace user ID
+              firstName: updatedGoal.createdBy.user.firstName,
+              lastName: updatedGoal.createdBy.user.lastName,
+              profileImageUrl: updatedGoal.createdBy.user.profileImageUrl,
             },
-      createdAt: newGoal.createdAt,
-      deletedAt: newGoal.deletedAt,
-      updatedAt: newGoal.updatedAt,
+      createdAt: updatedGoal.createdAt,
+      deletedAt: updatedGoal.deletedAt,
+      updatedAt: updatedGoal.updatedAt,
     };
   }
 }

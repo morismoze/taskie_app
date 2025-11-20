@@ -518,11 +518,11 @@ abstract class AppLocalizations {
   /// **'Edit task assignments'**
   String get tasksAssignmentsEdit;
 
-  /// No description provided for @tasksAssignmentsEditStatusLabel.
+  /// No description provided for @progressStatusLabel.
   ///
   /// In en, this message translates to:
   /// **'Status'**
-  String get tasksAssignmentsEditStatusLabel;
+  String get progressStatusLabel;
 
   /// No description provided for @tasksAssignmentsEditStatusSubmit.
   ///
@@ -1303,6 +1303,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.'**
   String get goalsClosedGoalError;
+
+  /// No description provided for @goalsDetailsAssignedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal assigned to'**
+  String get goalsDetailsAssignedTo;
 }
 
 class _AppLocalizationsDelegate
