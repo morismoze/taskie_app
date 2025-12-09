@@ -26,6 +26,7 @@ class GoalsList extends StatelessWidget {
               assignee: goal.assignee,
               requiredPoints: goal.requiredPoints,
               accumulatedPoints: goal.accumulatedPoints,
+              status: goal.status,
               isNew: goal.isNew,
               isGoalClosed: goal.status == ProgressStatus.closed,
             ),

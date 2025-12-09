@@ -236,7 +236,7 @@ export class WorkspaceService {
   async getWorkspaceInfoByWorkspaceInviteToken(
     inviteToken: WorkspaceInvite['token'],
   ): Promise<WorkspaceResponse> {
-    // Check if user by ID exists
+    // Check if workspace invite exists
     const workspaceInvite =
       await this.workspaceInviteService.findByTokenWithWorkspace(inviteToken);
 
@@ -665,12 +665,8 @@ export class WorkspaceService {
       );
     }
 
-    const newGoal = await this.goalService.create({
-      workspaceId,
-      createdById: createdByWorkspaceUser.id,
-      data,
-    });
-
+    // We firstly need to check if the provided required points is
+    // greater than workspace user's current accumulated points
     const workspaceUserAccumulatedPoints =
       await this.workspaceUserService.getWorkspaceUserAccumulatedPoints({
         workspaceId,
@@ -687,6 +683,21 @@ export class WorkspaceService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    if (data.requiredPoints <= workspaceUserAccumulatedPoints) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const newGoal = await this.goalService.create({
+      workspaceId,
+      createdById: createdByWorkspaceUser.id,
+      data,
+    });
 
     const response: WorkspaceGoalResponse = {
       id: newGoal.id,
@@ -864,6 +875,20 @@ export class WorkspaceService {
     };
 
     return response;
+  }
+
+  async closeGoal({
+    workspaceId,
+    goalId,
+  }: {
+    workspaceId: Workspace['id'];
+    goalId: Goal['id'];
+  }): Promise<void> {
+    // Closed goal can't be updated
+    await this.goalService.closeByGoalIdAndWorkspaceId({
+      goalId,
+      workspaceId,
+    });
   }
 
   async getWorkspaceUserAccumulatedPoints({
@@ -1319,15 +1344,6 @@ export class WorkspaceService {
 
     // Closed task can't be updated
     await this.checkTaskIsClosed(taskId);
-
-    if (!task) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
 
     // We need to check if provided assignee IDs exist as this specific task assignments
     const providedAssigneeIds = assignments.map((item) => item.assigneeId);

@@ -569,6 +569,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Potrebni bodovi moraju biti višekratnik broja 10';
 
   @override
+  String get createNewGoalRequiredPointsLowerThanAccumulatedPoints =>
+      'Potrebni bodovi moraju biti iznad akumuliranih bodova';
+
+  @override
   String get goalAssigneesRequired => 'Cilj mora biti dodijeljen 1 članu';
 
   @override

@@ -202,6 +202,8 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
 
   String? _validateRequiredPoints(String? value) {
     final trimmedValue = value?.trim();
+    final accumulatedPoints = widget.viewModel.workspaceUserAccumulatedPoints;
+
     switch (trimmedValue) {
       case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
@@ -211,6 +213,12 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
           when int.tryParse(trimmedValue)! % ObjectiveRules.rewardPointsStep !=
               0:
         return context.localization.createNewGoalRequiredPointsNotMultipleOf10;
+      case final String trimmedValue
+          when accumulatedPoints != null &&
+              int.tryParse(trimmedValue)! <= accumulatedPoints:
+        return context
+            .localization
+            .createNewGoalRequiredPointsLowerThanAccumulatedPoints;
       default:
         return null;
     }

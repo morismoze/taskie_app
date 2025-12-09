@@ -55,6 +55,14 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 
+  abstract findByIdWithAssigneeUser({
+    id,
+    relations,
+  }: {
+    id: TaskAssignment['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>>;
+
   abstract findByTaskId({
     id,
     relations,

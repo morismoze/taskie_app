@@ -3,8 +3,8 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { WorkspaceObjectiveRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { ProgressStatus } from '../task/task-module/domain/progress-status.enum';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
-import { UpdateGoalRequest } from '../workspace/workspace-module/dto/request/update-goal-request.dto';
 import { WorkspaceUser } from '../workspace/workspace-user-module/domain/workspace-user.domain';
 import { GoalCore } from './domain/goal-core.domain';
 import { GoalWithAssigneeUserCore } from './domain/goal-with-assignee-user-core.domain';
@@ -163,7 +163,12 @@ export class GoalService {
   }: {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
-    data: UpdateGoalRequest;
+    data: Partial<
+      Omit<Goal, 'assignee' | 'workspace' | 'createdBy'> & {
+        status: ProgressStatus;
+        assigneeId: Goal['assignee']['id'];
+      }
+    >;
   }): Promise<GoalWithAssigneeUserCore> {
     const goal = await this.findByGoalIdAndWorkspaceId({ goalId, workspaceId });
 
@@ -183,6 +188,7 @@ export class GoalService {
         description: data.description,
         requiredPoints: data.requiredPoints,
         assigneeId: data.assigneeId,
+        status: data.status,
       },
       relations: {
         assignee: {
@@ -228,5 +234,21 @@ export class GoalService {
       deletedAt: updatedGoal.deletedAt,
       updatedAt: updatedGoal.updatedAt,
     };
+  }
+
+  async closeByGoalIdAndWorkspaceId({
+    goalId,
+    workspaceId,
+  }: {
+    goalId: Goal['id'];
+    workspaceId: Goal['workspace']['id'];
+  }): Promise<void> {
+    await this.updateByGoalIdAndWorkspaceId({
+      goalId,
+      workspaceId,
+      data: {
+        status: ProgressStatus.CLOSED,
+      },
+    });
   }
 }

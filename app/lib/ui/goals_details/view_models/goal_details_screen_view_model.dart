@@ -29,7 +29,6 @@ class GoalDetailsScreenViewModel extends ChangeNotifier {
 
   Result<void> _loadWorkspaceGoalDetails() {
     final result = _workspaceGoalRepository.loadGoalDetails(goalId: _goalId);
-    print('yooo $result');
     switch (result) {
       case Ok():
         _details = result.value;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../data/services/api/workspace/progress_status.dart';
 import '../../../../domain/constants/rbac.dart';
 import '../../../../domain/models/assignee.dart';
 import '../../../../routing/routes.dart';
@@ -11,7 +12,9 @@ import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/card_container.dart';
 import '../../../core/ui/new_objective_badge.dart';
+import '../../../core/ui/objective_status_chip.dart';
 import '../../../core/ui/rbac.dart';
+import '../../../core/utils/color.dart';
 import '../../view_models/goals_screen_viewmodel.dart';
 import 'progress.dart';
 import 'title.dart';
@@ -24,6 +27,7 @@ class GoalCard extends StatelessWidget {
     required this.assignee,
     required this.requiredPoints,
     required this.accumulatedPoints,
+    required this.status,
     required this.isNew,
     required this.viewModel,
     required this.isGoalClosed,
@@ -34,6 +38,7 @@ class GoalCard extends StatelessWidget {
   final Assignee assignee;
   final int requiredPoints;
   final int accumulatedPoints;
+  final ProgressStatus status;
 
   /// This represents a goal was just created and was placed in the
   /// current active list of goals regardless the current active filters.
@@ -45,6 +50,10 @@ class GoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(
+      status,
+    );
+
     return InkWell(
       onTap: () =>
           _onTap(context, viewModel.activeWorkspaceId, goalId, isGoalClosed),
@@ -64,6 +73,11 @@ class GoalCard extends StatelessWidget {
                 ),
                 Expanded(child: GoalTitle(title: title)),
                 if (isNew) const NewObjectiveBadge(),
+                ObjectiveStatusChip(
+                  status: status,
+                  textColor: textColor,
+                  backgroundColor: backgroundColor,
+                ),
               ],
             ),
             GoalProgress(

@@ -160,6 +160,7 @@
   "goalRequiredPointsNote": "Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).",
   "createNewGoalRequiredPointsNaN": "Required points must be a number without characters",
   "createNewGoalRequiredPointsNotMultipleOf10": "Required points must be a multiple of 10",
+  "createNewGoalRequiredPointsLowerThanAccumulatedPoints": "Required points must be over accumulated points",
   "goalAssigneesRequired": "Goal must have 1 assignee",
   "workspaceSettings": "Workspace settings",
   "workspaceSettingsOwnerDeletedAccount": "Owner deleted their account",

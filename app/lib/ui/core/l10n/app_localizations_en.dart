@@ -566,6 +566,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Required points must be a multiple of 10';
 
   @override
+  String get createNewGoalRequiredPointsLowerThanAccumulatedPoints =>
+      'Required points must be over accumulated points';
+
+  @override
   String get goalAssigneesRequired => 'Goal must have 1 assignee';
 
   @override

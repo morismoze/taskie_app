@@ -374,6 +374,20 @@ export class WorkspaceController {
     });
   }
 
+  @Post(':workspaceId/goals/:goalId/close')
+  @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
+  @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  closeGoal(
+    @Param() { workspaceId }: WorkspaceIdRequestPathParam,
+    @Param() { goalId }: GoalIdRequestPathParam,
+  ): Promise<void> {
+    return this.workspaceService.closeGoal({
+      workspaceId,
+      goalId,
+    });
+  }
+
   @Get(':workspaceId/leaderboard')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)

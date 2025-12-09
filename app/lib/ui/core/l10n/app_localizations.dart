@@ -1052,6 +1052,12 @@ abstract class AppLocalizations {
   /// **'Required points must be a multiple of 10'**
   String get createNewGoalRequiredPointsNotMultipleOf10;
 
+  /// No description provided for @createNewGoalRequiredPointsLowerThanAccumulatedPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points must be over accumulated points'**
+  String get createNewGoalRequiredPointsLowerThanAccumulatedPoints;
+
   /// No description provided for @goalAssigneesRequired.
   ///
   /// In en, this message translates to:

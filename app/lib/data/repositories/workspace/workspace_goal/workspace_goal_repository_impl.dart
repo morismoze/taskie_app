@@ -162,7 +162,6 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
   @override
   Result<WorkspaceGoal> loadGoalDetails({required String goalId}) {
-    print('aloo $goalId');
     final details = _cachedGoals!.items.firstWhere((goal) => goal.id == goalId);
     return Result.ok(details);
   }
@@ -231,20 +230,11 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
       switch (result) {
         case Ok():
-          final goalIndex = _cachedGoals!.items.indexWhere(
+          final closedGoal = _cachedGoals!.items.firstWhere(
             (goal) => goal.id == goalId,
           );
-
-          if (goalIndex != -1) {
-            final existingGoalResult =
-                loadGoalDetails(goalId: goalId) as Ok<WorkspaceGoal>;
-            final existingGoal = existingGoalResult.value;
-            final updatedGoal = existingGoal.copyWith(
-              status: ProgressStatus.closed,
-            );
-            _cachedGoals!.items[goalIndex] = updatedGoal;
-            notifyListeners();
-          }
+          _cachedGoals!.items.remove(closedGoal);
+          notifyListeners();
 
           return const Result.ok(null);
         case Error():

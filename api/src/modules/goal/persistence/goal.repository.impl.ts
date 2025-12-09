@@ -155,7 +155,7 @@ export class GoalRepositoryImpl implements GoalRepository {
     data: Partial<
       Omit<
         Goal,
-        'id' | 'status' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'assignee'
+        'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'assignee'
       > & { assigneeId: Goal['assignee']['id'] }
     >;
     relations?: FindOptionsRelations<GoalEntity>;
