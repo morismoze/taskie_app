@@ -17,6 +17,7 @@ import '../ui/goals_details/view_models/goal_details_screen_view_model.dart';
 import '../ui/goals_details/widgets/goal_details_screen.dart';
 import '../ui/goals_details_edit/view_models/goal_details_edit_screen_view_model.dart';
 import '../ui/goals_details_edit/widgets/goal_details_edit_screen.dart';
+import '../ui/goals_guide/widgets/goals_guide_screen.dart';
 import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
 import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
@@ -492,6 +493,33 @@ GoRouter router({
                                   workspaceUserRepository: context.read(),
                                 ),
                               ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: Routes.guideRelative,
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: const GoalsGuideScreen(),
                             );
                           },
                         ),

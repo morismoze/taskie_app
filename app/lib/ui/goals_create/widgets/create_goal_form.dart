@@ -10,7 +10,6 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
-import '../../core/ui/info_icon_with_tooltip.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
@@ -115,10 +114,6 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             validator: _validateRequiredPoints,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
-            suffixIcon: InfoIconWithTooltip(
-              message: context.localization.goalRequiredPointsNote,
-              tooltipShowDuration: 8,
-            ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
           const SizedBox(height: 20),

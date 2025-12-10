@@ -530,6 +530,12 @@ abstract class AppLocalizations {
   /// **'Update assignments'**
   String get tasksAssignmentsEditStatusSubmit;
 
+  /// No description provided for @tasksAssignmentsMinAssignees.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.'**
+  String get tasksAssignmentsMinAssignees;
+
   /// No description provided for @tasksAssignmentsEditAddNewAssignee.
   ///
   /// In en, this message translates to:
@@ -575,7 +581,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAssignmentsGuideMultipleAssigneesBody.
   ///
   /// In en, this message translates to:
-  /// **'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.'**
+  /// **'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each one. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.'**
   String get tasksAssignmentsGuideMultipleAssigneesBody;
 
   /// No description provided for @appDrawerTitle.
@@ -1034,12 +1040,6 @@ abstract class AppLocalizations {
   /// **'Required points'**
   String get goalRequiredPointsLabel;
 
-  /// No description provided for @goalRequiredPointsNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
-  String get goalRequiredPointsNote;
-
   /// No description provided for @createNewGoalRequiredPointsNaN.
   ///
   /// In en, this message translates to:
@@ -1315,6 +1315,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goal assigned to'**
   String get goalsDetailsAssignedTo;
+
+  /// No description provided for @goalsGuideMainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About goals'**
+  String get goalsGuideMainTitle;
+
+  /// No description provided for @goalsGuideAssignmentLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment limit'**
+  String get goalsGuideAssignmentLimitTitle;
+
+  /// No description provided for @goalsGuideAssignmentLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each goal can be assigned to only one member. This is because each goal is tied to reward points which the member accumulates by completing tasks, making it specific to that user.'**
+  String get goalsGuideAssignmentLimitBody;
+
+  /// No description provided for @goalsGuideStatusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment statuses'**
+  String get goalsGuideStatusesTitle;
+
+  /// No description provided for @goalsGuideStatusesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'__In Progress__ - the goal is currently being worked on\n__Completed__ - the goal was successfully completed'**
+  String get goalsGuideStatusesBody;
+
+  /// No description provided for @goalsGuideRequiredPointsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points'**
+  String get goalsGuideRequiredPointsTitle;
+
+  /// No description provided for @goalsGuideRequiredPointsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points represent the total reward points a member needs to accumulate completing tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
+  String get goalsGuideRequiredPointsBody;
 }
 
 class _AppLocalizationsDelegate

@@ -73,6 +73,7 @@
   "tasksAssignmentsEdit": "Edit task assignments",
   "progressStatusLabel": "Status",
   "tasksAssignmentsEditStatusSubmit": "Update assignments",
+  "tasksAssignmentsMinAssignees": "Uh-oh! This is the last assignee and can't be removed. Try closing the task instead.",
   "tasksAssignmentsEditAddNewAssignee": "Add additional assignees to this task:",
   "tasksAssignmentsGuideMainTitle": "About task assignments",
   "tasksAssignmentsGuideAssignmentLimitTitle": "Assignments limit",
@@ -80,7 +81,7 @@
   "tasksAssignmentsGuideAssignmentStatusesTitle": "Assignments statuses",
   "tasksAssignmentsGuideAssignmentStatusesBody": "__In Progress__ - the task is currently being worked on\n__Completed__ - the task was successfully completed\n__Completed as Stale__ - the task was completed after the due date has passed (applicable only if the task has a due date set)\n__Not Completed__ - the task was not completed",
   "tasksAssignmentsGuideMultipleAssigneesTitle": "Multiple assignees",
-  "tasksAssignmentsGuideMultipleAssigneesBody": "A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.",
+  "tasksAssignmentsGuideMultipleAssigneesBody": "A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each one. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.",
   "appDrawerTitle": "Workspaces",
   "appDrawerChangeActiveWorkspaceError": "Uh-oh! We've had some trouble changing workspace",
   "appDrawerEditWorkspace": "Workspace settings",
@@ -157,7 +158,6 @@
   "goalDescriptionLabel": "Goal description",
   "goalRequiredPointsCurrentAccumulatedPoints": "Current accumulated points by the user",
   "goalRequiredPointsLabel": "Required points",
-  "goalRequiredPointsNote": "Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).",
   "createNewGoalRequiredPointsNaN": "Required points must be a number without characters",
   "createNewGoalRequiredPointsNotMultipleOf10": "Required points must be a multiple of 10",
   "createNewGoalRequiredPointsLowerThanAccumulatedPoints": "Required points must be over accumulated points",
@@ -210,5 +210,12 @@
   "goalsDetailsCloseSuccess": "Successfully closed the goal",
   "goalsDetailsCloseError": "Uh-oh! We've had some trouble closing the goal",
   "goalsClosedGoalError": "Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.",
-  "goalsDetailsAssignedTo": "Goal assigned to"
+  "goalsDetailsAssignedTo": "Goal assigned to",
+  "goalsGuideMainTitle": "About goals",
+  "goalsGuideAssignmentLimitTitle": "Assignment limit",
+  "goalsGuideAssignmentLimitBody": "Each goal can be assigned to only one member. This is because each goal is tied to reward points which the member accumulates by completing tasks, making it specific to that user.",
+  "goalsGuideStatusesTitle": "Assignment statuses",
+  "goalsGuideStatusesBody": "__In Progress__ - the goal is currently being worked on\n__Completed__ - the goal was successfully completed",
+  "goalsGuideRequiredPointsTitle": "Required points",
+  "goalsGuideRequiredPointsBody": "Required points represent the total reward points a member needs to accumulate completing tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000)."
 }
