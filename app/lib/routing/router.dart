@@ -486,11 +486,28 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: CreateGoalScreen(
-                                viewModel: CreateGoalScreenViewmodel(
-                                  workspaceId: workspaceId,
-                                  workspaceGoalRepository: context.read(),
-                                  workspaceUserRepository: context.read(),
+                              // ChangeNotifierProvider is used because when we navigate (push)
+                              // from CreateGoalScreen to the GoalsGuideScreen, this whole routes
+                              // array of the [Routes.goalsRelative] GoRoute gets rebuilt - pageBuilders
+                              // re-instantiate the VM, which then leads to having a quick display
+                              // of the CreateGoalScreen (specifically the loader/activity indicator)
+                              // ad then the GoalsGuideScreen is shown.
+                              // Basically, when we push to another screen, the current page gets
+                              // rebuilt, but it is not deducted from the tree and then again
+                              // inserted. This is only when the :workspaceId is the same of course.
+                              // If it is different, then the whole tree is rebuilt.
+                              child: ChangeNotifierProvider(
+                                create: (BuildContext context) =>
+                                    CreateGoalScreenViewmodel(
+                                      workspaceId: workspaceId,
+                                      workspaceGoalRepository: context.read(),
+                                      workspaceUserRepository: context.read(),
+                                    ),
+                                child: Builder(
+                                  builder: (BuildContext builderContext) =>
+                                      CreateGoalScreen(
+                                        viewModel: builderContext.read(),
+                                      ),
                                 ),
                               ),
                             );

@@ -115,7 +115,10 @@ export class GoalRepositoryImpl implements GoalRepository {
     };
 
     if (status) {
-      findOptions.where = { status };
+      findOptions.where = {
+        ...findOptions.where,
+        status,
+      };
     }
 
     if (search) {

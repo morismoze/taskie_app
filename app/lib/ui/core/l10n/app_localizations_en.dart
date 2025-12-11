@@ -730,6 +730,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goalsGuideMainTitle => 'About goals';
 
   @override
+  String get goalsGuideBaseInfoBody =>
+      'Goals are flexible rewards/guidelines defined by the Manager. What a goal is is entirely up to your creativity (e.g., a gift, a day off, public recognition).';
+
+  @override
   String get goalsGuideAssignmentLimitTitle => 'Assignment limit';
 
   @override
@@ -749,4 +753,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsGuideRequiredPointsBody =>
       'Required points represent the total reward points a member needs to accumulate completing tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).';
+
+  @override
+  String get goalsGuideNoteTitle => 'Note';
+
+  @override
+  String get goalsGuideNoteBody =>
+      'If the status of a previously completed task is later changed from __Completed__ to __In Progress__, __Completed as Stale__ or __Not Completed__, or if the task is closed (__Closed__), or if the member was removed from a task as an assignee, the accumulated points are recalculated (they usually decrease). As a result, some goals that were previously completed may automatically revert to __In Progress__ until the member collects enough points again.';
 }

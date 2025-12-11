@@ -736,6 +736,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get goalsGuideMainTitle => 'O ciljevima';
 
   @override
+  String get goalsGuideBaseInfoBody =>
+      'Ciljevi su fleksibilne nagrade/odrednice koje definira Menadžer. Što će biti cilj u potpunosti je stvar kreativnosti (npr. poklon, slobodan dan, javno priznanje).';
+
+  @override
   String get goalsGuideAssignmentLimitTitle => 'Ograničenje dodjele';
 
   @override
@@ -755,4 +759,11 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsGuideRequiredPointsBody =>
       'Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati izvršavanjem zadataka kako bi ostvario cilj. Budući da zadaci dodjeljuju bodove u koracima od 10 (10, 20, 30, 40, 50), broj potrebnih bodova također mora biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).';
+
+  @override
+  String get goalsGuideNoteTitle => 'Napomena';
+
+  @override
+  String get goalsGuideNoteBody =>
+      'Ako se status nekog prethodno dovršenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.';
 }
