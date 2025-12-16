@@ -88,6 +88,13 @@ abstract final class Routes {
     required String workspaceId,
     required String goalId,
   }) => '/$workspacesRelative/$workspaceId/$goalsRelative/$goalId';
+  static String goalDetailsEdit({
+    required String workspaceId,
+    required String goalId,
+  }) =>
+      '/$workspacesRelative/$workspaceId/$goalsRelative/$goalId/$editRelative';
+  static String goalsGuide({required String workspaceId}) =>
+      '/$workspacesRelative/$workspaceId/$goalsRelative/$guideRelative';
 
   // Private global route for setting global settings (e.g. language).
   static const preferences = '/preferences';

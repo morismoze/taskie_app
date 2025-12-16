@@ -87,9 +87,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardLabel => 'Leaderboard';
 
   @override
-  String get bottomNavigationBarGoalsLabel => 'Goals';
-
-  @override
   String get taskCreateNew => 'Create new task';
 
   @override
@@ -248,10 +245,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
-  String get tasksAssignmentsEditStatusLabel => 'Status';
+  String get progressStatusLabel => 'Status';
 
   @override
   String get tasksAssignmentsEditStatusSubmit => 'Update assignments';
+
+  @override
+  String get tasksAssignmentsMinAssignees =>
+      'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
@@ -284,7 +285,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksAssignmentsGuideMultipleAssigneesBody =>
-      'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.';
+      'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each one. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.';
 
   @override
   String get appDrawerTitle => 'Workspaces';
@@ -557,16 +558,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goalRequiredPointsLabel => 'Required points';
 
   @override
-  String get goalRequiredPointsNote =>
-      'Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).';
-
-  @override
   String get createNewGoalRequiredPointsNaN =>
       'Required points must be a number without characters';
 
   @override
   String get createNewGoalRequiredPointsNotMultipleOf10 =>
       'Required points must be a multiple of 10';
+
+  @override
+  String get createNewGoalRequiredPointsLowerThanAccumulatedPoints =>
+      'Required points must be over accumulated points';
 
   @override
   String get goalAssigneesRequired => 'Goal must have 1 assignee';
@@ -669,4 +670,94 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get leaderboardEmpty =>
       'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!';
+
+  @override
+  String get goalsLabel => 'Goals';
+
+  @override
+  String get goalsNoGoals =>
+      'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!';
+
+  @override
+  String get goalsNoFilteredGoals =>
+      'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
+
+  @override
+  String get goalsDetails => 'Goal details';
+
+  @override
+  String get goalsDetailsEdit => 'Edit goal details';
+
+  @override
+  String get goalsDetailsEditCreatedBy => 'Goal created by';
+
+  @override
+  String get goalsDetailsEditCreatedByDeletedAccount =>
+      'Creator deleted their account';
+
+  @override
+  String get goalsDetailsEditCreatedAt => 'Goal created at';
+
+  @override
+  String get goalsDetailsEditSuccess => 'Successfully edited goal details';
+
+  @override
+  String get goalsDetailsEditError =>
+      'Uh-oh! We\'ve had some trouble editing goal details';
+
+  @override
+  String get goalsDetailsCloseGoal => 'Close goal';
+
+  @override
+  String get goalsDetailsCloseGoalModalMessage =>
+      'Are you sure you want to close this goal?\nOnce a goal is closed you will no longer be able to update it.';
+
+  @override
+  String get goalsDetailsCloseSuccess => 'Successfully closed the goal';
+
+  @override
+  String get goalsDetailsCloseError =>
+      'Uh-oh! We\'ve had some trouble closing the goal';
+
+  @override
+  String get goalsClosedGoalError =>
+      'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.';
+
+  @override
+  String get goalsDetailsAssignedTo => 'Goal assigned to';
+
+  @override
+  String get goalsGuideMainTitle => 'About goals';
+
+  @override
+  String get goalsGuideBaseInfoBody =>
+      'Goals are flexible rewards/guidelines defined by the Manager. What a goal is is entirely up to your creativity (e.g., a gift, a day off, public recognition).';
+
+  @override
+  String get goalsGuideAssignmentLimitTitle => 'Assignment limit';
+
+  @override
+  String get goalsGuideAssignmentLimitBody =>
+      'Each goal can be assigned to only one member. This is because each goal is tied to reward points which the member accumulates by completing tasks, making it specific to that user.';
+
+  @override
+  String get goalsGuideStatusesTitle => 'Assignment statuses';
+
+  @override
+  String get goalsGuideStatusesBody =>
+      '__In Progress__ - the goal is currently being worked on\n__Completed__ - the goal was successfully completed';
+
+  @override
+  String get goalsGuideRequiredPointsTitle => 'Required points';
+
+  @override
+  String get goalsGuideRequiredPointsBody =>
+      'Required points represent the total reward points a member needs to accumulate completing tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).';
+
+  @override
+  String get goalsGuideNoteTitle => 'Note';
+
+  @override
+  String get goalsGuideNoteBody =>
+      'If the status of a previously completed task is later changed from __Completed__ to __In Progress__, __Completed as Stale__ or __Not Completed__, or if the task is closed (__Closed__), or if the member was removed from a task as an assignee, the accumulated points are recalculated (they usually decrease). As a result, some goals that were previously completed may automatically revert to __In Progress__ until the member collects enough points again.';
 }

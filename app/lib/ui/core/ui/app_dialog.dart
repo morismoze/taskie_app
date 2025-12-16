@@ -22,7 +22,6 @@ class AppDialog {
               vertical: Dimens.paddingVertical,
               horizontal: Dimens.paddingHorizontal,
             ),
-
             title: Center(child: title),
             content: content,
             shape: RoundedRectangleBorder(

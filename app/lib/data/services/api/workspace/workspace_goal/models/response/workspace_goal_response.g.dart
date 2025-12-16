@@ -13,8 +13,12 @@ WorkspaceGoalResponse _$WorkspaceGoalResponseFromJson(
   title: json['title'] as String,
   requiredPoints: (json['requiredPoints'] as num).toInt(),
   accumulatedPoints: (json['accumulatedPoints'] as num).toInt(),
+  createdAt: DateTime.parse(json['createdAt'] as String),
   status: $enumDecode(_$ProgressStatusEnumMap, json['status']),
   assignee: AssigneeResponse.fromJson(json['assignee'] as Map<String, dynamic>),
+  createdBy: json['createdBy'] == null
+      ? null
+      : CreatedByResponse.fromJson(json['createdBy'] as Map<String, dynamic>),
   description: json['description'] as String?,
 );
 

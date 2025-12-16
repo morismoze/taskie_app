@@ -3,8 +3,8 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { WorkspaceObjectiveRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { ProgressStatus } from '../task/task-module/domain/progress-status.enum';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
-import { UpdateGoalRequest } from '../workspace/workspace-module/dto/request/update-goal-request.dto';
 import { WorkspaceUser } from '../workspace/workspace-user-module/domain/workspace-user.domain';
 import { GoalCore } from './domain/goal-core.domain';
 import { GoalWithAssigneeUserCore } from './domain/goal-with-assignee-user-core.domain';
@@ -37,6 +37,9 @@ export class GoalService {
         assignee: {
           user: true,
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -50,11 +53,20 @@ export class GoalService {
         requiredPoints: goal.requiredPoints,
         status: goal.status,
         assignee: {
-          id: goal.assignee.user.id,
+          id: goal.assignee.id, // Workspace user ID
           firstName: goal.assignee.user.firstName,
           lastName: goal.assignee.user.lastName,
           profileImageUrl: goal.assignee.user.profileImageUrl,
         },
+        createdBy:
+          goal.createdBy === null
+            ? null
+            : {
+                id: goal.createdBy.id,
+                firstName: goal.createdBy.user.firstName,
+                lastName: goal.createdBy.user.lastName,
+                profileImageUrl: goal.createdBy.user.profileImageUrl,
+              },
         createdAt: goal.createdAt,
         deletedAt: goal.deletedAt,
         updatedAt: goal.updatedAt,
@@ -90,6 +102,9 @@ export class GoalService {
         assignee: {
           user: true,
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
@@ -104,8 +119,17 @@ export class GoalService {
 
     return {
       ...newGoal,
+      createdBy:
+        newGoal.createdBy === null
+          ? null
+          : {
+              id: newGoal.createdBy.id, // Workspace user ID
+              firstName: newGoal.createdBy.user.firstName,
+              lastName: newGoal.createdBy.user.lastName,
+              profileImageUrl: newGoal.createdBy.user.profileImageUrl,
+            },
       assignee: {
-        id: newGoal.assignee.id,
+        id: newGoal.assignee.id, // Workspace user ID
         firstName: newGoal.assignee.user.firstName,
         lastName: newGoal.assignee.user.lastName,
         profileImageUrl: newGoal.assignee.user.profileImageUrl,
@@ -139,7 +163,12 @@ export class GoalService {
   }: {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
-    data: UpdateGoalRequest;
+    data: Partial<
+      Omit<Goal, 'assignee' | 'workspace' | 'createdBy'> & {
+        status: ProgressStatus;
+        assigneeId: Goal['assignee']['id'];
+      }
+    >;
   }): Promise<GoalWithAssigneeUserCore> {
     const goal = await this.findByGoalIdAndWorkspaceId({ goalId, workspaceId });
 
@@ -152,23 +181,26 @@ export class GoalService {
       );
     }
 
-    const newGoal = await this.goalRepository.update({
+    const updatedGoal = await this.goalRepository.update({
       id: goalId,
       data: {
         title: data.title,
         description: data.description,
         requiredPoints: data.requiredPoints,
-        status: data.status,
         assigneeId: data.assigneeId,
+        status: data.status,
       },
       relations: {
         assignee: {
           user: true,
         },
+        createdBy: {
+          user: true,
+        },
       },
     });
 
-    if (!newGoal) {
+    if (!updatedGoal) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -178,20 +210,45 @@ export class GoalService {
     }
 
     return {
-      id: newGoal.id,
-      title: newGoal.title,
-      description: newGoal.description,
-      requiredPoints: newGoal.requiredPoints,
-      status: newGoal.status,
+      id: updatedGoal.id,
+      title: updatedGoal.title,
+      description: updatedGoal.description,
+      requiredPoints: updatedGoal.requiredPoints,
+      status: updatedGoal.status,
       assignee: {
-        id: newGoal.assignee.user.id,
-        firstName: newGoal.assignee.user.firstName,
-        lastName: newGoal.assignee.user.lastName,
-        profileImageUrl: newGoal.assignee.user.profileImageUrl,
+        id: updatedGoal.assignee.id, // Workspace user ID
+        firstName: updatedGoal.assignee.user.firstName,
+        lastName: updatedGoal.assignee.user.lastName,
+        profileImageUrl: updatedGoal.assignee.user.profileImageUrl,
       },
-      createdAt: newGoal.createdAt,
-      deletedAt: newGoal.deletedAt,
-      updatedAt: newGoal.updatedAt,
+      createdBy:
+        updatedGoal.createdBy === null
+          ? null
+          : {
+              id: updatedGoal.createdBy.id, // Workspace user ID
+              firstName: updatedGoal.createdBy.user.firstName,
+              lastName: updatedGoal.createdBy.user.lastName,
+              profileImageUrl: updatedGoal.createdBy.user.profileImageUrl,
+            },
+      createdAt: updatedGoal.createdAt,
+      deletedAt: updatedGoal.deletedAt,
+      updatedAt: updatedGoal.updatedAt,
     };
+  }
+
+  async closeByGoalIdAndWorkspaceId({
+    goalId,
+    workspaceId,
+  }: {
+    goalId: Goal['id'];
+    workspaceId: Goal['workspace']['id'];
+  }): Promise<void> {
+    await this.updateByGoalIdAndWorkspaceId({
+      goalId,
+      workspaceId,
+      data: {
+        status: ProgressStatus.CLOSED,
+      },
+    });
   }
 }

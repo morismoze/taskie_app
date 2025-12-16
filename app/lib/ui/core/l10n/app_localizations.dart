@@ -248,12 +248,6 @@ abstract class AppLocalizations {
   /// **'Leaderboard'**
   String get leaderboardLabel;
 
-  /// No description provided for @bottomNavigationBarGoalsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Goals'**
-  String get bottomNavigationBarGoalsLabel;
-
   /// No description provided for @taskCreateNew.
   ///
   /// In en, this message translates to:
@@ -524,17 +518,23 @@ abstract class AppLocalizations {
   /// **'Edit task assignments'**
   String get tasksAssignmentsEdit;
 
-  /// No description provided for @tasksAssignmentsEditStatusLabel.
+  /// No description provided for @progressStatusLabel.
   ///
   /// In en, this message translates to:
   /// **'Status'**
-  String get tasksAssignmentsEditStatusLabel;
+  String get progressStatusLabel;
 
   /// No description provided for @tasksAssignmentsEditStatusSubmit.
   ///
   /// In en, this message translates to:
   /// **'Update assignments'**
   String get tasksAssignmentsEditStatusSubmit;
+
+  /// No description provided for @tasksAssignmentsMinAssignees.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.'**
+  String get tasksAssignmentsMinAssignees;
 
   /// No description provided for @tasksAssignmentsEditAddNewAssignee.
   ///
@@ -581,7 +581,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAssignmentsGuideMultipleAssigneesBody.
   ///
   /// In en, this message translates to:
-  /// **'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each member. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.'**
+  /// **'A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each one. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.'**
   String get tasksAssignmentsGuideMultipleAssigneesBody;
 
   /// No description provided for @appDrawerTitle.
@@ -1040,12 +1040,6 @@ abstract class AppLocalizations {
   /// **'Required points'**
   String get goalRequiredPointsLabel;
 
-  /// No description provided for @goalRequiredPointsNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Required points represent the total reward points a member needs to accumulate solving tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
-  String get goalRequiredPointsNote;
-
   /// No description provided for @createNewGoalRequiredPointsNaN.
   ///
   /// In en, this message translates to:
@@ -1057,6 +1051,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required points must be a multiple of 10'**
   String get createNewGoalRequiredPointsNotMultipleOf10;
+
+  /// No description provided for @createNewGoalRequiredPointsLowerThanAccumulatedPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points must be over accumulated points'**
+  String get createNewGoalRequiredPointsLowerThanAccumulatedPoints;
 
   /// No description provided for @goalAssigneesRequired.
   ///
@@ -1219,6 +1219,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!'**
   String get leaderboardEmpty;
+
+  /// No description provided for @goalsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get goalsLabel;
+
+  /// No description provided for @goalsNoGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!'**
+  String get goalsNoGoals;
+
+  /// No description provided for @goalsNoFilteredGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
+  String get goalsNoFilteredGoals;
+
+  /// No description provided for @goalsDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal details'**
+  String get goalsDetails;
+
+  /// No description provided for @goalsDetailsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal details'**
+  String get goalsDetailsEdit;
+
+  /// No description provided for @goalsDetailsEditCreatedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal created by'**
+  String get goalsDetailsEditCreatedBy;
+
+  /// No description provided for @goalsDetailsEditCreatedByDeletedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator deleted their account'**
+  String get goalsDetailsEditCreatedByDeletedAccount;
+
+  /// No description provided for @goalsDetailsEditCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal created at'**
+  String get goalsDetailsEditCreatedAt;
+
+  /// No description provided for @goalsDetailsEditSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully edited goal details'**
+  String get goalsDetailsEditSuccess;
+
+  /// No description provided for @goalsDetailsEditError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble editing goal details'**
+  String get goalsDetailsEditError;
+
+  /// No description provided for @goalsDetailsCloseGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Close goal'**
+  String get goalsDetailsCloseGoal;
+
+  /// No description provided for @goalsDetailsCloseGoalModalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to close this goal?\nOnce a goal is closed you will no longer be able to update it.'**
+  String get goalsDetailsCloseGoalModalMessage;
+
+  /// No description provided for @goalsDetailsCloseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully closed the goal'**
+  String get goalsDetailsCloseSuccess;
+
+  /// No description provided for @goalsDetailsCloseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble closing the goal'**
+  String get goalsDetailsCloseError;
+
+  /// No description provided for @goalsClosedGoalError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.'**
+  String get goalsClosedGoalError;
+
+  /// No description provided for @goalsDetailsAssignedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal assigned to'**
+  String get goalsDetailsAssignedTo;
+
+  /// No description provided for @goalsGuideMainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About goals'**
+  String get goalsGuideMainTitle;
+
+  /// No description provided for @goalsGuideBaseInfoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals are flexible rewards/guidelines defined by the Manager. What a goal is is entirely up to your creativity (e.g., a gift, a day off, public recognition).'**
+  String get goalsGuideBaseInfoBody;
+
+  /// No description provided for @goalsGuideAssignmentLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment limit'**
+  String get goalsGuideAssignmentLimitTitle;
+
+  /// No description provided for @goalsGuideAssignmentLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each goal can be assigned to only one member. This is because each goal is tied to reward points which the member accumulates by completing tasks, making it specific to that user.'**
+  String get goalsGuideAssignmentLimitBody;
+
+  /// No description provided for @goalsGuideStatusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment statuses'**
+  String get goalsGuideStatusesTitle;
+
+  /// No description provided for @goalsGuideStatusesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'__In Progress__ - the goal is currently being worked on\n__Completed__ - the goal was successfully completed'**
+  String get goalsGuideStatusesBody;
+
+  /// No description provided for @goalsGuideRequiredPointsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points'**
+  String get goalsGuideRequiredPointsTitle;
+
+  /// No description provided for @goalsGuideRequiredPointsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Required points represent the total reward points a member needs to accumulate completing tasks to achieve a goal. Since tasks grant points in steps of 10 (10, 20, 30, 40, 50), the required points must also be a multiple of 10 (e.g. 50, 550, 5660, 25340, 30000).'**
+  String get goalsGuideRequiredPointsBody;
+
+  /// No description provided for @goalsGuideNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get goalsGuideNoteTitle;
+
+  /// No description provided for @goalsGuideNoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If the status of a previously completed task is later changed from __Completed__ to __In Progress__, __Completed as Stale__ or __Not Completed__, or if the task is closed (__Closed__), or if the member was removed from a task as an assignee, the accumulated points are recalculated (they usually decrease). As a result, some goals that were previously completed may automatically revert to __In Progress__ until the member collects enough points again.'**
+  String get goalsGuideNoteBody;
 }
 
 class _AppLocalizationsDelegate

@@ -8,12 +8,9 @@ class UpdateTaskDetailsRequest {
     this.dueDate,
   });
 
-  // non-nullable fields
   final ValuePatch<String>? title;
-  final ValuePatch<int>? rewardPoints;
-
-  // nullable fields
   final ValuePatch<String?>? description;
+  final ValuePatch<int>? rewardPoints;
   final ValuePatch<DateTime?>? dueDate;
 
   Map<String, dynamic> toJson() {

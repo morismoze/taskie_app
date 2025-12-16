@@ -30,6 +30,7 @@ export class TaskAssignmentService {
         {
           workspaceUserId,
           workspaceId,
+          // COMPLETED_AS_STALE won't fall into accumulated points
           status: ProgressStatus.COMPLETED,
         },
       );
@@ -133,6 +134,19 @@ export class TaskAssignmentService {
     return newTaskAssignments;
   }
 
+  async findByIdWithAssigneeUser(
+    taskAssignmentId: TaskAssignment['id'],
+  ): Promise<Nullable<TaskAssignmentCore>> {
+    return await this.taskAssignmentRepository.findByIdWithAssigneeUser({
+      id: taskAssignmentId,
+      relations: {
+        assignee: {
+          user: true,
+        },
+      },
+    });
+  }
+
   async findByTaskId(
     taskId: TaskAssignment['task']['id'],
   ): Promise<Nullable<TaskAssignmentCore>> {
@@ -214,7 +228,7 @@ export class TaskAssignmentService {
   }
 
   /**
-   * This is idempotennt solution because it uses Typeorm's
+   * This is idempotent solution because it uses Typeorm's
    * delete funtion, which doesn't check if the record actually
    * exists. This is actually a good solution for the case
    * when a Manager2 tries to remove a assignee which was already

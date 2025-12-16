@@ -6,7 +6,8 @@ import '../theme/dimens.dart';
 import 'app_filled_button.dart';
 import 'app_outlined_button.dart';
 
-/// This represents two basic action buttons: Cancel and Submit.
+/// This represents two basic action buttons: Cancel and Submit,
+/// listening on the [command] if it is provided.
 /// It is used in number of places, so it's good to have it as
 /// a reusable widget.
 class ActionButtonBar extends StatelessWidget {
@@ -34,11 +35,17 @@ class ActionButtonBar extends StatelessWidget {
     Key? key,
     required VoidCallback onSubmit,
     required VoidCallback onCancel,
+    String Function(BuildContext builderContext)? submitButtonText,
+    String Function(BuildContext builderContext)? cancelButtonText,
+    Color Function(BuildContext builderContext)? submitButtonColor,
   }) {
     return ActionButtonBar._(
       key: key,
       onSubmit: (_) => onSubmit(),
       onCancel: (_) => onCancel(),
+      submitButtonText: submitButtonText,
+      cancelButtonText: cancelButtonText,
+      submitButtonColor: submitButtonColor,
     );
   }
 

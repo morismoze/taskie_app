@@ -43,7 +43,7 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
     });
 
     // Filter out users whose accumulated points equal to 0
-    //sortedLeaderboard.removeWhere((lu) => lu.accumulatedPoints == 0);
+    sortedLeaderboard.removeWhere((lu) => lu.accumulatedPoints == 0);
 
     return sortedLeaderboard;
   }

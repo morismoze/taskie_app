@@ -9,6 +9,14 @@ export interface WorkspaceGoalResponse {
     lastName: string;
     profileImageUrl: string | null;
   };
+  // Will be null in the case user has deleted their account
+  createdBy: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profileImageUrl: string | null;
+  } | null;
+  createdAt: string;
   title: string;
   description: string | null;
   requiredPoints: number;

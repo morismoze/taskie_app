@@ -71,7 +71,9 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedOptions = widget.viewModel.details!.assignees.map((assignee) {
+    final selectedAssignees = widget.viewModel.details!.assignees.map((
+      assignee,
+    ) {
       final fullName = UserUtils.constructFullName(
         firstName: assignee.firstName,
         lastName: assignee.lastName,
@@ -106,7 +108,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
           const SizedBox(height: 10),
           AppSelectFieldSelectedOptions(
             label: context.localization.objectiveAssigneeLabel,
-            selectedOptions: selectedOptions,
+            selectedOptions: selectedAssignees,
             isFieldFocused: true,
             onTap: () => context.push(
               Routes.taskDetailsAssignmentsEdit(

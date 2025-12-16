@@ -31,11 +31,10 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          context
+                        GuideSection(
+                          body: context
                               .localization
                               .workspaceUsersManagementUsersGuideIntroBody,
-                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         const SizedBox(height: 24),
                         GuideSection(

@@ -10,7 +10,6 @@ import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
-import '../../core/ui/info_icon_with_tooltip.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
@@ -52,7 +51,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
 
   @override
   Widget build(BuildContext context) {
-    final options = widget.viewModel.workspaceMembers.map((user) {
+    final members = widget.viewModel.workspaceMembers.map((user) {
       final fullName = UserUtils.constructFullName(
         firstName: user.firstName,
         lastName: user.lastName,
@@ -94,7 +93,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
           ),
           const SizedBox(height: 10),
           AppSelectFormField.single(
-            options: options,
+            options: members,
             value: _selectedAssignee,
             onChanged: _onAssigneeSelected,
             onCleared: _onAssigneeCleared,
@@ -115,10 +114,6 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             validator: _validateRequiredPoints,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
-            suffixIcon: InfoIconWithTooltip(
-              message: context.localization.goalRequiredPointsNote,
-              tooltipShowDuration: 8,
-            ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
           const SizedBox(height: 20),
@@ -202,6 +197,8 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
 
   String? _validateRequiredPoints(String? value) {
     final trimmedValue = value?.trim();
+    final accumulatedPoints = widget.viewModel.workspaceUserAccumulatedPoints;
+
     switch (trimmedValue) {
       case final String trimmedValue when trimmedValue.isEmpty:
         return context.localization.misc_requiredField;
@@ -211,6 +208,12 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
           when int.tryParse(trimmedValue)! % ObjectiveRules.rewardPointsStep !=
               0:
         return context.localization.createNewGoalRequiredPointsNotMultipleOf10;
+      case final String trimmedValue
+          when accumulatedPoints != null &&
+              int.tryParse(trimmedValue)! <= accumulatedPoints:
+        return context
+            .localization
+            .createNewGoalRequiredPointsLowerThanAccumulatedPoints;
       default:
         return null;
     }

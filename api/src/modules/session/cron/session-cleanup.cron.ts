@@ -8,7 +8,7 @@ export class SessionCleanupService {
   constructor(private readonly sessionRepository: SessionRepository) {}
 
   /**
-   * We'll initally delete sessionsevery week on Sunday midnight.
+   * We'll initally delete sessions every week on Sunday midnight.
    * We'll initally delete sessions which haven't been updated for more than
    * 7 days.
    */

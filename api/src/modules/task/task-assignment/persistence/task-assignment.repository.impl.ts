@@ -124,6 +124,19 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     });
   }
 
+  async findByIdWithAssigneeUser({
+    id,
+    relations,
+  }: {
+    id: TaskAssignment['id'];
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity>> {
+    return await this.repo.findOne({
+      where: { id },
+      relations,
+    });
+  }
+
   async findByTaskId({
     id,
     relations,
@@ -176,7 +189,11 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     data: Partial<TaskAssignmentCore>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    await this.repo.update(id, data);
+    const entity = await this.repo.findOneByOrFail({ id });
+    this.repo.merge(entity, data);
+    // `save` is used here beacuse we have afterUpdate subscriber on this entity
+    // and `update` method does not trigger it
+    await this.repo.save(entity);
 
     const newEntity = await this.findById({ id, relations });
 

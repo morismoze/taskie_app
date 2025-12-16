@@ -9,8 +9,15 @@ import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_screen_viewmodel.dart';
 import '../ui/entry/widgets/entry_screen.dart';
+import '../ui/goals/view_models/goals_screen_viewmodel.dart';
+import '../ui/goals/widgets/goals_screen.dart';
 import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
+import '../ui/goals_details/view_models/goal_details_screen_view_model.dart';
+import '../ui/goals_details/widgets/goal_details_screen.dart';
+import '../ui/goals_details_edit/view_models/goal_details_edit_screen_view_model.dart';
+import '../ui/goals_details_edit/widgets/goal_details_edit_screen.dart';
+import '../ui/goals_guide/widgets/goals_guide_screen.dart';
 import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
 import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
@@ -283,12 +290,6 @@ GoRouter router({
                                 state.pathParameters['workspaceId']!;
                             final taskId = state.pathParameters['taskId']!;
 
-                            // We are not using the view model memoization here because we
-                            // want the task details repository call to fire everytime we
-                            // land on this route, so we get fresh data for specific task
-                            // ID - this is important as Managers can edit task data
-                            // and we are not listening to entire workspace task repository
-                            // listenable value on this route, as that would be unnecessary.
                             return CustomTransitionPage(
                               transitionDuration: const Duration(
                                 milliseconds: 250,
@@ -448,7 +449,14 @@ GoRouter router({
                             state.pathParameters['workspaceId']!;
                         return NoTransitionPage(
                           key: ValueKey('goals_page_$workspaceId'),
-                          child: const Text('goals'),
+                          child: GoalsScreen(
+                            viewModel: GoalsScreenViewmodel(
+                              workspaceId: workspaceId,
+                              userRepository: context.read(),
+                              workspaceGoalRepository: context.read(),
+                              preferencesRepository: context.read(),
+                            ),
+                          ),
                         );
                       },
                       routes: [
@@ -478,15 +486,138 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: CreateGoalScreen(
-                                viewModel: CreateGoalScreenViewmodel(
-                                  workspaceId: workspaceId,
-                                  workspaceGoalRepository: context.read(),
-                                  workspaceUserRepository: context.read(),
+                              // ChangeNotifierProvider is used because when we navigate (push)
+                              // from CreateGoalScreen to the GoalsGuideScreen, this whole routes
+                              // array of the [Routes.goalsRelative] GoRoute gets rebuilt - pageBuilders
+                              // re-instantiate the VM, which then leads to having a quick display
+                              // of the CreateGoalScreen (specifically the loader/activity indicator)
+                              // ad then the GoalsGuideScreen is shown.
+                              // Basically, when we push to another screen, the current page gets
+                              // rebuilt, but it is not deducted from the tree and then again
+                              // inserted. This is only when the :workspaceId is the same of course.
+                              // If it is different, then the whole tree is rebuilt.
+                              child: ChangeNotifierProvider(
+                                create: (BuildContext context) =>
+                                    CreateGoalScreenViewmodel(
+                                      workspaceId: workspaceId,
+                                      workspaceGoalRepository: context.read(),
+                                      workspaceUserRepository: context.read(),
+                                    ),
+                                child: Builder(
+                                  builder: (BuildContext builderContext) =>
+                                      CreateGoalScreen(
+                                        viewModel: builderContext.read(),
+                                      ),
                                 ),
                               ),
                             );
                           },
+                        ),
+                        GoRoute(
+                          path: Routes.guideRelative,
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: const GoalsGuideScreen(),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: ':goalId',
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            final workspaceId =
+                                state.pathParameters['workspaceId']!;
+                            final goalId = state.pathParameters['goalId']!;
+
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 250,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.scaled,
+                                      child: child,
+                                    );
+                                  },
+                              child: GoalDetailsScreen(
+                                viewModel: GoalDetailsScreenViewModel(
+                                  workspaceId: workspaceId,
+                                  goalId: goalId,
+                                  workspaceGoalRepository: context.read(),
+                                ),
+                              ),
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                              path: Routes.editRelative,
+                              parentNavigatorKey: _rootNavigatorKey,
+                              pageBuilder: (context, state) {
+                                final workspaceId =
+                                    state.pathParameters['workspaceId']!;
+                                final goalId = state.pathParameters['goalId']!;
+
+                                return CustomTransitionPage(
+                                  transitionDuration: const Duration(
+                                    milliseconds: 400,
+                                  ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return SharedAxisTransition(
+                                          animation: animation,
+                                          secondaryAnimation:
+                                              secondaryAnimation,
+                                          transitionType:
+                                              SharedAxisTransitionType
+                                                  .horizontal,
+                                          child: child,
+                                        );
+                                      },
+                                  child: GoalDetailsEditScreen(
+                                    viewModel: GoalDetailsEditScreenViewModel(
+                                      workspaceId: workspaceId,
+                                      goalId: goalId,
+                                      workspaceGoalRepository: context.read(),
+                                      workspaceUserRepository: context.read(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),

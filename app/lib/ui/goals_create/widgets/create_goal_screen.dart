@@ -63,6 +63,14 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                     );
                   },
                 ),
+                AppHeaderActionButton(
+                  iconData: FontAwesomeIcons.question,
+                  onTap: () => context.push(
+                    Routes.goalsGuide(
+                      workspaceId: widget.viewModel.activeWorkspaceId,
+                    ),
+                  ),
+                ),
               ],
             ),
             Expanded(

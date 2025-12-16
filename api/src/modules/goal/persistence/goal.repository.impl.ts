@@ -115,7 +115,10 @@ export class GoalRepositoryImpl implements GoalRepository {
     };
 
     if (status) {
-      findOptions.where = { status };
+      findOptions.where = {
+        ...findOptions.where,
+        status,
+      };
     }
 
     if (search) {
@@ -160,7 +163,16 @@ export class GoalRepositoryImpl implements GoalRepository {
     >;
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    await this.repo.update(id, data);
+    const { assigneeId, ...restData } = data;
+    const updateData: any = { ...restData };
+
+    if (data.assigneeId) {
+      updateData.assignee = {
+        id: data.assigneeId,
+      };
+    }
+
+    await this.repo.update(id, updateData);
 
     const newEntity = await this.findById({ id, relations });
 

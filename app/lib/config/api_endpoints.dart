@@ -1,4 +1,5 @@
 import '../data/services/api/workspace/workspace/models/request/workspace_id_path_param.dart';
+import '../data/services/api/workspace/workspace_goal/models/request/workspace_goal_id_path_param.dart';
 import '../data/services/api/workspace/workspace_task/models/request/workspace_task_id_path_param.dart';
 import '../data/services/api/workspace/workspace_task/models/request/workspace_user_id_path_param.dart';
 
@@ -54,6 +55,14 @@ abstract final class ApiEndpoints {
       '$_prefix/workspaces/$workspaceId/goals';
   static String createGoal(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/goals';
+  static String updateGoalDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceGoalIdPathParam goalId,
+  ) => '$_prefix/workspaces/$workspaceId/goals/$goalId';
+  static String closeGoal(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceGoalIdPathParam goalId,
+  ) => '$_prefix/workspaces/$workspaceId/goals/$goalId/close';
 
   // Users
   static const getCurrentUser = '$_prefix/users/me';

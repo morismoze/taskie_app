@@ -27,7 +27,6 @@ class _WorkspaceUserDetailsEditFormState
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   late AppSelectFieldOption<WorkspaceRole>? _selectedRole;
-  final bool _isInit = false;
 
   @override
   void initState() {
@@ -39,12 +38,10 @@ class _WorkspaceUserDetailsEditFormState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_isInit) {
-      _selectedRole = AppSelectFieldOption(
-        label: widget.viewModel.details!.role.l10n(context),
-        value: widget.viewModel.details!.role,
-      );
-    }
+    _selectedRole = AppSelectFieldOption(
+      label: widget.viewModel.details!.role.l10n(context),
+      value: widget.viewModel.details!.role,
+    );
   }
 
   @override

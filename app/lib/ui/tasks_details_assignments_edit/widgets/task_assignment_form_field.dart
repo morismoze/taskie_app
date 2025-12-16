@@ -66,17 +66,18 @@ class TaskAssignmentFormField extends StatelessWidget {
               firstName: firstName,
               imageUrl: profileImageUrl,
             ),
-            Text(
-              UserUtils.constructFullName(
-                firstName: firstName,
-                lastName: lastName,
-              ),
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-                height: 1,
+            Expanded(
+              child: Text(
+                UserUtils.constructFullName(
+                  firstName: firstName,
+                  lastName: lastName,
+                ),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  height: 1,
+                ),
               ),
             ),
-            const Spacer(),
             InkWell(
               onTap: () => removeAssignee(assigneeId),
               child: const FaIcon(
@@ -91,7 +92,7 @@ class TaskAssignmentFormField extends StatelessWidget {
           options: options,
           value: activeStatus,
           onChanged: (status) => onStatusChanged(assigneeId, status.value),
-          label: context.localization.tasksAssignmentsEditStatusLabel,
+          label: context.localization.progressStatusLabel,
         ),
       ],
     );

@@ -38,4 +38,5 @@ const _$ApiErrorCodeEnumMap = {
   ApiErrorCode.taskAssigneesCountMaxedOut: '8',
   ApiErrorCode.taskAssigneesInvalid: '9',
   ApiErrorCode.taskAssigneesAlreadyExist: '10',
+  ApiErrorCode.goalClosed: '11',
 };

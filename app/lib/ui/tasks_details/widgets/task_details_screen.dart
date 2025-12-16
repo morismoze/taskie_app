@@ -109,22 +109,32 @@ class TaskDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 15),
                         LabeledData(
                           label: context.localization.tasksDetailsEditCreatedBy,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: 8,
-                            children: [
-                              if (details.createdBy != null)
-                                AppAvatar(
-                                  hashString: details.createdBy!.id,
-                                  firstName: details.createdBy!.firstName,
-                                  imageUrl: details.createdBy!.profileImageUrl,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.9,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: 8,
+                              children: [
+                                if (details.createdBy != null)
+                                  AppAvatar(
+                                    hashString: details.createdBy!.id,
+                                    firstName: details.createdBy!.firstName,
+                                    imageUrl:
+                                        details.createdBy!.profileImageUrl,
+                                  ),
+                                Flexible(
+                                  child: Text(
+                                    createdByFullName,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                  ),
                                 ),
-                              Text(
-                                createdByFullName,
-                                style: Theme.of(context).textTheme.bodyLarge!
-                                    .copyWith(fontWeight: FontWeight.normal),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],

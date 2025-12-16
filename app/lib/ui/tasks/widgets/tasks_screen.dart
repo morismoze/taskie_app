@@ -44,10 +44,8 @@ class _TasksScreenState extends State<TasksScreen> {
           TasksHeader(viewModel: widget.viewModel),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                 bottom: kAppBottomNavigationBarHeight,
-                left: Dimens.of(context).paddingScreenHorizontal,
-                right: Dimens.of(context).paddingScreenHorizontal,
               ),
               child: ListenableBuilder(
                 listenable: widget.viewModel,
@@ -74,8 +72,10 @@ class _TasksScreenState extends State<TasksScreen> {
                   if (!widget.viewModel.isFilterSearch &&
                       widget.viewModel.tasks!.total == 0) {
                     return Padding(
-                      padding: const EdgeInsets.only(
+                      padding: EdgeInsets.only(
                         bottom: kAppBottomNavigationBarHeight,
+                        left: Dimens.of(context).paddingScreenHorizontal,
+                        right: Dimens.of(context).paddingScreenHorizontal,
                       ),
                       child: EmptyDataPlaceholder(
                         assetImage: Assets.emptyObjectivesIllustration,

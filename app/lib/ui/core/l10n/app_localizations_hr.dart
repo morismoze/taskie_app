@@ -87,9 +87,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get leaderboardLabel => 'Ljestvica';
 
   @override
-  String get bottomNavigationBarGoalsLabel => 'Ciljevi';
-
-  @override
   String get taskCreateNew => 'Kreiraj novi zadatak';
 
   @override
@@ -146,13 +143,13 @@ class AppLocalizationsHr extends AppLocalizations {
   String get progressStatusInProgress => 'U tijeku';
 
   @override
-  String get progressStatusCompleted => 'Dovršeno';
+  String get progressStatusCompleted => 'Završeno';
 
   @override
-  String get progressStatusCompletedAsStale => 'Dovršeno (zastarjelo)';
+  String get progressStatusCompletedAsStale => 'Završeno (zastarjelo)';
 
   @override
-  String get progressStatusNotCompleted => 'Nedovršeno';
+  String get progressStatusNotCompleted => 'Nezavršeno';
 
   @override
   String get progressStatusClosed => 'Zatvoreno';
@@ -209,7 +206,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksClosedTaskError =>
-      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadatakaa.';
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadataka.';
 
   @override
   String get tasksAmendedAssigneesError =>
@@ -248,10 +245,14 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
-  String get tasksAssignmentsEditStatusLabel => 'Status';
+  String get progressStatusLabel => 'Status';
 
   @override
   String get tasksAssignmentsEditStatusSubmit => 'Ažuriraj dodjele';
+
+  @override
+  String get tasksAssignmentsMinAssignees =>
+      'Uh-oh! Ovo je posljednji dodijeljeni korisnik i ne može se ukloniti. Umjesto toga, pokušajte zatvoriti zadatak.';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
@@ -276,7 +277,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksAssignmentsGuideAssignmentStatusesBody =>
-      '__In Progress__ - zadatak je trenutno u izradi\n__Completed__ - zadatak je uspješno završen\n__Completed as Stale__ - zadatak je završen nakon isteka roka završetka (primjenjivo samo ako zadatak ima postavljen Rok završetka)\n__Not Completed__ - zadatak nije izvršen';
+      '__U tijeku__ - zadatak je trenutno u izradi\n__Završeno__ - zadatak je uspješno završen\n__Završeno (zastarjelo)__ - zadatak je završen nakon isteka roka završetka (primjenjivo samo ako zadatak ima postavljen rok završetka)\n__Nezavršeno__ - zadatak nije izvršen';
 
   @override
   String get tasksAssignmentsGuideMultipleAssigneesTitle =>
@@ -560,16 +561,16 @@ class AppLocalizationsHr extends AppLocalizations {
   String get goalRequiredPointsLabel => 'Potrebni bodovi';
 
   @override
-  String get goalRequiredPointsNote =>
-      'Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati rješavanjem zadataka kako bi dosegao cilj. Budući da zadaci daju bodove u koracima od 10 (10, 20, 30, 40, 50), potrebni bodovi također moraju biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).';
-
-  @override
   String get createNewGoalRequiredPointsNaN =>
       'Potrebni bodovi moraju biti broj bez znakova';
 
   @override
   String get createNewGoalRequiredPointsNotMultipleOf10 =>
       'Potrebni bodovi moraju biti višekratnik broja 10';
+
+  @override
+  String get createNewGoalRequiredPointsLowerThanAccumulatedPoints =>
+      'Potrebni bodovi moraju biti iznad akumuliranih bodova';
 
   @override
   String get goalAssigneesRequired => 'Cilj mora biti dodijeljen 1 članu';
@@ -674,5 +675,95 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get leaderboardEmpty =>
-      'Izgleda da vaš workspace još nema dovršenih zadataka. Pokušajte ažurirati i dovršiti neke kako biste započeli!';
+      'Izgleda da vaš workspace još nema završenih zadataka. Pokušajte ažurirati i završiti neke kako biste započeli!';
+
+  @override
+  String get goalsLabel => 'Ciljevi';
+
+  @override
+  String get goalsNoGoals =>
+      'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+
+  @override
+  String get goalsNoFilteredGoals =>
+      'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
+
+  @override
+  String get goalsDetails => 'Detalji cilja';
+
+  @override
+  String get goalsDetailsEdit => 'Uređivanje detalja zadatka';
+
+  @override
+  String get goalsDetailsEditCreatedBy => 'Cilj kreirao/la';
+
+  @override
+  String get goalsDetailsEditCreatedByDeletedAccount =>
+      'Kreator je izbrisao račun';
+
+  @override
+  String get goalsDetailsEditCreatedAt => 'Cilj kreiran';
+
+  @override
+  String get goalsDetailsEditSuccess => 'Uspješno ste uredili detalje cilja';
+
+  @override
+  String get goalsDetailsEditError =>
+      'Uh-oh! Došlo je do problema prilikom uređivanja detalja cilja';
+
+  @override
+  String get goalsDetailsCloseGoal => 'Zatvori cilj';
+
+  @override
+  String get goalsDetailsCloseGoalModalMessage =>
+      'Jeste li sigurni da želite zatvoriti ovaj cilj?\nKada zatvorite cilj neće ga više biti moguće ažurirati.';
+
+  @override
+  String get goalsDetailsCloseSuccess => 'Uspješno ste zatvorili cilj';
+
+  @override
+  String get goalsDetailsCloseError =>
+      'Uh-oh! Došlo je do problema prilikom zatvaranja cilja';
+
+  @override
+  String get goalsClosedGoalError =>
+      'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva.';
+
+  @override
+  String get goalsDetailsAssignedTo => 'Cilj dodijeljen';
+
+  @override
+  String get goalsGuideMainTitle => 'O ciljevima';
+
+  @override
+  String get goalsGuideBaseInfoBody =>
+      'Ciljevi su fleksibilne nagrade/odrednice koje definira Menadžer. Što će biti cilj u potpunosti je stvar kreativnosti (npr. poklon, slobodan dan, javno priznanje).';
+
+  @override
+  String get goalsGuideAssignmentLimitTitle => 'Ograničenje dodjele';
+
+  @override
+  String get goalsGuideAssignmentLimitBody =>
+      'Svaki cilj može biti dodijeljen samo jednom članu.\nTo je zato što je svaki cilj vezan uz nagradne bodove koje član skuplja izvršavanjem zadataka, zbog čega je specifičan za tog člana.';
+
+  @override
+  String get goalsGuideStatusesTitle => 'Statusi ciljeva';
+
+  @override
+  String get goalsGuideStatusesBody =>
+      '__U tijeku__ – na cilju se trenutno radi\n__Završen__ – cilj je uspješno završen';
+
+  @override
+  String get goalsGuideRequiredPointsTitle => 'Potrebni bodovi';
+
+  @override
+  String get goalsGuideRequiredPointsBody =>
+      'Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati izvršavanjem zadataka kako bi ostvario cilj. Budući da zadaci dodjeljuju bodove u koracima od 10 (10, 20, 30, 40, 50), broj potrebnih bodova također mora biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).';
+
+  @override
+  String get goalsGuideNoteTitle => 'Napomena';
+
+  @override
+  String get goalsGuideNoteBody =>
+      'Ako se status nekog prethodno dovršenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.';
 }

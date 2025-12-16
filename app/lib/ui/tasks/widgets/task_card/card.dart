@@ -48,8 +48,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () =>
-          _onTap(context, viewModel, viewModel.activeWorkspaceId, taskId),
+      onTap: () => _onTap(context, viewModel.activeWorkspaceId, taskId),
       child: CardContainer(
         child: Column(
           spacing: 10,
@@ -105,12 +104,7 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  void _onTap(
-    BuildContext context,
-    TasksScreenViewModel viewModel,
-    String activeWorkspaceId,
-    String taskId,
-  ) {
+  void _onTap(BuildContext context, String activeWorkspaceId, String taskId) {
     AppModalBottomSheet.show(
       context: context,
       child: Column(
