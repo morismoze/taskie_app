@@ -4,6 +4,7 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
 import { FindOptionsRelations, Repository } from 'typeorm';
+import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-assignment.entity';
 import { ProgressStatus } from '../domain/progress-status.enum';
 import { Task } from '../domain/task.domain';
 import { TaskEntity } from './task.entity';
@@ -103,7 +104,7 @@ export class TaskRepositoryImpl implements TaskRepository {
 
     const qb = this.repo
       .createQueryBuilder('task')
-      .leftJoinAndSelect('task.taskAssignments', 'assignment')
+      .leftJoinAndSelect('task.taskAssignments', 'assignment') // all assignments
       .leftJoinAndSelect('assignment.assignee', 'assignee')
       .leftJoinAndSelect('assignee.user', 'user')
       .leftJoinAndSelect('task.createdBy', 'createdBy')
@@ -111,7 +112,20 @@ export class TaskRepositoryImpl implements TaskRepository {
       .where('task.workspace.id = :workspaceId', { workspaceId });
 
     if (status) {
-      qb.andWhere('assignment.status = :status', { status });
+      // Filter tasks so that at least one task assignment has the provided
+      // status, and also load all task assignments of that task, regardless
+      // its status. "EXISTS" enables to check if there is any task assignment
+      // with the provided status.
+      qb.andWhere((qb2) => {
+        const subQuery = qb2
+          .subQuery()
+          .select('1') // random select, EXISTS doesn't care about the value
+          .from(TaskAssignmentEntity, 'ta')
+          .where('ta.task_id = task.id')
+          .andWhere('ta.status = :status')
+          .getQuery();
+        return `EXISTS ${subQuery}`;
+      }).setParameter('status', status);
     }
 
     if (search) {
@@ -131,7 +145,7 @@ export class TaskRepositoryImpl implements TaskRepository {
       }
     }
 
-    qb.skip(offset).take(limit);
+    qb.distinct(true).skip(offset).take(limit);
 
     const [taskEntities, totalCount] = await qb.getManyAndCount();
 

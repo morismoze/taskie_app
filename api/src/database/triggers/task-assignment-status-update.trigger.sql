@@ -47,7 +47,7 @@ BEGIN
             NEW.assignee_id
         );
 
-        -- 3. Update goals by [workspace ID, assignee ID and status = COMPLETED] back to IN progress
+        -- 3.a Update goals by [workspace ID, assignee ID and status = COMPLETED] back to IN progress
         --    status if accumulated points dropped below required points
         IF NEW.status IN ('IN_PROGRESS', 'NOT_COMPLETED', 'CLOSED', 'COMPLETED_AS_STALE') THEN
             UPDATE goal g
@@ -59,7 +59,7 @@ BEGIN
             AND g.required_points > v_accumulated_points;
         END IF;
 
-        -- 3. Update goals by [workspace ID, assignee ID and status != COMPLETED] putting the status to 
+        -- 3.b Update goals by [workspace ID, assignee ID and status != COMPLETED] putting the status to 
         --    COMPLETED if accumulated points became equal or greater then required points.
         --    COMPLETED_AS_STALE won't fall into accumulated points.
         IF NEW.status = 'COMPLETED' THEN

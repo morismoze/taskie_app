@@ -1201,7 +1201,7 @@ export class WorkspaceService {
     await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
   }
 
-  async addTaskAssignee({
+  async addTaskAssignees({
     workspaceId,
     taskId,
     payload,
@@ -1241,7 +1241,7 @@ export class WorkspaceService {
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.NOT_FOUND,
       );
     }
 
