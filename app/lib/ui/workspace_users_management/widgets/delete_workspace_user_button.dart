@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
@@ -50,8 +51,7 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
             workspaceId,
             workspaceUserId,
           )),
-          onCancel: (BuildContext builderContext) =>
-              Navigator.pop(builderContext),
+          onCancel: (BuildContext builderContext) => builderContext.pop(),
           submitButtonText: (BuildContext builderContext) => builderContext
               .localization
               .workspaceUsersManagementDeleteUserModalCta,

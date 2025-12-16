@@ -75,52 +75,39 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 30,
-      children: [
-        Text(
-          context.localization.tasksAssignmentsEditAddNewAssignee,
-          textAlign: TextAlign.center,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
-        ),
-        Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.onUnfocus,
-          child: Column(
-            children: [
-              AppSelectFormField(
-                options: options,
-                value: _selectedAssignees,
-                onChanged: _onAssigneesSelected,
-                onCleared: _onAssigneesCleared,
-                label: context.localization.objectiveAssigneeLabel,
-                multiple: true,
-                max:
-                    ValidationRules.taskMaxAssigneesCount -
-                    widget.viewModel.assignees!.length,
-                validator: (assignees) =>
-                    _validateAssignees(context, assignees),
-              ),
-              const SizedBox(height: 20),
-              ListenableBuilder(
-                listenable: widget.viewModel.addTaskAssignee,
-                builder: (builderContext, _) {
-                  final isDirty = _selectedAssignees.isNotEmpty;
-
-                  return AppFilledButton(
-                    onPress: _onSubmit,
-                    label: builderContext.localization.objectiveAssigneeLabel,
-                    loading: widget.viewModel.addTaskAssignee.running,
-                    disabled: !isDirty,
-                  );
-                },
-              ),
-            ],
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUnfocus,
+      child: Column(
+        children: [
+          AppSelectFormField(
+            options: options,
+            value: _selectedAssignees,
+            onChanged: _onAssigneesSelected,
+            onCleared: _onAssigneesCleared,
+            label: context.localization.objectiveAssigneeLabel,
+            multiple: true,
+            max:
+                ValidationRules.taskMaxAssigneesCount -
+                widget.viewModel.assignees!.length,
+            validator: (assignees) => _validateAssignees(context, assignees),
           ),
-        ),
-      ],
+          const SizedBox(height: 20),
+          ListenableBuilder(
+            listenable: widget.viewModel.addTaskAssignee,
+            builder: (builderContext, _) {
+              final isDirty = _selectedAssignees.isNotEmpty;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.objectiveAssigneeLabel,
+                loading: widget.viewModel.addTaskAssignee.running,
+                disabled: !isDirty,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

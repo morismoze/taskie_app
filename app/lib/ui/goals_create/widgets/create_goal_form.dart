@@ -101,9 +101,12 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             validator: (assignee) => _validateAssignee(context, assignee),
           ),
           if (_selectedAssignee != null) ...[
-            WorkspaceUserAccumulatedPoints(
-              viewModel: widget.viewModel,
-              selectedAssignee: _selectedAssignee!.value,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: WorkspaceUserAccumulatedPoints(
+                viewModel: widget.viewModel,
+                selectedAssignee: _selectedAssignee!.value,
+              ),
             ),
             const SizedBox(height: 10),
           ],

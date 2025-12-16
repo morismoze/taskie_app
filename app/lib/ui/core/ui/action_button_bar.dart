@@ -101,9 +101,9 @@ class ActionButtonBar extends StatelessWidget {
   }) {
     return Row(
       spacing: Dimens.paddingHorizontal,
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Flexible(
+        Expanded(
+          flex: 2,
           child: AppOutlinedButton(
             onPress: () => onCancel(context),
             label: cancelButtonText != null
@@ -113,7 +113,8 @@ class ActionButtonBar extends StatelessWidget {
             disabled: isLoading,
           ),
         ),
-        Flexible(
+        Expanded(
+          flex: 4,
           child: AppFilledButton(
             onPress: () => onSubmit(context),
             loading: isLoading,

@@ -77,8 +77,13 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
+        // This can happen when a goal gets closed and removed from the cache
+        // and the repository notifies listeners, in this case the goal details
+        // edit screen VM, which then tries to load the details again in a split
+        // second before goal is closed and user is navigated back to goals
+        // screen. Hence why we return positive result.
         _log.warning('Failed to load goal details', result.error);
-        return result;
+        return const Result.ok(null);
     }
   }
 

@@ -53,8 +53,13 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
+        // This can happen when a task gets closed and removed from the cache
+        // and the repository notifies listeners, in this case the task details
+        // edit screen VM, which then tries to load the details again in a split
+        // second before task is closed and user is navigated back to tasks
+        // screen. Hence why we return positive result.
         _log.warning('Failed to load task details', result.error);
-        return result;
+        return const Result.ok(null);
     }
   }
 

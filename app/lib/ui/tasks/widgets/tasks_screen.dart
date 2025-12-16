@@ -71,18 +71,46 @@ class _TasksScreenState extends State<TasksScreen> {
                   // show Create new task prompt
                   if (!widget.viewModel.isFilterSearch &&
                       widget.viewModel.tasks!.total == 0) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: kAppBottomNavigationBarHeight,
-                        left: Dimens.of(context).paddingScreenHorizontal,
-                        right: Dimens.of(context).paddingScreenHorizontal,
-                      ),
-                      child: EmptyDataPlaceholder(
-                        assetImage: Assets.emptyObjectivesIllustration,
-                        child: context.localization.tasksNoTasks.format(
-                          style: Theme.of(context).textTheme.bodyMedium!,
-                          textAlign: TextAlign.center,
-                        ),
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        widget.viewModel.loadTasks.execute((null, true));
+                      },
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            // Enables scrolling and trigger of pull-to-refresh
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: kAppBottomNavigationBarHeight,
+                                    left: Dimens.of(
+                                      context,
+                                    ).paddingScreenHorizontal,
+                                    right: Dimens.of(
+                                      context,
+                                    ).paddingScreenHorizontal,
+                                  ),
+                                  child: EmptyDataPlaceholder(
+                                    assetImage:
+                                        Assets.emptyObjectivesIllustration,
+                                    child: context.localization.tasksNoTasks
+                                        .format(
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium!,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   }

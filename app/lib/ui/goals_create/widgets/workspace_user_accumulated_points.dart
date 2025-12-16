@@ -22,7 +22,7 @@ class WorkspaceUserAccumulatedPoints extends StatelessWidget {
       builder: (builderContext, child) {
         if (viewModel.loadWorkspaceUserAccumulatedPoints.running) {
           return ActivityIndicator(
-            radius: 16,
+            radius: 10,
             color: Theme.of(builderContext).colorScheme.primary,
           );
         }

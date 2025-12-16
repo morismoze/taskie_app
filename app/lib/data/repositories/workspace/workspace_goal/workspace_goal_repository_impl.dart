@@ -149,6 +149,10 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           // we show a error prompt with retry on the GoalsScreen if there was a problem
           // with initial goals load from origin.
           _cachedGoals!.items.add(newGoal);
+          if (_cachedGoals!.totalPages == 0) {
+            ++_cachedGoals!.totalPages;
+          }
+          ++_cachedGoals!.total;
           notifyListeners();
 
           return const Result.ok(null);
@@ -161,9 +165,19 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   }
 
   @override
-  Result<WorkspaceGoal> loadGoalDetails({required String goalId}) {
-    final details = _cachedGoals!.items.firstWhere((goal) => goal.id == goalId);
-    return Result.ok(details);
+  Result<WorkspaceGoal?> loadGoalDetails({required String goalId}) {
+    try {
+      final details = _cachedGoals!.items.firstWhere(
+        (goal) => goal.id == goalId,
+      );
+      return Result.ok(details);
+    } on StateError {
+      // This can happen when a goal gets closed and removed from the cache
+      // and the repository notifies listeners, e.g. the goal details edit
+      // screen VM, which then tries to load the details again in a split
+      // second before goal is closed and user is navigated back to goals screen.
+      return Result.error(Exception('Goal $goalId not found'));
+    }
   }
 
   @override
@@ -234,6 +248,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
             (goal) => goal.id == goalId,
           );
           _cachedGoals!.items.remove(closedGoal);
+          --_cachedGoals!.total;
           notifyListeners();
 
           return const Result.ok(null);

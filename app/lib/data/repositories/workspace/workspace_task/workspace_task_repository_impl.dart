@@ -156,6 +156,10 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           // we show a error prompt with retry on the TasksScreen if there was a problem
           // with initial tasks load from origin.
           _cachedTasks!.items.add(newTask);
+          if (_cachedTasks!.totalPages == 0) {
+            ++_cachedTasks!.totalPages;
+          }
+          ++_cachedTasks!.total;
           notifyListeners();
 
           return const Result.ok(null);
@@ -169,8 +173,18 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   @override
   Result<WorkspaceTask> loadWorkspaceTaskDetails({required String taskId}) {
-    final details = _cachedTasks!.items.firstWhere((task) => task.id == taskId);
-    return Result.ok(details);
+    try {
+      final details = _cachedTasks!.items.firstWhere(
+        (task) => task.id == taskId,
+      );
+      return Result.ok(details);
+    } on StateError {
+      // This can happen when a task gets closed and removed from the cache
+      // and the repository notifies listeners, e.g. the task details edit
+      // screen VM, which then tries to load the details again in a split
+      // second before task is closed and user is navigated back to tasks screen.
+      return Result.error(Exception('Task $taskId not found'));
+    }
   }
 
   @override
@@ -388,21 +402,12 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
       switch (result) {
         case Ok():
-          final taskIndex = _cachedTasks!.items.indexWhere(
+          final closedTask = _cachedTasks!.items.firstWhere(
             (task) => task.id == taskId,
           );
-
-          if (taskIndex != -1) {
-            final existingTaskResult =
-                loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
-            final existingTask = existingTaskResult.value;
-            final newAssignees = existingTask.assignees.map((assignee) {
-              return assignee.copyWith(status: ProgressStatus.closed);
-            }).toList();
-            final updatedTask = existingTask.copyWith(assignees: newAssignees);
-            _cachedTasks!.items[taskIndex] = updatedTask;
-            notifyListeners();
-          }
+          _cachedTasks!.items.remove(closedTask);
+          --_cachedTasks!.total;
+          notifyListeners();
 
           return const Result.ok(null);
         case Error():

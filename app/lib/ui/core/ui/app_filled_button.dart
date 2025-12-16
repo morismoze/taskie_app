@@ -30,7 +30,7 @@ class AppFilledButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveFontSize =
-        fontSize ?? Theme.of(context).textTheme.titleMedium!.fontSize;
+        fontSize ?? Theme.of(context).textTheme.titleSmall!.fontSize;
     final effectiveBackgroundColor =
         backgroundColor ?? Theme.of(context).colorScheme.primary;
 
@@ -76,7 +76,7 @@ class AppFilledButton extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: shrinkWrap ? 2 : 12),
                   child: Text(
                     label,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: effectiveFontSize,

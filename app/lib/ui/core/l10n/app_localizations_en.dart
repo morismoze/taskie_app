@@ -206,11 +206,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksClosedTaskError =>
-      'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.';
+      'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the Homepage and refresh your feed.';
 
   @override
   String get tasksAmendedAssigneesError =>
-      'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.';
+      'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.';
 
   @override
   String get tasksRemoveTaskAssignmentModalMessage =>
@@ -257,6 +257,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
       'Add additional assignees to this task:';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees =>
+      'Maximum number of 10 assignees have been assigned to this task. Try removing some if you wish to add new ones.';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssigneeEmptyAssignees =>
+      'There are no members left to assign to this task. Try adding or inviting new ones to your workspace.';
 
   @override
   String get tasksAssignmentsGuideMainTitle => 'About task assignments';
@@ -721,7 +729,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalsClosedGoalError =>
-      'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.';
+      'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the Goals page and refresh your feed.';
 
   @override
   String get goalsDetailsAssignedTo => 'Goal assigned to';

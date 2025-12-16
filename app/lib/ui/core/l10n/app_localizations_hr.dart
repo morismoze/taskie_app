@@ -206,11 +206,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksClosedTaskError =>
-      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadataka.';
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na Početnu stranicu i osvježite svoj popis zadataka.';
 
   @override
   String get tasksAmendedAssigneesError =>
-      'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
+      'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na Početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
 
   @override
   String get tasksRemoveTaskAssignmentModalMessage =>
@@ -257,6 +257,14 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
       'Dodijelite ovaj zadatak dodatnome članu:';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees =>
+      'Ovom zadatku već je dodijeljen maksimalan broj od 10 ćlanova. Uklonite nekoga ako želite dodati novog.';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssigneeEmptyAssignees =>
+      'Nema više članova kojima se ovaj zadatak može dodijeliti. Dodajte ili pozovite nove članove u svoj workspace.';
 
   @override
   String get tasksAssignmentsGuideMainTitle => 'O dodjelama zadatka';
@@ -727,7 +735,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsClosedGoalError =>
-      'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva.';
+      'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu Ciljeva i osvježite svoj popis ciljeva.';
 
   @override
   String get goalsDetailsAssignedTo => 'Cilj dodijeljen';

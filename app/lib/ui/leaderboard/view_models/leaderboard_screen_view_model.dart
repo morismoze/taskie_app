@@ -31,16 +31,6 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
     }
 
     final sortedLeaderboard = List<WorkspaceLeaderboardUser>.from(leaderbard);
-    // Sort leaderboard users by accumulated points
-    sortedLeaderboard.sort((l1, l2) {
-      if (l1.accumulatedPoints > l2.accumulatedPoints) {
-        return -1;
-      } else if (l1.accumulatedPoints < l2.accumulatedPoints) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
 
     // Filter out users whose accumulated points equal to 0
     sortedLeaderboard.removeWhere((lu) => lu.accumulatedPoints == 0);

@@ -455,13 +455,13 @@ abstract class AppLocalizations {
   /// No description provided for @tasksClosedTaskError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.'**
+  /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the Homepage and refresh your feed.'**
   String get tasksClosedTaskError;
 
   /// No description provided for @tasksAmendedAssigneesError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.'**
+  /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.'**
   String get tasksAmendedAssigneesError;
 
   /// No description provided for @tasksRemoveTaskAssignmentModalMessage.
@@ -541,6 +541,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add additional assignees to this task:'**
   String get tasksAssignmentsEditAddNewAssignee;
+
+  /// No description provided for @tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum number of 10 assignees have been assigned to this task. Try removing some if you wish to add new ones.'**
+  String get tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees;
+
+  /// No description provided for @tasksAssignmentsEditAddNewAssigneeEmptyAssignees.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no members left to assign to this task. Try adding or inviting new ones to your workspace.'**
+  String get tasksAssignmentsEditAddNewAssigneeEmptyAssignees;
 
   /// No description provided for @tasksAssignmentsGuideMainTitle.
   ///
@@ -1307,7 +1319,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsClosedGoalError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.'**
+  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the Goals page and refresh your feed.'**
   String get goalsClosedGoalError;
 
   /// No description provided for @goalsDetailsAssignedTo.
