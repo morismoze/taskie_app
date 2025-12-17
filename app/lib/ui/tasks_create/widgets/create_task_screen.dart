@@ -27,8 +27,8 @@ class CreateTaskScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   void initState() {
-    widget.viewModel.createTask.addListener(_onResult);
     super.initState();
+    widget.viewModel.createTask.addListener(_onResult);
   }
 
   @override
@@ -62,6 +62,14 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                       ),
                     );
                   },
+                ),
+                AppHeaderActionButton(
+                  iconData: FontAwesomeIcons.question,
+                  onTap: () => context.push(
+                    Routes.tasksGuide(
+                      workspaceId: widget.viewModel.activeWorkspaceId,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -133,6 +141,10 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   void _onResult() {
     if (widget.viewModel.createTask.completed) {
       widget.viewModel.createTask.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.createNewTaskSuccess,
+      );
       context.pop();
     }
 

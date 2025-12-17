@@ -28,13 +28,13 @@ class _WorkspaceUsersManagementScreenState
     extends State<WorkspaceUsersManagementScreen> {
   @override
   void initState() {
+    super.initState();
     widget.viewModel.loadWorkspaceMembers.addListener(
       _onWorkspaceUsersLoadResult,
     );
     widget.viewModel.deleteWorkspaceUser.addListener(
       _onWorkspaceUserDeleteResult,
     );
-    super.initState();
   }
 
   @override

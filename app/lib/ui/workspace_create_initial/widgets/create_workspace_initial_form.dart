@@ -57,12 +57,22 @@ class _CreateWorkspaceInitialFormState
           ),
           const SizedBox(height: 20),
           ListenableBuilder(
-            listenable: widget.viewModel.createWorkspace,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: builderContext.localization.workspaceCreateLabel,
-              loading: widget.viewModel.createWorkspace.running,
-            ),
+            listenable: Listenable.merge([
+              widget.viewModel.createWorkspace,
+              _nameController,
+              _descriptionController,
+            ]),
+            builder: (builderContext, _) {
+              // Description is optional
+              final enabledSubmit = _nameController.text.isNotEmpty;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.workspaceCreateLabel,
+                loading: widget.viewModel.createWorkspace.running,
+                disabled: !enabledSubmit,
+              );
+            },
           ),
         ],
       ),

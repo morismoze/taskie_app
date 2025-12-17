@@ -20,21 +20,19 @@ class GoogleAuthService {
     try {
       var googleUser = await _googleSignIn.signInSilently();
 
+      // Check if a Google session is still active
       if (googleUser != null) {
         final googleAuth = await googleUser.authentication;
 
         if (googleAuth.idToken == null) {
           _log.severe("Invalid ID token on silent sign-in", googleAuth);
-          return Result.error(
-            Exception(const GoogleSignInInvalidIdTokenException()),
-          );
+        } else {
+          return Result.ok(googleAuth.idToken!);
         }
-
-        return Result.ok(googleAuth.idToken!);
       }
 
-      // Check if a Google session is still active
-      googleUser ??= await _googleSignIn.signIn();
+      // Fallback: no active/usable session → prompt user interactively.
+      googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         return const Result.error(GoogleSignInCancelledException());

@@ -34,6 +34,7 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
 
   @override
   void initState() {
+    super.initState();
     _titleController.text = widget.viewModel.details!.title;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
     _requiredPointsController.text = widget.viewModel.details!.requiredPoints
@@ -47,7 +48,6 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
         (member) => member.id == widget.viewModel.details!.assignee.id,
       ),
     );
-    super.initState();
   }
 
   @override
@@ -121,8 +121,9 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
                   value: selectedAssigneeValue,
                   onChanged: _onAssigneeSelected,
                   onCleared: _onAssigneeCleared,
-                  label: context.localization.objectiveAssigneeLabel,
-                  validator: (assignee) => _validateAssignee(context, assignee),
+                  label: builderContext.localization.objectiveAssigneeLabel,
+                  validator: (assignee) =>
+                      _validateAssignee(builderContext, assignee),
                 ),
           ),
           const SizedBox(height: 20),

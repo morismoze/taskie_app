@@ -5,7 +5,7 @@ abstract final class Routes {
   // Public routes
   static const login = '/login';
 
-  // Resuable subroutes
+  // Reusable subroutes
   static const createRelative = 'create';
   static const editRelative = 'edit';
   static const guideRelative = 'guide';
@@ -69,11 +69,8 @@ abstract final class Routes {
     required String taskId,
   }) =>
       '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskDetailsAssignmentsRelative/$editRelative';
-  static String taskDetailsAssignmentsGuide({
-    required String workspaceId,
-    required String taskId,
-  }) =>
-      '/$workspacesRelative/$workspaceId/$tasksRelative/$taskId/$taskDetailsAssignmentsRelative/$guideRelative';
+  static String tasksGuide({required String workspaceId}) =>
+      '/$workspacesRelative/$workspaceId/$tasksRelative/$guideRelative';
 
   static const leaderboardRelative = 'leaderboard';
   static String leaderboard({required String workspaceId}) =>

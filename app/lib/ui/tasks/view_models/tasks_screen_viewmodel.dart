@@ -24,6 +24,7 @@ class TasksScreenViewModel extends ChangeNotifier {
     _userRepository.addListener(_onUserChanged);
     // Repository defines default values for ObjectiveFilter, so we use null here for it
     loadTasks = Command1(_loadTasks)..execute((null, null));
+    refreshUser = Command0(_refreshUser);
     _userNotifier.value = _userRepository.user;
   }
 
@@ -34,6 +35,7 @@ class TasksScreenViewModel extends ChangeNotifier {
   final _log = Logger('TasksScreenViewModel');
 
   late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadTasks;
+  late Command0 refreshUser;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -69,18 +71,7 @@ class TasksScreenViewModel extends ChangeNotifier {
         return 1;
       }
 
-      // New tasks should be additionally sorted by creation
-      // date so that newest created ones are first (DESC)
-      if (t1.isNew && t2.isNew) {
-        return t2.createdAt.compareTo(t1.createdAt);
-      }
-
       // If both tasks are not new, keep the original ordering
-      if (!t1.isNew && !t2.isNew) {
-        return 0;
-      }
-
-      // Safety case - keep the original ordering
       return 0;
     });
 
@@ -112,6 +103,18 @@ class TasksScreenViewModel extends ChangeNotifier {
       case Error():
         _log.warning('Failed to load tasks', result.error);
         return result;
+    }
+  }
+
+  Future<Result<void>> _refreshUser() async {
+    final resultLoadUser = await _userRepository.loadUser(forceFetch: true);
+
+    switch (resultLoadUser) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        _log.warning('Failed to refresh user', resultLoadUser.error);
+        return Result.error(resultLoadUser.error);
     }
   }
 

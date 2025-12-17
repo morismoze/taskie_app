@@ -341,6 +341,9 @@ class AppLocalizationsHr extends AppLocalizations {
       'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
 
   @override
+  String get createNewTaskSuccess => 'Uspješno ste kreirali novi zadatak';
+
+  @override
   String get objectiveNoMembersCta => 'Dodajmo članove';
 
   @override
@@ -551,6 +554,9 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get createNewGoalNoMembers =>
       'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti cilj. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
+
+  @override
+  String get createNewGoalSuccess => 'Uspješno ste kreirali novi cilj';
 
   @override
   String get createNewGoalTitle => 'Novi cilj';

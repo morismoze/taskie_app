@@ -34,10 +34,10 @@ class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
 
   @override
   void initState() {
+    super.initState();
     // We need to copy values from the given list and not assign it directly
     // beacuse we would change direct reference (the given list).
     _selectedOptions = List.from(widget.value);
-    super.initState();
   }
 
   void _onOptionTap(AppSelectFieldOption<T> option) {

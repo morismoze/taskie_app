@@ -22,6 +22,9 @@ class AddNewAssigneeForm extends StatefulWidget {
 class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
   final _formKey = GlobalKey<FormState>();
   List<AppSelectFieldOption<WorkspaceUser>> options = [];
+  // ValueNotifier is not needed here because we use setState
+  // which rebuild the whole widget and this is a simple widget
+  // so no need for serparate ValueListenableBuilder.
   List<AppSelectFieldOption<WorkspaceUser>> _selectedAssignees = [];
 
   @override
@@ -35,7 +38,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
   @override
   void didUpdateWidget(covariant AddNewAssigneeForm oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Needs setState because widget is already build and needs rebuild
+    // Needs setState because widget is already built and needs rebuild
     setState(() {
       _updateOptions();
     });

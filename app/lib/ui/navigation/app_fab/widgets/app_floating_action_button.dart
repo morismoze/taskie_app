@@ -41,6 +41,7 @@ class AppFloatingActionButton extends StatelessWidget {
       context: context,
       isDetached: true,
       child: Column(
+        spacing: 12,
         children: [
           AppFilledButton(
             label: context.localization.taskCreateNew,
@@ -51,7 +52,6 @@ class AppFloatingActionButton extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 15),
           AppFilledButton(
             label: context.localization.goalCreateNew,
             onPress: () {

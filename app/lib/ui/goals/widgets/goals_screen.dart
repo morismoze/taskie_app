@@ -27,13 +27,13 @@ class GoalsScreen extends StatefulWidget {
 class _GoalssScreenState extends State<GoalsScreen> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-    super.initState();
   }
 
   @override

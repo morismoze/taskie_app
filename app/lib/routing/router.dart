@@ -27,13 +27,13 @@ import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
+import '../ui/tasks_assignments_guide/widgets/tasks_assignments_guide_screen.dart';
 import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
 import '../ui/tasks_create/widgets/create_task_screen.dart';
 import '../ui/tasks_details/view_models/task_details_screen_view_model.dart';
 import '../ui/tasks_details/widgets/task_details_screen.dart';
 import '../ui/tasks_details_assignments_edit/view_models/task_assignments_edit_screen_view_model.dart';
 import '../ui/tasks_details_assignments_edit/widgets/task_assignments_edit_screen.dart';
-import '../ui/tasks_details_assignments_guide/widgets/tasks_details_assignments_guide_screen.dart';
 import '../ui/tasks_details_edit/view_models/task_details_edit_screen_view_model.dart';
 import '../ui/tasks_details_edit/widgets/task_details_edit_screen.dart';
 import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
@@ -213,6 +213,7 @@ GoRouter router({
                       create: (notifierContext) => AppDrawerViewModel(
                         workspaceId: workspaceId,
                         workspaceRepository: notifierContext.read(),
+                        userRepository: context.read(),
                         refreshTokenUseCase: notifierContext.read(),
                         activeWorkspaceChangeUseCase: notifierContext.read(),
                       ),
@@ -272,13 +273,57 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: CreateTaskScreen(
-                                viewModel: CreateTaskScreenViewmodel(
-                                  workspaceId: workspaceId,
-                                  workspaceTaskRepository: context.read(),
-                                  workspaceUserRepository: context.read(),
+                              // ChangeNotifierProvider is used because when we navigate (push)
+                              // from CreateTaskScreen to the TasksAssignmentsGuideScreen, this whole routes
+                              // array of the [Routes.tasksRelative] GoRoute gets rebuilt - pageBuilders
+                              // re-instantiate the VM, which then leads to having a quick display
+                              // of the CreateTaskScreen (specifically the loader/activity indicator)
+                              // and then the TasksAssignmentsGuideScreen is shown.
+                              // Basically, when we push to another screen, the current page gets
+                              // rebuilt, but it is not deducted from the tree and then again
+                              // inserted. This is only when the :workspaceId is the same of course.
+                              // If it is different, then the whole tree is rebuilt.
+                              child: ChangeNotifierProvider(
+                                create: (BuildContext context) =>
+                                    CreateTaskScreenViewmodel(
+                                      workspaceId: workspaceId,
+                                      workspaceTaskRepository: context.read(),
+                                      workspaceUserRepository: context.read(),
+                                    ),
+                                child: Builder(
+                                  builder: (BuildContext builderContext) =>
+                                      CreateTaskScreen(
+                                        viewModel: builderContext.read(),
+                                      ),
                                 ),
                               ),
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          path: Routes.guideRelative,
+                          parentNavigatorKey: _rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            return CustomTransitionPage(
+                              transitionDuration: const Duration(
+                                milliseconds: 400,
+                              ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return SharedAxisTransition(
+                                      animation: animation,
+                                      secondaryAnimation: secondaryAnimation,
+                                      transitionType:
+                                          SharedAxisTransitionType.horizontal,
+                                      child: child,
+                                    );
+                                  },
+                              child: const TasksAssignmentsGuideScreen(),
                             );
                           },
                         ),
@@ -402,38 +447,6 @@ GoRouter router({
                                 );
                               },
                             ),
-                            GoRoute(
-                              path:
-                                  '${Routes.taskDetailsAssignmentsRelative}/${Routes.guideRelative}',
-                              parentNavigatorKey: _rootNavigatorKey,
-                              pageBuilder: (context, state) {
-                                return CustomTransitionPage(
-                                  key: state.pageKey,
-                                  transitionDuration: const Duration(
-                                    milliseconds: 400,
-                                  ),
-                                  transitionsBuilder:
-                                      (
-                                        context,
-                                        animation,
-                                        secondaryAnimation,
-                                        child,
-                                      ) {
-                                        return SharedAxisTransition(
-                                          animation: animation,
-                                          secondaryAnimation:
-                                              secondaryAnimation,
-                                          transitionType:
-                                              SharedAxisTransitionType
-                                                  .horizontal,
-                                          child: child,
-                                        );
-                                      },
-                                  child:
-                                      const TasksDetailsAssignmentsGuideScreen(),
-                                );
-                              },
-                            ),
                           ],
                         ),
                       ],
@@ -491,7 +504,7 @@ GoRouter router({
                               // array of the [Routes.goalsRelative] GoRoute gets rebuilt - pageBuilders
                               // re-instantiate the VM, which then leads to having a quick display
                               // of the CreateGoalScreen (specifically the loader/activity indicator)
-                              // ad then the GoalsGuideScreen is shown.
+                              // and then the GoalsGuideScreen is shown.
                               // Basically, when we push to another screen, the current page gets
                               // rebuilt, but it is not deducted from the tree and then again
                               // inserted. This is only when the :workspaceId is the same of course.

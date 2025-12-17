@@ -341,6 +341,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.';
 
   @override
+  String get createNewTaskSuccess => 'Successfully created new task';
+
+  @override
   String get objectiveNoMembersCta => 'Let\'s add members';
 
   @override
@@ -548,6 +551,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get createNewGoalNoMembers =>
       'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.';
+
+  @override
+  String get createNewGoalSuccess => 'Successfully created new goal';
 
   @override
   String get createNewGoalTitle => 'New goal';

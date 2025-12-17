@@ -36,6 +36,7 @@ class TaskAssignmentsEditScreen extends StatefulWidget {
 class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void initState() {
+    super.initState();
     widget.viewModel.addTaskAssignee.addListener(_onAddTaskAssigneeResult);
     widget.viewModel.removeTaskAssignee.addListener(
       _onRemoveTaskAssigneeResult,
@@ -43,7 +44,6 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
     widget.viewModel.updateTaskAssignments.addListener(
       _onUpdateTaskAssignmentsResult,
     );
-    super.initState();
   }
 
   @override
@@ -98,9 +98,8 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                     onTap: () {
                       if (widget.viewModel.taskId != null) {
                         context.push(
-                          Routes.taskDetailsAssignmentsGuide(
+                          Routes.tasksGuide(
                             workspaceId: widget.viewModel.activeWorkspaceId,
-                            taskId: widget.viewModel.taskId!,
                           ),
                         );
                       }

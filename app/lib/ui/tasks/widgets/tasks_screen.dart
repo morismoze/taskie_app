@@ -27,13 +27,13 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-    super.initState();
   }
 
   @override
@@ -74,6 +74,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     return RefreshIndicator(
                       onRefresh: () async {
                         widget.viewModel.loadTasks.execute((null, true));
+                        widget.viewModel.refreshUser.execute();
                       },
                       child: LayoutBuilder(
                         builder: (context, constraints) {
@@ -124,6 +125,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   return RefreshIndicator(
                     onRefresh: () async {
                       widget.viewModel.loadTasks.execute((null, true));
+                      widget.viewModel.refreshUser.execute();
                     },
                     child: ObjectivesListView(
                       headerDelegate: TasksSortingHeaderDelegate(

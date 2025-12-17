@@ -24,6 +24,7 @@ class EntryScreen extends StatefulWidget {
 class _EntryScreenState extends State<EntryScreen> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
@@ -33,7 +34,6 @@ class _EntryScreenState extends State<EntryScreen> {
       ),
     );
     widget.viewModel.setupInitial.addListener(_onInitialLoad);
-    super.initState();
   }
 
   @override

@@ -41,10 +41,10 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
 
   @override
   void initState() {
+    super.initState();
     if (widget.initialValue != null) {
       _selectedDate = widget.initialValue!;
     }
-    super.initState();
   }
 
   void _clearSelections() {

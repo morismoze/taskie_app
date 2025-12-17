@@ -27,8 +27,8 @@ class CreateGoalScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   void initState() {
-    widget.viewModel.createGoal.addListener(_onResult);
     super.initState();
+    widget.viewModel.createGoal.addListener(_onResult);
   }
 
   @override
@@ -136,6 +136,10 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   void _onResult() {
     if (widget.viewModel.createGoal.completed) {
       widget.viewModel.createGoal.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.createNewGoalSuccess,
+      );
       context.pop();
     }
 

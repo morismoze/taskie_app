@@ -31,9 +31,9 @@ class TaskDetailsEditScreen extends StatefulWidget {
 class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   @override
   void initState() {
+    super.initState();
     widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
     widget.viewModel.closeTask.addListener(_onTaskCloseResult);
-    super.initState();
   }
 
   @override

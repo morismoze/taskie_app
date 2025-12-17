@@ -24,8 +24,8 @@ class LeaderboardScreen extends StatefulWidget {
 class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
   @override
   void initState() {
-    widget.viewModel.loadLeaderboard.addListener(_onLeaderboardLoadResult);
     super.initState();
+    widget.viewModel.loadLeaderboard.addListener(_onLeaderboardLoadResult);
   }
 
   @override

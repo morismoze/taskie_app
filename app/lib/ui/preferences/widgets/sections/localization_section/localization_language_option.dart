@@ -26,10 +26,10 @@ class _LocalizationLanguageOptionState
 
   @override
   void initState() {
+    super.initState();
     setState(() {
       _initialLocale = widget.viewModel.appLocale;
     });
-    super.initState();
   }
 
   void _onSubmit(Locale locale) {

@@ -27,7 +27,6 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
   @override
   void initState() {
     super.initState();
-
     for (final assignee in widget.viewModel.assignees!) {
       _assigneesStatuses[assignee.id] = assignee.status;
     }

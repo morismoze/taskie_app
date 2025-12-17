@@ -24,10 +24,10 @@ class _WorkspaceSettingsEditScreenState
     extends State<WorkspaceSettingsEditScreen> {
   @override
   void initState() {
+    super.initState();
     widget.viewModel.editWorkspaceDetails.addListener(
       _onWorkspaceDetailsEditResult,
     );
-    super.initState();
   }
 
   @override

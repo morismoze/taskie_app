@@ -674,6 +674,12 @@ abstract class AppLocalizations {
   /// **'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.'**
   String get createNewTaskNoMembers;
 
+  /// No description provided for @createNewTaskSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully created new task'**
+  String get createNewTaskSuccess;
+
   /// No description provided for @objectiveNoMembersCta.
   ///
   /// In en, this message translates to:
@@ -1021,6 +1027,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.'**
   String get createNewGoalNoMembers;
+
+  /// No description provided for @createNewGoalSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully created new goal'**
+  String get createNewGoalSuccess;
 
   /// No description provided for @createNewGoalTitle.
   ///

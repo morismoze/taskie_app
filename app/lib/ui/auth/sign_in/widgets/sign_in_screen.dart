@@ -25,6 +25,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
@@ -34,7 +35,6 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
     widget.viewModel.signInWithGoogle.addListener(_onResult);
-    super.initState();
   }
 
   @override

@@ -27,8 +27,8 @@ class _SortByButtonState extends State<SortByButton> {
 
   @override
   void initState() {
-    _selectedOptions = List.from([widget.activeValue]);
     super.initState();
+    _selectedOptions = List.from([widget.activeValue]);
   }
 
   void _onSubmit(List<AppSelectFieldOption> selectedOptions) {
