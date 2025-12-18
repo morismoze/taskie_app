@@ -194,6 +194,18 @@ abstract class AppLocalizations {
   /// **'pts'**
   String get misc_pointsAbbr;
 
+  /// No description provided for @misc_errorPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We ran into a small hiccup loading this.'**
+  String get misc_errorPrompt;
+
+  /// No description provided for @misc_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s try again'**
+  String get misc_retry;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -325,6 +337,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!'**
   String get tasksNoTasks;
+
+  /// No description provided for @tasksLoadRefreshError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble refreshing tasks.'**
+  String get tasksLoadRefreshError;
 
   /// No description provided for @taskskNoFilteredTasks.
   ///
@@ -1028,6 +1046,12 @@ abstract class AppLocalizations {
   /// **'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.'**
   String get createNewGoalNoMembers;
 
+  /// No description provided for @createNewGoalMembersLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We ran into a small hiccup loading workspace members.'**
+  String get createNewGoalMembersLoadError;
+
   /// No description provided for @createNewGoalSuccess.
   ///
   /// In en, this message translates to:
@@ -1051,6 +1075,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goal description'**
   String get goalDescriptionLabel;
+
+  /// No description provided for @goalRequiredPointsCurrentAccumulatedPointsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-uh! We\'ve had some trouble loading up this member\'s accumulated points.'**
+  String get goalRequiredPointsCurrentAccumulatedPointsError;
 
   /// No description provided for @goalRequiredPointsCurrentAccumulatedPoints.
   ///
@@ -1249,6 +1279,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goals'**
   String get goalsLabel;
+
+  /// No description provided for @goalsLoadRefreshError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble refreshing goals.'**
+  String get goalsLoadRefreshError;
 
   /// No description provided for @goalsNoGoals.
   ///

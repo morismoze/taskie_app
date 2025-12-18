@@ -57,6 +57,13 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_pointsAbbr => 'bod.';
 
   @override
+  String get misc_errorPrompt =>
+      'Uh-oh! Nešto nije pošlo po planu pri učitavanju.';
+
+  @override
+  String get misc_retry => 'Pokušajmo ponovno';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -131,6 +138,10 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get tasksNoTasks =>
       'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+
+  @override
+  String get tasksLoadRefreshError =>
+      'Uh-oh! Došlo je do problema prilikom osvježavanja zadataka.';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -556,6 +567,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti cilj. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
 
   @override
+  String get createNewGoalMembersLoadError =>
+      'Uh-oh! Došlo je do problema prilikom učitavanja članova radnog prostora.';
+
+  @override
   String get createNewGoalSuccess => 'Uspješno ste kreirali novi cilj';
 
   @override
@@ -566,6 +581,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalDescriptionLabel => 'Opis cilja';
+
+  @override
+  String get goalRequiredPointsCurrentAccumulatedPointsError =>
+      'Uh-uh! Došlo je do problema prilikom učitavanja akumuliranih bodova ovoga korisnika.';
 
   @override
   String get goalRequiredPointsCurrentAccumulatedPoints =>
@@ -693,6 +712,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsLabel => 'Ciljevi';
+
+  @override
+  String get goalsLoadRefreshError =>
+      'Uh-oh! Došlo je do problema prilikom osvježavanja ciljeva.';
 
   @override
   String get goalsNoGoals =>

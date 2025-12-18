@@ -47,10 +47,8 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
       actions: [
         ActionButtonBar.withCommand(
           command: viewModel.deleteWorkspaceUser,
-          onSubmit: (_) => viewModel.deleteWorkspaceUser.execute((
-            workspaceId,
-            workspaceUserId,
-          )),
+          onSubmit: (_) =>
+              viewModel.deleteWorkspaceUser.execute(workspaceUserId),
           onCancel: (BuildContext builderContext) => builderContext.pop(),
           submitButtonText: (BuildContext builderContext) => builderContext
               .localization

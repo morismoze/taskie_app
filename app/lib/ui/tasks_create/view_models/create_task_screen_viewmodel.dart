@@ -16,8 +16,7 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
        _workspaceUserRepository = workspaceUserRepository,
        _workspaceTaskRepository = workspaceTaskRepository {
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
-    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
-      ..execute(workspaceId);
+    loadWorkspaceMembers = Command0(_loadWorkspaceMembers)..execute();
     createTask = Command1(_createTask);
   }
 
@@ -25,7 +24,7 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final _log = Logger('CreateTaskScreenViewmodel');
 
-  late Command1<void, String> loadWorkspaceMembers;
+  late Command0 loadWorkspaceMembers;
   late Command1<
     void,
     (
@@ -52,9 +51,9 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
           .toList() ??
       [];
 
-  Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
+  Future<Result<void>> _loadWorkspaceMembers() async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
-      workspaceId: workspaceId,
+      workspaceId: _activeWorkspaceId,
     );
 
     switch (result) {

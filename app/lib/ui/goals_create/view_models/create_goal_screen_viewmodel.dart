@@ -16,8 +16,7 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
        _workspaceUserRepository = workspaceUserRepository,
        _workspaceGoalRepository = workspaceGoalRepository {
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
-    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
-      ..execute(workspaceId);
+    loadWorkspaceMembers = Command0(_loadWorkspaceMembers)..execute();
     createGoal = Command1(_createGoal);
     loadWorkspaceUserAccumulatedPoints = Command1(
       _loadWorkspaceUserAccumulatedPoints,
@@ -28,7 +27,7 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
   final WorkspaceGoalRepository _workspaceGoalRepository;
   final _log = Logger('CreateGoalScreenViewmodel');
 
-  late Command1<void, String> loadWorkspaceMembers;
+  late Command0 loadWorkspaceMembers;
   late Command1<void, String> loadWorkspaceUserAccumulatedPoints;
   late Command1<
     void,
@@ -54,9 +53,9 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
+  Future<Result<void>> _loadWorkspaceMembers() async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
-      workspaceId: workspaceId,
+      workspaceId: _activeWorkspaceId,
     );
 
     switch (result) {

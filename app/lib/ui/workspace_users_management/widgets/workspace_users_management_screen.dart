@@ -9,6 +9,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/rbac.dart';
@@ -100,22 +101,27 @@ class _WorkspaceUsersManagementScreenState
               ),
               Expanded(
                 child: ListenableBuilder(
-                  listenable: widget.viewModel,
+                  listenable: Listenable.merge([
+                    widget.viewModel.loadWorkspaceMembers,
+                    widget.viewModel,
+                  ]),
                   builder: (builderContext, child) {
-                    if (widget.viewModel.users == null) {
+                    if (widget.viewModel.loadWorkspaceMembers.running &&
+                        widget.viewModel.users == null) {
                       return ActivityIndicator(
                         radius: 16,
                         color: Theme.of(builderContext).colorScheme.primary,
                       );
                     }
 
-                    // If there was an error while fetching from origin, display error prompt
-                    // only on initial load (`widget.viewModel.users will` be `null`). In other
-                    // cases, old list will still be shown, but we will show snackbar.
+                    // Display error prompt only on initial load. In other cases, old list
+                    // will still be shown, but we will show error snackbar.
                     if (widget.viewModel.loadWorkspaceMembers.error &&
                         widget.viewModel.users == null) {
-                      // TODO: Usage of a generic error prompt widget
-                      return const SizedBox.shrink();
+                      return ErrorPrompt(
+                        onRetry: () =>
+                            widget.viewModel.loadWorkspaceMembers.execute(true),
+                      );
                     }
 
                     // We don't have the standard 'First ListenableBuilder listening to a command
@@ -127,10 +133,7 @@ class _WorkspaceUsersManagementScreenState
                     return RefreshIndicator(
                       displacement: 30,
                       onRefresh: () async {
-                        widget.viewModel.loadWorkspaceMembers.execute((
-                          widget.viewModel.activeWorkspaceId,
-                          true,
-                        ));
+                        widget.viewModel.loadWorkspaceMembers.execute(true);
                       },
                       child: ListView.separated(
                         padding: EdgeInsets.only(
@@ -175,11 +178,16 @@ class _WorkspaceUsersManagementScreenState
     }
 
     if (widget.viewModel.loadWorkspaceMembers.error) {
-      widget.viewModel.loadWorkspaceMembers.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.workspaceUsersManagementLoadUsersError,
-      );
+      // Show snackbar only in the case there already is some
+      // cached data - basically when pull-to-refresh happens.
+      // On the first load and error we display the ErrorPrompt widget.
+      if (widget.viewModel.users != null) {
+        widget.viewModel.loadWorkspaceMembers.clearResult();
+        AppSnackbar.showError(
+          context: context,
+          message: context.localization.workspaceUsersManagementLoadUsersError,
+        );
+      }
     }
   }
 

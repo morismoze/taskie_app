@@ -6,16 +6,22 @@ class AppTextButton extends StatelessWidget {
     super.key,
     required this.onPress,
     required this.label,
+    this.disabled = false,
+    this.shrinkWrap = false,
     this.leadingIcon,
     this.color,
-    this.disabled = false,
+    this.minimumSize,
+    this.tapTargetSize,
   });
 
   final void Function() onPress;
   final String label;
+  final bool disabled;
+  final bool shrinkWrap;
   final IconData? leadingIcon;
   final Color? color;
-  final bool disabled;
+  final Size? minimumSize;
+  final MaterialTapTargetSize? tapTargetSize;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +30,11 @@ class AppTextButton extends StatelessWidget {
       style: TextButton.styleFrom(
         overlayColor: Colors.transparent,
         padding: EdgeInsets.zero,
+        minimumSize: minimumSize,
+        tapTargetSize: tapTargetSize,
       ),
       child: Row(
+        mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
         children: [
           if (leadingIcon != null) ...[
             SizedBox(

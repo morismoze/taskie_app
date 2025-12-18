@@ -57,6 +57,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_pointsAbbr => 'pts';
 
   @override
+  String get misc_errorPrompt =>
+      'Uh-oh! We ran into a small hiccup loading this.';
+
+  @override
+  String get misc_retry => 'Let\'s try again';
+
+  @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
 
   @override
@@ -131,6 +138,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tasksNoTasks =>
       'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!';
+
+  @override
+  String get tasksLoadRefreshError =>
+      'Uh-oh! We\'ve had some trouble refreshing tasks.';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -553,6 +564,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.';
 
   @override
+  String get createNewGoalMembersLoadError =>
+      'Uh-oh! We ran into a small hiccup loading workspace members.';
+
+  @override
   String get createNewGoalSuccess => 'Successfully created new goal';
 
   @override
@@ -563,6 +578,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalDescriptionLabel => 'Goal description';
+
+  @override
+  String get goalRequiredPointsCurrentAccumulatedPointsError =>
+      'Uh-uh! We\'ve had some trouble loading up this member\'s accumulated points.';
 
   @override
   String get goalRequiredPointsCurrentAccumulatedPoints =>
@@ -687,6 +706,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalsLabel => 'Goals';
+
+  @override
+  String get goalsLoadRefreshError =>
+      'Uh-oh! We\'ve had some trouble refreshing goals.';
 
   @override
   String get goalsNoGoals =>
