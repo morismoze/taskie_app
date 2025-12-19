@@ -118,7 +118,6 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             },
           ),
           const SizedBox(height: 10),
-          const SizedBox(height: 10),
           AppTextFormField(
             controller: _requiredPointsController,
             label: context.localization.goalRequiredPointsLabel,

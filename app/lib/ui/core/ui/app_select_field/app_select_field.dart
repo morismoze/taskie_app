@@ -141,6 +141,10 @@ class AppSelectField<T> extends StatelessWidget {
   }
 
   void _openOptions(BuildContext context) {
+    // Unfocus last field as this custom select field
+    // does not "own" its own focus
+    FocusManager.instance.primaryFocus?.unfocus();
+
     AppModalBottomSheet.show(
       context: context,
       isScrollControlled: true,

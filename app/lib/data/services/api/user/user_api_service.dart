@@ -19,8 +19,8 @@ class UserApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../utils/command.dart';
@@ -13,7 +12,6 @@ class PreferencesScreenViewModel extends ChangeNotifier {
   }
 
   final PreferencesRepository _preferencesRepository;
-  final _log = Logger('PreferencesScreenViewModel');
 
   late Command1<void, Locale> setAppLocale;
 
@@ -31,7 +29,6 @@ class PreferencesScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.severe('Failed to set app locale', result.error);
         return result;
     }
   }

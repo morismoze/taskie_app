@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../../data/repositories/user/user_repository.dart';
 import '../../../../data/repositories/workspace/workspace/workspace_repository.dart';
@@ -56,7 +55,6 @@ class AppDrawerViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final ActiveWorkspaceChangeUseCase _activeWorkspaceChangeUseCase;
-  final _log = Logger('AppDrawerViewModel');
 
   late Command0 loadWorkspaces;
 
@@ -108,7 +106,6 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to load workspaces', result.error);
     }
 
     return result;
@@ -123,7 +120,6 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         return Result.ok(workspaceId);
       case Error():
-        _log.warning('Failed to change active workspace', result.error);
         return Result.error(result.error);
     }
   }
@@ -139,7 +135,6 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to leave the workspace', resultLeave.error);
         return Result.error(resultLeave.error);
     }
 
@@ -151,7 +146,6 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to refresh token', resultRefresh.error);
         return Result.error(resultRefresh.error);
     }
 
@@ -172,7 +166,6 @@ class AppDrawerViewModel extends ChangeNotifier {
             case Ok():
               break;
             case Error():
-              _log.warning('Failed to refresh the user', resultUser.error);
               return Result.error(resultUser.error);
           }
 
@@ -208,13 +201,11 @@ class AppDrawerViewModel extends ChangeNotifier {
           case Ok():
             break;
           case Error():
-            _log.warning('Failed to refresh the user', resultUser.error);
             return Result.error(resultUser.error);
         }
 
         return const Result.ok(LeaveWorkspaceResultCloseOverlays());
       case Error():
-        _log.warning('Failed to load workspaces', resultLoad.error);
         return Result.error(resultLoad.error);
     }
   }

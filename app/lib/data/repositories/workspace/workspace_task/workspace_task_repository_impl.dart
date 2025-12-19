@@ -272,8 +272,15 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
                   ),
                 )
                 .toList();
+
+            // We need to add new assignee sorted because assignees are
+            // sorted alphabetically by firstName and eastName
+            final updatedAssignees = [
+              ...existingTask.assignees,
+              ...newAssignees,
+            ]..sort(_assigneeCmp);
             final updatedTask = existingTask.copyWith(
-              assignees: [...existingTask.assignees, ...newAssignees],
+              assignees: updatedAssignees,
             );
             _cachedTasks!.items[taskIndex] = updatedTask;
             notifyListeners();
@@ -463,5 +470,25 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       dueDate: task.dueDate,
       isNew: isNew,
     );
+  }
+
+  int _assigneeCmp(WorkspaceTaskAssignee a, WorkspaceTaskAssignee b) {
+    final aFirst = a.firstName.toLowerCase();
+    final aLast = a.lastName.toLowerCase();
+    final bFirst = b.firstName.toLowerCase();
+    final bLast = a.lastName.toLowerCase();
+
+    final byFirst = aFirst.compareTo(bFirst);
+    if (byFirst != 0) {
+      return byFirst;
+    }
+
+    final byLast = aLast.compareTo(bLast);
+    if (byLast != 0) {
+      return byLast;
+    }
+
+    // Stability - we never return 0 (equal)
+    return a.id.compareTo(b.id);
   }
 }

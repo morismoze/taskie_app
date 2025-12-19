@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/auth/auth_state_repository.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
@@ -18,7 +17,6 @@ class AppStartupViewModel {
 
   final PreferencesRepository _preferencesRepository;
   final AuthStateRepository _authStateRepository;
-  final _log = Logger('AppStartupViewModel');
 
   late Command0 bootstrap;
 
@@ -30,7 +28,6 @@ class AppStartupViewModel {
       case Ok<Locale?>():
         break;
       case Error<Locale?>():
-        _log.severe('Failed to get app locale', resultLoadAppLocale.error);
         return Result.error(resultLoadAppLocale.error);
     }
 
@@ -48,7 +45,6 @@ class AppStartupViewModel {
         case Ok():
           break;
         case Error():
-          _log.severe('Failed to set app locale', result.error);
           return Result.error(result.error);
       }
     }

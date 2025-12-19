@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../data/repositories/user/user_repository.dart';
@@ -26,7 +25,6 @@ class GoalsScreenViewmodel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final WorkspaceGoalRepository _workspaceGoalRepository;
   final PreferencesRepository _preferencesRepository;
-  final _log = Logger('GoalsScreenViewmodel');
 
   late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadGoals;
 
@@ -97,7 +95,6 @@ class GoalsScreenViewmodel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load goals', result.error);
         return result;
     }
   }

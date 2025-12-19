@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../data/services/api/value_patch.dart';
@@ -23,7 +22,6 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final String _taskId;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('TaskDetailsEditScreenViewModel');
 
   late Command0 closeTask;
   late Command1<
@@ -58,7 +56,6 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
         // edit screen VM, which then tries to load the details again in a split
         // second before task is closed and user is navigated back to tasks
         // screen. Hence why we return positive result.
-        _log.warning('Failed to load task details', result.error);
         return const Result.ok(null);
     }
   }
@@ -87,7 +84,6 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to update task details', result.error);
         return result;
     }
   }
@@ -102,7 +98,6 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to close the task', result.error);
         return result;
     }
   }

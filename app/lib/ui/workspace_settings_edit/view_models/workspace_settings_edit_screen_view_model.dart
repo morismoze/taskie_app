@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../domain/models/workspace.dart';
@@ -17,7 +16,6 @@ class WorkspaceSettingsEditScreenViewModel extends ChangeNotifier {
 
   final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
-  final _log = Logger('WorkspaceSettingsEditScreenViewModel');
 
   late Command1<void, (String? name, String? description)> editWorkspaceDetails;
 
@@ -36,10 +34,7 @@ class WorkspaceSettingsEditScreenViewModel extends ChangeNotifier {
         _details = activeWorkspaceDetailsResult.value;
         return;
       case Error():
-        _log.warning(
-          'Failed to load workspace details',
-          activeWorkspaceDetailsResult.error,
-        );
+        return;
     }
   }
 
@@ -63,7 +58,6 @@ class WorkspaceSettingsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to update workspace details', result.error);
         return result;
     }
   }

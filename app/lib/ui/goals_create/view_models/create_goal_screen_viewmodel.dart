@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -25,7 +24,6 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceGoalRepository _workspaceGoalRepository;
-  final _log = Logger('CreateGoalScreenViewmodel');
 
   late Command0 loadWorkspaceMembers;
   late Command1<void, String> loadWorkspaceUserAccumulatedPoints;
@@ -62,7 +60,6 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -82,7 +79,6 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -104,7 +100,6 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to create new goal', result.error);
         return result;
     }
   }

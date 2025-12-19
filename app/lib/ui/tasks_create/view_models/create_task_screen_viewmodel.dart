@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -22,7 +21,6 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
 
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('CreateTaskScreenViewmodel');
 
   late Command0 loadWorkspaceMembers;
   late Command1<
@@ -60,7 +58,6 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -89,7 +86,6 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to create new task', result.error);
         return result;
     }
   }

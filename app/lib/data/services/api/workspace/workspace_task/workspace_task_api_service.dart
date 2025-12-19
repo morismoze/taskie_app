@@ -50,8 +50,8 @@ class WorkspaceTaskApiService {
           );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -71,8 +71,8 @@ class WorkspaceTaskApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -93,14 +93,14 @@ class WorkspaceTaskApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
         return const Result.error(TaskClosedException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -125,7 +125,7 @@ class WorkspaceTaskApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
@@ -140,7 +140,7 @@ class WorkspaceTaskApiService {
         return const Result.error(TaskAssigneesAlreadyExistException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -156,14 +156,14 @@ class WorkspaceTaskApiService {
       );
 
       return const Result.ok(null);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
         return const Result.error(TaskClosedException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -189,7 +189,7 @@ class WorkspaceTaskApiService {
           );
 
       return Result.ok(apiResponse.data!);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
@@ -200,7 +200,7 @@ class WorkspaceTaskApiService {
         return const Result.error(TaskAssigneesInvalidException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -212,14 +212,14 @@ class WorkspaceTaskApiService {
       await _apiClient.client.post(ApiEndpoints.closeTask(workspaceId, taskId));
 
       return const Result.ok(null);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
         return const Result.error(TaskClosedException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 }

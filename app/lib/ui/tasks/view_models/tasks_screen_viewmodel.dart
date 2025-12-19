@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../data/repositories/user/user_repository.dart';
@@ -32,7 +31,6 @@ class TasksScreenViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final PreferencesRepository _preferencesRepository;
-  final _log = Logger('TasksScreenViewModel');
 
   late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadTasks;
   late Command0 refreshUser;
@@ -101,7 +99,6 @@ class TasksScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load tasks', result.error);
         return result;
     }
   }
@@ -113,7 +110,6 @@ class TasksScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to refresh user', resultLoadUser.error);
         return Result.error(resultLoadUser.error);
     }
   }

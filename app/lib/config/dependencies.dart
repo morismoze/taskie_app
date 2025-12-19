@@ -32,6 +32,7 @@ import '../data/services/api/workspace/workspace_leaderboard/workspace_leaderboa
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
+import '../data/services/local/logger.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
@@ -44,12 +45,16 @@ import '../ui/core/services/rbac_service.dart';
 
 List<SingleChildWidget> get providers {
   return [
+    Provider(create: (context) => LoggerService()),
     Provider(create: (context) => SecureStorageService()),
     Provider(create: (context) => SharedPreferencesService()),
     Provider(create: (context) => GoogleAuthService()),
     ChangeNotifierProvider(
       create: (context) =>
-          AuthStateRepositoryImpl(secureStorageService: context.read())
+          AuthStateRepositoryImpl(
+                secureStorageService: context.read(),
+                loggerService: context.read(),
+              )
               as AuthStateRepository,
     ),
     Provider(

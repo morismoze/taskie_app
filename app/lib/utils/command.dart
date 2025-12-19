@@ -94,7 +94,8 @@ sealed class Result<T> {
   const factory Result.ok(T value) = Ok._;
 
   /// Creates an error [Result], completed with the specified [error].
-  const factory Result.error(Exception error) = Error._;
+  const factory Result.error(Exception error, [StackTrace? stackTrace]) =
+      Error._;
 }
 
 final class Ok<T> extends Result<T> {
@@ -107,9 +108,10 @@ final class Ok<T> extends Result<T> {
 }
 
 final class Error<T> extends Result<T> {
-  const Error._(this.error);
+  const Error._(this.error, [this.stackTrace]);
 
   final Exception error;
+  final StackTrace? stackTrace;
 
   @override
   String toString() => 'Result<$T>.error($error)';

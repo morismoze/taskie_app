@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
@@ -20,7 +19,6 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
 
   final UserRepository _userRepository;
   final CreateWorkspaceUseCase _createWorkspaceUseCase;
-  final _log = Logger('CreateWorkspaceInitialScreenViewModel');
 
   late Command0 loadUser;
 
@@ -39,7 +37,6 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
         _user = result.value;
         notifyListeners();
       case Error():
-        _log.warning('Failed to load user', result.error);
     }
 
     notifyListeners();

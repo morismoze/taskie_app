@@ -100,57 +100,94 @@ export class TaskRepositoryImpl implements TaskRepository {
     totalPages: number;
     total: number;
   }> {
-    const offset = (page - 1) * limit;
+    // We use 2-phase query since a task can have multiple task assignments
+    // (1:N relation) and to avoid group bys and distincts, and also possible
+    // empty items resulting array, because resulting row multiplication can
+    // happen and ruin pagination.
+    // On 1:N relations, skip/take works on resulting rows, and not on entities
+    // meaning it can skip one task which has 5 assignments (if skip was 5),
+    // and not skip 5 tasks.
 
-    const qb = this.repo
+    // Phase 1: paginate only the "main" table: filtering and sorting only on
+    // the Task table, take total and take tasks' IDs
+    const baseQb = this.repo
       .createQueryBuilder('task')
-      .leftJoinAndSelect('task.taskAssignments', 'assignment') // all assignments
-      .leftJoinAndSelect('assignment.assignee', 'assignee')
-      .leftJoinAndSelect('assignee.user', 'user')
-      .leftJoinAndSelect('task.createdBy', 'createdBy')
-      .leftJoinAndSelect('createdBy.user', 'createdByUser')
       .where('task.workspace.id = :workspaceId', { workspaceId });
 
     if (status) {
-      // Filter tasks so that at least one task assignment has the provided
-      // status, and also load all task assignments of that task, regardless
-      // its status. "EXISTS" enables to check if there is any task assignment
-      // with the provided status.
-      qb.andWhere((qb2) => {
-        const subQuery = qb2
-          .subQuery()
-          .select('1') // random select, EXISTS doesn't care about the value
-          .from(TaskAssignmentEntity, 'ta')
-          .where('ta.task_id = task.id')
-          .andWhere('ta.status = :status')
-          .getQuery();
-        return `EXISTS ${subQuery}`;
-      }).setParameter('status', status);
+      // Status filter: task has at least one assignment with the given status
+      baseQb
+        .andWhere((qb) => {
+          const sub = qb
+            .subQuery()
+            .select('1')
+            .from(TaskAssignmentEntity, 'ta')
+            .where('ta.task.id = task.id')
+            .andWhere('ta.status = :status')
+            .getQuery();
+          return `EXISTS ${sub}`;
+        })
+        .setParameter('status', status);
     }
 
     if (search) {
-      qb.andWhere('LOWER(task.title) LIKE :search', {
+      baseQb.andWhere('LOWER(task.title) LIKE :search', {
         search: `%${search.toLowerCase()}%`,
       });
     }
 
-    if (sort) {
-      switch (sort) {
-        case SortBy.NEWEST:
-          qb.orderBy('task.createdAt', 'DESC');
-          break;
-        case SortBy.OLDEST:
-          qb.orderBy('task.createdAt', 'ASC');
-          break;
-      }
+    switch (sort) {
+      case SortBy.NEWEST:
+        baseQb.orderBy('task.createdAt', 'DESC');
+        break;
+      case SortBy.OLDEST:
+        baseQb.orderBy('task.createdAt', 'ASC');
+        break;
+      default:
+        baseQb.orderBy('task.createdAt', 'DESC');
     }
 
-    qb.distinct(true).skip(offset).take(limit);
+    const offset = (page - 1) * limit;
+    // clone method is used because QB is not mutable and thread-safe
+    const [idRows, totalCount] = await Promise.all([
+      baseQb
+        .clone()
+        .select('task.id', 'id')
+        .skip(offset)
+        .take(limit)
+        .getRawMany<{ id: string }>(),
+      baseQb.clone().getCount(),
+    ]);
 
-    const [taskEntities, totalCount] = await qb.getManyAndCount();
+    const ids = idRows.map((r) => r.id);
+
+    // This can happen if the wanted page is > totalPages,
+    // and total is pointing to the fact that there still
+    // is data in the database, just not on this page
+    if (ids.length === 0) {
+      return {
+        data: [],
+        totalPages: Math.ceil(totalCount / limit),
+        total: totalCount,
+      };
+    }
+
+    // Phase 2: retrieval of needed relations for IDs from phase 1
+    const data = await this.repo
+      .createQueryBuilder('task')
+      .whereInIds(ids)
+      .leftJoinAndSelect('task.taskAssignments', 'assignment')
+      .leftJoinAndSelect('assignment.assignee', 'assignee')
+      .leftJoinAndSelect('assignee.user', 'user')
+      .leftJoinAndSelect('task.createdBy', 'createdBy')
+      .leftJoinAndSelect('createdBy.user', 'createdByUser')
+      .orderBy('task.createdAt', sort === SortBy.OLDEST ? 'ASC' : 'DESC')
+      .addOrderBy('user.firstName', 'ASC')
+      .addOrderBy('user.lastName', 'ASC')
+      .getMany();
 
     return {
-      data: taskEntities,
+      data,
       totalPages: Math.ceil(totalCount / limit),
       total: totalCount,
     };

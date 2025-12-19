@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../../data/repositories/user/user_repository.dart';
 import '../../../../domain/constants/rbac.dart';
@@ -21,7 +20,6 @@ class AppBottomNavigationBarViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final RbacService _rbacService;
-  final _log = Logger('AppBottomNavigationBarViewModel');
 
   String get activeWorkspaceId => _activeWorkspaceId;
 

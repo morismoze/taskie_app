@@ -33,8 +33,8 @@ class WorkspaceUserApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -54,8 +54,8 @@ class WorkspaceUserApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -69,8 +69,8 @@ class WorkspaceUserApiService {
       );
 
       return const Result.ok(null);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -91,8 +91,8 @@ class WorkspaceUserApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -118,8 +118,8 @@ class WorkspaceUserApiService {
           );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 }

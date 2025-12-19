@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -24,7 +23,6 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('WorkspaceUsersManagementScreenViewModel');
 
   /// bool force fetch argument
   late Command1<void, bool?> loadWorkspaceMembers;
@@ -95,7 +93,6 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
         notifyListeners();
         break;
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
     }
 
     return result;
@@ -111,7 +108,6 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to delete workspace user', result.error);
         return result;
     }
   }

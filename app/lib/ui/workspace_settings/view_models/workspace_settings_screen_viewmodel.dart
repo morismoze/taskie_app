@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../domain/models/workspace.dart';
@@ -16,7 +15,6 @@ class WorkspaceSettingsScreenViewModel extends ChangeNotifier {
 
   final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
-  final _log = Logger('WorkspaceSettingsScreenViewModel');
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -35,7 +33,6 @@ class WorkspaceSettingsScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace details', result.error);
         return result;
     }
   }

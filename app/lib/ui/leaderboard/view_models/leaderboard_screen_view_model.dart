@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/leaderboard/workspace_leaderboard_repository.dart';
 import '../../../domain/models/workspace_leaderboard_user.dart';
@@ -17,7 +16,6 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
 
   final String _activeWorkspaceId;
   final WorkspaceLeaderboardRepository _workspaceLeaderboardRepository;
-  final _log = Logger('LeaderboardScreenViewModel');
 
   late Command1<void, bool?> loadLeaderboard;
 
@@ -52,7 +50,6 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace leaderboard', result.error);
         return result;
     }
   }

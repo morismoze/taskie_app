@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -35,7 +34,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
   final String _taskId;
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('TaskAssignmentsEditScreenViewModel');
 
   late Command1<void, List<String>> addTaskAssignee;
   late Command1<void, String> removeTaskAssignee;
@@ -85,7 +83,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load task details', result.error);
         return result;
     }
   }
@@ -99,7 +96,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -115,7 +111,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to add task assignee', result.error);
         return result;
     }
   }
@@ -131,7 +126,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to add task assignee', result.error);
         return result;
     }
   }
@@ -149,7 +143,6 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to edit task assignments', result.error);
         return result;
     }
   }
