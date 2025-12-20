@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -33,7 +32,6 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
   final String _goalId;
   final WorkspaceGoalRepository _workspaceGoalRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('GoalDetailsEditScreenViewModel');
 
   late Command1<void, String> loadWorkspaceMembers;
   late Command0 closeGoal;
@@ -77,8 +75,12 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load goal details', result.error);
-        return result;
+        // This can happen when a goal gets closed and removed from the cache
+        // and the repository notifies listeners, in this case the goal details
+        // edit screen VM, which then tries to load the details again in a split
+        // second before goal is closed and user is navigated back to goals
+        // screen. Hence why we return positive result.
+        return const Result.ok(null);
     }
   }
 
@@ -91,7 +93,6 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -127,7 +128,6 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to update goal details', result.error);
         return result;
     }
   }
@@ -142,7 +142,6 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to close the goal', result.error);
         return result;
     }
   }

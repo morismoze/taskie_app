@@ -80,14 +80,23 @@ class _JoinWorkspaceViaInviteFormState
               ),
               const SizedBox(height: 20),
               ListenableBuilder(
-                listenable: widget.viewModel.joinWorkspaceViaInviteLink,
-                builder: (builderContext, _) => AppFilledButton(
-                  onPress: _onSubmit,
-                  label: builderContext
-                      .localization
-                      .workspaceCreateJoinViaInviteLinkSubmit,
-                  loading: widget.viewModel.joinWorkspaceViaInviteLink.running,
-                ),
+                listenable: Listenable.merge([
+                  widget.viewModel.joinWorkspaceViaInviteLink,
+                  _inviteLinkController,
+                ]),
+                builder: (builderContext, _) {
+                  final enabledSubmit = _inviteLinkController.text.isNotEmpty;
+
+                  return AppFilledButton(
+                    onPress: _onSubmit,
+                    label: builderContext
+                        .localization
+                        .workspaceCreateJoinViaInviteLinkSubmit,
+                    loading:
+                        widget.viewModel.joinWorkspaceViaInviteLink.running,
+                    disabled: !enabledSubmit,
+                  );
+                },
               ),
             ],
           ),

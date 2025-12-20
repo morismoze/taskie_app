@@ -26,10 +26,10 @@ class _LocalizationLanguageOptionState
 
   @override
   void initState() {
+    super.initState();
     setState(() {
       _initialLocale = widget.viewModel.appLocale;
     });
-    super.initState();
   }
 
   void _onSubmit(Locale locale) {
@@ -89,8 +89,7 @@ class _LocalizationLanguageOptionState
             command: widget.viewModel.setAppLocale,
             onSubmit: (BuildContext builderContext) =>
                 _onSubmit(dialogSelectedLocale),
-            onCancel: (BuildContext builderContext) =>
-                Navigator.pop(builderContext),
+            onCancel: (BuildContext builderContext) => builderContext.pop(),
           ),
         );
       },

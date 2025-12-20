@@ -2,13 +2,18 @@ import '../../../domain/models/user.dart';
 import '../../../utils/command.dart';
 import '../../services/api/user/models/response/user_response.dart';
 import '../../services/api/user/user_api_service.dart';
+import '../../services/local/logger.dart';
 import 'user_repository.dart';
 
 class UserRepositoryImpl extends UserRepository {
-  UserRepositoryImpl({required UserApiService userApiService})
-    : _userApiService = userApiService;
+  UserRepositoryImpl({
+    required UserApiService userApiService,
+    required LoggerService loggerService,
+  }) : _userApiService = userApiService,
+       _loggerService = loggerService;
 
   final UserApiService _userApiService;
+  final LoggerService _loggerService;
 
   User? _cachedUser;
 
@@ -45,6 +50,12 @@ class UserRepositoryImpl extends UserRepository {
 
         return Result.ok(_cachedUser!);
       case Error<UserResponse>():
+        _loggerService.log(
+          LogLevel.error,
+          'userApiService.getCurrentUser failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
         return Result.error(result.error);
     }
   }

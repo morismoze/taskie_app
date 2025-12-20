@@ -37,16 +37,15 @@ class TasksHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        context.localization.tasksHello,
+                        builderContext.localization.tasksHello,
                         style: Theme.of(
-                          context,
+                          builderContext,
                         ).textTheme.labelLarge!.copyWith(fontSize: 14),
                       ),
                       Text(
                         fullName,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(builderContext).textTheme.titleLarge!
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   );

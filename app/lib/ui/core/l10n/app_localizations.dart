@@ -194,6 +194,18 @@ abstract class AppLocalizations {
   /// **'pts'**
   String get misc_pointsAbbr;
 
+  /// No description provided for @misc_errorPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We ran into a small hiccup loading this.'**
+  String get misc_errorPrompt;
+
+  /// No description provided for @misc_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s try again'**
+  String get misc_retry;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -326,6 +338,12 @@ abstract class AppLocalizations {
   /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!'**
   String get tasksNoTasks;
 
+  /// No description provided for @tasksLoadRefreshError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble refreshing tasks.'**
+  String get tasksLoadRefreshError;
+
   /// No description provided for @taskskNoFilteredTasks.
   ///
   /// In en, this message translates to:
@@ -455,13 +473,13 @@ abstract class AppLocalizations {
   /// No description provided for @tasksClosedTaskError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the homepage and refresh your feed.'**
+  /// **'Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the Homepage and refresh your feed.'**
   String get tasksClosedTaskError;
 
   /// No description provided for @tasksAmendedAssigneesError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the homepage, refresh your feed and return to this task assignments.'**
+  /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.'**
   String get tasksAmendedAssigneesError;
 
   /// No description provided for @tasksRemoveTaskAssignmentModalMessage.
@@ -541,6 +559,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add additional assignees to this task:'**
   String get tasksAssignmentsEditAddNewAssignee;
+
+  /// No description provided for @tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum number of 10 assignees have been assigned to this task. Try removing some if you wish to add new ones.'**
+  String get tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees;
+
+  /// No description provided for @tasksAssignmentsEditAddNewAssigneeEmptyAssignees.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no members left to assign to this task. Try adding or inviting new ones to your workspace.'**
+  String get tasksAssignmentsEditAddNewAssigneeEmptyAssignees;
 
   /// No description provided for @tasksAssignmentsGuideMainTitle.
   ///
@@ -661,6 +691,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It looks like your workspace doesn\'t have any members to assign a task to yet. Try inviting someone or creating virtual members.'**
   String get createNewTaskNoMembers;
+
+  /// No description provided for @createNewTaskSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully created new task'**
+  String get createNewTaskSuccess;
 
   /// No description provided for @objectiveNoMembersCta.
   ///
@@ -1010,6 +1046,18 @@ abstract class AppLocalizations {
   /// **'It looks like your workspace doesn\'t have any members to assign a goal to yet. Try inviting someone or creating virtual members.'**
   String get createNewGoalNoMembers;
 
+  /// No description provided for @createNewGoalMembersLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We ran into a small hiccup loading workspace members.'**
+  String get createNewGoalMembersLoadError;
+
+  /// No description provided for @createNewGoalSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully created new goal'**
+  String get createNewGoalSuccess;
+
   /// No description provided for @createNewGoalTitle.
   ///
   /// In en, this message translates to:
@@ -1027,6 +1075,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goal description'**
   String get goalDescriptionLabel;
+
+  /// No description provided for @goalRequiredPointsCurrentAccumulatedPointsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-uh! We\'ve had some trouble loading up this member\'s accumulated points.'**
+  String get goalRequiredPointsCurrentAccumulatedPointsError;
 
   /// No description provided for @goalRequiredPointsCurrentAccumulatedPoints.
   ///
@@ -1226,6 +1280,12 @@ abstract class AppLocalizations {
   /// **'Goals'**
   String get goalsLabel;
 
+  /// No description provided for @goalsLoadRefreshError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble refreshing goals.'**
+  String get goalsLoadRefreshError;
+
   /// No description provided for @goalsNoGoals.
   ///
   /// In en, this message translates to:
@@ -1307,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsClosedGoalError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the goals page and refresh your feed.'**
+  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the Goals page and refresh your feed.'**
   String get goalsClosedGoalError;
 
   /// No description provided for @goalsDetailsAssignedTo.

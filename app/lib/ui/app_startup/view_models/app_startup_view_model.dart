@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../data/repositories/auth/auth_state_repository.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
@@ -18,7 +17,6 @@ class AppStartupViewModel {
 
   final PreferencesRepository _preferencesRepository;
   final AuthStateRepository _authStateRepository;
-  final _log = Logger('AppStartupViewModel');
 
   late Command0 bootstrap;
 
@@ -26,18 +24,11 @@ class AppStartupViewModel {
     // 1.a Load app locale from shared prefs
     final resultLoadAppLocale = await _preferencesRepository.loadAppLocale();
 
-    switch (resultLoadAppLocale) {
-      case Ok<Locale?>():
-        break;
-      case Error<Locale?>():
-        _log.severe('Failed to get app locale', resultLoadAppLocale.error);
-        return Result.error(resultLoadAppLocale.error);
-    }
-
-    if (resultLoadAppLocale.value == null) {
+    // loadAppLocale always returns positive result
+    if ((resultLoadAppLocale as Ok<Locale?>).value == null) {
       // 1.b Set app locale if locale from shared prefs is null
       final systemLocale = PlatformDispatcher.instance.locale;
-      final supportedLocale = IntlUtils.getSupportedLanguageFromLangugageCode(
+      final supportedLocale = IntlUtils.getSupportedLanguageFromLanguageCode(
         systemLocale.languageCode,
       );
       final result = await _preferencesRepository.setAppLocale(
@@ -48,7 +39,6 @@ class AppStartupViewModel {
         case Ok():
           break;
         case Error():
-          _log.severe('Failed to set app locale', result.error);
           return Result.error(result.error);
       }
     }

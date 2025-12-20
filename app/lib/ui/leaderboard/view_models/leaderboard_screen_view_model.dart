@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/leaderboard/workspace_leaderboard_repository.dart';
 import '../../../domain/models/workspace_leaderboard_user.dart';
@@ -17,7 +16,6 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
 
   final String _activeWorkspaceId;
   final WorkspaceLeaderboardRepository _workspaceLeaderboardRepository;
-  final _log = Logger('LeaderboardScreenViewModel');
 
   late Command1<void, bool?> loadLeaderboard;
 
@@ -31,16 +29,6 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
     }
 
     final sortedLeaderboard = List<WorkspaceLeaderboardUser>.from(leaderbard);
-    // Sort leaderboard users by accumulated points
-    sortedLeaderboard.sort((l1, l2) {
-      if (l1.accumulatedPoints > l2.accumulatedPoints) {
-        return -1;
-      } else if (l1.accumulatedPoints < l2.accumulatedPoints) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
 
     // Filter out users whose accumulated points equal to 0
     sortedLeaderboard.removeWhere((lu) => lu.accumulatedPoints == 0);
@@ -62,7 +50,6 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace leaderboard', result.error);
         return result;
     }
   }

@@ -63,14 +63,25 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
               ),
               const SizedBox(height: 20),
               ListenableBuilder(
-                listenable: widget.viewModel.createVirtualUser,
-                builder: (builderContext, _) => AppFilledButton(
-                  onPress: _onSubmit,
-                  label: builderContext
-                      .localization
-                      .workspaceUsersManagementCreateVirtualUserSubmit,
-                  loading: widget.viewModel.createVirtualUser.running,
-                ),
+                listenable: Listenable.merge([
+                  widget.viewModel.createVirtualUser,
+                  _firstNameController,
+                  _lastNameController,
+                ]),
+                builder: (builderContext, _) {
+                  final enabledSubmit =
+                      _firstNameController.text.isNotEmpty &&
+                      _lastNameController.text.isNotEmpty;
+
+                  return AppFilledButton(
+                    onPress: _onSubmit,
+                    label: builderContext
+                        .localization
+                        .workspaceUsersManagementCreateVirtualUserSubmit,
+                    loading: widget.viewModel.createVirtualUser.running,
+                    disabled: !enabledSubmit,
+                  );
+                },
               ),
             ],
           ),

@@ -8,6 +8,8 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
+import '../../core/ui/error_prompt.dart';
+import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/leaderboard_screen_view_model.dart';
 import 'leaderboard_header_content.dart';
 import 'leaderboard_list.dart';
@@ -24,8 +26,8 @@ class LeaderboardScreen extends StatefulWidget {
 class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
   @override
   void initState() {
-    widget.viewModel.loadLeaderboard.addListener(_onLeaderboardLoadResult);
     super.initState();
+    widget.viewModel.loadLeaderboard.addListener(_onLeaderboardLoadResult);
   }
 
   @override
@@ -52,14 +54,11 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
     return Scaffold(
       body: BlurredCirclesBackground(
         child: ListenableBuilder(
-          listenable: widget.viewModel,
+          listenable: Listenable.merge([
+            widget.viewModel.loadLeaderboard,
+            widget.viewModel,
+          ]),
           builder: (builderContext, child) {
-            // We don't have the standard 'First ListenableBuilder listening to a command
-            // and its child is the second ListenableBuilder listening to viewModel' because
-            // we want to show [ActivityIndicator] only on the initial load. All other loads
-            // after that will happen when user pulls-to-refresh (and if the app process was not
-            // killed by the underlying OS). And in that case we want to show the existing
-            // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
             return RefreshIndicator(
               displacement: 30,
               edgeOffset: refreshIndicatorEdgeOffset,
@@ -86,16 +85,24 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
                       systemNavigationBarIconBrightness: Brightness.dark,
                     ),
                   ),
-                  // If there was an error while fetching from origin, display error prompt
-                  // only on initial load (`widget.viewModel.users will` be `null`). In other
-                  // cases, old list will still be shown, but we will show snackbar.
+                  // Display error prompt only on initial load. In other cases, old list
+                  // will still be shown, but we will show error snackbar.
                   if (widget.viewModel.loadLeaderboard.error &&
                       widget.viewModel.leaderboard == null)
-                    // TODO: Usage of a generic error prompt widget
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.only(top: Dimens.paddingVertical),
-                        child: SizedBox.shrink(),
+                        padding: const EdgeInsets.only(
+                          top: Dimens.paddingVertical,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: kAppBottomNavigationBarHeight,
+                          ),
+                          child: ErrorPrompt(
+                            onRetry: () =>
+                                widget.viewModel.loadLeaderboard.execute(true),
+                          ),
+                        ),
                       ),
                     )
                   else if (widget.viewModel.leaderboard == null)
@@ -145,11 +152,16 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
     }
 
     if (widget.viewModel.loadLeaderboard.error) {
-      widget.viewModel.loadLeaderboard.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.leaderboardLoadError,
-      );
+      // Show snackbar only in the case there already is some
+      // cached data - basically when pull-to-refresh happens.
+      // On the first load and error we display the ErrorPrompt widget.
+      if (widget.viewModel.leaderboard != null) {
+        widget.viewModel.loadLeaderboard.clearResult();
+        AppSnackbar.showError(
+          context: context,
+          message: context.localization.leaderboardLoadError,
+        );
+      }
     }
   }
 }

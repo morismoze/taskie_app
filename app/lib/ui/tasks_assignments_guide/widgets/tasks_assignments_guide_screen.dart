@@ -7,8 +7,8 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/guide_section.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 
-class TasksDetailsAssignmentsGuideScreen extends StatelessWidget {
-  const TasksDetailsAssignmentsGuideScreen({super.key});
+class TasksAssignmentsGuideScreen extends StatelessWidget {
+  const TasksAssignmentsGuideScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

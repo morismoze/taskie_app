@@ -30,23 +30,29 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _requiredPointsController =
       TextEditingController();
-  AppSelectFieldOption<WorkspaceUser>? _selectedAssignee;
+  final ValueNotifier<AppSelectFieldOption<WorkspaceUser>?>
+  _selectedAssigneeNotifier = ValueNotifier(null);
 
   void _onAssigneeSelected(
     AppSelectFieldOption<WorkspaceUser> selectedOptions,
   ) {
-    setState(() {
-      _selectedAssignee = selectedOptions;
-    });
+    _selectedAssigneeNotifier.value = selectedOptions;
     widget.viewModel.loadWorkspaceUserAccumulatedPoints.execute(
-      _selectedAssignee!.value.id,
+      _selectedAssigneeNotifier.value!.value.id,
     );
   }
 
   void _onAssigneeCleared() {
-    setState(() {
-      _selectedAssignee = null;
-    });
+    _selectedAssigneeNotifier.value = null;
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _requiredPointsController.dispose();
+    _selectedAssigneeNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -92,21 +98,34 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
-          AppSelectFormField.single(
-            options: members,
-            value: _selectedAssignee,
-            onChanged: _onAssigneeSelected,
-            onCleared: _onAssigneeCleared,
-            label: context.localization.objectiveAssigneeLabel,
-            validator: (assignee) => _validateAssignee(context, assignee),
+          ValueListenableBuilder(
+            valueListenable: _selectedAssigneeNotifier,
+            builder: (builderContext, selectedAssigneeValue, _) =>
+                AppSelectFormField.single(
+                  options: members,
+                  value: selectedAssigneeValue,
+                  onChanged: _onAssigneeSelected,
+                  onCleared: _onAssigneeCleared,
+                  label: builderContext.localization.objectiveAssigneeLabel,
+                  validator: (assignee) =>
+                      _validateAssignee(builderContext, assignee),
+                ),
           ),
-          if (_selectedAssignee != null) ...[
-            WorkspaceUserAccumulatedPoints(
-              viewModel: widget.viewModel,
-              selectedAssignee: _selectedAssignee!.value,
-            ),
-            const SizedBox(height: 10),
-          ],
+          ValueListenableBuilder(
+            valueListenable: _selectedAssigneeNotifier,
+            builder: (builderContext, selectedAssigneeValue, _) {
+              if (_selectedAssigneeNotifier.value != null) {
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: WorkspaceUserAccumulatedPoints(
+                    viewModel: widget.viewModel,
+                    selectedAssignee: selectedAssigneeValue!.value,
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           const SizedBox(height: 10),
           AppTextFormField(
             controller: _requiredPointsController,
@@ -118,12 +137,27 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
           ),
           const SizedBox(height: 20),
           ListenableBuilder(
-            listenable: widget.viewModel.createGoal,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: builderContext.localization.goalCreateNew,
-              loading: widget.viewModel.createGoal.running,
-            ),
+            listenable: Listenable.merge([
+              widget.viewModel.createGoal,
+              _titleController,
+              _requiredPointsController,
+              _selectedAssigneeNotifier,
+            ]),
+            builder: (builderContext, _) {
+              // Submit is enabled once title, required points
+              // and selected assignee are not empty.
+              final enabledSubmit =
+                  _titleController.text.isNotEmpty &&
+                  _requiredPointsController.text.isNotEmpty &&
+                  _selectedAssigneeNotifier.value != null;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.goalCreateNew,
+                loading: widget.viewModel.createGoal.running,
+                disabled: !enabledSubmit,
+              );
+            },
           ),
         ],
       ),
@@ -138,7 +172,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
       final requiredPoints = int.tryParse(
         _requiredPointsController.text.trim(),
       );
-      final assignee = _selectedAssignee!.value.id;
+      final assignee = _selectedAssigneeNotifier.value!.value.id;
 
       if (requiredPoints == null) {
         // should be non-triggerable case, do something

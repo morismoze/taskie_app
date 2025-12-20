@@ -111,16 +111,15 @@ export class TaskAssignmentService {
       );
     }
 
-    const newTaskAssignments =
-      await this.taskAssignmentRepository.createMultiple({
-        workspaceUserIds,
-        taskId,
-        status,
-      });
-
-    // Maybe also somehow detect that unique constraint on the
-    // entity has triggered because someone tried to add a
-    // assignee which was already assigned?
+    const newTaskAssignments = await this.unitOfWorkService.withTransaction(
+      async () => {
+        return await this.taskAssignmentRepository.createMultiple({
+          workspaceUserIds,
+          taskId,
+          status,
+        });
+      },
+    );
 
     if (newTaskAssignments.length !== workspaceUserIds.length) {
       throw new ApiHttpException(

@@ -13,7 +13,7 @@ abstract final class IntlUtils {
     const SupportedLanguage(Locale('hr', 'HR'), 'Hrvatski (HR)'),
   ];
 
-  static SupportedLanguage getSupportedLanguageFromLangugageCode(
+  static SupportedLanguage getSupportedLanguageFromLanguageCode(
     String languageCode,
   ) {
     return supportedLanguages.firstWhere(

@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../../../domain/models/assignee.dart';
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/filter.dart';
@@ -14,6 +12,7 @@ import '../../../services/api/workspace/workspace_goal/models/request/create_goa
 import '../../../services/api/workspace/workspace_goal/models/request/update_goal_details_request.dart';
 import '../../../services/api/workspace/workspace_goal/models/response/workspace_goal_response.dart';
 import '../../../services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
+import '../../../services/local/logger.dart';
 import 'workspace_goal_repository.dart';
 
 const _kDefaultPaginablePage = 1;
@@ -24,11 +23,12 @@ const _kDefaultPaginableStatus = ProgressStatus.inProgress;
 class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   WorkspaceGoalRepositoryImpl({
     required WorkspaceGoalApiService workspaceGoalApiService,
-  }) : _workspaceGoalApiService = workspaceGoalApiService;
+    required LoggerService loggerService,
+  }) : _workspaceGoalApiService = workspaceGoalApiService,
+       _loggerService = loggerService;
 
   final WorkspaceGoalApiService _workspaceGoalApiService;
-
-  final _log = Logger('WorkspaceGoalRepository');
+  final LoggerService _loggerService;
 
   bool _isFilterSearch = false;
 
@@ -80,41 +80,43 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
       _isFilterSearch = false;
     }
 
-    try {
-      final queryParams = ObjectiveRequestQueryParams(
-        page: _activeFilter.page,
-        limit: _activeFilter.limit,
-        search: _activeFilter.search,
-        status: _activeFilter.status,
-        sort: _activeFilter.sort,
-      );
-      final result = await _workspaceGoalApiService.getGoals(
-        workspaceId: workspaceId,
-        queryParams: queryParams,
-      );
-      switch (result) {
-        case Ok<PaginableResponse<WorkspaceGoalResponse>>():
-          final items = result.value.items;
-          final totalPages = result.value.totalPages;
-          final total = result.value.total;
-          final mappedData = items
-              .map((goal) => _mapGoalFromResponse(goal))
-              .toList();
-          final paginable = Paginable(
-            items: mappedData,
-            totalPages: totalPages,
-            total: total,
-          );
+    final queryParams = ObjectiveRequestQueryParams(
+      page: _activeFilter.page,
+      limit: _activeFilter.limit,
+      search: _activeFilter.search,
+      status: _activeFilter.status,
+      sort: _activeFilter.sort,
+    );
+    final result = await _workspaceGoalApiService.getGoals(
+      workspaceId: workspaceId,
+      queryParams: queryParams,
+    );
+    switch (result) {
+      case Ok<PaginableResponse<WorkspaceGoalResponse>>():
+        final items = result.value.items;
+        final totalPages = result.value.totalPages;
+        final total = result.value.total;
+        final mappedData = items
+            .map((goal) => _mapGoalFromResponse(goal))
+            .toList();
+        final paginable = Paginable(
+          items: mappedData,
+          totalPages: totalPages,
+          total: total,
+        );
 
-          _cachedGoals = paginable;
-          notifyListeners();
+        _cachedGoals = paginable;
+        notifyListeners();
 
-          return const Result.ok(null);
-        case Error<PaginableResponse<WorkspaceGoalResponse>>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return const Result.ok(null);
+      case Error<PaginableResponse<WorkspaceGoalResponse>>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceGoalApiService.getGoals failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -126,44 +128,60 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     required int requiredPoints,
     String? description,
   }) async {
-    try {
-      final payload = CreateGoalRequest(
-        title: title,
-        assignee: assignee,
-        requiredPoints: requiredPoints,
-        description: description,
-      );
-      final result = await _workspaceGoalApiService.createGoal(
-        workspaceId: workspaceId,
-        payload: payload,
-      );
+    final payload = CreateGoalRequest(
+      title: title,
+      assignee: assignee,
+      requiredPoints: requiredPoints,
+      description: description,
+    );
+    final result = await _workspaceGoalApiService.createGoal(
+      workspaceId: workspaceId,
+      payload: payload,
+    );
 
-      switch (result) {
-        case Ok<WorkspaceGoalResponse>():
-          // Add the new goal with the `isNew` flag, so additional
-          // UI styles are applied to it in the current goals paginable page.
-          // Also it is added to the current active filter key.
-          final newGoal = _mapGoalFromResponse(result.value, isNew: true);
+    switch (result) {
+      case Ok<WorkspaceGoalResponse>():
+        // Add the new goal with the `isNew` flag, so additional
+        // UI styles are applied to it in the current goals paginable page.
+        // Also it is added to the current active filter key.
+        final newGoal = _mapGoalFromResponse(result.value, isNew: true);
 
-          // [_cachedGoals] should always be != null at this point in time, because
-          // we show a error prompt with retry on the GoalsScreen if there was a problem
-          // with initial goals load from origin.
-          _cachedGoals!.items.add(newGoal);
-          notifyListeners();
+        // [_cachedGoals] should always be != null at this point in time, because
+        // we show a error prompt with retry on the GoalsScreen if there was a problem
+        // with initial goals load from origin.
+        _cachedGoals!.items.add(newGoal);
+        ++_cachedGoals!.total;
+        // Re-calculate total pages
+        _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
+            .ceil();
+        notifyListeners();
 
-          return const Result.ok(null);
-        case Error<WorkspaceGoalResponse>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return const Result.ok(null);
+      case Error<WorkspaceGoalResponse>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceGoalApiService.createGoal failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
   @override
   Result<WorkspaceGoal> loadGoalDetails({required String goalId}) {
-    final details = _cachedGoals!.items.firstWhere((goal) => goal.id == goalId);
-    return Result.ok(details);
+    try {
+      final details = _cachedGoals!.items.firstWhere(
+        (goal) => goal.id == goalId,
+      );
+      return Result.ok(details);
+    } on StateError {
+      // This can happen when a goal gets closed and removed from the cache
+      // and the repository notifies listeners, e.g. the goal details edit
+      // screen VM, which then tries to load the details again in a split
+      // second before goal is closed and user is navigated back to goals screen.
+      return Result.error(Exception('Goal $goalId not found'));
+    }
   }
 
   @override
@@ -175,45 +193,47 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     ValuePatch<String>? assigneeId,
     ValuePatch<int>? requiredPoints,
   }) async {
-    try {
-      final result = await _workspaceGoalApiService.updateGoalDetails(
-        workspaceId: workspaceId,
-        goalId: goalId,
-        payload: UpdateGoalDetailsRequest(
-          title: title,
-          description: description,
-          requiredPoints: requiredPoints,
-          assigneeId: assigneeId,
-        ),
-      );
+    final result = await _workspaceGoalApiService.updateGoalDetails(
+      workspaceId: workspaceId,
+      goalId: goalId,
+      payload: UpdateGoalDetailsRequest(
+        title: title,
+        description: description,
+        requiredPoints: requiredPoints,
+        assigneeId: assigneeId,
+      ),
+    );
 
-      switch (result) {
-        case Ok():
-          final existingGoalResult =
-              loadGoalDetails(goalId: goalId) as Ok<WorkspaceGoal>;
-          final existingGoal = existingGoalResult.value;
-          final updatedGoal = _mapGoalFromResponse(
-            result.value,
-            isNew: existingGoal.isNew,
-          );
+    switch (result) {
+      case Ok():
+        final existingGoalResult =
+            loadGoalDetails(goalId: goalId) as Ok<WorkspaceGoal>;
+        final existingGoal = existingGoalResult.value;
+        final updatedGoal = _mapGoalFromResponse(
+          result.value,
+          isNew: existingGoal.isNew,
+        );
 
-          final goalIndex = _cachedGoals!.items.indexWhere(
-            (goal) => goal.id == updatedGoal.id,
-          );
+        final goalIndex = _cachedGoals!.items.indexWhere(
+          (goal) => goal.id == updatedGoal.id,
+        );
 
-          if (goalIndex != -1) {
-            // Update the existing goal in the list by replacing it
-            // with the new updated instance.
-            _cachedGoals!.items[goalIndex] = updatedGoal;
-            notifyListeners();
-          }
+        if (goalIndex != -1) {
+          // Update the existing goal in the list by replacing it
+          // with the new updated instance.
+          _cachedGoals!.items[goalIndex] = updatedGoal;
+          notifyListeners();
+        }
 
-          return const Result.ok(null);
-        case Error():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return const Result.ok(null);
+      case Error():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceGoalApiService.updateGoalDetails failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -222,26 +242,32 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     required String workspaceId,
     required String goalId,
   }) async {
-    try {
-      final result = await _workspaceGoalApiService.closeGoal(
-        workspaceId: workspaceId,
-        goalId: goalId,
-      );
+    final result = await _workspaceGoalApiService.closeGoal(
+      workspaceId: workspaceId,
+      goalId: goalId,
+    );
 
-      switch (result) {
-        case Ok():
-          final closedGoal = _cachedGoals!.items.firstWhere(
-            (goal) => goal.id == goalId,
-          );
-          _cachedGoals!.items.remove(closedGoal);
-          notifyListeners();
+    switch (result) {
+      case Ok():
+        final closedGoal = _cachedGoals!.items.firstWhere(
+          (goal) => goal.id == goalId,
+        );
+        _cachedGoals!.items.remove(closedGoal);
+        --_cachedGoals!.total;
+        // Re-calculate total pages
+        _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
+            .ceil();
+        notifyListeners();
 
-          return const Result.ok(null);
-        case Error():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return const Result.ok(null);
+      case Error():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceGoalApiService.closeGoal failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 

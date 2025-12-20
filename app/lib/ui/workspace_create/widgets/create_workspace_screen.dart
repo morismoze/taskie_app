@@ -28,11 +28,11 @@ class CreateWorkspaceScreen extends StatefulWidget {
 class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   void initState() {
+    super.initState();
     widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
     widget.viewModel.joinWorkspaceViaInviteLink.addListener(
       _onWorkspaceJoinResult,
     );
-    super.initState();
   }
 
   @override

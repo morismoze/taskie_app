@@ -6,7 +6,7 @@ part 'refresh_token_request.g.dart';
 class RefreshTokenRequest {
   RefreshTokenRequest(this.refreshToken);
 
-  final String? refreshToken;
+  final String refreshToken;
 
   Map<String, dynamic> toJson() => _$RefreshTokenRequestToJson(this);
 }

@@ -36,6 +36,13 @@ class _TaskDetailsMetaState extends State<TaskDetailsMeta> {
   }
 
   @override
+  void dispose() {
+    _createdByController.dispose();
+    _createdAtController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,

@@ -1,4 +1,3 @@
-import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/command.dart';
@@ -9,16 +8,14 @@ class SharedPreferencesService {
 
   static const _activeWorkspaceKey = "ACTIVE_WORKSPACE";
   static const _appLanguageCodeKey = "LANGUAGE_CODE";
-  final _log = Logger("SharedPreferencesService");
 
   Future<Result<String?>> getActiveWorkspaceId() async {
     try {
       return Result.ok(
         await _sharedPreferencesAsync.getString(_activeWorkspaceKey),
       );
-    } on Exception catch (e) {
-      _log.warning("Failed to get active workspace ID", e);
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -28,9 +25,8 @@ class SharedPreferencesService {
     try {
       await _sharedPreferencesAsync.setString(_activeWorkspaceKey, workspaceId);
       return const Result.ok(null);
-    } on Exception catch (e) {
-      _log.warning("Failed to get active workspace ID", e);
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -39,9 +35,8 @@ class SharedPreferencesService {
       return Result.ok(
         await _sharedPreferencesAsync.getString(_appLanguageCodeKey),
       );
-    } on Exception catch (e) {
-      _log.warning("Failed to get app language code", e);
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -54,9 +49,8 @@ class SharedPreferencesService {
         languageCode,
       );
       return const Result.ok(null);
-    } on Exception catch (e) {
-      _log.warning("Failed to set app language code", e);
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 }

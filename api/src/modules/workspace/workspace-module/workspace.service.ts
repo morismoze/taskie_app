@@ -1026,32 +1026,6 @@ export class WorkspaceService {
     return response;
   }
 
-  async getWorkspaceUserAdditionalDetails({
-    workspaceId,
-    workspaceUserId,
-  }: {
-    workspaceId: Workspace['id'];
-    workspaceUserId: WorkspaceUser['id'];
-  }): Promise<void> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
-    });
-
-    if (!workspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    await this.workspaceUserService.delete({
-      workspaceId,
-      workspaceUserId,
-    });
-  }
-
   async removeUserFromWorkspace({
     workspaceId,
     workspaceUserId,
@@ -1201,7 +1175,7 @@ export class WorkspaceService {
     await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
   }
 
-  async addTaskAssignee({
+  async addTaskAssignees({
     workspaceId,
     taskId,
     payload,
@@ -1241,7 +1215,7 @@ export class WorkspaceService {
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -1278,7 +1252,7 @@ export class WorkspaceService {
   }
 
   /**
-   * This is idempotennt solution because it uses Typeorm's
+   * This is idempotent solution because it uses Typeorm's
    * delete funtion, which doesn't check if the record actually
    * exists. This is actually a good solution for the case
    * when a Manager2 tries to remove a assignee which was already

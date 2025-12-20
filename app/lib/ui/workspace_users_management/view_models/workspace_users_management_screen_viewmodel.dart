@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -17,20 +16,19 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
        _userRepository = userRepository,
        _workspaceUserRepository = workspaceUserRepository {
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
-    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
-      ..execute((workspaceId, false));
+    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)..execute(null);
     deleteWorkspaceUser = Command1(_deleteWorkspaceUser);
   }
 
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('WorkspaceUsersManagementScreenViewModel');
 
-  late Command1<void, (String workspaceId, bool forceFetch)>
-  loadWorkspaceMembers;
-  late Command1<void, (String workspaceId, String workspaceUserId)>
-  deleteWorkspaceUser;
+  /// bool force fetch argument
+  late Command1<void, bool?> loadWorkspaceMembers;
+
+  /// String workspaceUserId argument
+  late Command1<void, String> deleteWorkspaceUser;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -84,13 +82,10 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> _loadWorkspaceMembers(
-    (String workspaceId, bool forceFetch) details,
-  ) async {
-    final (workspaceId, forceFetch) = details;
+  Future<Result<void>> _loadWorkspaceMembers(bool? forceFetch) async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
-      workspaceId: workspaceId,
-      forceFetch: forceFetch,
+      workspaceId: _activeWorkspaceId,
+      forceFetch: forceFetch ?? false,
     );
 
     switch (result) {
@@ -98,18 +93,14 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
         notifyListeners();
         break;
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
     }
 
     return result;
   }
 
-  Future<Result<void>> _deleteWorkspaceUser(
-    (String workspaceId, String workspaceUserId) details,
-  ) async {
-    final (String workspaceId, String workspaceUserId) = details;
+  Future<Result<void>> _deleteWorkspaceUser(String workspaceUserId) async {
     final result = await _workspaceUserRepository.deleteWorkspaceUser(
-      workspaceId: workspaceId,
+      workspaceId: _activeWorkspaceId,
       workspaceUserId: workspaceUserId,
     );
 
@@ -117,7 +108,6 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to delete workspace user', result.error);
         return result;
     }
   }

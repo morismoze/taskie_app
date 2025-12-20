@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../config/environment/env.dart';
@@ -35,7 +34,6 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
   final WorkspaceInviteRepository _workspaceInviteRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
   final ShareWorkspaceInviteLinkUseCase _shareWorkspaceInviteLinkUseCase;
-  final _log = Logger('CreateWorkspaceUserScreenViewModel');
 
   /// Returns [ShareResult] from share_plus
   late Command0<ShareResult> shareWorkspaceInviteLink;
@@ -58,10 +56,6 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
         _activeWorkspaceDetails = activeWorkspaceDetailsResult.value;
         return;
       case Error():
-        _log.warning(
-          'Failed to load active workspace details',
-          activeWorkspaceDetailsResult.error,
-        );
     }
   }
 
@@ -80,7 +74,6 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
         _workspaceInviteLink = inviteLink;
         return Result.ok(inviteLink);
       case Error():
-        _log.warning('Failed to create workspace invite link', result.error);
         return Result.error(result.error);
     }
   }
@@ -103,10 +96,6 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
       case Ok():
         return Result.ok(resultShare.value);
       case Error():
-        _log.warning(
-          'Failed to share workspace invite link',
-          resultShare.error,
-        );
         return Result.error(resultShare.error);
     }
   }
@@ -125,7 +114,6 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to create virtual user', result.error);
         return result;
     }
   }

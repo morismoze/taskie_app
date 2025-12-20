@@ -10,6 +10,7 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
+import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
@@ -27,8 +28,8 @@ class CreateGoalScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   void initState() {
-    widget.viewModel.createGoal.addListener(_onResult);
     super.initState();
+    widget.viewModel.createGoal.addListener(_onResult);
   }
 
   @override
@@ -89,8 +90,18 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                     }
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
-                      // TODO: Usage of a generic error prompt widget
-                      return const SizedBox.shrink();
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom * 2,
+                        ),
+                        child: ErrorPrompt(
+                          onRetry: () =>
+                              widget.viewModel.loadWorkspaceMembers.execute(),
+                          text: builderContext
+                              .localization
+                              .createNewGoalMembersLoadError,
+                        ),
+                      );
                     }
 
                     return child!;
@@ -136,6 +147,10 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   void _onResult() {
     if (widget.viewModel.createGoal.completed) {
       widget.viewModel.createGoal.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.createNewGoalSuccess,
+      );
       context.pop();
     }
 

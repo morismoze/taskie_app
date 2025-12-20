@@ -285,12 +285,12 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
-  addTaskAssignee(
+  addTaskAssignees(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
     @Body() payload: AddTaskAssigneeRequest,
   ): Promise<AddTaskAssigneeResponse> {
-    return this.workspaceService.addTaskAssignee({
+    return this.workspaceService.addTaskAssignees({
       workspaceId,
       taskId,
       payload,

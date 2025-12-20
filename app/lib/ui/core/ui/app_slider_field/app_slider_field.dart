@@ -64,7 +64,14 @@ class AppSliderField extends StatelessWidget {
           // to true (old design), even though the old design should be depreceated
           year2023: false,
           value: value,
-          onChanged: readOnly ? null : onChanged,
+          onChanged: readOnly
+              ? null
+              : (double value) {
+                  // Unfocus last field as this custom date picker field
+                  // does not "own" its own focus
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  onChanged!(value);
+                },
           divisions: divisions,
           max: max,
           min: min,

@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../../../domain/use_cases/sign_in_use_case.dart';
 import '../../../../utils/command.dart';
 
@@ -10,7 +8,6 @@ class SignInViewModel {
   }
 
   final SignInUseCase _signInUseCase;
-  final _log = Logger('SignInViewModel');
 
   late Command0 signInWithGoogle;
 
@@ -21,7 +18,6 @@ class SignInViewModel {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to sign the user in via Google', result.error);
         return result;
     }
   }

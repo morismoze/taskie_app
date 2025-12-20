@@ -1,5 +1,4 @@
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:logging/logging.dart';
 
 import '../../../../config/environment/env.dart';
 import '../../../../utils/command.dart';
@@ -13,28 +12,25 @@ class GoogleAuthService {
     serverClientId: Env.googleAuthClientId,
     scopes: const ['email', 'profile'],
   );
-  final _log = Logger("GoogleAuthService");
 
   /// Returns ID token
   Future<Result<String>> authenticate() async {
     try {
       var googleUser = await _googleSignIn.signInSilently();
 
+      // Check if a Google session is still active
       if (googleUser != null) {
         final googleAuth = await googleUser.authentication;
 
         if (googleAuth.idToken == null) {
-          _log.severe("Invalid ID token on silent sign-in", googleAuth);
-          return Result.error(
-            Exception(const GoogleSignInInvalidIdTokenException()),
-          );
+          // Invalid ID token on silent sign-in
+        } else {
+          return Result.ok(googleAuth.idToken!);
         }
-
-        return Result.ok(googleAuth.idToken!);
       }
 
-      // Check if a Google session is still active
-      googleUser ??= await _googleSignIn.signIn();
+      // Fallback: no active/usable session → prompt user interactively.
+      googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         return const Result.error(GoogleSignInCancelledException());
@@ -43,7 +39,6 @@ class GoogleAuthService {
       final googleAuth = await googleUser.authentication;
 
       if (googleAuth.idToken == null) {
-        _log.severe("Invalid ID token on sign-in", googleAuth);
         return Result.error(
           Exception(const GoogleSignInInvalidIdTokenException()),
         );
@@ -53,9 +48,11 @@ class GoogleAuthService {
       // await _googleSignIn.disconnect();
 
       return Result.ok(googleAuth.idToken!);
-    } on Exception catch (e) {
-      _log.severe("Failed Google sign-in or sign-out", e);
-      return Result.error(Exception(const GoogleSignInUnknownException()));
+    } on Exception catch (e, stackTrace) {
+      return Result.error(
+        Exception(const GoogleSignInUnknownException()),
+        stackTrace,
+      );
     }
   }
 }

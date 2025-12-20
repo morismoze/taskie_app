@@ -5,8 +5,10 @@ import '../../../config/assets.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
+import '../../core/ui/error_prompt.dart';
 import '../../core/ui/objectives_list_view.dart';
 import '../../core/utils/extensions.dart';
 import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
@@ -27,13 +29,27 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-    super.initState();
+    widget.viewModel.loadTasks.addListener(_onLoadTasksResult);
+  }
+
+  @override
+  void didUpdateWidget(covariant TasksScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.loadTasks.removeListener(_onLoadTasksResult);
+    widget.viewModel.loadTasks.addListener(_onLoadTasksResult);
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.loadTasks.removeListener(_onLoadTasksResult);
+    super.dispose();
   }
 
   @override
@@ -48,22 +64,31 @@ class _TasksScreenState extends State<TasksScreen> {
                 bottom: kAppBottomNavigationBarHeight,
               ),
               child: ListenableBuilder(
-                listenable: widget.viewModel,
+                listenable: Listenable.merge([
+                  widget.viewModel.loadTasks,
+                  widget.viewModel,
+                ]),
                 builder: (builderContext, _) {
-                  // If the tasks are null (before initial load) amd there was an error while fetching
-                  // from origin, display error prompt. In other cases, old list will still be shown, but
-                  // we will show a error snackbar.
-                  if (widget.viewModel.tasks == null &&
-                      widget.viewModel.loadTasks.error) {
-                    // TODO: Usage of a generic error prompt widget
-                    return const SizedBox.shrink();
-                  }
-
-                  // If the tasks are null (before initial load) show activity indicator.
-                  if (widget.viewModel.tasks == null) {
+                  // Show loader only on initial load (tasks are null)
+                  if (widget.viewModel.loadTasks.running &&
+                      widget.viewModel.tasks == null) {
                     return ActivityIndicator(
                       radius: 16,
                       color: Theme.of(builderContext).colorScheme.primary,
+                    );
+                  }
+
+                  // Show error prompt only on initial load (tasks are null)
+                  if (widget.viewModel.loadTasks.error &&
+                      widget.viewModel.tasks == null) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: kAppBottomNavigationBarHeight,
+                      ),
+                      child: ErrorPrompt(
+                        onRetry: () =>
+                            widget.viewModel.loadTasks.execute((null, true)),
+                      ),
                     );
                   }
 
@@ -71,18 +96,47 @@ class _TasksScreenState extends State<TasksScreen> {
                   // show Create new task prompt
                   if (!widget.viewModel.isFilterSearch &&
                       widget.viewModel.tasks!.total == 0) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: kAppBottomNavigationBarHeight,
-                        left: Dimens.of(context).paddingScreenHorizontal,
-                        right: Dimens.of(context).paddingScreenHorizontal,
-                      ),
-                      child: EmptyDataPlaceholder(
-                        assetImage: Assets.emptyObjectivesIllustration,
-                        child: context.localization.tasksNoTasks.format(
-                          style: Theme.of(context).textTheme.bodyMedium!,
-                          textAlign: TextAlign.center,
-                        ),
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        widget.viewModel.loadTasks.execute((null, true));
+                        widget.viewModel.refreshUser.execute();
+                      },
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            // Enables scrolling and trigger of pull-to-refresh
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: kAppBottomNavigationBarHeight,
+                                    left: Dimens.of(
+                                      context,
+                                    ).paddingScreenHorizontal,
+                                    right: Dimens.of(
+                                      context,
+                                    ).paddingScreenHorizontal,
+                                  ),
+                                  child: EmptyDataPlaceholder(
+                                    assetImage:
+                                        Assets.emptyObjectivesIllustration,
+                                    child: context.localization.tasksNoTasks
+                                        .format(
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium!,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   }
@@ -96,6 +150,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   return RefreshIndicator(
                     onRefresh: () async {
                       widget.viewModel.loadTasks.execute((null, true));
+                      widget.viewModel.refreshUser.execute();
                     },
                     child: ObjectivesListView(
                       headerDelegate: TasksSortingHeaderDelegate(
@@ -121,5 +176,24 @@ class _TasksScreenState extends State<TasksScreen> {
         ],
       ),
     );
+  }
+
+  void _onLoadTasksResult() {
+    if (widget.viewModel.loadTasks.completed) {
+      widget.viewModel.loadTasks.clearResult();
+    }
+
+    if (widget.viewModel.loadTasks.error) {
+      // Show snackbar only in the case there already is some
+      // cached data - basically when pull-to-refresh happens.
+      // On the first load and error we display the ErrorPrompt widget.
+      if (widget.viewModel.tasks != null) {
+        widget.viewModel.loadTasks.clearResult();
+        AppSnackbar.showError(
+          context: context,
+          message: context.localization.tasksLoadRefreshError,
+        );
+      }
+    }
   }
 }

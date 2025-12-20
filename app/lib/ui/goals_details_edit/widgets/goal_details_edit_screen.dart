@@ -31,9 +31,9 @@ class GoalDetailsEditScreen extends StatefulWidget {
 class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
   @override
   void initState() {
+    super.initState();
     widget.viewModel.editGoalDetails.addListener(_onGoalDetailsEditResult);
     widget.viewModel.closeGoal.addListener(_onGoalCloseResult);
-    super.initState();
   }
 
   @override

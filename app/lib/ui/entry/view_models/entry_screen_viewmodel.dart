@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
@@ -15,7 +13,6 @@ class EntryScreenViewModel {
 
   final UserRepository _userRepository;
   final WorkspaceRepository _workspaceRepository;
-  final _log = Logger('EntryViewModel');
 
   /// Initial setup before proceeding to the app.
   ///
@@ -31,7 +28,6 @@ class EntryScreenViewModel {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to load user', resultLoadUser.error);
         return Result.error(resultLoadUser.error);
     }
 
@@ -48,7 +44,6 @@ class EntryScreenViewModel {
         }
         break;
       case Error():
-        _log.warning('Failed to load workspaces', resultLoadWorkspaces.error);
         return Result.error(resultLoadWorkspaces.error);
     }
 
@@ -57,10 +52,6 @@ class EntryScreenViewModel {
         .loadActiveWorkspaceId();
 
     if (activeWorkspaceIdResult is Error<String?>) {
-      _log.warning(
-        'Failed to get active workspace ID',
-        activeWorkspaceIdResult.error,
-      );
       return Result.error(activeWorkspaceIdResult.error);
     }
 
@@ -80,10 +71,6 @@ class EntryScreenViewModel {
         case Ok():
           return Result.ok(firstWorkspaceId);
         case Error():
-          _log.warning(
-            'Failed to load workspaces',
-            resultSetActiveWorkspaceId.error,
-          );
           return Result.error(resultSetActiveWorkspaceId.error);
       }
     }

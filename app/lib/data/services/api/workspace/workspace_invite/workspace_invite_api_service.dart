@@ -42,8 +42,8 @@ class WorkspaceInviteApiService {
           );
 
       return Result.ok(apiResponse.data!);
-    } on Exception catch (e) {
-      return Result.error(e);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 
@@ -59,7 +59,7 @@ class WorkspaceInviteApiService {
       );
 
       return Result.ok(apiResponse.data!);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.notFoundWorkspaceInviteToken) {
@@ -75,7 +75,7 @@ class WorkspaceInviteApiService {
         return const Result.error(WorkspaceInviteExistingUserException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 }

@@ -45,7 +45,7 @@ class AppOutlinedButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Text(
               label,
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 color: color ?? Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),

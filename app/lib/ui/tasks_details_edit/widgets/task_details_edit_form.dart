@@ -35,19 +35,21 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
   @override
   void initState() {
+    super.initState();
     _titleController.text = widget.viewModel.details!.title;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
     _rewardPointsNotifier = ValueNotifier(
       widget.viewModel.details!.rewardPoints,
     );
     _dueDateNotifier = ValueNotifier(widget.viewModel.details!.dueDate);
-    super.initState();
   }
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _rewardPointsNotifier.dispose();
+    _dueDateNotifier.dispose();
     super.dispose();
   }
 

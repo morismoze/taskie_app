@@ -189,13 +189,12 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     data: Partial<TaskAssignmentCore>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    const entity = await this.repo.findOneByOrFail({ id });
-    this.repo.merge(entity, data);
-    // `save` is used here beacuse we have afterUpdate subscriber on this entity
-    // and `update` method does not trigger it
-    await this.repo.save(entity);
+    await this.transactionalTaskAssignmentRepo.update(id, data);
 
-    const newEntity = await this.findById({ id, relations });
+    const newEntity = await this.transactionalTaskAssignmentRepo.findOne({
+      where: { id },
+      relations,
+    });
 
     return newEntity;
   }

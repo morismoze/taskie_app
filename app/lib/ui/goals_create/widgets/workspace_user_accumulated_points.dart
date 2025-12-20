@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_text_button.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
 
 class WorkspaceUserAccumulatedPoints extends StatelessWidget {
@@ -22,14 +23,36 @@ class WorkspaceUserAccumulatedPoints extends StatelessWidget {
       builder: (builderContext, child) {
         if (viewModel.loadWorkspaceUserAccumulatedPoints.running) {
           return ActivityIndicator(
-            radius: 16,
+            radius: 10,
             color: Theme.of(builderContext).colorScheme.primary,
           );
         }
 
         if (viewModel.loadWorkspaceUserAccumulatedPoints.error) {
-          // TODO: Usage of a generic error prompt widget
-          return const SizedBox.shrink();
+          return Text.rich(
+            TextSpan(
+              text:
+                  '${context.localization.goalRequiredPointsCurrentAccumulatedPointsError} ',
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
+              children: [
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: AppTextButton(
+                    onPress: () => viewModel.loadWorkspaceUserAccumulatedPoints
+                        .execute(selectedAssignee.id),
+                    label: context.localization.misc_tryAgain,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shrinkWrap: true,
+                  ),
+                ),
+              ],
+            ),
+          );
         }
 
         return child!;

@@ -29,23 +29,23 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  List<AppSelectFieldOption<WorkspaceUser>> _selectedAssignees = [];
+  final ValueNotifier<List<AppSelectFieldOption<WorkspaceUser>>>
+  _selectedAssigneesNotifier = ValueNotifier([]);
+  // No need for ValueNotifier as it is initialized and can't be set
+  // to a null value or something similar as we use the Slider widget.
   int _rewardPoints = ObjectiveRules.rewardPointsMin;
+  // No need for ValueNotifier as it is not required and
+  // AppDatePickerFormField handles the state internally.
   DateTime? _dueDate;
 
   void _onAssigneesSelected(
     List<AppSelectFieldOption<WorkspaceUser>> selectedOptions,
   ) {
-    setState(() {
-      // Take selected workspace IDs
-      _selectedAssignees = selectedOptions;
-    });
+    _selectedAssigneesNotifier.value = selectedOptions;
   }
 
   void _onAssigneesCleared() {
-    setState(() {
-      _selectedAssignees = [];
-    });
+    _selectedAssigneesNotifier.value = [];
   }
 
   void _onRewardPointsChanged(double points) {
@@ -64,6 +64,14 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     setState(() {
       _dueDate = null;
     });
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _selectedAssigneesNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -109,15 +117,20 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
           const SizedBox(height: 10),
-          AppSelectFormField(
-            options: options,
-            value: _selectedAssignees,
-            onChanged: _onAssigneesSelected,
-            onCleared: _onAssigneesCleared,
-            label: context.localization.objectiveAssigneeLabel,
-            multiple: true,
-            max: ValidationRules.taskMaxAssigneesCount,
-            validator: (assignees) => _validateAssignees(context, assignees),
+          ValueListenableBuilder(
+            valueListenable: _selectedAssigneesNotifier,
+            builder: (builderContext, selectedAssigneesValue, _) =>
+                AppSelectFormField(
+                  options: options,
+                  value: selectedAssigneesValue,
+                  onChanged: _onAssigneesSelected,
+                  onCleared: _onAssigneesCleared,
+                  label: builderContext.localization.objectiveAssigneeLabel,
+                  multiple: true,
+                  max: ValidationRules.taskMaxAssigneesCount,
+                  validator: (assignees) =>
+                      _validateAssignees(builderContext, assignees),
+                ),
           ),
           const SizedBox(height: 10),
           AppDatePickerFormField(
@@ -140,12 +153,26 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           ),
           const SizedBox(height: 20),
           ListenableBuilder(
-            listenable: widget.viewModel.createTask,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: builderContext.localization.taskCreateNew,
-              loading: widget.viewModel.createTask.running,
-            ),
+            listenable: Listenable.merge([
+              widget.viewModel.createTask,
+              _titleController,
+              _selectedAssigneesNotifier,
+            ]),
+            builder: (builderContext, _) {
+              // Submit is enabled once title and selected assignees are not empty.
+              // No need to check rewardPoints as it is initialized and can't be set
+              // to a null value or something similar as we use the Slider widget.
+              final enabledSubmit =
+                  _titleController.text.isNotEmpty &&
+                  _selectedAssigneesNotifier.value.isNotEmpty;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.taskCreateNew,
+                loading: widget.viewModel.createTask.running,
+                disabled: !enabledSubmit,
+              );
+            },
           ),
         ],
       ),
@@ -157,7 +184,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       final title = _titleController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();
       final description = trimmedDescription.nullIfEmpty;
-      final assigneesIds = _selectedAssignees
+      final assigneesIds = _selectedAssigneesNotifier.value
           .map((assignee) => assignee.value.id)
           .toList();
 

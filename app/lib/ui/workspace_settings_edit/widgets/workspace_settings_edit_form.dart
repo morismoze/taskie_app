@@ -24,9 +24,9 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
 
   @override
   void initState() {
+    super.initState();
     _nameController.text = widget.viewModel.details!.name;
     _descriptionController.text = widget.viewModel.details!.description ?? '';
-    super.initState();
   }
 
   @override
@@ -64,12 +64,26 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
           ),
           const SizedBox(height: 20),
           ListenableBuilder(
-            listenable: widget.viewModel.editWorkspaceDetails,
-            builder: (builderContext, _) => AppFilledButton(
-              onPress: _onSubmit,
-              label: builderContext.localization.editDetailsSubmit,
-              loading: widget.viewModel.editWorkspaceDetails.running,
-            ),
+            listenable: Listenable.merge([
+              widget.viewModel.editWorkspaceDetails,
+              _nameController,
+              _descriptionController,
+            ]),
+            builder: (builderContext, _) {
+              final isDirty =
+                  _nameController.text != widget.viewModel.details!.name &&
+                      _nameController.text.isNotEmpty ||
+                  _descriptionController.text !=
+                          widget.viewModel.details!.description &&
+                      _descriptionController.text.isNotEmpty;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.editDetailsSubmit,
+                loading: widget.viewModel.editWorkspaceDetails.running,
+                disabled: !isDirty,
+              );
+            },
           ),
         ],
       ),

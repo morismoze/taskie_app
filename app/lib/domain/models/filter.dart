@@ -46,6 +46,9 @@ class ObjectiveFilter extends Filter {
   final SortBy sort;
   final ProgressStatus? status;
 
+  // Sentinel for 'no change', used to differentiate from the real/wanted null value
+  static const _unset = Object();
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
@@ -71,14 +74,19 @@ class ObjectiveFilter extends Filter {
     int? page,
     int? limit,
     String? search,
-    ProgressStatus? status,
+    // Sentinel value is used here, because null is a valid value
+    // representing no filter by status, so we need a way to
+    // differentiate between null value and no value.
+    Object? status = _unset,
     SortBy? sort,
   }) {
     return ObjectiveFilter(
       page: page ?? this.page,
       limit: limit ?? this.limit,
-      search: search,
-      status: status,
+      search: search ?? this.search,
+      status: identical(status, _unset)
+          ? this.status
+          : status as ProgressStatus?,
       sort: sort ?? this.sort,
     );
   }

@@ -72,6 +72,15 @@ class UnauthorizedInterceptor extends Interceptor {
 
     try {
       final (_, refreshToken) = await _authStateRepository.tokens;
+
+      if (refreshToken == null) {
+        _refreshTokenCompleter!.completeError(
+          'Error saving tokens to the storage',
+        );
+        handler.reject(originalError);
+        return false;
+      }
+
       final refreshTokenResponse = await _client.post(
         ApiEndpoints.refreshToken,
         data: RefreshTokenRequest(refreshToken),

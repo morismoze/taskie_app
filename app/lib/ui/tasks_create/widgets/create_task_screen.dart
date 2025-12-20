@@ -10,6 +10,7 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
+import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/create_task_screen_viewmodel.dart';
@@ -27,8 +28,8 @@ class CreateTaskScreen extends StatefulWidget {
 class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   void initState() {
-    widget.viewModel.createTask.addListener(_onResult);
     super.initState();
+    widget.viewModel.createTask.addListener(_onResult);
   }
 
   @override
@@ -63,6 +64,14 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                     );
                   },
                 ),
+                AppHeaderActionButton(
+                  iconData: FontAwesomeIcons.question,
+                  onTap: () => context.push(
+                    Routes.tasksGuide(
+                      workspaceId: widget.viewModel.activeWorkspaceId,
+                    ),
+                  ),
+                ),
               ],
             ),
             // Wrapped in Expanded because SingleChildScrollView is unbounded,
@@ -86,8 +95,18 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                     }
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
-                      // TODO: Usage of a generic error prompt widget
-                      return const SizedBox.shrink();
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom * 2,
+                        ),
+                        child: ErrorPrompt(
+                          onRetry: () =>
+                              widget.viewModel.loadWorkspaceMembers.execute(),
+                          text: builderContext
+                              .localization
+                              .createNewGoalMembersLoadError,
+                        ),
+                      );
                     }
 
                     return child!;
@@ -133,6 +152,10 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   void _onResult() {
     if (widget.viewModel.createTask.completed) {
       widget.viewModel.createTask.clearResult();
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.createNewTaskSuccess,
+      );
       context.pop();
     }
 

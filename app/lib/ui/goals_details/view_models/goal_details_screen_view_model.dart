@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
 import '../../../domain/models/workspace_goal.dart';
@@ -19,7 +18,6 @@ class GoalDetailsScreenViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final String _goalId;
   final WorkspaceGoalRepository _workspaceGoalRepository;
-  final _log = Logger('GoalDetailsScreenViewModel');
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -35,7 +33,6 @@ class GoalDetailsScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load goal details', result.error);
         return result;
     }
   }

@@ -11,4 +11,6 @@ abstract final class Assets {
       'assets/images/empty_members_illustration.png';
   static const laurelWreathLeft = 'assets/images/laurel_wreath_left.png';
   static const laurelWreathRight = 'assets/images/laurel_wreath_right.png';
+  static const errorPromptIllustration =
+      'assets/images/error_prompt_illustration.png';
 }

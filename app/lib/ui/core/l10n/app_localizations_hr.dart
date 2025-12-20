@@ -57,6 +57,13 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_pointsAbbr => 'bod.';
 
   @override
+  String get misc_errorPrompt =>
+      'Uh-oh! Nešto nije pošlo po planu pri učitavanju.';
+
+  @override
+  String get misc_retry => 'Pokušajmo ponovno';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -133,6 +140,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
 
   @override
+  String get tasksLoadRefreshError =>
+      'Uh-oh! Došlo je do problema prilikom osvježavanja zadataka.';
+
+  @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
 
@@ -206,11 +217,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksClosedTaskError =>
-      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na početnu stranicu i osvježite svoj popis zadataka.';
+      'Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na Početnu stranicu i osvježite svoj popis zadataka.';
 
   @override
   String get tasksAmendedAssigneesError =>
-      'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
+      'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na Početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
 
   @override
   String get tasksRemoveTaskAssignmentModalMessage =>
@@ -257,6 +268,14 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
       'Dodijelite ovaj zadatak dodatnome članu:';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees =>
+      'Ovom zadatku već je dodijeljen maksimalan broj od 10 ćlanova. Uklonite nekoga ako želite dodati novog.';
+
+  @override
+  String get tasksAssignmentsEditAddNewAssigneeEmptyAssignees =>
+      'Nema više članova kojima se ovaj zadatak može dodijeliti. Dodajte ili pozovite nove članove u svoj workspace.';
 
   @override
   String get tasksAssignmentsGuideMainTitle => 'O dodjelama zadatka';
@@ -331,6 +350,9 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get createNewTaskNoMembers =>
       'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
+
+  @override
+  String get createNewTaskSuccess => 'Uspješno ste kreirali novi zadatak';
 
   @override
   String get objectiveNoMembersCta => 'Dodajmo članove';
@@ -545,6 +567,13 @@ class AppLocalizationsHr extends AppLocalizations {
       'Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti cilj. Pokušajte pozvati nekoga ili kreirati virtualne članove.';
 
   @override
+  String get createNewGoalMembersLoadError =>
+      'Uh-oh! Došlo je do problema prilikom učitavanja članova radnog prostora.';
+
+  @override
+  String get createNewGoalSuccess => 'Uspješno ste kreirali novi cilj';
+
+  @override
   String get createNewGoalTitle => 'Novi cilj';
 
   @override
@@ -552,6 +581,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalDescriptionLabel => 'Opis cilja';
+
+  @override
+  String get goalRequiredPointsCurrentAccumulatedPointsError =>
+      'Uh-uh! Došlo je do problema prilikom učitavanja akumuliranih bodova ovoga korisnika.';
 
   @override
   String get goalRequiredPointsCurrentAccumulatedPoints =>
@@ -681,6 +714,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get goalsLabel => 'Ciljevi';
 
   @override
+  String get goalsLoadRefreshError =>
+      'Uh-oh! Došlo je do problema prilikom osvježavanja ciljeva.';
+
+  @override
   String get goalsNoGoals =>
       'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
 
@@ -727,7 +764,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsClosedGoalError =>
-      'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu ciljeva i osvježite svoj popis ciljeva.';
+      'Uh-oh! Izgleda da je ovaj cilj zatvoren. Ažuriranje njegovih detalja više nije moguće. Molimo, idite na stranicu Ciljeva i osvježite svoj popis ciljeva.';
 
   @override
   String get goalsDetailsAssignedTo => 'Cilj dodijeljen';

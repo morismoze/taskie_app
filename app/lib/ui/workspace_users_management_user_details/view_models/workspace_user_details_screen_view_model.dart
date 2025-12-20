@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -24,7 +23,6 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
   final String _workspaceUserId;
   final UserRepository _userRepository;
   final WorkspaceUserRepository _workspaceUserRepository;
-  final _log = Logger('WorkspaceUserDetailsScreenViewModel');
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -46,7 +44,6 @@ class WorkspaceUserDetailsScreenViewModel extends ChangeNotifier {
         notifyListeners();
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace user details', result.error);
         return result;
     }
   }

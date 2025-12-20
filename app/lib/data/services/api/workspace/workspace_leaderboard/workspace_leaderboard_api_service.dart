@@ -35,14 +35,14 @@ class WorkspaceLeaderboardApiService {
           );
 
       return Result.ok(apiResponse.data!);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) {
       final apiError = ApiUtils.getApiErrorResponse(e);
 
       if (apiError?.code == ApiErrorCode.taskClosed) {
         return const Result.error(TaskClosedException());
       }
 
-      return Result.error(e);
+      return Result.error(e, stackTrace);
     }
   }
 }

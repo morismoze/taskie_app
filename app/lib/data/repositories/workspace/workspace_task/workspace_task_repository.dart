@@ -12,6 +12,7 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
 
   ObjectiveFilter get activeFilter;
 
+  /// Assignees are sorted alphabetically by firstName and lastName
   Paginable<WorkspaceTask>? get tasks;
 
   Future<Result<void>> loadTasks({

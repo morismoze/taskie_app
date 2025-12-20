@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -16,16 +15,14 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
        _workspaceUserRepository = workspaceUserRepository,
        _workspaceTaskRepository = workspaceTaskRepository {
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
-    loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
-      ..execute(workspaceId);
+    loadWorkspaceMembers = Command0(_loadWorkspaceMembers)..execute();
     createTask = Command1(_createTask);
   }
 
   final WorkspaceUserRepository _workspaceUserRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
-  final _log = Logger('CreateTaskScreenViewmodel');
 
-  late Command1<void, String> loadWorkspaceMembers;
+  late Command0 loadWorkspaceMembers;
   late Command1<
     void,
     (
@@ -52,16 +49,15 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
           .toList() ??
       [];
 
-  Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
+  Future<Result<void>> _loadWorkspaceMembers() async {
     final result = await _workspaceUserRepository.loadWorkspaceUsers(
-      workspaceId: workspaceId,
+      workspaceId: _activeWorkspaceId,
     );
 
     switch (result) {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to load workspace users', result.error);
         return result;
     }
   }
@@ -90,7 +86,6 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
       case Ok():
         return const Result.ok(null);
       case Error():
-        _log.warning('Failed to create new task', result.error);
         return result;
     }
   }

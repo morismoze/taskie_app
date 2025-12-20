@@ -28,6 +28,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
   @override
   void initState() {
+    super.initState();
     widget.viewModel.createWorkspaceInviteLink.addListener(
       _onInviteLinkCreateResult,
     );
@@ -35,7 +36,6 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
       _onInviteLinkShareResult,
     );
     widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
-    super.initState();
   }
 
   @override

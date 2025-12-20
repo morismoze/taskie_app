@@ -41,10 +41,10 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
 
   @override
   void initState() {
+    super.initState();
     if (widget.initialValue != null) {
       _selectedDate = widget.initialValue!;
     }
-    super.initState();
   }
 
   void _clearSelections() {
@@ -105,6 +105,10 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
   }
 
   void _openDatePicker(BuildContext context) {
+    // Unfocus last field as this custom date picker field
+    // does not "own" its own focus
+    FocusManager.instance.primaryFocus?.unfocus();
+
     AppModalBottomSheet.show(
       context: context,
       child: _AppDatePicker(

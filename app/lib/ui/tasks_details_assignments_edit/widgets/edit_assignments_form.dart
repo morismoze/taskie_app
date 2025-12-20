@@ -27,7 +27,6 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
   @override
   void initState() {
     super.initState();
-
     for (final assignee in widget.viewModel.assignees!) {
       _assigneesStatuses[assignee.id] = assignee.status;
     }
@@ -134,8 +133,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
             command: widget.viewModel.removeTaskAssignee,
             onSubmit: (BuildContext builderContext) =>
                 widget.viewModel.removeTaskAssignee.execute(assigneeId),
-            onCancel: (BuildContext builderContext) =>
-                Navigator.pop(builderContext),
+            onCancel: (BuildContext builderContext) => builderContext.pop(),
             submitButtonText: (BuildContext builderContext) =>
                 builderContext.localization.tasksRemoveTaskAssignmentModalCta,
             submitButtonColor: (BuildContext builderContext) =>

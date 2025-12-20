@@ -14,6 +14,7 @@ class AppTextFormField extends StatelessWidget {
     this.obscureText = false,
     this.required = true,
     this.maxLines = 1,
+    this.textCapitalization = TextCapitalization.sentences,
     this.minLines,
     this.hintText,
     this.keyboardType,
@@ -29,6 +30,7 @@ class AppTextFormField extends StatelessWidget {
   final bool obscureText;
   final bool readOnly;
   final bool required;
+  final TextCapitalization textCapitalization;
   final int? maxLines;
   final int? minLines;
   final String? hintText;
@@ -48,6 +50,7 @@ class AppTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       inputFormatters: inputFormatters,
+      textCapitalization: textCapitalization,
       obscureText: obscureText,
       obscuringCharacter: '●',
       maxLines: maxLines,
