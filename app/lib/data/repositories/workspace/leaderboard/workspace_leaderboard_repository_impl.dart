@@ -1,20 +1,20 @@
-import 'package:logging/logging.dart';
-
 import '../../../../domain/models/workspace_leaderboard_user.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace_leaderboard/models/response/workspace_leaderboard_user_response.dart';
 import '../../../services/api/workspace/workspace_leaderboard/workspace_leaderboard_api_service.dart';
+import '../../../services/local/logger.dart';
 import 'workspace_leaderboard_repository.dart';
 
 class WorkspaceLeaderboardRepositoryImpl
     extends WorkspaceLeaderboardRepository {
   WorkspaceLeaderboardRepositoryImpl({
     required WorkspaceLeaderboardApiService workspaceLeaderboardApiService,
-  }) : _workspaceLeaderboardApiService = workspaceLeaderboardApiService;
+    required LoggerService loggerService,
+  }) : _workspaceLeaderboardApiService = workspaceLeaderboardApiService,
+       _loggerService = loggerService;
 
   final WorkspaceLeaderboardApiService _workspaceLeaderboardApiService;
-
-  final _log = Logger('WorkspaceLeaderboardRepository');
+  final LoggerService _loggerService;
 
   List<WorkspaceLeaderboardUser>? _leaderboard;
 
@@ -30,34 +30,36 @@ class WorkspaceLeaderboardRepositoryImpl
       return const Result.ok(null);
     }
 
-    try {
-      final result = await _workspaceLeaderboardApiService.loadLeaderboard(
-        workspaceId,
-      );
+    final result = await _workspaceLeaderboardApiService.loadLeaderboard(
+      workspaceId,
+    );
 
-      switch (result) {
-        case Ok<List<WorkspaceLeaderboardUserResponse>>():
-          final leaderboard = result.value
-              .map(
-                (u) => WorkspaceLeaderboardUser(
-                  id: u.id,
-                  firstName: u.firstName,
-                  lastName: u.lastName,
-                  accumulatedPoints: u.accumulatedPoints,
-                  completedTasks: u.completedTasks,
-                  profileImageUrl: u.profileImageUrl,
-                ),
-              )
-              .toList();
-          _leaderboard = leaderboard;
-          notifyListeners();
+    switch (result) {
+      case Ok<List<WorkspaceLeaderboardUserResponse>>():
+        final leaderboard = result.value
+            .map(
+              (u) => WorkspaceLeaderboardUser(
+                id: u.id,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                accumulatedPoints: u.accumulatedPoints,
+                completedTasks: u.completedTasks,
+                profileImageUrl: u.profileImageUrl,
+              ),
+            )
+            .toList();
+        _leaderboard = leaderboard;
+        notifyListeners();
 
-          return const Result.ok(null);
-        case Error<List<WorkspaceLeaderboardUserResponse>>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return const Result.ok(null);
+      case Error<List<WorkspaceLeaderboardUserResponse>>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceLeaderboardApiService.loadLeaderboard failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error);
     }
   }
 

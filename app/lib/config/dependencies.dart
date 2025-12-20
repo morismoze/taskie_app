@@ -70,13 +70,18 @@ List<SingleChildWidget> get providers {
           AuthRepositoryImpl(
                 authApiService: context.read(),
                 googleAuthService: context.read(),
+                loggerService: context.read(),
               )
               as AuthRepository,
     ),
     Provider(create: (context) => UserApiService(apiClient: context.read())),
     ChangeNotifierProvider(
       create: (context) =>
-          UserRepositoryImpl(userApiService: context.read()) as UserRepository,
+          UserRepositoryImpl(
+                userApiService: context.read(),
+                loggerService: context.read(),
+              )
+              as UserRepository,
     ),
     Provider(
       create: (context) => SignInUseCase(
@@ -93,6 +98,7 @@ List<SingleChildWidget> get providers {
           WorkspaceRepositoryImpl(
                 workspaceApiService: context.read(),
                 sharedPreferencesService: context.read(),
+                loggerService: context.read(),
               )
               as WorkspaceRepository,
     ),
@@ -101,7 +107,10 @@ List<SingleChildWidget> get providers {
     ),
     ChangeNotifierProvider(
       create: (context) =>
-          WorkspaceTaskRepositoryImpl(workspaceTaskApiService: context.read())
+          WorkspaceTaskRepositoryImpl(
+                workspaceTaskApiService: context.read(),
+                loggerService: context.read(),
+              )
               as WorkspaceTaskRepository,
     ),
     Provider(
@@ -109,7 +118,10 @@ List<SingleChildWidget> get providers {
     ),
     ChangeNotifierProvider(
       create: (context) =>
-          WorkspaceGoalRepositoryImpl(workspaceGoalApiService: context.read())
+          WorkspaceGoalRepositoryImpl(
+                workspaceGoalApiService: context.read(),
+                loggerService: context.read(),
+              )
               as WorkspaceGoalRepository,
     ),
     Provider(
@@ -117,7 +129,10 @@ List<SingleChildWidget> get providers {
     ),
     ChangeNotifierProvider(
       create: (context) =>
-          WorkspaceUserRepositoryImpl(workspaceUserApiService: context.read())
+          WorkspaceUserRepositoryImpl(
+                workspaceUserApiService: context.read(),
+                loggerService: context.read(),
+              )
               as WorkspaceUserRepository,
     ),
     Provider(
@@ -127,12 +142,16 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceInviteRepositoryImpl(
                 workspaceInviteApiService: context.read(),
+                loggerService: context.read(),
               )
               as WorkspaceInviteRepository,
     ),
     ChangeNotifierProvider(
       create: (context) =>
-          PreferencesRepositoryImpl(sharedPreferencesService: context.read())
+          PreferencesRepositoryImpl(
+                sharedPreferencesService: context.read(),
+                loggerService: context.read(),
+              )
               as PreferencesRepository,
     ),
     Provider(
@@ -149,6 +168,7 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceLeaderboardRepositoryImpl(
                 workspaceLeaderboardApiService: context.read(),
+                loggerService: context.read(),
               )
               as WorkspaceLeaderboardRepository,
     ),

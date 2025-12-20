@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
@@ -8,6 +7,7 @@ import '../../../services/api/workspace/workspace/models/request/create_workspac
 import '../../../services/api/workspace/workspace/models/request/update_workspace_details_request.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace/workspace_api_service.dart';
+import '../../../services/local/logger.dart';
 import '../../../services/local/shared_preferences_service.dart';
 import 'workspace_repository.dart';
 
@@ -15,13 +15,15 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   WorkspaceRepositoryImpl({
     required WorkspaceApiService workspaceApiService,
     required SharedPreferencesService sharedPreferencesService,
+    required LoggerService loggerService,
   }) : _workspaceApiService = workspaceApiService,
-       _sharedPreferencesService = sharedPreferencesService;
+       _sharedPreferencesService = sharedPreferencesService,
+       _loggerService = loggerService;
 
   final WorkspaceApiService _workspaceApiService;
   final SharedPreferencesService _sharedPreferencesService;
+  final LoggerService _loggerService;
 
-  final _log = Logger('WorkspaceRepository');
   List<Workspace>? _cachedWorkspacesList;
 
   @override
@@ -54,9 +56,11 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       case Ok():
         _activeWorkspaceId = workspaceId;
       case Error():
-        _log.severe(
-          'Failed to set active workspace to shared prefs',
-          result.error,
+        _loggerService.log(
+          LogLevel.warn,
+          'sharedPreferencesService.setActiveWorkspaceId failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
         );
     }
 
@@ -75,8 +79,13 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         _activeWorkspaceId ??= result.value;
         return Result.ok(result.value);
       case Error<String?>():
-        _log.severe('Failed to read active workspace ID', result.error);
-        return Result.error(result.error);
+        _loggerService.log(
+          LogLevel.warn,
+          'sharedPreferencesService.getActiveWorkspaceId failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -88,28 +97,30 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       return Result.ok(_cachedWorkspacesList!);
     }
 
-    try {
-      final result = await _workspaceApiService.getWorkspaces();
-      switch (result) {
-        case Ok<List<WorkspaceResponse>>():
-          final mappedData = result.value
-              .map((workspace) => _mapWorkspaceFromResponse(workspace))
-              .toList();
+    final result = await _workspaceApiService.getWorkspaces();
+    switch (result) {
+      case Ok<List<WorkspaceResponse>>():
+        final mappedData = result.value
+            .map((workspace) => _mapWorkspaceFromResponse(workspace))
+            .toList();
 
-          _cachedWorkspacesList = mappedData;
-          notifyListeners();
+        _cachedWorkspacesList = mappedData;
+        notifyListeners();
 
-          // If user is not part of any workspace, notify the navigation redirection listener
-          if (_cachedWorkspacesList!.isEmpty) {
-            _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
-          }
+        // If user is not part of any workspace, notify the navigation redirection listener
+        if (_cachedWorkspacesList!.isEmpty) {
+          _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
+        }
 
-          return Result.ok(mappedData);
-        case Error<List<WorkspaceResponse>>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return Result.ok(mappedData);
+      case Error<List<WorkspaceResponse>>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceApiService.getWorkspaces failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -118,74 +129,87 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     required String name,
     String? description,
   }) async {
-    try {
-      final payload = CreateWorkspaceRequest(
-        name: name,
-        description: description,
-      );
-      final result = await _workspaceApiService.createWorkspace(payload);
+    final payload = CreateWorkspaceRequest(
+      name: name,
+      description: description,
+    );
+    final result = await _workspaceApiService.createWorkspace(payload);
 
-      switch (result) {
-        case Ok<WorkspaceResponse>():
-          final newWorkspace = _mapWorkspaceFromResponse(result.value);
+    switch (result) {
+      case Ok<WorkspaceResponse>():
+        final newWorkspace = _mapWorkspaceFromResponse(result.value);
 
-          // Add the new workspace to the local list (cache)
-          _cachedWorkspacesList?.add(newWorkspace);
-          notifyListeners();
+        // Initialize the list if null
+        _cachedWorkspacesList ??= <Workspace>[];
+        // Add the new workspace to the local list (cache)
+        _cachedWorkspacesList!.add(newWorkspace);
+        notifyListeners();
 
-          // We need to update [_hasNoWorkspacesNotifier] notifier, but just
-          // in the case user now is part of only one workspace for 2 reasons:
-          // 1. when user is not part of any workspace and creates a workspace for the first time
-          // 2. we don't want to trigger this everytime user creates new workspace, because
-          // we don't want the gorouter redirect function to re-trigger everytime.
-          if (_cachedWorkspacesList != null &&
-              _cachedWorkspacesList!.length == 1) {
-            _hasNoWorkspacesNotifier.value = false;
-          }
+        // We need to update [_hasNoWorkspacesNotifier] notifier, but just
+        // in the case user now is part of only one workspace for 2 reasons:
+        // 1. when user is not part of any workspace and creates a workspace for the first time
+        // 2. we don't want to trigger this everytime user creates new workspace, because
+        // we don't want the gorouter redirect function to re-trigger everytime.
+        if (_cachedWorkspacesList!.length == 1) {
+          _hasNoWorkspacesNotifier.value = false;
+        }
 
-          return Result.ok(newWorkspace.id);
-        case Error<WorkspaceResponse>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return Result.ok(newWorkspace.id);
+      case Error<WorkspaceResponse>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceApiService.createWorkspace failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
   @override
   Future<Result<void>> leaveWorkspace({required String workspaceId}) async {
-    final leavingWorkspace = _cachedWorkspacesList?.firstWhere(
-      (workspace) => workspace.id == workspaceId,
-    );
-    try {
-      final result = await _workspaceApiService.leaveWorkspace(workspaceId);
+    if (_cachedWorkspacesList == null) {
+      return Result.error(Exception('Workspaces cache is null'));
+    }
 
-      switch (result) {
-        case Ok():
-          // Remove the leaving workspace from the local list (cache)
-          _cachedWorkspacesList!.remove(leavingWorkspace);
-          notifyListeners();
+    final result = await _workspaceApiService.leaveWorkspace(workspaceId);
 
-          // If user is no more part of any workspace, notify the navigation redirection listener
-          if (_cachedWorkspacesList!.isEmpty) {
-            _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
-          }
+    switch (result) {
+      case Ok():
+        // Remove the leaving workspace from the local list (cache)
+        final leavingWorkspace = _cachedWorkspacesList?.firstWhere(
+          (workspace) => workspace.id == workspaceId,
+        );
+        _cachedWorkspacesList!.remove(leavingWorkspace);
+        notifyListeners();
 
-          return const Result.ok(null);
-        case Error():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        // If user is no more part of any workspace, notify the navigation redirection listener
+        if (_cachedWorkspacesList!.isEmpty) {
+          _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
+        }
+
+        return const Result.ok(null);
+      case Error():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceApiService.leaveWorkspace failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
   @override
   Result<Workspace> loadWorkspaceDetails(String workspaceId) {
-    final details = _cachedWorkspacesList!.firstWhere(
-      (workspace) => workspace.id == workspaceId,
-    );
-    return Result.ok(details);
+    try {
+      final details = _cachedWorkspacesList!.firstWhere(
+        (workspace) => workspace.id == workspaceId,
+      );
+      return Result.ok(details);
+    } on StateError {
+      return Result.error(Exception('Workspace $workspaceId not found'));
+    }
   }
 
   @override
@@ -194,35 +218,37 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     String? name,
     String? description,
   }) async {
-    try {
-      final result = await _workspaceApiService.updateWorkspaceDetails(
-        workspaceId: workspaceId,
-        payload: UpdateWorkspaceDetailsRequest(
-          name: name,
-          description: description,
-        ),
-      );
+    final result = await _workspaceApiService.updateWorkspaceDetails(
+      workspaceId: workspaceId,
+      payload: UpdateWorkspaceDetailsRequest(
+        name: name,
+        description: description,
+      ),
+    );
 
-      switch (result) {
-        case Ok():
-          final updatedWorkspace = _mapWorkspaceFromResponse(result.value);
-          final workspaceIndex = _cachedWorkspacesList!.indexWhere(
-            (workspace) => workspace.id == updatedWorkspace.id,
-          );
+    switch (result) {
+      case Ok():
+        final updatedWorkspace = _mapWorkspaceFromResponse(result.value);
+        final workspaceIndex = _cachedWorkspacesList!.indexWhere(
+          (workspace) => workspace.id == updatedWorkspace.id,
+        );
 
-          if (workspaceIndex != -1) {
-            // Update the existing workspace in the list by replacing it
-            // with the new updated instance.
-            _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
-            notifyListeners();
-          }
+        if (workspaceIndex != -1) {
+          // Update the existing workspace in the list by replacing it
+          // with the new updated instance.
+          _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
+          notifyListeners();
+        }
 
-          return const Result.ok(null);
-        case Error():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+        return const Result.ok(null);
+      case Error():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceApiService.updateWorkspaceDetails failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -253,5 +279,11 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
               profileImageUrl: workspace.createdBy!.profileImageUrl,
             ),
     );
+  }
+
+  @override
+  void dispose() {
+    _hasNoWorkspacesNotifier.dispose();
+    super.dispose();
   }
 }

@@ -34,7 +34,7 @@ abstract class WorkspaceGoalRepository extends ChangeNotifier {
     String? description,
   });
 
-  Result<WorkspaceGoal?> loadGoalDetails({required String goalId});
+  Result<WorkspaceGoal> loadGoalDetails({required String goalId});
 
   Future<Result<void>> updateGoalDetails(
     String workspaceId,

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 
 import '../../../ui/core/utils/intl.dart';
 import '../../../utils/command.dart';
+import '../../services/local/logger.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'preferences_repository.dart';
 
 class PreferencesRepositoryImpl extends PreferencesRepository {
   PreferencesRepositoryImpl({
     required SharedPreferencesService sharedPreferencesService,
-  }) : _sharedPreferencesService = sharedPreferencesService;
+    required LoggerService loggerService,
+  }) : _sharedPreferencesService = sharedPreferencesService,
+       _loggerService = loggerService;
 
   final SharedPreferencesService _sharedPreferencesService;
-
-  final _log = Logger('PreferencesRepository');
+  final LoggerService _loggerService;
 
   Locale? _appLocale;
 
@@ -32,7 +33,7 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
       case Ok():
         final appLanguageCode = result.value;
         if (appLanguageCode != null) {
-          _appLocale = IntlUtils.getSupportedLanguageFromLangugageCode(
+          _appLocale = IntlUtils.getSupportedLanguageFromLanguageCode(
             appLanguageCode,
           ).locale;
           notifyListeners();
@@ -41,11 +42,15 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
         // it here if it is missing in storage. That is the job for the AppStartup view model.
         return Result.ok(_appLocale);
       case Error():
-        _log.severe(
-          'Failed to get app language code from shared prefs',
-          result.error,
+        _loggerService.log(
+          LogLevel.warn,
+          'sharedPreferencesService.getAppLanguageCode failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
         );
-        return Result.error(result.error);
+        // We don't want to error the program since preferences miss
+        // is not fatal as we can always fallback to default values
+        return const Result.ok(null);
     }
   }
 
@@ -64,9 +69,11 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
         _appLocale = locale;
         notifyListeners();
       case Error():
-        _log.severe(
-          'Failed to set app language code to shared prefs',
-          result.error,
+        _loggerService.log(
+          LogLevel.error,
+          'sharedPreferencesService.setAppLanguageCode failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
         );
     }
 

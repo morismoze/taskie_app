@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../domain/models/workspace_invite.dart';
@@ -7,16 +5,19 @@ import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace_invite/models/response/create_workspace_invite_token_response.dart';
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
+import '../../../services/local/logger.dart';
 import 'workspace_invite_repository.dart';
 
 class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
   WorkspaceInviteRepositoryImpl({
     required WorkspaceInviteApiService workspaceInviteApiService,
-  }) : _workspaceInviteApiService = workspaceInviteApiService;
+    required LoggerService loggerService,
+  }) : _workspaceInviteApiService = workspaceInviteApiService,
+       _loggerService = loggerService;
 
   final WorkspaceInviteApiService _workspaceInviteApiService;
+  final LoggerService _loggerService;
 
-  final _log = Logger('WorkspaceInviteRepository');
   // Workspace invite per workspace ID (<workspaceId>: WorkspaceInvite)
   final Map<String, WorkspaceInvite> _cachedWorkspaceInviteTokens = {};
 
@@ -36,57 +37,60 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
       return Result.ok(_cachedWorkspaceInviteTokens[workspaceId]!);
     }
 
-    try {
-      final result = await _workspaceInviteApiService
-          .createWorkspaceInviteToken(workspaceId);
+    final result = await _workspaceInviteApiService.createWorkspaceInviteToken(
+      workspaceId,
+    );
 
-      switch (result) {
-        case Ok<CreateWorkspaceInviteTokenResponse>():
-          final workspaceInvite = WorkspaceInvite(
-            token: result.value.token,
-            expiresAt: result.value.expiresAt,
-          );
-          _cachedWorkspaceInviteTokens[workspaceId] = workspaceInvite;
-          return Result.ok(workspaceInvite);
-        case Error<CreateWorkspaceInviteTokenResponse>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+    switch (result) {
+      case Ok<CreateWorkspaceInviteTokenResponse>():
+        final workspaceInvite = WorkspaceInvite(
+          token: result.value.token,
+          expiresAt: result.value.expiresAt,
+        );
+        _cachedWorkspaceInviteTokens[workspaceId] = workspaceInvite;
+        return Result.ok(workspaceInvite);
+      case Error<CreateWorkspaceInviteTokenResponse>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceInviteApiService.createWorkspaceInviteToken failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
   @override
   Future<Result<Workspace>> joinWorkspace({required String inviteToken}) async {
-    try {
-      final result = await _workspaceInviteApiService.joinWorkspace(
-        inviteToken,
-      );
+    final result = await _workspaceInviteApiService.joinWorkspace(inviteToken);
 
-      switch (result) {
-        case Ok<WorkspaceResponse>():
-          final workspace = result.value;
-          final joinedWorkspace = Workspace(
-            id: workspace.id,
-            name: workspace.name,
-            createdAt: workspace.createdAt,
-            description: workspace.description,
-            pictureUrl: workspace.pictureUrl,
-            createdBy: workspace.createdBy == null
-                ? null
-                : CreatedBy(
-                    id: workspace.createdBy!.id,
-                    firstName: workspace.createdBy!.firstName,
-                    lastName: workspace.createdBy!.lastName,
-                    profileImageUrl: workspace.createdBy!.profileImageUrl,
-                  ),
-          );
-          return Result.ok(joinedWorkspace);
-        case Error<WorkspaceResponse>():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
+    switch (result) {
+      case Ok<WorkspaceResponse>():
+        final workspace = result.value;
+        final joinedWorkspace = Workspace(
+          id: workspace.id,
+          name: workspace.name,
+          createdAt: workspace.createdAt,
+          description: workspace.description,
+          pictureUrl: workspace.pictureUrl,
+          createdBy: workspace.createdBy == null
+              ? null
+              : CreatedBy(
+                  id: workspace.createdBy!.id,
+                  firstName: workspace.createdBy!.firstName,
+                  lastName: workspace.createdBy!.lastName,
+                  profileImageUrl: workspace.createdBy!.profileImageUrl,
+                ),
+        );
+        return Result.ok(joinedWorkspace);
+      case Error<WorkspaceResponse>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceInviteApiService.joinWorkspace failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
     }
   }
 }
