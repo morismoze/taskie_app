@@ -49,6 +49,7 @@ class _WorkspaceUserDetailsEditFormState
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _selectedRoleNotifier.dispose();
     super.dispose();
   }
 

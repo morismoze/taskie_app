@@ -67,6 +67,14 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   }
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _selectedAssigneesNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final options = widget.viewModel.workspaceMembers.map((user) {
       final fullName = UserUtils.constructFullName(

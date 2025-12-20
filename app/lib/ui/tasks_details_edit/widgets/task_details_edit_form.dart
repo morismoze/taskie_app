@@ -48,6 +48,8 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _rewardPointsNotifier.dispose();
+    _dueDateNotifier.dispose();
     super.dispose();
   }
 

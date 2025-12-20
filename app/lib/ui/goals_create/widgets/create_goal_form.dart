@@ -47,6 +47,15 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   }
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _requiredPointsController.dispose();
+    _selectedAssigneeNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final members = widget.viewModel.workspaceMembers.map((user) {
       final fullName = UserUtils.constructFullName(

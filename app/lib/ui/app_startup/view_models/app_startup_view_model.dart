@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../data/repositories/auth/auth_state_repository.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
@@ -24,7 +25,7 @@ class AppStartupViewModel {
     final resultLoadAppLocale = await _preferencesRepository.loadAppLocale();
 
     // loadAppLocale always returns positive result
-    if ((resultLoadAppLocale as Ok<String?>).value == null) {
+    if ((resultLoadAppLocale as Ok<Locale?>).value == null) {
       // 1.b Set app locale if locale from shared prefs is null
       final systemLocale = PlatformDispatcher.instance.locale;
       final supportedLocale = IntlUtils.getSupportedLanguageFromLanguageCode(

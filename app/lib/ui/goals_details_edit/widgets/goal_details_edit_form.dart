@@ -55,6 +55,7 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
     _titleController.dispose();
     _descriptionController.dispose();
     _requiredPointsController.dispose();
+    _selectedAssigneeNotifier.dispose();
     super.dispose();
   }
 

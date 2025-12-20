@@ -118,6 +118,7 @@ class TasksScreenViewModel extends ChangeNotifier {
   void dispose() {
     _workspaceTaskRepository.removeListener(_onTasksChanged);
     _userRepository.removeListener(_onUserChanged);
+    _userNotifier.dispose();
     super.dispose();
   }
 }
