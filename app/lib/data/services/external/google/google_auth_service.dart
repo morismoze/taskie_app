@@ -55,4 +55,13 @@ class GoogleAuthService {
       );
     }
   }
+
+  Future<Result<void>> disconnect() async {
+    try {
+      await _googleSignIn.disconnect();
+      return const Result.ok(null);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
+    }
+  }
 }

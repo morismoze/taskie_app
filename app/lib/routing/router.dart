@@ -36,6 +36,7 @@ import '../ui/tasks_details_assignments_edit/view_models/task_assignments_edit_s
 import '../ui/tasks_details_assignments_edit/widgets/task_assignments_edit_screen.dart';
 import '../ui/tasks_details_edit/view_models/task_details_edit_screen_view_model.dart';
 import '../ui/tasks_details_edit/widgets/task_details_edit_screen.dart';
+import '../ui/user_profile/view_models/user_profile_view_model.dart';
 import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
@@ -196,7 +197,7 @@ GoRouter router({
                 final workspaceId = state.pathParameters['workspaceId']!;
 
                 return MultiProvider(
-                  // Both of these view models are wrapped in providers, because we want to limit
+                  // These view models are wrapped in providers, because we want to limit
                   // reinstantianting them on every navigation inside the shell route.
                   providers: [
                     ChangeNotifierProvider(
@@ -216,6 +217,14 @@ GoRouter router({
                         userRepository: context.read(),
                         refreshTokenUseCase: notifierContext.read(),
                         activeWorkspaceChangeUseCase: notifierContext.read(),
+                      ),
+                    ),
+                    ChangeNotifierProvider(
+                      key: ValueKey('user_profile_$workspaceId'),
+                      create: (notifierContext) => UserProfileViewModel(
+                        workspaceId: workspaceId,
+                        userRepository: context.read(),
+                        signOutUserCase: context.read(),
                       ),
                     ),
                   ],

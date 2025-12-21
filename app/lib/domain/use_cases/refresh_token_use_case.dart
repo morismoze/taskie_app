@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
 import '../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
@@ -14,8 +12,6 @@ class RefreshTokenUseCase {
 
   final AuthRepository _authRepository;
   final AuthStateRepository _authStateRepository;
-
-  final _log = Logger('RefreshTokenUseCase');
 
   /// Refreshes access token via [RefreshTokenRepository] and sets authenticated state in [AuthStateRepository],
   /// meaning it sets the new tokens and, in cases of failure, sets the authenticated state to false for the
@@ -34,7 +30,6 @@ class RefreshTokenUseCase {
           await _authStateRepository.setTokens((accessToken, refreshToken));
           return const Result.ok(null);
         case Error():
-          _log.severe('Error refreshing the token', result.error);
           await _authStateRepository.setTokens(null);
           _authStateRepository.setAuthenticated(false);
           return const Result.error(RefreshTokenFailedException());

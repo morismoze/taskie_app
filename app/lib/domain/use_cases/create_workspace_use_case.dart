@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../utils/command.dart';
 import 'active_workspace_change_use_case.dart';
@@ -17,8 +15,6 @@ class CreateWorkspaceUseCase {
   final WorkspaceRepository _workspaceRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final ActiveWorkspaceChangeUseCase _activeWorkspaceChangeUseCase;
-
-  final _log = Logger('CreateWorkspaceUseCase');
 
   /// On workspace creation we need to do couple of things:
   /// 1. Create the workspace,
@@ -42,7 +38,6 @@ class CreateWorkspaceUseCase {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to create workspace', resultCreate.error);
         return Result.error(resultCreate.error);
     }
 
@@ -54,7 +49,6 @@ class CreateWorkspaceUseCase {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to refresh token', resultRefresh.error);
         return Result.error(resultRefresh.error);
     }
 
@@ -66,10 +60,6 @@ class CreateWorkspaceUseCase {
       case Ok():
         return resultCreate;
       case Error():
-        _log.warning(
-          'Failed to change active workspace',
-          resultWorkspaceChange.error,
-        );
         return Result.error(resultWorkspaceChange.error);
     }
   }

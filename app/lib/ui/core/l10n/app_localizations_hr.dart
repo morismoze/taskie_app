@@ -803,4 +803,7 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsGuideNoteBody =>
       'Ako se status nekog prethodno dovršenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.';
+
+  @override
+  String get signOut => 'Odjava';
 }

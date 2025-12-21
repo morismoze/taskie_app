@@ -19,7 +19,7 @@ abstract class WorkspaceRepository extends ChangeNotifier {
 
   /// This method is invoked on the EntryScreen or when user either leaves a
   /// workspace, joins one or creates one (ActiveWorkspaceChangeUseCase).
-  Future<Result<void>> setActiveWorkspaceId(String workspaceId);
+  Future<Result<void>> setActiveWorkspaceId(String? workspaceId);
 
   /// Reads either from local cache or from storage. When read from storage,
   /// it also sets the local cache. This is used only in one place - on app
@@ -47,4 +47,6 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// This method is used in conjuction with `WorkspaceInviteRepository`'s
   /// `joinWorkspace` method.
   Future<Result<void>> addWorkspace({required Workspace workspace});
+
+  void purgeWorkspacesCache();
 }

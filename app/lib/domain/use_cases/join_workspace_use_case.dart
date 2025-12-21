@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../data/repositories/user/user_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
@@ -22,8 +20,6 @@ class JoinWorkspaceUseCase {
   final UserRepository _userRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
 
-  final _log = Logger('JoinWorkspaceUseCase');
-
   /// On workspace join we need to do two things:
   /// 1. Join the workspace,
   /// 2. Refresh the access token, since we keep role per workspace in it,
@@ -43,7 +39,6 @@ class JoinWorkspaceUseCase {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to join workspace', resultJoin.error);
         return Result.error(resultJoin.error);
     }
 
@@ -55,7 +50,6 @@ class JoinWorkspaceUseCase {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to refresh token', resultRefresh.error);
         return Result.error(resultRefresh.error);
     }
 
@@ -65,7 +59,6 @@ class JoinWorkspaceUseCase {
       case Ok():
         break;
       case Error():
-        _log.warning('Failed to refresh the user', resultUser.error);
         return Result.error(resultUser.error);
     }
 
@@ -78,7 +71,6 @@ class JoinWorkspaceUseCase {
       case Ok():
         return Result.ok(newWorkspace.id);
       case Error():
-        _log.warning('Failed to add new workspace', resultAddWorkspace.error);
         return Result.error(resultAddWorkspace.error);
     }
   }

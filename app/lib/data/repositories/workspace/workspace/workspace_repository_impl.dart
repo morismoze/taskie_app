@@ -42,7 +42,26 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   ValueNotifier<bool?> get hasNoWorkspacesNotifier => _hasNoWorkspacesNotifier;
 
   @override
-  Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
+  Future<Result<void>> setActiveWorkspaceId(String? workspaceId) async {
+    if (workspaceId == null) {
+      // Back to init value
+      final result = await _sharedPreferencesService.deleteActiveWorkspaceId();
+
+      switch (result) {
+        case Ok():
+          _activeWorkspaceId = null;
+          return const Result.ok(null);
+        case Error():
+          _loggerService.log(
+            LogLevel.warn,
+            'sharedPreferencesService.setActiveWorkspaceId failed',
+            error: result.error,
+            stackTrace: result.stackTrace,
+          );
+          return Result.error(result.error, result.stackTrace);
+      }
+    }
+
     if (_activeWorkspaceId == workspaceId) {
       // Early return if the same workspaceId is already set
       return const Result.ok(null);
@@ -261,6 +280,11 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     }
 
     return Result.error(Exception('Cached list was not initialized'));
+  }
+
+  @override
+  void purgeWorkspacesCache() {
+    _cachedWorkspacesList = null;
   }
 
   Workspace _mapWorkspaceFromResponse(WorkspaceResponse workspace) {
