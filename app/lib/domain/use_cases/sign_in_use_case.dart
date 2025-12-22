@@ -27,6 +27,8 @@ class SignInUseCase {
 
     switch (resultSignIn) {
       case Ok<Auth>():
+        // Not fatal if tokens save to the secure storage fails. Worst
+        // case token refresh will trigger.
         _authStateRepository.setTokens((
           resultSignIn.value.accessToken,
           resultSignIn.value.refreshToken,

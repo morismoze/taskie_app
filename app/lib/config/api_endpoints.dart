@@ -1,3 +1,4 @@
+import '../data/repositories/auth/auth_id_provider_repository.dart';
 import '../data/services/api/workspace/workspace/models/request/workspace_id_path_param.dart';
 import '../data/services/api/workspace/workspace_goal/models/request/workspace_goal_id_path_param.dart';
 import '../data/services/api/workspace/workspace_task/models/request/workspace_task_id_path_param.dart';
@@ -6,7 +7,13 @@ import '../data/services/api/workspace/workspace_task/models/request/workspace_u
 abstract final class ApiEndpoints {
   static const _prefix = '/api';
   // Auth
-  static const loginGoogle = '$_prefix/auth/google';
+  static String socialLogin(AuthProvider p) {
+    switch (p) {
+      case AuthProvider.google:
+        return '$_prefix/auth/google';
+    }
+  }
+
   static const logout = '$_prefix/auth/logout';
   static const refreshToken = '$_prefix/auth/refresh';
 

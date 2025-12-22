@@ -39,8 +39,27 @@ class SignOutUseCase {
 
     switch (result) {
       case Ok():
+        final resultSetActiveWorkspace = await _workspaceRepository
+            .setActiveWorkspaceId(null);
+
+        if (resultSetActiveWorkspace is Error) {
+          // This is important and an error needs to be returned in this
+          // case because if a user signs out, and then signs in with another
+          // email/provider, active workspace ID will still be from the
+          // previous user, which is fatal.
+          _loggerService.log(
+            LogLevel.error,
+            'workspaceRepository.setActiveWorkspaceId failed',
+            error: resultSetActiveWorkspace.error,
+            stackTrace: resultSetActiveWorkspace.stackTrace,
+          );
+          return Result.error(
+            resultSetActiveWorkspace.error,
+            resultSetActiveWorkspace.stackTrace,
+          );
+        }
+
         _purgeDataCacheUseCase.purgeDataCache();
-        _workspaceRepository.setActiveWorkspaceId(null);
         // This needs to be done only in the case of a
         // sign out - hence why it is not in the
         // purgeWorkspacesCache method.

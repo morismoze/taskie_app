@@ -39,6 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     switch (resultGetActiveAuthIdProvider) {
       case Ok<AuthProvider?>():
+        _activeProvider = resultGetActiveAuthIdProvider.value;
         return Result.ok(resultGetActiveAuthIdProvider.value);
       case Error<AuthProvider?>():
         _loggerService.log(
@@ -76,7 +77,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final idToken = (idProviderResult as Ok<ExternalCredential>).value.idToken;
 
     final apiLoginResult = await _authApiService.login(
-      SocialLoginRequest(idToken),
+      provider: provider,
+      payload: SocialLoginRequest(idToken),
     );
 
     switch (apiLoginResult) {
@@ -87,18 +89,20 @@ class AuthRepositoryImpl implements AuthRepository {
 
         // We need to save active provider to the disk once a user
         // signed in via that provider.
-        final resultSetActiveAuthIdProvider = _sharedPreferencesService
+        final resultSetActiveAuthIdProvider = await _sharedPreferencesService
             .setActiveAuthIdProvider(provider: provider);
 
         if (resultSetActiveAuthIdProvider is Error) {
-          final resultError = resultSetActiveAuthIdProvider as Error;
           _loggerService.log(
             LogLevel.warn,
             'sharedPreferencesService.setActiveAuthIdProvider failed',
-            error: resultError.error,
-            stackTrace: resultError.stackTrace,
+            error: resultSetActiveAuthIdProvider.error,
+            stackTrace: resultSetActiveAuthIdProvider.stackTrace,
           );
-          return Result.error(resultError.error, resultError.stackTrace);
+          return Result.error(
+            resultSetActiveAuthIdProvider.error,
+            resultSetActiveAuthIdProvider.stackTrace,
+          );
         }
 
         return Result.ok(
@@ -156,6 +160,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final resultApiLogout = await _authApiService.logout();
 
     if (resultApiLogout is Error) {
+      // No need to return error result, because not logouting
+      // on the backend is not fatal
       _loggerService.log(
         LogLevel.warn,
         'authApiService.logout failed',
@@ -177,6 +183,9 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     }
 
+    // No need to check the result, as user will override it again
+    // on the next sign in
+    await _sharedPreferencesService.deleteActiveAuthIdProvider();
     _activeProvider = null;
     // Best-effort as we delete tokens and do other actual
     // UI-wise logout stuff in separate methods

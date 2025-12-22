@@ -800,4 +800,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOut => 'Sign out';
+
+  @override
+  String get signOutError => 'Uh-oh! We\'ve had some trouble signing you out';
 }

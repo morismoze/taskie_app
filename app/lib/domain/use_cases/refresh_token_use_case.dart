@@ -27,6 +27,8 @@ class RefreshTokenUseCase {
       switch (result) {
         case Ok():
           final (accessToken, refreshToken) = result.value;
+          // Not fatal if tokens save to the secure storage fails. Worst
+          // case token refresh will trigger once again.
           await _authStateRepository.setTokens((accessToken, refreshToken));
           return const Result.ok(null);
         case Error():

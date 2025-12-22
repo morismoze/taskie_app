@@ -806,4 +806,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get signOut => 'Odjava';
+
+  @override
+  String get signOutError => 'Uh-oh! Došlo je do problema prilikom odjave';
 }

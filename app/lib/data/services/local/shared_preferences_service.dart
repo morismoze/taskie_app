@@ -95,4 +95,13 @@ class SharedPreferencesService {
       return Result.error(e, stackTrace);
     }
   }
+
+  Future<Result<void>> deleteActiveAuthIdProvider() async {
+    try {
+      await _sharedPreferencesAsync.remove(_activeAuthIdProvider);
+      return const Result.ok(null);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
+    }
+  }
 }

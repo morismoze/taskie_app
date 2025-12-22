@@ -1,5 +1,6 @@
 import '../../../../config/api_endpoints.dart';
 import '../../../../utils/command.dart';
+import '../../../repositories/auth/auth_id_provider_repository.dart';
 import '../api_client.dart';
 import '../api_response.dart';
 import 'models/request/refresh_token_request.dart';
@@ -12,12 +13,13 @@ class AuthApiService {
 
   final ApiClient _apiClient;
 
-  Future<Result<LoginResponse>> login(SocialLoginRequest payload) async {
+  Future<Result<LoginResponse>> login({
+    required AuthProvider provider,
+    required SocialLoginRequest payload,
+  }) async {
     try {
-      final response = await _apiClient.client.post(
-        ApiEndpoints.loginGoogle,
-        data: payload,
-      );
+      final endpoint = ApiEndpoints.socialLogin(provider);
+      final response = await _apiClient.client.post(endpoint, data: payload);
 
       final apiResponse = ApiResponse<LoginResponse>.fromJson(
         response.data,
