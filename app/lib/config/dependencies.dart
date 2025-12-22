@@ -1,6 +1,8 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
+import '../data/repositories/auth/auth_id_provider_repository.dart';
+import '../data/repositories/auth/auth_id_provider_repository_google_impl.dart';
 import '../data/repositories/auth/auth_repository.dart';
 import '../data/repositories/auth/auth_repository_impl.dart';
 import '../data/repositories/auth/auth_state_repository.dart';
@@ -38,9 +40,11 @@ import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
 import '../domain/use_cases/create_workspace_use_case.dart';
 import '../domain/use_cases/join_workspace_use_case.dart';
+import '../domain/use_cases/purge_data_cache_use_case.dart';
 import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/share_workspace_invite_link_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
+import '../domain/use_cases/sign_out_use_case.dart';
 import '../ui/core/services/rbac_service.dart';
 
 List<SingleChildWidget> get providers {
@@ -66,10 +70,20 @@ List<SingleChildWidget> get providers {
     ),
     Provider(create: (context) => AuthApiService(apiClient: context.read())),
     Provider(
+      create: (context) => AuthGoogleIdProviderRepositoryImpl(
+        googleAuthService: context.read(),
+        loggerService: context.read(),
+      ),
+    ),
+    Provider(
       create: (context) =>
           AuthRepositoryImpl(
                 authApiService: context.read(),
-                googleAuthService: context.read(),
+                sharedPreferencesService: context.read(),
+                providers: {
+                  AuthProvider.google: context
+                      .read<AuthGoogleIdProviderRepositoryImpl>(),
+                },
                 loggerService: context.read(),
               )
               as AuthRepository,
@@ -173,12 +187,17 @@ List<SingleChildWidget> get providers {
               as WorkspaceLeaderboardRepository,
     ),
     Provider(
-      create: (context) => ActiveWorkspaceChangeUseCase(
-        workspaceRepository: context.read(),
+      create: (context) => PurgeDataCacheUseCase(
         workspaceUserRepository: context.read(),
         workspaceTaskRepository: context.read(),
         workspaceLeaderboardRepository: context.read(),
         workspaceGoalRepository: context.read(),
+      ),
+    ),
+    Provider(
+      create: (context) => ActiveWorkspaceChangeUseCase(
+        workspaceRepository: context.read(),
+        purgeDataCacheUseCase: context.read(),
         userRepository: context.read(),
       ),
     ),
@@ -201,5 +220,14 @@ List<SingleChildWidget> get providers {
       create: (context) => RbacService(userRepository: context.read()),
     ),
     Provider(lazy: true, create: (_) => ShareWorkspaceInviteLinkUseCase()),
+    Provider(
+      create: (context) => SignOutUseCase(
+        authRepository: context.read(),
+        authStateRepository: context.read(),
+        workspaceRepository: context.read(),
+        purgeDataCacheUseCase: context.read(),
+        loggerService: context.read(),
+      ),
+    ),
   ];
 }

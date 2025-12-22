@@ -8,11 +8,17 @@ import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/ui/app_avatar.dart';
+import '../../../core/ui/app_modal_bottom_sheet.dart';
+import '../../../user_profile/widgets/user_profile.dart';
 import '../../app_fab/widgets/app_floating_action_button.dart';
 import '../view_models/app_bottom_navigation_bar_view_model.dart';
 
 const double kAppBottomNavigationBarHeight = 58.0;
 const double kAppBottomNavigationBarBorderRadius = 40.0;
+const int tasksIndex = 0;
+const int goalsIndex = 1;
+const int leaderboardIndex = 2;
+const int userProfileIndex = 3;
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({
@@ -48,26 +54,26 @@ class AppBottomNavigationBar extends StatelessWidget {
             _TabItem(
               icon: FontAwesomeIcons.house,
               label: context.localization.bottomNavigationBarTasksLabel,
-              isActive: currentIndex == 0,
-              onPressed: () => _navigateToBranch(0),
+              isActive: currentIndex == tasksIndex,
+              onPressed: () => _navigateToBranch(tasksIndex),
             ),
             _TabItem(
               icon: FontAwesomeIcons.solidFlag,
               label: context.localization.goalsLabel,
-              isActive: currentIndex == 2,
-              onPressed: () => _navigateToBranch(1),
+              isActive: currentIndex == goalsIndex,
+              onPressed: () => _navigateToBranch(goalsIndex),
             ),
             if (canCreateObjective)
               const SizedBox(width: kAppFloatingActionButtonSize),
             _TabItem(
               icon: FontAwesomeIcons.trophy,
               label: context.localization.leaderboardLabel,
-              isActive: currentIndex == 1,
-              onPressed: () => _navigateToBranch(2),
+              isActive: currentIndex == leaderboardIndex,
+              onPressed: () => _navigateToBranch(leaderboardIndex),
             ),
             _AvatarTabItem(
-              isActive: currentIndex == 3,
-              onPressed: () => _navigateToBranch(3),
+              isActive: currentIndex == userProfileIndex,
+              onPressed: () => _openUserProfile(context),
               user: viewModel.user!,
             ),
           ],
@@ -87,12 +93,21 @@ class AppBottomNavigationBar extends StatelessWidget {
     }
   }
 
+  void _openUserProfile(BuildContext context) {
+    AppModalBottomSheet.show(
+      context: context,
+      isDetached: true,
+      child: UserProfile(viewModel: context.read()),
+    );
+  }
+
   int _getCurrentTabIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
-      final path when path.contains(Routes.tasksRelative) => 0,
-      final path when path.contains(Routes.leaderboardRelative) => 1,
-      final path when path.contains(Routes.goalsRelative) => 2,
+      final path when path.contains(Routes.tasksRelative) => tasksIndex,
+      final path when path.contains(Routes.goalsRelative) => goalsIndex,
+      final path when path.contains(Routes.leaderboardRelative) =>
+        leaderboardIndex,
       _ => 0,
     };
   }

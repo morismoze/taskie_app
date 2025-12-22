@@ -797,4 +797,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsGuideNoteBody =>
       'If the status of a previously completed task is later changed from __Completed__ to __In Progress__, __Completed as Stale__ or __Not Completed__, or if the task is closed (__Closed__), or if the member was removed from a task as an assignee, the accumulated points are recalculated (they usually decrease). As a result, some goals that were previously completed may automatically revert to __In Progress__ until the member collects enough points again.';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get signOutError => 'Uh-oh! We\'ve had some trouble signing you out';
 }

@@ -9,6 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { AuthService } from './auth.service';
 import { RequestWithUser } from './domain/request-with-user.domain';
 import { TokenRefreshRequest } from './dto/token-refresh-request.dto';
@@ -37,6 +39,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(@Req() request: RequestWithUser): Promise<void> {
+    throw new ApiHttpException(
+      {
+        code: ApiErrorCode.SERVER_ERROR,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
     return this.authService.logout(request.user);
   }
 }

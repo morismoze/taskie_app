@@ -38,13 +38,6 @@ class Footer extends StatelessWidget {
                 label: context.localization.appDrawerCreateNewWorkspace,
                 leadingIcon: FontAwesomeIcons.plus,
               ),
-              AppTextButton(
-                onPress: () {
-                  context.push(Routes.preferences);
-                },
-                label: context.localization.preferencesLabel,
-                leadingIcon: FontAwesomeIcons.gear,
-              ),
             ],
           ),
         ),
