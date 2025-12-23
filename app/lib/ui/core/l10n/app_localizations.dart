@@ -350,6 +350,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
   String get taskskNoFilteredTasks;
 
+  /// No description provided for @tasksEmptyPageTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!'**
+  String get tasksEmptyPageTasks;
+
   /// No description provided for @objectiveStatusFilterAll.
   ///
   /// In en, this message translates to:
@@ -1297,6 +1303,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
   String get goalsNoFilteredGoals;
+
+  /// No description provided for @goalsEmptyPageGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!'**
+  String get goalsEmptyPageGoals;
 
   /// No description provided for @goalsDetails.
   ///

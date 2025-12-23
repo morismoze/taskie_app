@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../../../../domain/models/assignee.dart';
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/filter.dart';
@@ -7,7 +9,6 @@ import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/paginable_objectives.dart';
-import '../../../services/api/workspace/progress_status.dart';
 import '../../../services/api/workspace/workspace_goal/models/request/create_goal_request.dart';
 import '../../../services/api/workspace/workspace_goal/models/request/update_goal_details_request.dart';
 import '../../../services/api/workspace/workspace_goal/models/response/workspace_goal_response.dart';
@@ -18,7 +19,6 @@ import 'workspace_goal_repository.dart';
 const _kDefaultPaginablePage = 1;
 const _kDefaultPaginableLimit = 15;
 const _kDefaultPaginableSort = SortBy.newestFirst;
-const _kDefaultPaginableStatus = ProgressStatus.inProgress;
 
 class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   WorkspaceGoalRepositoryImpl({
@@ -39,7 +39,6 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     page: _kDefaultPaginablePage,
     limit: _kDefaultPaginableLimit,
     sort: _kDefaultPaginableSort,
-    status: _kDefaultPaginableStatus,
   );
 
   @override
@@ -170,18 +169,15 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
   @override
   Result<WorkspaceGoal> loadGoalDetails({required String goalId}) {
-    try {
-      final details = _cachedGoals!.items.firstWhere(
-        (goal) => goal.id == goalId,
-      );
-      return Result.ok(details);
-    } on StateError {
-      // This can happen when a goal gets closed and removed from the cache
-      // and the repository notifies listeners, e.g. the goal details edit
-      // screen VM, which then tries to load the details again in a split
-      // second before goal is closed and user is navigated back to goals screen.
+    final details = _cachedGoals?.items.firstWhereOrNull(
+      (goal) => goal.id == goalId,
+    );
+
+    if (details == null) {
       return Result.error(Exception('Goal $goalId not found'));
     }
+
+    return Result.ok(details);
   }
 
   @override
@@ -273,7 +269,15 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
   @override
   void purgeGoalsCache() {
+    _isFilterSearch = false;
     _cachedGoals = null;
+    _activeFilter = ObjectiveFilter(
+      page: _kDefaultPaginablePage,
+      limit: _kDefaultPaginableLimit,
+      search: null,
+      status: null,
+      sort: _kDefaultPaginableSort,
+    );
   }
 
   WorkspaceGoal _mapGoalFromResponse(

@@ -148,6 +148,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
 
   @override
+  String get tasksEmptyPageTasks =>
+      'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!';
+
+  @override
   String get objectiveStatusFilterAll => 'All statuses';
 
   @override
@@ -718,6 +722,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
+
+  @override
+  String get goalsEmptyPageGoals =>
+      'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!';
 
   @override
   String get goalsDetails => 'Goal details';

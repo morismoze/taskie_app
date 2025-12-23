@@ -148,6 +148,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
 
   @override
+  String get tasksEmptyPageTasks =>
+      'Uh-oh! Ova stranica nema više zadataka. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis zadataka!';
+
+  @override
   String get objectiveStatusFilterAll => 'Svi statusi';
 
   @override
@@ -724,6 +728,10 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
+
+  @override
+  String get goalsEmptyPageGoals =>
+      'Uh-oh! Ova stranica nema više ciljeva. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis ciljeva!';
 
   @override
   String get goalsDetails => 'Detalji cilja';

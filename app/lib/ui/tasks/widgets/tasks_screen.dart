@@ -159,9 +159,10 @@ class _TasksScreenState extends State<TasksScreen> {
                       ),
                       list: TasksList(viewModel: widget.viewModel),
                       totalPages: widget.viewModel.tasks!.totalPages,
+                      currentPage: widget.viewModel.activeFilter.page,
                       onPageChange: (page) {
                         final updatedFilter = widget.viewModel.activeFilter
-                            .copyWith(page: page + 1);
+                            .copyWith(page: page);
                         widget.viewModel.loadTasks.execute((
                           updatedFilter,
                           null,

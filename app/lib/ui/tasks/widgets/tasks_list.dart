@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
+import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/empty_filtered_objectives.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
-import 'empty_filtered_tasks.dart';
 import 'task_card/card.dart';
 
 class TasksList extends StatelessWidget {
@@ -37,9 +38,11 @@ class TasksList extends StatelessWidget {
       );
     }
 
-    return const SliverFillRemaining(
+    return SliverFillRemaining(
       hasScrollBody: false,
-      child: EmptyFilteredTasks(),
+      child: EmptyFilteredObjectives(
+        text: context.localization.taskskNoFilteredTasks,
+      ),
     );
   }
 }

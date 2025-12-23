@@ -94,6 +94,17 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
       taskId: _taskId,
     );
 
+    if ((_workspaceTaskRepository.tasks!.items.isEmpty ||
+            _workspaceTaskRepository.tasks == null) &&
+        _workspaceTaskRepository.activeFilter.page > 1) {
+      _workspaceTaskRepository.loadTasks(
+        workspaceId: _activeWorkspaceId,
+        filter: _workspaceTaskRepository.activeFilter.copyWith(
+          page: _workspaceTaskRepository.activeFilter.page - 1,
+        ),
+      );
+    }
+
     switch (result) {
       case Ok():
         return const Result.ok(null);

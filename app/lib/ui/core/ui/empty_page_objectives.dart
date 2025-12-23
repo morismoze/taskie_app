@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../core/l10n/l10n_extensions.dart';
+class EmptyPageObjectives extends StatelessWidget {
+  const EmptyPageObjectives({super.key, required this.text});
 
-class EmptyFilteredTasks extends StatelessWidget {
-  const EmptyFilteredTasks({super.key});
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class EmptyFilteredTasks extends StatelessWidget {
         FractionallySizedBox(
           widthFactor: 0.9,
           child: Text(
-            context.localization.taskskNoFilteredTasks,
+            text,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),

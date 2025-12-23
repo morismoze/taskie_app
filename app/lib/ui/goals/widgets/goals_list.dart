@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
+import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/empty_filtered_objectives.dart';
 import '../view_models/goals_screen_viewmodel.dart';
-import 'empty_filtered_goals.dart';
 import 'goal_card/card.dart';
 
 class GoalsList extends StatelessWidget {
@@ -35,9 +36,11 @@ class GoalsList extends StatelessWidget {
       );
     }
 
-    return const SliverFillRemaining(
+    return SliverFillRemaining(
       hasScrollBody: false,
-      child: EmptyFilteredGoals(),
+      child: EmptyFilteredObjectives(
+        text: context.localization.goalsNoFilteredGoals,
+      ),
     );
   }
 }

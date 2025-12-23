@@ -153,9 +153,10 @@ class _GoalssScreenState extends State<GoalsScreen> {
                       ),
                       list: GoalsList(viewModel: widget.viewModel),
                       totalPages: widget.viewModel.goals!.totalPages,
+                      currentPage: widget.viewModel.activeFilter.page,
                       onPageChange: (page) {
                         final updatedFilter = widget.viewModel.activeFilter
-                            .copyWith(page: page + 1);
+                            .copyWith(page: page);
                         widget.viewModel.loadGoals.execute((
                           updatedFilter,
                           null,
