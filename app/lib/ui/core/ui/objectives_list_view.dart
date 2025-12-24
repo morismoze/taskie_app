@@ -38,8 +38,10 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
     final paginatorCurrentPage = _controller.currentPage + 1;
     final repositoryCurrentPage = widget.currentPage;
 
+    // This case can happen for example:
+    // 1. When the user closes all tasks/goals of the current page
+    // and then we need to re-navigate the user to the previous page
     if (paginatorCurrentPage != repositoryCurrentPage) {
-      _controller.currentPage = repositoryCurrentPage;
       _controller.navigateToPage(repositoryCurrentPage);
     }
   }

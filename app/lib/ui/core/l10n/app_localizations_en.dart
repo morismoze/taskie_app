@@ -12,9 +12,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_cancel => 'Cancel';
 
   @override
-  String get misc_somethingWentWrong => 'Uh-oh! Something went wrong';
-
-  @override
   String get misc_tryAgain => 'Try again';
 
   @override
@@ -58,7 +55,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get misc_errorPrompt =>
-      'Uh-oh! We ran into a small hiccup loading this.';
+      'Uh-oh! We\'ve ran into a small hiccup loading this.';
 
   @override
   String get misc_retry => 'Let\'s try again';
@@ -77,11 +74,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInGetStarted => 'Let\'s get started';
 
   @override
+  String get signInTitleProviders => 'Sign in method';
+
+  @override
   String get signInViaGoogle => 'Sign in via Google';
 
   @override
   String get signInGoogleCanceled =>
       'Google sign-in cancelled. Please try again.';
+
+  @override
+  String get signInGoogleError =>
+      'Uh-oh! We\'ve had some trouble with Google sign-in';
 
   @override
   String get errorOnInitialLoad =>
@@ -153,6 +157,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get objectiveStatusFilterAll => 'All statuses';
+
+  @override
+  String get objectiveStatusFilter => 'Filter by status';
+
+  @override
+  String get objectiveTimeFilter => 'Sort by time';
 
   @override
   String get progressStatusInProgress => 'In Progress';
@@ -318,6 +328,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble changing workspace';
 
   @override
+  String get appDrawerWorkspaceOptions => 'Workspace options';
+
+  @override
   String get appDrawerEditWorkspace => 'Workspace settings';
 
   @override
@@ -359,6 +372,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createNewTaskSuccess => 'Successfully created new task';
 
   @override
+  String get createNewTaskError =>
+      'Uh-oh! We\'ve had some trouble creating new task';
+
+  @override
   String get objectiveNoMembersCta => 'Let\'s add members';
 
   @override
@@ -394,6 +411,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagement => 'Users management';
+
+  @override
+  String get workspaceUsersManagementUserOptions => 'Workspace user options';
 
   @override
   String get workspaceUsersManagementLoadUsersError =>
@@ -473,6 +493,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceInviteLabel => 'Workspace invite link';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteError =>
+      'Uh-oh! We\'ve had some trouble creating a workspace invite link.';
 
   @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
@@ -569,10 +593,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createNewGoalMembersLoadError =>
-      'Uh-oh! We ran into a small hiccup loading workspace members.';
+      'Uh-oh! We\'ve ran into a small hiccup loading workspace members.';
 
   @override
   String get createNewGoalSuccess => 'Successfully created new goal';
+
+  @override
+  String get createNewGoalError =>
+      'Uh-oh! We\'ve had some trouble creating new goal';
 
   @override
   String get createNewGoalTitle => 'New goal';
@@ -672,15 +700,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceCreateJoinViaInviteLinkNotFound =>
-      'The provided link is invalid';
+      'Uh-oh! The provided link is invalid';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
-      'The provided link has expired or was already used';
+      'Uh-oh! The provided link has expired or was already used';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExistingUser =>
-      'You are already part of this workspace';
+      'Uh-oh! You are already part of this workspace';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkError =>
+      'Uh-oh! We\'ve had some trouble adding you to the workspace';
 
   @override
   String get workspaceCreationSuccess =>

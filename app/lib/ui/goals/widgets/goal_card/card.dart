@@ -9,6 +9,7 @@ import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/app_avatar.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
+import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/card_container.dart';
 import '../../../core/ui/new_objective_badge.dart';
@@ -55,8 +56,13 @@ class GoalCard extends StatelessWidget {
     );
 
     return InkWell(
-      onTap: () =>
-          _onTap(context, viewModel.activeWorkspaceId, goalId, isGoalClosed),
+      onTap: () => _onTap(
+        context,
+        title,
+        viewModel.activeWorkspaceId,
+        goalId,
+        isGoalClosed,
+      ),
       child: CardContainer(
         child: Column(
           spacing: 15,
@@ -92,46 +98,50 @@ class GoalCard extends StatelessWidget {
 
   void _onTap(
     BuildContext context,
+    String title,
     String activeWorkspaceId,
     String goalId,
     bool isGoalClosed,
   ) {
     AppModalBottomSheet.show(
       context: context,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppTextButton(
-            onPress: () {
-              context.pop(); // Close bottom sheet
-              context.push(
-                Routes.goalDetails(
-                  workspaceId: activeWorkspaceId,
-                  goalId: goalId,
-                ),
-              );
-            },
-            label: context.localization.goalsDetails,
-            leadingIcon: FontAwesomeIcons.circleInfo,
-          ),
-          if (!isGoalClosed)
-            Rbac(
-              permission: RbacPermission.objectiveEdit,
-              child: AppTextButton(
-                onPress: () {
-                  context.pop(); // Close bottom sheet
-                  context.push(
-                    Routes.goalDetailsEdit(
-                      workspaceId: activeWorkspaceId,
-                      goalId: goalId,
-                    ),
-                  );
-                },
-                label: context.localization.goalsDetailsEdit,
-                leadingIcon: FontAwesomeIcons.pencil,
-              ),
+      child: AppModalBottomSheetContentWrapper(
+        title: title,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppTextButton(
+              onPress: () {
+                context.pop(); // Close bottom sheet
+                context.push(
+                  Routes.goalDetails(
+                    workspaceId: activeWorkspaceId,
+                    goalId: goalId,
+                  ),
+                );
+              },
+              label: context.localization.goalsDetails,
+              leadingIcon: FontAwesomeIcons.circleInfo,
             ),
-        ],
+            if (!isGoalClosed)
+              Rbac(
+                permission: RbacPermission.objectiveEdit,
+                child: AppTextButton(
+                  onPress: () {
+                    context.pop(); // Close bottom sheet
+                    context.push(
+                      Routes.goalDetailsEdit(
+                        workspaceId: activeWorkspaceId,
+                        goalId: goalId,
+                      ),
+                    );
+                  },
+                  label: context.localization.goalsDetailsEdit,
+                  leadingIcon: FontAwesomeIcons.pencil,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -34,6 +34,7 @@ import '../data/services/api/workspace/workspace_leaderboard/workspace_leaderboa
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
+import '../data/services/local/client_info_service.dart';
 import '../data/services/local/logger.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
@@ -53,6 +54,7 @@ List<SingleChildWidget> get providers {
     Provider(create: (context) => SecureStorageService()),
     Provider(create: (context) => SharedPreferencesService()),
     Provider(create: (context) => GoogleAuthService()),
+    Provider(create: (context) => ClientInfoService()),
     ChangeNotifierProvider(
       create: (context) =>
           AuthStateRepositoryImpl(

@@ -121,8 +121,9 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
     }
 
     if (widget.viewModel.createWorkspaceInviteLink.error) {
-      widget.viewModel.createWorkspaceInviteLink.clearResult();
-      // TODO: do something
+      // We handle this error in the WorkspaceInviteSection widget
+      // hence why we are not clearing the result here, as we use
+      // error flag in that widget.
     }
   }
 

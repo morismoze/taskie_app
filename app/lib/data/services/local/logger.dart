@@ -11,6 +11,11 @@ class LoggerService {
 
   void setUser(String? userId) => _userId = userId;
 
+  // This is used on user sign out
+  void clearState() {
+    _userId = null;
+  }
+
   void log(
     LogLevel level,
     String message, {

@@ -22,7 +22,7 @@ import '../../../services/local/logger.dart';
 import 'workspace_task_repository.dart';
 
 const _kDefaultPaginablePage = 1;
-const _kDefaultPaginableLimit = 2;
+const _kDefaultPaginableLimit = 15;
 const _kDefaultPaginableSort = SortBy.newestFirst;
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {

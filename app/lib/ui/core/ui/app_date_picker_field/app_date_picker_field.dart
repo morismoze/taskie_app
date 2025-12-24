@@ -9,6 +9,7 @@ import '../../theme/dimens.dart';
 import '../action_button_bar.dart';
 import '../app_field_button.dart';
 import '../app_modal_bottom_sheet.dart';
+import '../app_modal_bottom_sheet_content_wrapper.dart';
 
 class AppDatePickerField extends StatefulWidget {
   const AppDatePickerField({
@@ -111,12 +112,15 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
 
     AppModalBottomSheet.show(
       context: context,
-      child: _AppDatePicker(
-        selectedDate: _selectedDate,
-        onSubmit: _onSubmit,
-        initialValue: widget.initialValue,
-        minimumDate: widget.minimumDate,
-        maximumDate: widget.maximumDate,
+      child: AppModalBottomSheetContentWrapper(
+        title: widget.label,
+        child: _AppDatePicker(
+          selectedDate: _selectedDate,
+          onSubmit: _onSubmit,
+          initialValue: widget.initialValue,
+          minimumDate: widget.minimumDate,
+          maximumDate: widget.maximumDate,
+        ),
       ),
     );
   }

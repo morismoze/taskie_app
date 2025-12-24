@@ -135,7 +135,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
           );
           break;
         case WorkspaceInviteExpiredOrUsedException():
-          AppSnackbar.showError(
+          AppSnackbar.showInfo(
             context: context,
             message: context
                 .localization
@@ -143,7 +143,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
           );
           break;
         case WorkspaceInviteExistingUserException():
-          AppSnackbar.showError(
+          AppSnackbar.showInfo(
             context: context,
             message: context
                 .localization
@@ -153,7 +153,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.misc_somethingWentWrong,
+            message: context.localization.workspaceCreateJoinViaInviteLinkError,
           );
       }
     }

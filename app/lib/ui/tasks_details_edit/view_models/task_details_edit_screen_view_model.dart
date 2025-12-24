@@ -94,19 +94,24 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
       taskId: _taskId,
     );
 
-    if ((_workspaceTaskRepository.tasks!.items.isEmpty ||
-            _workspaceTaskRepository.tasks == null) &&
-        _workspaceTaskRepository.activeFilter.page > 1) {
-      _workspaceTaskRepository.loadTasks(
-        workspaceId: _activeWorkspaceId,
-        filter: _workspaceTaskRepository.activeFilter.copyWith(
-          page: _workspaceTaskRepository.activeFilter.page - 1,
-        ),
-      );
-    }
-
     switch (result) {
       case Ok():
+        // This is the case when the user closes all the tasks
+        // from the current page, so we need to fetch previous
+        // page, if the current page is not first one (1). The
+        // actual UI page change is done in the ObjectivesListView
+        // and here we only amend the repository level page value.
+        if ((_workspaceTaskRepository.tasks!.items.isEmpty ||
+                _workspaceTaskRepository.tasks == null) &&
+            _workspaceTaskRepository.activeFilter.page > 1) {
+          _workspaceTaskRepository.loadTasks(
+            workspaceId: _activeWorkspaceId,
+            filter: _workspaceTaskRepository.activeFilter.copyWith(
+              page: _workspaceTaskRepository.activeFilter.page - 1,
+            ),
+          );
+        }
+
         return const Result.ok(null);
       case Error():
         return result;
