@@ -172,6 +172,7 @@ export class WorkspaceController {
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { workspaceUserId }: WorkspaceUserIdRequestPathParam,
     @Body() data: UpdateWorkspaceUserRequest,
+    @Req() request: RequestWithUser,
   ): Promise<WorkspaceUserResponse> {
     return this.workspaceService.updateWorkspaceUser({
       workspaceId,

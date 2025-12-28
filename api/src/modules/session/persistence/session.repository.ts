@@ -22,6 +22,10 @@ export abstract class SessionRepository {
     >;
   }): Promise<Nullable<SessionEntity>>;
 
+  abstract incrementAccessTokenVersionByUserId(
+    id: Session['user']['id'],
+  ): Promise<void>;
+
   abstract deleteById(id: Session['id']): Promise<void>;
 
   /**

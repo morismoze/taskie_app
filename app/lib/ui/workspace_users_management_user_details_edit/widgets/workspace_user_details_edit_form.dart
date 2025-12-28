@@ -9,6 +9,7 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/info_icon_with_tooltip.dart';
 import '../../core/utils/extensions.dart';
+import '../../core/utils/user.dart';
 import '../view_models/workspace_user_details_edit_screen_view_model.dart';
 
 class WorkspaceUserDetailsEditForm extends StatefulWidget {
@@ -74,7 +75,9 @@ class _WorkspaceUserDetailsEditFormState
       ),
     ]).toList();
     // Virtual users don't have emails, and real users must have emails.
-    final isVirtualUser = widget.viewModel.details!.email == null;
+    final isVirtualUser = UserUtils.checkIsVirtualUser(
+      email: widget.viewModel.details!.email,
+    );
 
     return Form(
       key: _formKey,

@@ -53,6 +53,14 @@ export class SessionService {
     });
   }
 
+  async findLastByUserId(
+    id: Session['user']['id'],
+  ): Promise<Nullable<SessionCore>> {
+    return await this.sessionRepository.findById({
+      id,
+    });
+  }
+
   async findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {
     return await this.sessionRepository.findById({
       id,
@@ -66,7 +74,15 @@ export class SessionService {
   }: {
     id: Session['id'];
     data: Partial<
-      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>
+      Omit<
+        Session,
+        | 'id'
+        | 'accessTokenVersion'
+        | 'createdAt'
+        | 'updatedAt'
+        | 'deletedAt'
+        | 'user'
+      >
     >;
   }): Promise<SessionCore> {
     const updatedSession = await this.sessionRepository.update({
@@ -84,6 +100,12 @@ export class SessionService {
     }
 
     return updatedSession;
+  }
+
+  async incrementAccessTokenVersionByUserId(
+    id: Session['user']['id'],
+  ): Promise<void> {
+    await this.sessionRepository.incrementAccessTokenVersionByUserId(id);
   }
 
   deleteById(id: Session['id']): Promise<void> {

@@ -3,20 +3,27 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../config/environment/env.dart';
 import '../../repositories/auth/auth_state_repository.dart';
+import '../local/client_info_service.dart';
 import 'interceptors/request_headers_interceptor.dart';
 import 'interceptors/unauthorized_interceptor.dart';
 
 class ApiClient {
-  ApiClient({required AuthStateRepository authStateRepository})
-    : _authStateRepository = authStateRepository,
-      _client = Dio(
-        BaseOptions(
-          baseUrl: Env.backendUrl,
-          headers: {'Content-Type': 'application/json'},
-        ),
-      ) {
+  ApiClient({
+    required AuthStateRepository authStateRepository,
+    required ClientInfoService clientInfoService,
+  }) : _authStateRepository = authStateRepository,
+       _clientInfoService = clientInfoService,
+       _client = Dio(
+         BaseOptions(
+           baseUrl: Env.backendUrl,
+           headers: {'Content-Type': 'application/json'},
+         ),
+       ) {
     _client.interceptors.addAll([
-      RequestHeadersInterceptor(authStateRepository: _authStateRepository),
+      RequestHeadersInterceptor(
+        authStateRepository: _authStateRepository,
+        clientInfoService: _clientInfoService,
+      ),
       PrettyDioLogger(
         requestHeader: true,
         requestBody: true,
@@ -32,6 +39,7 @@ class ApiClient {
 
   final Dio _client;
   final AuthStateRepository _authStateRepository;
+  final ClientInfoService _clientInfoService;
 
   Dio get client => _client;
 }

@@ -22,8 +22,8 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   Future<Result<void>> setActiveWorkspaceId(String? workspaceId);
 
   /// Reads either from local cache or from storage. When read from storage,
-  /// it also sets the local cache. This is used only in one place - on app
-  /// startup or to be precise, in EntryScreenViewmodel.
+  /// it also sets the local cache. This is used only in one place - on the
+  /// Entry screen.
   Future<Result<String?>> loadActiveWorkspaceId();
 
   Future<Result<List<Workspace>>> loadWorkspaces({bool forceFetch});

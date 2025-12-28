@@ -30,7 +30,7 @@ void main() async {
           viewModel: AppStartupViewModel(
             preferencesRepository: context.read(),
             authStateRepository: context.read(),
-            clientInfoService: context.read(),
+            clientInfoRepository: context.read(),
           ),
           child: const MainApp(),
         ),

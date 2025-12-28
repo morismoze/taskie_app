@@ -1,10 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
+import { checkIsVirtualUser } from 'src/common/helper/util';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { Goal } from 'src/modules/goal/domain/goal.domain';
 import { GoalService } from 'src/modules/goal/goal.service';
+import { SessionService } from 'src/modules/session/session.service';
 import { TaskAssignmentService } from 'src/modules/task/task-assignment/task-assignment.service';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import { Task } from 'src/modules/task/task-module/domain/task.domain';
@@ -65,6 +67,7 @@ export class WorkspaceService {
     private readonly goalService: GoalService,
     private readonly taskAssignmentService: TaskAssignmentService,
     private readonly workspaceInviteService: WorkspaceInviteService,
+    private readonly sessionService: SessionService,
     private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
 
@@ -823,9 +826,10 @@ export class WorkspaceService {
 
     if (payload.assigneeId) {
       // We need to check if provided assignee ID exists as a workspace user
-      const workspaceUser = this.workspaceUserService.findById(
-        payload.assigneeId,
-      );
+      const workspaceUser = this.workspaceUserService.findByIdAndWorkspaceId({
+        workspaceId,
+        id: payload.assigneeId,
+      });
 
       if (!workspaceUser) {
         throw new ApiHttpException(
@@ -986,12 +990,17 @@ export class WorkspaceService {
         return { updatedWorkspaceUserId: updatedWorkspaceUser.id };
       });
 
+    await this.invalidateUserSession({ workspaceId, workspaceUserId });
+
     // This is freshly updated workspace user because former code is
     // executed inside a transaction, so doing this find inside would result
     // in not updated workspace user.
     const updatedWorkspaceUser =
-      await this.workspaceUserService.findByIdWithUserAndCreatedByUser(
-        updatedWorkspaceUserId,
+      await this.workspaceUserService.findByIdAndWorkspaceIdWithUserAndCreatedByUser(
+        {
+          id: updatedWorkspaceUserId,
+          workspaceId,
+        },
       );
 
     if (updatedWorkspaceUser == null) {
@@ -1050,6 +1059,8 @@ export class WorkspaceService {
       workspaceId,
       workspaceUserId,
     });
+
+    await this.invalidateUserSession({ workspaceId, workspaceUserId });
   }
 
   async leaveWorkspace({
@@ -1376,5 +1387,56 @@ export class WorkspaceService {
         );
       }
     }
+  }
+
+  // A non-virtual user can get his roles changed:
+  // 1. directly by a Manager through the app
+  // 2. when user gets removed from a workspace
+  // In those two cases we need a way to make that user do token
+  // refresh and user info refresh in the app. We do this using
+  // access token versioning. Basically, that's a plain integer
+  // field on Session entity (defaults to 0) which we increment
+  // in the WorkspaceService in those two cases (endpoints).
+  // We also add that value to the access token payload itself.
+  // And then here we detect that increment change, comparing
+  // these two values, and if the value from the access token
+  // does not equal to the one on the found session record,
+  // we unauthorize the user.
+  // We use incremental flag and not e.g. a boolean flag,
+  // because a boolean flag would require switching back
+  // to default value on token refresh. This way we just
+  // write the session atv value to the access token
+  // at the time of login and compare it with the current
+  // value at the time of JWT strategy execution.
+  private async invalidateUserSession({
+    workspaceId,
+    workspaceUserId,
+  }: {
+    workspaceUserId: string;
+    workspaceId: string;
+  }) {
+    const workspaceUser =
+      await this.workspaceUserService.findByIdAndWorkspaceIdWithUser({
+        id: workspaceUserId,
+        workspaceId,
+      });
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Virtual users are virtual and don't have sessions
+    if (checkIsVirtualUser({ user: workspaceUser.user })) {
+      return;
+    }
+
+    await this.sessionService.incrementAccessTokenVersionByUserId(
+      workspaceUser.user.id,
+    );
   }
 }

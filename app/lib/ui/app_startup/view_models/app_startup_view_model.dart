@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../data/repositories/auth/auth_state_repository.dart';
+import '../../../data/repositories/client_info/client_info_repository_impl.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
-import '../../../data/services/local/client_info_service.dart';
 import '../../../utils/command.dart';
 import '../../core/utils/intl.dart';
 
@@ -11,16 +11,16 @@ class AppStartupViewModel {
   AppStartupViewModel({
     required PreferencesRepository preferencesRepository,
     required AuthStateRepository authStateRepository,
-    required ClientInfoService clientInfoService,
+    required ClientInfoRepository clientInfoRepository,
   }) : _preferencesRepository = preferencesRepository,
        _authStateRepository = authStateRepository,
-       _clientInfoService = clientInfoService {
+       _clientInfoRepository = clientInfoRepository {
     bootstrap = Command0(_bootstrap)..execute();
   }
 
   final PreferencesRepository _preferencesRepository;
   final AuthStateRepository _authStateRepository;
-  final ClientInfoService _clientInfoService;
+  final ClientInfoRepository _clientInfoRepository;
 
   late Command0 bootstrap;
 
@@ -54,7 +54,7 @@ class AppStartupViewModel {
     await _authStateRepository.loadAuthenticatedState();
 
     // Init client info
-    await _clientInfoService.init();
+    await _clientInfoRepository.initializeClientInfo();
 
     return const Result.ok(null);
   }

@@ -5,4 +5,8 @@ abstract final class UserUtils {
   }) {
     return '$firstName $lastName';
   }
+
+  static bool checkIsVirtualUser({required String? email}) {
+    return email == null;
+  }
 }

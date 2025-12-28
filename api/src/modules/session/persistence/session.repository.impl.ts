@@ -47,6 +47,17 @@ export class SessionRepositoryImpl implements SessionRepository {
     return newEntity;
   }
 
+  async incrementAccessTokenVersionByUserId(
+    id: Session['user']['id'],
+  ): Promise<void> {
+    await this.repo
+      .createQueryBuilder()
+      .update(SessionEntity)
+      .set({ accessTokenVersion: () => 'access_token_version + 1' })
+      .where('user_id = :id', { id })
+      .execute();
+  }
+
   async deleteById(id: Session['id']): Promise<void> {
     await this.repo.delete(id);
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../core/utils/constants.dart';
+import '../../../core/ui/app_icon.dart';
 
 class WorkspaceImageStatus extends StatelessWidget {
   const WorkspaceImageStatus({
@@ -20,8 +20,7 @@ class WorkspaceImageStatus extends StatelessWidget {
     final iconSize = imageSize * 0.3;
     final iconBorderThickness = 2.5;
     final iconContainerTotalSize = iconSize + (2 * iconBorderThickness);
-    final imageBorderRadius =
-        imageSize * MiscConstants.appIconBorderRadiusSizePercentage;
+    final imageBorderRadius = imageSize * appIconBorderRadiusSizePercentage;
 
     return Stack(
       clipBehavior: Clip.none,

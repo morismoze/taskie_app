@@ -251,7 +251,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorOnInitialLoad.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble loading up your workspace'**
+  /// **'Uh-oh! We\'ve had some trouble loading up your workspace.'**
   String get errorOnInitialLoad;
 
   /// No description provided for @bottomNavigationBarTasksLabel.
@@ -361,6 +361,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!'**
   String get tasksEmptyPageTasks;
+
+  /// No description provided for @tasksPressAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press again to exit the app'**
+  String get tasksPressAgainToExit;
 
   /// No description provided for @objectiveStatusFilterAll.
   ///

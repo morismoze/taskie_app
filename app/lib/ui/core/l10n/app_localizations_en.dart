@@ -89,7 +89,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorOnInitialLoad =>
-      'Uh-oh! We\'ve had some trouble loading up your workspace';
+      'Uh-oh! We\'ve had some trouble loading up your workspace.';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Tasks';
@@ -154,6 +154,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tasksEmptyPageTasks =>
       'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!';
+
+  @override
+  String get tasksPressAgainToExit => 'Press again to exit the app';
 
   @override
   String get objectiveStatusFilterAll => 'All statuses';

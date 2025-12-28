@@ -89,7 +89,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get errorOnInitialLoad =>
-      'Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora';
+      'Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora.';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Zadatci';
@@ -154,6 +154,10 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get tasksEmptyPageTasks =>
       'Uh-oh! Ova stranica nema više zadataka. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis zadataka!';
+
+  @override
+  String get tasksPressAgainToExit =>
+      'Pritisnite ponovno za izlaz iz aplikacije';
 
   @override
   String get objectiveStatusFilterAll => 'Svi statusi';
