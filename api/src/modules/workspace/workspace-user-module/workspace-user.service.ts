@@ -232,6 +232,14 @@ export class WorkspaceUserService {
     });
   }
 
+  async findAllByWorkspaceId(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<WorkspaceUserCore[]> {
+    return this.workspaceUserRepository.findAllByWorkspaceId({
+      workspaceId,
+    });
+  }
+
   async update({
     id,
     data,

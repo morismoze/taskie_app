@@ -348,7 +348,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalMessage =>
-      'Are you sure you want to leave this workspace?';
+      'Are you sure you want to leave this workspace? **Beware: if you are the last Manager, the workspace will be entirely deleted once you leave.**';
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Leave';

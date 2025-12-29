@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { PassportStrategy } from '@nestjs/passport';
@@ -11,6 +11,8 @@ import { JwtPayload } from './jwt-payload.type';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  private readonly logger = new Logger(PassportStrategy.name);
+
   constructor(
     // Injecting SessionService directly does not work because it depends on the
     // transactional repo, which is request scoped, but strategies are
@@ -43,6 +45,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (!payload.sub) {
       throw new UnauthorizedException();
     }
+
+    this.logger.log(`[USER_ID]: ${payload.sub}`);
 
     // A non-virtual user can get his roles changed:
     // 1. directly by a Manager through the app

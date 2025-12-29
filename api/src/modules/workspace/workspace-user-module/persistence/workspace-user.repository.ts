@@ -53,6 +53,14 @@ export abstract class WorkspaceUserRepository {
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 
+  abstract findAllByWorkspaceId({
+    workspaceId,
+    relations,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<WorkspaceUserEntity[]>;
+
   abstract create({
     data,
     relations,

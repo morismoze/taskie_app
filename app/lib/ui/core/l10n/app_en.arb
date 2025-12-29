@@ -97,7 +97,7 @@
   "appDrawerManageUsers": "Workspace users",
   "appDrawerNotActiveWorkspace": "To see additional options, make this workspace active by clicking on its icon in the list above.",
   "appDrawerLeaveWorkspace": "Leave workspace",
-  "appDrawerLeaveWorkspaceModalMessage": "Are you sure you want to leave this workspace?",
+  "appDrawerLeaveWorkspaceModalMessage": "Are you sure you want to leave this workspace? **Beware: if you are the last Manager, the workspace will be entirely deleted once you leave.**",
   "appDrawerLeaveWorkspaceModalCta": "Leave",
   "appDrawerLeaveWorkspaceSuccess": "Successfully left the workspace",
   "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",

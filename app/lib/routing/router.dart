@@ -169,8 +169,6 @@ GoRouter router({
                   },
               child: CreateWorkspaceScreen(
                 viewModel: CreateWorkspaceScreenViewModel(
-                  userRepository: context.read(),
-                  workspaceRepository: context.read(),
                   createWorkspaceUseCase: context.read(),
                   joinWorkspaceUseCase: context.read(),
                 ),

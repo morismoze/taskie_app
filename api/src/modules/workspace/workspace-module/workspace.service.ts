@@ -1085,10 +1085,38 @@ export class WorkspaceService {
       );
     }
 
-    await this.workspaceUserService.delete({
-      workspaceId,
-      workspaceUserId: workspaceUser.id,
-    });
+    const allWorkspaceUsers =
+      await this.workspaceUserService.findAllByWorkspaceId(workspaceId);
+
+    if (allWorkspaceUsers.length === 0) {
+      // Something's wrong since there has to be atleast one workspace
+      // user - the current user
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const currentUserIsManager =
+      workspaceUser.workspaceRole === WorkspaceUserRole.MANAGER;
+    const currentUserIsLastManager =
+      allWorkspaceUsers.filter(
+        (user) => user.workspaceRole === WorkspaceUserRole.MANAGER,
+      ).length === 1;
+
+    if (currentUserIsLastManager && currentUserIsManager) {
+      // This user is the last Manager so we delete the entire workspace which
+      // cascadely deletes every task assignments, workspace users, etc.
+      await this.workspaceRepository.deleteById(workspaceId);
+    } else {
+      // This user is not the last Manager, so just delete that workspace user
+      await this.workspaceUserService.delete({
+        workspaceId,
+        workspaceUserId: workspaceUser.id,
+      });
+    }
   }
 
   async updateTask({

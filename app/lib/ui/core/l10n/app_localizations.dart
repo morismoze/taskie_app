@@ -689,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerLeaveWorkspaceModalMessage.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to leave this workspace?'**
+  /// **'Are you sure you want to leave this workspace? **Beware: if you are the last Manager, the workspace will be entirely deleted once you leave.**'**
   String get appDrawerLeaveWorkspaceModalMessage;
 
   /// No description provided for @appDrawerLeaveWorkspaceModalCta.
