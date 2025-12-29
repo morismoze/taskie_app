@@ -104,7 +104,9 @@ class TasksScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _refreshUser() async {
-    final resultLoadUser = await _userRepository.loadUser(forceFetch: true);
+    final resultLoadUser = await _userRepository
+        .loadUser(forceFetch: true)
+        .last;
 
     switch (resultLoadUser) {
       case Ok():

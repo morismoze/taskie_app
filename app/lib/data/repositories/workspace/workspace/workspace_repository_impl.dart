@@ -7,7 +7,8 @@ import '../../../services/api/workspace/workspace/models/request/create_workspac
 import '../../../services/api/workspace/workspace/models/request/update_workspace_details_request.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace/workspace_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/database_service.dart';
+import '../../../services/local/logger_service.dart';
 import '../../../services/local/shared_preferences_service.dart';
 import 'workspace_repository.dart';
 
@@ -15,13 +16,16 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   WorkspaceRepositoryImpl({
     required WorkspaceApiService workspaceApiService,
     required SharedPreferencesService sharedPreferencesService,
+    required DatabaseService databaseService,
     required LoggerService loggerService,
   }) : _workspaceApiService = workspaceApiService,
        _sharedPreferencesService = sharedPreferencesService,
+       _databaseService = databaseService,
        _loggerService = loggerService;
 
   final WorkspaceApiService _workspaceApiService;
   final SharedPreferencesService _sharedPreferencesService;
+  final DatabaseService _databaseService;
   final LoggerService _loggerService;
 
   List<Workspace>? _cachedWorkspacesList;
@@ -109,13 +113,27 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  Future<Result<List<Workspace>>> loadWorkspaces({
+  Stream<Result<List<Workspace>>> loadWorkspaces({
     bool forceFetch = false,
-  }) async {
+  }) async* {
     if (!forceFetch && _cachedWorkspacesList != null) {
-      return Result.ok(_cachedWorkspacesList!);
+      yield Result.ok(_cachedWorkspacesList!);
     }
 
+    if (!forceFetch) {
+      // Read from DB cache
+      final dbResult = await _databaseService.getWorkspaces();
+      if (dbResult is Ok<List<Workspace>>) {
+        final dbWorkspaces = dbResult.value;
+        if (dbWorkspaces.isNotEmpty) {
+          _cachedWorkspacesList = dbWorkspaces;
+          notifyListeners();
+          yield Result.ok(dbWorkspaces);
+        }
+      }
+    }
+
+    // Trigger API request
     final result = await _workspaceApiService.getWorkspaces();
     switch (result) {
       case Ok<List<WorkspaceResponse>>():
@@ -126,12 +144,14 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         _cachedWorkspacesList = mappedData;
         notifyListeners();
 
+        _updateDbCache(_cachedWorkspacesList!);
+
         // If user is not part of any workspace, notify the navigation redirection listener
         if (_cachedWorkspacesList!.isEmpty) {
           _hasNoWorkspacesNotifier.value = _cachedWorkspacesList!.isEmpty;
         }
 
-        return Result.ok(mappedData);
+        yield Result.ok(mappedData);
       case Error<List<WorkspaceResponse>>():
         _loggerService.log(
           LogLevel.warn,
@@ -139,7 +159,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           error: result.error,
           stackTrace: result.stackTrace,
         );
-        return Result.error(result.error, result.stackTrace);
+        yield Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -163,6 +183,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         // Add the new workspace to the local list (cache)
         _cachedWorkspacesList!.add(newWorkspace);
         notifyListeners();
+
+        _updateDbCache(_cachedWorkspacesList!);
 
         // We need to update [_hasNoWorkspacesNotifier] notifier, but just
         // in the case user now is part of only one workspace for 2 reasons:
@@ -201,6 +223,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         );
         _cachedWorkspacesList!.remove(leavingWorkspace);
         notifyListeners();
+
+        _updateDbCache(_cachedWorkspacesList!);
 
         // If user is no more part of any workspace, notify the navigation redirection listener
         if (_cachedWorkspacesList!.isEmpty) {
@@ -257,6 +281,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           // with the new updated instance.
           _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
           notifyListeners();
+
+          _updateDbCache(_cachedWorkspacesList!);
         }
 
         return const Result.ok(null);
@@ -276,6 +302,9 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     if (_cachedWorkspacesList != null) {
       _cachedWorkspacesList!.add(workspace);
       notifyListeners();
+
+      _updateDbCache(_cachedWorkspacesList!);
+
       return const Result.ok(null);
     }
 
@@ -303,6 +332,17 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
               profileImageUrl: workspace.createdBy!.profileImageUrl,
             ),
     );
+  }
+
+  void _updateDbCache(List<Workspace> payload) async {
+    final dbSaveResult = await _databaseService.setWorkspaces(payload);
+    if (dbSaveResult is Error<void>) {
+      _loggerService.log(
+        LogLevel.warn,
+        'databaseService.setWorkspaces failed',
+        error: dbSaveResult.error,
+      );
+    }
   }
 
   @override

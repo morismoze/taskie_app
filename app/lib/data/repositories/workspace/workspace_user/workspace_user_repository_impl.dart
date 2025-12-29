@@ -7,7 +7,7 @@ import '../../../services/api/workspace/workspace_user/models/request/update_wor
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_accumulated_points_response.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_response.dart';
 import '../../../services/api/workspace/workspace_user/workspace_user_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_user_repository.dart';
 
 class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {

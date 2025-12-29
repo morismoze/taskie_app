@@ -37,7 +37,8 @@ import '../data/services/api/workspace/workspace_task/workspace_task_api_service
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/client_info_service.dart';
-import '../data/services/local/logger.dart';
+import '../data/services/local/database_service.dart';
+import '../data/services/local/logger_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
@@ -57,6 +58,7 @@ List<SingleChildWidget> get providers {
     Provider(create: (context) => SharedPreferencesService()),
     Provider(create: (context) => GoogleAuthService()),
     Provider(create: (context) => ClientInfoService()),
+    Provider(create: (context) => DatabaseService()),
     ChangeNotifierProvider(
       create: (context) =>
           AuthStateRepositoryImpl(
@@ -102,6 +104,7 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           UserRepositoryImpl(
                 userApiService: context.read(),
+                databaseService: context.read(),
                 loggerService: context.read(),
               )
               as UserRepository,
@@ -121,6 +124,7 @@ List<SingleChildWidget> get providers {
           WorkspaceRepositoryImpl(
                 workspaceApiService: context.read(),
                 sharedPreferencesService: context.read(),
+                databaseService: context.read(),
                 loggerService: context.read(),
               )
               as WorkspaceRepository,

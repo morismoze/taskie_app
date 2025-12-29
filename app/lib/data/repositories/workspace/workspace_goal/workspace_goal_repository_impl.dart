@@ -13,7 +13,7 @@ import '../../../services/api/workspace/workspace_goal/models/request/create_goa
 import '../../../services/api/workspace/workspace_goal/models/request/update_goal_details_request.dart';
 import '../../../services/api/workspace/workspace_goal/models/response/workspace_goal_response.dart';
 import '../../../services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_goal_repository.dart';
 
 const _kDefaultPaginablePage = 1;

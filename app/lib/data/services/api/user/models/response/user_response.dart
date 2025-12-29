@@ -33,6 +33,11 @@ class RolePerWorkspace {
   final String workspaceId;
   final WorkspaceRole role;
 
+  Map<String, dynamic> toMap() => {
+    'workspaceId': workspaceId,
+    'role': role.value,
+  };
+
   factory RolePerWorkspace.fromJson(Map<String, dynamic> json) =>
       _$RolePerWorkspaceFromJson(json);
 }

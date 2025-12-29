@@ -1,7 +1,7 @@
 import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
-import '../../data/services/local/logger.dart';
+import '../../data/services/local/logger_service.dart';
 import '../../utils/command.dart';
 import 'purge_data_cache_use_case.dart';
 

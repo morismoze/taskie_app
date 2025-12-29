@@ -5,7 +5,7 @@ import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace_invite/models/response/create_workspace_invite_token_response.dart';
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_invite_repository.dart';
 
 class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {

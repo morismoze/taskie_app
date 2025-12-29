@@ -2,7 +2,7 @@ import '../../../../domain/models/workspace_leaderboard_user.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace_leaderboard/models/response/workspace_leaderboard_user_response.dart';
 import '../../../services/api/workspace/workspace_leaderboard/workspace_leaderboard_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_leaderboard_repository.dart';
 
 class WorkspaceLeaderboardRepositoryImpl

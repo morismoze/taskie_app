@@ -53,7 +53,7 @@ class JoinWorkspaceUseCase {
         return Result.error(resultRefresh.error);
     }
 
-    final resultUser = await _userRepository.loadUser(forceFetch: true);
+    final resultUser = await _userRepository.loadUser(forceFetch: true).last;
 
     switch (resultUser) {
       case Ok():

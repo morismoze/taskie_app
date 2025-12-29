@@ -18,7 +18,7 @@ import '../../../services/api/workspace/workspace_task/models/response/add_task_
 import '../../../services/api/workspace/workspace_task/models/response/update_task_assignment_response.dart';
 import '../../../services/api/workspace/workspace_task/models/response/workspace_task_response.dart';
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_task_repository.dart';
 
 const _kDefaultPaginablePage = 1;
