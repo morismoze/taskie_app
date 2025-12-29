@@ -21,15 +21,17 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
-  async findById({
+  async findByIdAndWorkspaceId({
     id,
+    workspaceId,
     relations,
   }: {
     id: WorkspaceUser['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
     return await this.repo.findOne({
-      where: { id },
+      where: { id, workspace: { id: workspaceId } },
       relations,
     });
   }
@@ -93,6 +95,21 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     return this.repo.find({
       where: {
         id: In(ids),
+        workspace: { id: workspaceId },
+      },
+      relations,
+    });
+  }
+
+  async findAllByWorkspaceId({
+    workspaceId,
+    relations,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<WorkspaceUserEntity[]> {
+    return this.repo.find({
+      where: {
         workspace: { id: workspaceId },
       },
       relations,

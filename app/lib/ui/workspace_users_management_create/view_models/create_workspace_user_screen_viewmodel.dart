@@ -23,7 +23,7 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
        _workspaceUserRepository = workspaceUserRepository,
        _shareWorkspaceInviteLinkUseCase = shareWorkspaceInviteLinkUseCase {
     createWorkspaceInviteLink = Command1(_createWorkspaceInviteLink)
-      ..execute(false);
+      ..execute(null);
     shareWorkspaceInviteLink = Command0(_shareWorkspaceInviteLink);
     createVirtualUser = Command1(_createVirtualUser);
     _loadWorkspaceDetails();
@@ -39,7 +39,7 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
   late Command0<ShareResult> shareWorkspaceInviteLink;
 
   /// Returns invite link
-  late Command1<String, bool> createWorkspaceInviteLink;
+  late Command1<String, bool?> createWorkspaceInviteLink;
   late Command1<void, (String firstName, String lastName)> createVirtualUser;
   Workspace? _activeWorkspaceDetails;
 
@@ -59,7 +59,7 @@ class CreateWorkspaceUserScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Result<String>> _createWorkspaceInviteLink(bool? forceFetch) async {
+  Future<Result<String>> _createWorkspaceInviteLink([bool? forceFetch]) async {
     final result = await _workspaceInviteRepository.createWorkspaceInviteToken(
       workspaceId: _activeWorkspaceId,
       forceFetch: forceFetch ?? false,

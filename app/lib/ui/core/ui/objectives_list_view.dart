@@ -6,21 +6,45 @@ import '../theme/dimens.dart';
 
 /// Represents a layer of abstraction for the list of objectives (tasks
 /// or goals) on Tasks and Goals screes.
-class ObjectivesListView extends StatelessWidget {
+class ObjectivesListView extends StatefulWidget {
   const ObjectivesListView({
     super.key,
     required this.headerDelegate,
     required this.list,
     required this.totalPages,
+    required this.currentPage,
     required this.onPageChange,
   });
 
   final SliverPersistentHeaderDelegate headerDelegate;
   final Widget list;
+  final int currentPage;
   final int totalPages;
 
   /// [page] param starts from 0
   final Function(int page0) onPageChange;
+
+  @override
+  State<ObjectivesListView> createState() => _ObjectivesListViewState();
+}
+
+class _ObjectivesListViewState extends State<ObjectivesListView> {
+  final NumberPaginatorController _controller = NumberPaginatorController();
+
+  @override
+  void didUpdateWidget(covariant ObjectivesListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final paginatorCurrentPage = _controller.currentPage + 1;
+    final repositoryCurrentPage = widget.currentPage;
+
+    // This case can happen for example:
+    // 1. When the user closes all tasks/goals of the current page
+    // and then we need to re-navigate the user to the previous page
+    if (paginatorCurrentPage != repositoryCurrentPage) {
+      _controller.navigateToPage(repositoryCurrentPage);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +55,7 @@ class ObjectivesListView extends StatelessWidget {
             horizontal: Dimens.of(context).paddingScreenHorizontal,
           ),
           sliver: SliverPersistentHeader(
-            delegate: headerDelegate,
+            delegate: widget.headerDelegate,
             pinned: false,
             floating: true,
           ),
@@ -41,9 +65,9 @@ class ObjectivesListView extends StatelessWidget {
             horizontal: Dimens.of(context).paddingScreenHorizontal,
             vertical: Dimens.paddingVertical,
           ),
-          sliver: list,
+          sliver: widget.list,
         ),
-        if (totalPages > 0)
+        if (widget.totalPages > 0)
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(
@@ -54,9 +78,10 @@ class ObjectivesListView extends StatelessWidget {
                 right: Dimens.of(context).paddingScreenHorizontal,
               ),
               child: NumberPaginator(
-                numberPages: totalPages,
+                controller: _controller,
+                numberPages: widget.totalPages,
                 // [page] param starts from 0
-                onPageChange: onPageChange,
+                onPageChange: (page) => widget.onPageChange(page + 1),
                 child: const SizedBox(
                   height: 48,
                   child: Row(

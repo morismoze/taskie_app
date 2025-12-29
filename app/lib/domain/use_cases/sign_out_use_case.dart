@@ -29,6 +29,7 @@ class SignOutUseCase {
   /// 2. purge data cache
   /// 3. make active workspace null
   /// 4. set authenticated state in [AuthStateRepository]
+  /// 5. clear LoggerService state
   ///
   /// This use case is not used in the UnauthorizedInterceptor because
   /// we would have circular dependencies problem: ApiClient
@@ -66,6 +67,8 @@ class SignOutUseCase {
         _workspaceRepository.purgeWorkspacesCache();
         _authStateRepository.setAuthenticated(false);
         _authStateRepository.setTokens(null);
+        _loggerService.clearState();
+
         return const Result.ok(null);
       case Error():
         _loggerService.log(

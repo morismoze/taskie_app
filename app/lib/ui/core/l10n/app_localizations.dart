@@ -104,12 +104,6 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get misc_cancel;
 
-  /// No description provided for @misc_somethingWentWrong.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! Something went wrong'**
-  String get misc_somethingWentWrong;
-
   /// No description provided for @misc_tryAgain.
   ///
   /// In en, this message translates to:
@@ -197,7 +191,7 @@ abstract class AppLocalizations {
   /// No description provided for @misc_errorPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We ran into a small hiccup loading this.'**
+  /// **'Uh-oh! We\'ve ran into a small hiccup loading this.'**
   String get misc_errorPrompt;
 
   /// No description provided for @misc_retry.
@@ -230,6 +224,12 @@ abstract class AppLocalizations {
   /// **'Let\'s get started'**
   String get signInGetStarted;
 
+  /// No description provided for @signInTitleProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in method'**
+  String get signInTitleProviders;
+
   /// No description provided for @signInViaGoogle.
   ///
   /// In en, this message translates to:
@@ -242,10 +242,16 @@ abstract class AppLocalizations {
   /// **'Google sign-in cancelled. Please try again.'**
   String get signInGoogleCanceled;
 
+  /// No description provided for @signInGoogleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble with Google sign-in'**
+  String get signInGoogleError;
+
   /// No description provided for @errorOnInitialLoad.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble loading up your workspace'**
+  /// **'Uh-oh! We\'ve had some trouble loading up your workspace.'**
   String get errorOnInitialLoad;
 
   /// No description provided for @bottomNavigationBarTasksLabel.
@@ -350,11 +356,35 @@ abstract class AppLocalizations {
   /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
   String get taskskNoFilteredTasks;
 
+  /// No description provided for @tasksEmptyPageTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!'**
+  String get tasksEmptyPageTasks;
+
+  /// No description provided for @tasksPressAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press again to exit the app'**
+  String get tasksPressAgainToExit;
+
   /// No description provided for @objectiveStatusFilterAll.
   ///
   /// In en, this message translates to:
   /// **'All statuses'**
   String get objectiveStatusFilterAll;
+
+  /// No description provided for @objectiveStatusFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by status'**
+  String get objectiveStatusFilter;
+
+  /// No description provided for @objectiveTimeFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by time'**
+  String get objectiveTimeFilter;
 
   /// No description provided for @progressStatusInProgress.
   ///
@@ -626,6 +656,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble changing workspace'**
   String get appDrawerChangeActiveWorkspaceError;
 
+  /// No description provided for @appDrawerWorkspaceOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace options'**
+  String get appDrawerWorkspaceOptions;
+
   /// No description provided for @appDrawerEditWorkspace.
   ///
   /// In en, this message translates to:
@@ -653,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @appDrawerLeaveWorkspaceModalMessage.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to leave this workspace?'**
+  /// **'Are you sure you want to leave this workspace? **Beware: if you are the last Manager, the workspace will be entirely deleted once you leave.**'**
   String get appDrawerLeaveWorkspaceModalMessage;
 
   /// No description provided for @appDrawerLeaveWorkspaceModalCta.
@@ -697,6 +733,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Successfully created new task'**
   String get createNewTaskSuccess;
+
+  /// No description provided for @createNewTaskError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble creating new task'**
+  String get createNewTaskError;
 
   /// No description provided for @objectiveNoMembersCta.
   ///
@@ -769,6 +811,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Users management'**
   String get workspaceUsersManagement;
+
+  /// No description provided for @workspaceUsersManagementUserOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace user options'**
+  String get workspaceUsersManagementUserOptions;
 
   /// No description provided for @workspaceUsersManagementLoadUsersError.
   ///
@@ -895,6 +943,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Workspace invite link'**
   String get workspaceInviteLabel;
+
+  /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble creating a workspace invite link.'**
+  String get workspaceUsersManagementCreateWorkspaceInviteError;
 
   /// No description provided for @workspaceUsersManagementCreateWorkspaceInviteNote.
   ///
@@ -1049,7 +1103,7 @@ abstract class AppLocalizations {
   /// No description provided for @createNewGoalMembersLoadError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We ran into a small hiccup loading workspace members.'**
+  /// **'Uh-oh! We\'ve ran into a small hiccup loading workspace members.'**
   String get createNewGoalMembersLoadError;
 
   /// No description provided for @createNewGoalSuccess.
@@ -1057,6 +1111,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Successfully created new goal'**
   String get createNewGoalSuccess;
+
+  /// No description provided for @createNewGoalError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble creating new goal'**
+  String get createNewGoalError;
 
   /// No description provided for @createNewGoalTitle.
   ///
@@ -1229,20 +1289,26 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceCreateJoinViaInviteLinkNotFound.
   ///
   /// In en, this message translates to:
-  /// **'The provided link is invalid'**
+  /// **'Uh-oh! The provided link is invalid'**
   String get workspaceCreateJoinViaInviteLinkNotFound;
 
   /// No description provided for @workspaceCreateJoinViaInviteLinkExpiredOrUsed.
   ///
   /// In en, this message translates to:
-  /// **'The provided link has expired or was already used'**
+  /// **'Uh-oh! The provided link has expired or was already used'**
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed;
 
   /// No description provided for @workspaceCreateJoinViaInviteLinkExistingUser.
   ///
   /// In en, this message translates to:
-  /// **'You are already part of this workspace'**
+  /// **'Uh-oh! You are already part of this workspace'**
   String get workspaceCreateJoinViaInviteLinkExistingUser;
+
+  /// No description provided for @workspaceCreateJoinViaInviteLinkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble adding you to the workspace'**
+  String get workspaceCreateJoinViaInviteLinkError;
 
   /// No description provided for @workspaceCreationSuccess.
   ///
@@ -1297,6 +1363,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
   String get goalsNoFilteredGoals;
+
+  /// No description provided for @goalsEmptyPageGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!'**
+  String get goalsEmptyPageGoals;
 
   /// No description provided for @goalsDetails.
   ///

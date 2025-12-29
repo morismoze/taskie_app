@@ -140,6 +140,22 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        // This is the case when the user closes all the tasks
+        // from the current page, so we need to fetch previous
+        // page, if the current page is not first one (1). The
+        // actual UI page change is done in the ObjectivesListView
+        // and here we only amend the repository level page value.
+        if ((_workspaceGoalRepository.goals!.items.isEmpty ||
+                _workspaceGoalRepository.goals == null) &&
+            _workspaceGoalRepository.activeFilter.page > 1) {
+          _workspaceGoalRepository.loadGoals(
+            workspaceId: _activeWorkspaceId,
+            filter: _workspaceGoalRepository.activeFilter.copyWith(
+              page: _workspaceGoalRepository.activeFilter.page - 1,
+            ),
+          );
+        }
+
         return const Result.ok(null);
       case Error():
         return result;

@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../theme/dimens.dart';
 
+const _borderRadius = 16.0;
+
 class AppModalBottomSheet {
   AppModalBottomSheet._();
-
-  static const _borderRadius = 16.0;
-  static const _notchLineWidth = 50.0;
-  static const _notchLineHeight = 2.0;
 
   static Future<T?> show<T>({
     required BuildContext context,
@@ -28,61 +24,23 @@ class AppModalBottomSheet {
       backgroundColor: isDetached ? Colors.transparent : null,
       enableDrag: enableDrag,
       builder: (BuildContext builderContext) {
-        return !isDetached
-            ? _createBottomSheetContent(context: builderContext, child: child)
-            : _createDetachedBottomSheetContent(
-                context: builderContext,
-                child: child,
-              );
+        if (isDetached) {
+          return _DetachedBottomSheetContent(child: child);
+        }
+
+        return child;
       },
     );
   }
+}
 
-  static Widget _createBottomSheetContent({
-    required BuildContext context,
-    required Widget child,
-  }) {
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(_borderRadius),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: Dimens.paddingVertical),
-              child: Container(
-                color: Theme.of(context).colorScheme.secondary,
-                width: _notchLineWidth,
-                height: _notchLineHeight,
-              ),
-            ),
-          ),
-          Flexible(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                Dimens.paddingHorizontal,
-                Dimens.paddingVertical / 1.75,
-                Dimens.paddingHorizontal,
-                Platform.isIOS
-                    ? Dimens.paddingVertical
-                    : MediaQuery.of(context).padding.bottom,
-              ),
-              child: child,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+class _DetachedBottomSheetContent extends StatelessWidget {
+  const _DetachedBottomSheetContent({required this.child});
 
-  static Widget _createDetachedBottomSheetContent({
-    required BuildContext context,
-    required Widget child,
-  }) {
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return Wrap(
       children: [
         Padding(

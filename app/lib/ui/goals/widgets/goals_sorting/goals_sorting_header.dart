@@ -16,7 +16,7 @@ class GoalsSortingHeader extends StatelessWidget {
       spacing: 13,
       children: [
         SortByTimeButton(viewModel: viewModel),
-        SortByStatusButton(viewModel: viewModel),
+        FilterByStatusButton(viewModel: viewModel),
         const Spacer(),
         ListenableBuilder(
           listenable: viewModel.loadGoals,

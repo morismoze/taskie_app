@@ -28,7 +28,8 @@ class ActiveWorkspaceChangeUseCase {
   /// 1. clear the data cache which is relevant to the current active
   /// workspace. This data includes: workspace users, tasks, leaderboard, goals,
   ///
-  /// 2. re-fetch user data
+  /// 2. re-fetch user data - this is important as the user's role for that
+  /// workspace could have been changed in the meantime
   ///
   /// 3. set the new active workspace ID.
   Future<Result<void>> handleWorkspaceChange(String workspaceId) async {

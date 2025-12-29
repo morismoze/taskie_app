@@ -35,6 +35,8 @@ class UserRepositoryImpl extends UserRepository {
     final result = await _userApiService.getCurrentUser();
     switch (result) {
       case Ok<UserResponse>():
+        _loggerService.setUser(result.value.id);
+
         final user = User(
           id: result.value.id,
           email: result.value.email,

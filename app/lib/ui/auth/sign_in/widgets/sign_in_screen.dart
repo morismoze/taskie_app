@@ -9,6 +9,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_filled_button.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
+import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_snackbar.dart';
 import '../../../core/ui/blurred_circles_background.dart';
 import '../view_models/sign_in_viewmodel.dart';
@@ -100,7 +101,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         listenable: widget.viewModel.signInWithGoogle,
                         builder: (BuildContext builderContext, _) =>
                             AppFilledButton(
-                              onPress: _onSignInStart,
+                              onPress: () => _onSignInStart(builderContext),
                               label:
                                   builderContext.localization.signInGetStarted,
                             ),
@@ -127,7 +128,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
       switch (errorResult.error) {
         case GoogleSignInCancelledException():
-          AppSnackbar.showError(
+          AppSnackbar.showInfo(
             context: context,
             message: context.localization.signInGoogleCanceled,
           );
@@ -135,32 +136,36 @@ class _SignInScreenState extends State<SignInScreen> {
         default:
           AppSnackbar.showError(
             context: context,
-            message: context.localization.misc_somethingWentWrong,
+            message: context.localization.signInGoogleError,
           );
       }
     }
   }
 
-  void _onSignInStart() {
+  void _onSignInStart(BuildContext context) {
     AppModalBottomSheet.show(
       context: context,
-      enableDrag: !widget.viewModel.signInWithGoogle.running,
-      isDismissable: !widget.viewModel.signInWithGoogle.running,
+      enableDrag: false,
+      isDismissable: false,
       // Even though the entire outer AppFilledButton is inside ListenableBuilder, the child
       // of the bottom sheet snapshots current state of `widget.viewModel.signInWithGoogle` when
       // opened (something like closure). Hence why it also needs to be wrapped inside ListenableBuilder
       child: ListenableBuilder(
         listenable: widget.viewModel.signInWithGoogle,
-        builder: (BuildContext builderContext, _) => Padding(
-          padding: const EdgeInsets.only(bottom: 24),
-          child: AppFilledButton(
-            onPress: () => widget.viewModel.signInWithGoogle.execute(),
-            label: builderContext.localization.signInViaGoogle,
-            leadingIcon: FontAwesomeIcons.google,
-            loading: widget.viewModel.signInWithGoogle.running,
-            backgroundColor: Colors.red[800],
-          ),
-        ),
+        builder: (BuildContext builderContext, _) =>
+            AppModalBottomSheetContentWrapper(
+              title: context.localization.signInTitleProviders,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: AppFilledButton(
+                  onPress: () => widget.viewModel.signInWithGoogle.execute(),
+                  label: builderContext.localization.signInViaGoogle,
+                  leadingIcon: FontAwesomeIcons.google,
+                  loading: widget.viewModel.signInWithGoogle.running,
+                  backgroundColor: Colors.red[800],
+                ),
+              ),
+            ),
       ),
     );
   }

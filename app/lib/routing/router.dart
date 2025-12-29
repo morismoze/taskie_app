@@ -23,6 +23,7 @@ import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
+import '../ui/navigation/back_button_handler.dart';
 import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
@@ -168,8 +169,6 @@ GoRouter router({
                   },
               child: CreateWorkspaceScreen(
                 viewModel: CreateWorkspaceScreenViewModel(
-                  userRepository: context.read(),
-                  workspaceRepository: context.read(),
                   createWorkspaceUseCase: context.read(),
                   joinWorkspaceUseCase: context.read(),
                 ),
@@ -228,9 +227,12 @@ GoRouter router({
                       ),
                     ),
                   ],
-                  child: AppShellScaffold(
-                    workspaceId: workspaceId,
+                  child: BackButtonHandler(
                     navigationShell: navigationShell,
+                    child: AppShellScaffold(
+                      workspaceId: workspaceId,
+                      navigationShell: navigationShell,
+                    ),
                   ),
                 );
               },

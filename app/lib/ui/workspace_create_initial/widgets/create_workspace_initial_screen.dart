@@ -101,6 +101,7 @@ class _CreateWorkspaceInitialScreenState
                                         ).textTheme.bodyMedium,
                                       ),
                                     ),
+                                    const SizedBox(height: 60),
                                   ],
                                 );
                               }
@@ -109,7 +110,6 @@ class _CreateWorkspaceInitialScreenState
                           ),
                         ],
                       ),
-                      const SizedBox(height: 60),
                       CreateWorkspaceInitialForm(viewModel: widget.viewModel),
                     ],
                   ),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../config/assets.dart';
 import '../../core/theme/colors.dart';
-import '../../core/ui/activity_indicator.dart';
-import '../../core/utils/constants.dart';
+import '../../core/ui/app_icon.dart';
 import '../view_models/app_startup_view_model.dart';
 
 class AppStartup extends StatefulWidget {
@@ -37,36 +35,10 @@ class _AppStartupState extends State<AppStartup> {
       listenable: widget.viewModel.bootstrap,
       builder: (_, _) {
         if (widget.viewModel.bootstrap.running) {
-          final appIconSize = 90.0;
-          final appIconBorderRadius =
-              appIconSize * MiscConstants.appIconBorderRadiusSizePercentage;
-
           return SizedBox.expand(
             child: Container(
               color: AppColors.white1,
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(appIconBorderRadius),
-                      ),
-                      child: Image(
-                        image: const AssetImage(Assets.appIcon),
-                        height: appIconSize,
-                        width: appIconSize,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    ActivityIndicator(
-                      radius: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ],
-                ),
-              ),
+              child: const Center(child: AppIcon()),
             ),
           );
         }

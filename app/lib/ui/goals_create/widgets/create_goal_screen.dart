@@ -158,7 +158,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
       widget.viewModel.createGoal.clearResult();
       AppSnackbar.showError(
         context: context,
-        message: context.localization.misc_somethingWentWrong,
+        message: context.localization.createNewGoalError,
       );
     }
   }

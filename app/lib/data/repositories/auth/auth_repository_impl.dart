@@ -105,6 +105,8 @@ class AuthRepositoryImpl implements AuthRepository {
           );
         }
 
+        _loggerService.setUser(apiLoginResult.value.user.id);
+
         return Result.ok(
           Auth(
             accessToken: accessToken,

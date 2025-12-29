@@ -5,11 +5,13 @@ import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
 
 export abstract class WorkspaceUserRepository {
-  abstract findById({
+  abstract findByIdAndWorkspaceId({
     id,
+    workspaceId,
     relations,
   }: {
     id: WorkspaceUser['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
@@ -48,6 +50,14 @@ export abstract class WorkspaceUserRepository {
   }: {
     workspaceId: WorkspaceUser['workspace']['id'];
     ids: WorkspaceUser['id'][];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<WorkspaceUserEntity[]>;
+
+  abstract findAllByWorkspaceId({
+    workspaceId,
+    relations,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 

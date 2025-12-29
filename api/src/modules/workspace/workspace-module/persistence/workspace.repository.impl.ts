@@ -99,6 +99,10 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     });
   }
 
+  async deleteById(id: Workspace['id']): Promise<void> {
+    await this.repo.delete(id);
+  }
+
   private get transactionalWorkspaceRepo(): Repository<WorkspaceEntity> {
     return this.transactionalRepository.getRepository(WorkspaceEntity);
   }

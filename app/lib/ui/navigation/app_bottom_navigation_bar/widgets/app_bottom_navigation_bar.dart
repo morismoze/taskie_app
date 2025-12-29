@@ -15,10 +15,10 @@ import '../view_models/app_bottom_navigation_bar_view_model.dart';
 
 const double kAppBottomNavigationBarHeight = 58.0;
 const double kAppBottomNavigationBarBorderRadius = 40.0;
-const int tasksIndex = 0;
-const int goalsIndex = 1;
-const int leaderboardIndex = 2;
-const int userProfileIndex = 3;
+const int tasksTabIndex = 0;
+const int goalsTabIndex = 1;
+const int leaderboardTabIndex = 2;
+const int userProfileTabIndex = 3;
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({
@@ -54,25 +54,25 @@ class AppBottomNavigationBar extends StatelessWidget {
             _TabItem(
               icon: FontAwesomeIcons.house,
               label: context.localization.bottomNavigationBarTasksLabel,
-              isActive: currentIndex == tasksIndex,
-              onPressed: () => _navigateToBranch(tasksIndex),
+              isActive: currentIndex == tasksTabIndex,
+              onPressed: () => _navigateToBranch(tasksTabIndex),
             ),
             _TabItem(
               icon: FontAwesomeIcons.solidFlag,
               label: context.localization.goalsLabel,
-              isActive: currentIndex == goalsIndex,
-              onPressed: () => _navigateToBranch(goalsIndex),
+              isActive: currentIndex == goalsTabIndex,
+              onPressed: () => _navigateToBranch(goalsTabIndex),
             ),
             if (canCreateObjective)
               const SizedBox(width: kAppFloatingActionButtonSize),
             _TabItem(
               icon: FontAwesomeIcons.trophy,
               label: context.localization.leaderboardLabel,
-              isActive: currentIndex == leaderboardIndex,
-              onPressed: () => _navigateToBranch(leaderboardIndex),
+              isActive: currentIndex == leaderboardTabIndex,
+              onPressed: () => _navigateToBranch(leaderboardTabIndex),
             ),
             _AvatarTabItem(
-              isActive: currentIndex == userProfileIndex,
+              isActive: currentIndex == userProfileTabIndex,
               onPressed: () => _openUserProfile(context),
               user: viewModel.user!,
             ),
@@ -104,10 +104,10 @@ class AppBottomNavigationBar extends StatelessWidget {
   int _getCurrentTabIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
-      final path when path.contains(Routes.tasksRelative) => tasksIndex,
-      final path when path.contains(Routes.goalsRelative) => goalsIndex,
+      final path when path.contains(Routes.tasksRelative) => tasksTabIndex,
+      final path when path.contains(Routes.goalsRelative) => goalsTabIndex,
       final path when path.contains(Routes.leaderboardRelative) =>
-        leaderboardIndex,
+        leaderboardTabIndex,
       _ => 0,
     };
   }

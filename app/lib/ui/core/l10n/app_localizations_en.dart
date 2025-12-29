@@ -12,9 +12,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_cancel => 'Cancel';
 
   @override
-  String get misc_somethingWentWrong => 'Uh-oh! Something went wrong';
-
-  @override
   String get misc_tryAgain => 'Try again';
 
   @override
@@ -58,7 +55,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get misc_errorPrompt =>
-      'Uh-oh! We ran into a small hiccup loading this.';
+      'Uh-oh! We\'ve ran into a small hiccup loading this.';
 
   @override
   String get misc_retry => 'Let\'s try again';
@@ -77,6 +74,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInGetStarted => 'Let\'s get started';
 
   @override
+  String get signInTitleProviders => 'Sign in method';
+
+  @override
   String get signInViaGoogle => 'Sign in via Google';
 
   @override
@@ -84,8 +84,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Google sign-in cancelled. Please try again.';
 
   @override
+  String get signInGoogleError =>
+      'Uh-oh! We\'ve had some trouble with Google sign-in';
+
+  @override
   String get errorOnInitialLoad =>
-      'Uh-oh! We\'ve had some trouble loading up your workspace';
+      'Uh-oh! We\'ve had some trouble loading up your workspace.';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Tasks';
@@ -148,7 +152,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
 
   @override
+  String get tasksEmptyPageTasks =>
+      'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!';
+
+  @override
+  String get tasksPressAgainToExit => 'Press again to exit the app';
+
+  @override
   String get objectiveStatusFilterAll => 'All statuses';
+
+  @override
+  String get objectiveStatusFilter => 'Filter by status';
+
+  @override
+  String get objectiveTimeFilter => 'Sort by time';
 
   @override
   String get progressStatusInProgress => 'In Progress';
@@ -314,6 +331,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble changing workspace';
 
   @override
+  String get appDrawerWorkspaceOptions => 'Workspace options';
+
+  @override
   String get appDrawerEditWorkspace => 'Workspace settings';
 
   @override
@@ -328,7 +348,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalMessage =>
-      'Are you sure you want to leave this workspace?';
+      'Are you sure you want to leave this workspace? **Beware: if you are the last Manager, the workspace will be entirely deleted once you leave.**';
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Leave';
@@ -353,6 +373,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createNewTaskSuccess => 'Successfully created new task';
+
+  @override
+  String get createNewTaskError =>
+      'Uh-oh! We\'ve had some trouble creating new task';
 
   @override
   String get objectiveNoMembersCta => 'Let\'s add members';
@@ -390,6 +414,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceUsersManagement => 'Users management';
+
+  @override
+  String get workspaceUsersManagementUserOptions => 'Workspace user options';
 
   @override
   String get workspaceUsersManagementLoadUsersError =>
@@ -469,6 +496,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceInviteLabel => 'Workspace invite link';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteError =>
+      'Uh-oh! We\'ve had some trouble creating a workspace invite link.';
 
   @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
@@ -565,10 +596,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createNewGoalMembersLoadError =>
-      'Uh-oh! We ran into a small hiccup loading workspace members.';
+      'Uh-oh! We\'ve ran into a small hiccup loading workspace members.';
 
   @override
   String get createNewGoalSuccess => 'Successfully created new goal';
+
+  @override
+  String get createNewGoalError =>
+      'Uh-oh! We\'ve had some trouble creating new goal';
 
   @override
   String get createNewGoalTitle => 'New goal';
@@ -668,15 +703,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceCreateJoinViaInviteLinkNotFound =>
-      'The provided link is invalid';
+      'Uh-oh! The provided link is invalid';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
-      'The provided link has expired or was already used';
+      'Uh-oh! The provided link has expired or was already used';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExistingUser =>
-      'You are already part of this workspace';
+      'Uh-oh! You are already part of this workspace';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkError =>
+      'Uh-oh! We\'ve had some trouble adding you to the workspace';
 
   @override
   String get workspaceCreationSuccess =>
@@ -718,6 +757,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
+
+  @override
+  String get goalsEmptyPageGoals =>
+      'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!';
 
   @override
   String get goalsDetails => 'Goal details';

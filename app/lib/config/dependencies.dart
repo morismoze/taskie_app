@@ -7,6 +7,8 @@ import '../data/repositories/auth/auth_repository.dart';
 import '../data/repositories/auth/auth_repository_impl.dart';
 import '../data/repositories/auth/auth_state_repository.dart';
 import '../data/repositories/auth/auth_state_repository_impl.dart';
+import '../data/repositories/client_info/client_info_repository.dart';
+import '../data/repositories/client_info/client_info_repository_impl.dart';
 import '../data/repositories/preferences/preferences_repository.dart';
 import '../data/repositories/preferences/preferences_repository_impl.dart';
 import '../data/repositories/user/user_repository.dart';
@@ -34,6 +36,7 @@ import '../data/services/api/workspace/workspace_leaderboard/workspace_leaderboa
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
+import '../data/services/local/client_info_service.dart';
 import '../data/services/local/logger.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
@@ -53,6 +56,7 @@ List<SingleChildWidget> get providers {
     Provider(create: (context) => SecureStorageService()),
     Provider(create: (context) => SharedPreferencesService()),
     Provider(create: (context) => GoogleAuthService()),
+    Provider(create: (context) => ClientInfoService()),
     ChangeNotifierProvider(
       create: (context) =>
           AuthStateRepositoryImpl(
@@ -62,11 +66,16 @@ List<SingleChildWidget> get providers {
               as AuthStateRepository,
     ),
     Provider(
-      create: (context) => ApiClient(authStateRepository: context.read()),
+      create: (context) => ApiClient(
+        authStateRepository: context.read(),
+        clientInfoService: context.read(),
+      ),
     ),
     Provider(
-      create: (context) =>
-          ApiDeepLinkClient(authStateRepository: context.read()),
+      create: (context) => ApiDeepLinkClient(
+        authStateRepository: context.read(),
+        clientInfoService: context.read(),
+      ),
     ),
     Provider(create: (context) => AuthApiService(apiClient: context.read())),
     Provider(
@@ -228,6 +237,11 @@ List<SingleChildWidget> get providers {
         purgeDataCacheUseCase: context.read(),
         loggerService: context.read(),
       ),
+    ),
+    Provider(
+      create: (context) =>
+          ClientInfoRepositoryImpl(clientInfoService: context.read())
+              as ClientInfoRepository,
     ),
   ];
 }

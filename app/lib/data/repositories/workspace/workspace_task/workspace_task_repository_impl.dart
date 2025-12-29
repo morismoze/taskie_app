@@ -24,7 +24,6 @@ import 'workspace_task_repository.dart';
 const _kDefaultPaginablePage = 1;
 const _kDefaultPaginableLimit = 15;
 const _kDefaultPaginableSort = SortBy.newestFirst;
-const _kDefaultPaginableStatus = ProgressStatus.inProgress;
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   WorkspaceTaskRepositoryImpl({
@@ -45,7 +44,6 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     page: _kDefaultPaginablePage,
     limit: _kDefaultPaginableLimit,
     sort: _kDefaultPaginableSort,
-    status: _kDefaultPaginableStatus,
   );
 
   @override
@@ -177,18 +175,15 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
   @override
   Result<WorkspaceTask> loadWorkspaceTaskDetails({required String taskId}) {
-    try {
-      final details = _cachedTasks!.items.firstWhere(
-        (task) => task.id == taskId,
-      );
-      return Result.ok(details);
-    } on StateError {
-      // This can happen when a task gets closed and removed from the cache
-      // and the repository notifies listeners, e.g. the task details edit
-      // screen VM, which then tries to load the details again in a split
-      // second before task is closed and user is navigated back to tasks screen.
+    final details = _cachedTasks?.items.firstWhereOrNull(
+      (task) => task.id == taskId,
+    );
+
+    if (details == null) {
       return Result.error(Exception('Task $taskId not found'));
     }
+
+    return Result.ok(details);
   }
 
   @override
@@ -307,6 +302,15 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     String taskId,
     String assigneeId,
   ) async {
+    final existingTaskResult =
+        loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
+
+    if (existingTaskResult.value.assignees.length == 1) {
+      // Guard case, the actual user's guard is done in the
+      // uI with a modal blocking the removal of the last assignee
+      return const Result.ok(null);
+    }
+
     final result = await _workspaceTaskApiService.removeTaskAssignee(
       workspaceId: workspaceId,
       taskId: taskId,
@@ -448,7 +452,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       page: _kDefaultPaginablePage,
       limit: _kDefaultPaginableLimit,
       search: null,
-      status: _kDefaultPaginableStatus,
+      status: null,
       sort: _kDefaultPaginableSort,
     );
   }

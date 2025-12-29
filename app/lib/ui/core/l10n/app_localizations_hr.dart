@@ -12,9 +12,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_cancel => 'Otkaži';
 
   @override
-  String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
-
-  @override
   String get misc_tryAgain => 'Pokušajte ponovno';
 
   @override
@@ -77,6 +74,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get signInGetStarted => 'Započnimo';
 
   @override
+  String get signInTitleProviders => 'Metoda prijave';
+
+  @override
   String get signInViaGoogle => 'Prijavi se putem Googlea';
 
   @override
@@ -84,8 +84,12 @@ class AppLocalizationsHr extends AppLocalizations {
       'Google prijava otkazana. Molimo pokušajte ponovno.';
 
   @override
+  String get signInGoogleError =>
+      'Uh-oh! Došlo je do problema prilikom Google prijave';
+
+  @override
   String get errorOnInitialLoad =>
-      'Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora';
+      'Uh-oh! Došlo je do problema prilikom učitavanja vašeg radnog prostora.';
 
   @override
   String get bottomNavigationBarTasksLabel => 'Zadatci';
@@ -148,7 +152,21 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
 
   @override
+  String get tasksEmptyPageTasks =>
+      'Uh-oh! Ova stranica nema više zadataka. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis zadataka!';
+
+  @override
+  String get tasksPressAgainToExit =>
+      'Pritisnite ponovno za izlaz iz aplikacije';
+
+  @override
   String get objectiveStatusFilterAll => 'Svi statusi';
+
+  @override
+  String get objectiveStatusFilter => 'Filter po statusu';
+
+  @override
+  String get objectiveTimeFilter => 'Sortiranje po vremenu';
 
   @override
   String get progressStatusInProgress => 'U tijeku';
@@ -314,6 +332,9 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora';
 
   @override
+  String get appDrawerWorkspaceOptions => 'Opcije radnog prostora';
+
+  @override
   String get appDrawerEditWorkspace => 'Postavke radnog prostora';
 
   @override
@@ -328,7 +349,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalMessage =>
-      'Jeste li sigurni da želite napustiti ovaj radni prostor?';
+      'Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunost izbrisati nakon što ga napustite.**';
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
@@ -353,6 +374,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get createNewTaskSuccess => 'Uspješno ste kreirali novi zadatak';
+
+  @override
+  String get createNewTaskError =>
+      'Uh-oh! Došlo je do problema prilikom kreiranja novog zadatka';
 
   @override
   String get objectiveNoMembersCta => 'Dodajmo članove';
@@ -391,6 +416,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceUsersManagement => 'Upravljanje korisnicima';
+
+  @override
+  String get workspaceUsersManagementUserOptions =>
+      'Opcije korisnika radnog prostora';
 
   @override
   String get workspaceUsersManagementLoadUsersError =>
@@ -471,6 +500,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceInviteLabel => 'Pozivni link radnog prostora';
+
+  @override
+  String get workspaceUsersManagementCreateWorkspaceInviteError =>
+      'Uh-oh! Došlo je do problema prilikom kreiranja pozivnog linka radnog prostora.';
 
   @override
   String get workspaceUsersManagementCreateWorkspaceInviteNote =>
@@ -574,6 +607,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get createNewGoalSuccess => 'Uspješno ste kreirali novi cilj';
 
   @override
+  String get createNewGoalError =>
+      'Uh-oh! Došlo je do problema prilikom kreiranja novog cilja';
+
+  @override
   String get createNewGoalTitle => 'Novi cilj';
 
   @override
@@ -668,19 +705,23 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceCreateJoinViaInviteLinkInvalid =>
-      'Neispravan format pozivnog linka';
+      'Uh-oh! Neispravan format pozivnog linka';
 
   @override
   String get workspaceCreateJoinViaInviteLinkNotFound =>
-      'Uneseni pozivni link nije važeći';
+      'Uh-oh! Uneseni pozivni link nije važeći';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
-      'Uneseni pozivni link je istekao ili je već iskorišten';
+      'Uh-oh! Uneseni pozivni link je istekao ili je već iskorišten';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExistingUser =>
       'Već ste član ovog radnog prostora';
+
+  @override
+  String get workspaceCreateJoinViaInviteLinkError =>
+      'Uh-oh! Došlo je do problema prilikom pridruživanja radnom prostoru';
 
   @override
   String get workspaceCreationSuccess =>
@@ -724,6 +765,10 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
+
+  @override
+  String get goalsEmptyPageGoals =>
+      'Uh-oh! Ova stranica nema više ciljeva. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis ciljeva!';
 
   @override
   String get goalsDetails => 'Detalji cilja';

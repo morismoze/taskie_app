@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../theme/colors.dart';
 import '../app_modal_bottom_sheet.dart';
+import '../app_modal_bottom_sheet_content_wrapper.dart';
 import 'app_select_field_options.dart';
 import 'app_select_field_selected_options.dart';
 
@@ -131,7 +132,7 @@ class AppSelectField<T> extends StatelessWidget {
       isFieldFocused: hasSelection,
       onTap: () {
         if (enabled) {
-          _openOptions(context);
+          _openOptions(context, label);
         }
       },
       trailing: trailingWidget,
@@ -140,7 +141,7 @@ class AppSelectField<T> extends StatelessWidget {
     );
   }
 
-  void _openOptions(BuildContext context) {
+  void _openOptions(BuildContext context, String label) {
     // Unfocus last field as this custom select field
     // does not "own" its own focus
     FocusManager.instance.primaryFocus?.unfocus();
@@ -148,12 +149,15 @@ class AppSelectField<T> extends StatelessWidget {
     AppModalBottomSheet.show(
       context: context,
       isScrollControlled: true,
-      child: AppSelectFieldOptions<T>(
-        options: options,
-        value: value,
-        onSubmit: onChanged,
-        multiple: multiple,
-        max: max,
+      child: AppModalBottomSheetContentWrapper(
+        title: label,
+        child: AppSelectFieldOptions<T>(
+          options: options,
+          value: value,
+          onSubmit: onChanged,
+          multiple: multiple,
+          max: max,
+        ),
       ),
     );
   }

@@ -133,6 +133,7 @@ export class AuthService {
             role: workspaceUser.workspaceRole,
           })),
           sessionId: session.id,
+          atv: session.accessTokenVersion,
         },
         session.hash,
       );
@@ -194,6 +195,7 @@ export class AuthService {
             role: workspaceUser.workspaceRole,
           })),
           sessionId: session.id,
+          atv: session.accessTokenVersion,
         },
         newHash,
       );
@@ -222,6 +224,7 @@ export class AuthService {
           sub: data.sub,
           roles: data.roles,
           sessionId: data.sessionId,
+          atv: data.atv,
         },
         {
           secret: this.configService.getOrThrow('auth.secret', { infer: true }),

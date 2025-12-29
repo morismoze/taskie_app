@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../data/repositories/auth/auth_state_repository.dart';
+import '../../../data/repositories/client_info/client_info_repository_impl.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../utils/command.dart';
 import '../../core/utils/intl.dart';
@@ -10,13 +11,16 @@ class AppStartupViewModel {
   AppStartupViewModel({
     required PreferencesRepository preferencesRepository,
     required AuthStateRepository authStateRepository,
+    required ClientInfoRepository clientInfoRepository,
   }) : _preferencesRepository = preferencesRepository,
-       _authStateRepository = authStateRepository {
+       _authStateRepository = authStateRepository,
+       _clientInfoRepository = clientInfoRepository {
     bootstrap = Command0(_bootstrap)..execute();
   }
 
   final PreferencesRepository _preferencesRepository;
   final AuthStateRepository _authStateRepository;
+  final ClientInfoRepository _clientInfoRepository;
 
   late Command0 bootstrap;
 
@@ -48,6 +52,9 @@ class AppStartupViewModel {
     // inspected by the gorouter redirect function when gorouter builds the routes
     // initially.
     await _authStateRepository.loadAuthenticatedState();
+
+    // Init client info
+    await _clientInfoRepository.initializeClientInfo();
 
     return const Result.ok(null);
   }

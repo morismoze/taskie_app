@@ -7,6 +7,7 @@ import '../../../../domain/models/workspace_task.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
+import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/card_container.dart';
 import '../../../core/ui/new_objective_badge.dart';
@@ -48,7 +49,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _onTap(context, viewModel.activeWorkspaceId, taskId),
+      onTap: () => _onTap(context, title, viewModel.activeWorkspaceId, taskId),
       child: CardContainer(
         child: Column(
           spacing: 10,
@@ -104,43 +105,51 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context, String activeWorkspaceId, String taskId) {
+  void _onTap(
+    BuildContext context,
+    String title,
+    String activeWorkspaceId,
+    String taskId,
+  ) {
     AppModalBottomSheet.show(
       context: context,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppTextButton(
-            onPress: () {
-              context.pop(); // Close bottom sheet
-              context.push(
-                Routes.taskDetails(
-                  workspaceId: activeWorkspaceId,
-                  taskId: taskId,
-                ),
-              );
-            },
-            label: context.localization.tasksDetails,
-            leadingIcon: FontAwesomeIcons.circleInfo,
-          ),
-          if (!isTaskClosed)
-            Rbac(
-              permission: RbacPermission.objectiveEdit,
-              child: AppTextButton(
-                onPress: () {
-                  context.pop(); // Close bottom sheet
-                  context.push(
-                    Routes.taskDetailsEdit(
-                      workspaceId: activeWorkspaceId,
-                      taskId: taskId,
-                    ),
-                  );
-                },
-                label: context.localization.tasksDetailsEdit,
-                leadingIcon: FontAwesomeIcons.pencil,
-              ),
+      child: AppModalBottomSheetContentWrapper(
+        title: title,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppTextButton(
+              onPress: () {
+                context.pop(); // Close bottom sheet
+                context.push(
+                  Routes.taskDetails(
+                    workspaceId: activeWorkspaceId,
+                    taskId: taskId,
+                  ),
+                );
+              },
+              label: context.localization.tasksDetails,
+              leadingIcon: FontAwesomeIcons.circleInfo,
             ),
-        ],
+            if (!isTaskClosed)
+              Rbac(
+                permission: RbacPermission.objectiveEdit,
+                child: AppTextButton(
+                  onPress: () {
+                    context.pop(); // Close bottom sheet
+                    context.push(
+                      Routes.taskDetailsEdit(
+                        workspaceId: activeWorkspaceId,
+                        taskId: taskId,
+                      ),
+                    );
+                  },
+                  label: context.localization.tasksDetailsEdit,
+                  leadingIcon: FontAwesomeIcons.pencil,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

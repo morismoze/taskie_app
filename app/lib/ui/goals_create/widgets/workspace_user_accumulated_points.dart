@@ -42,6 +42,7 @@ class WorkspaceUserAccumulatedPoints extends StatelessWidget {
                   alignment: PlaceholderAlignment.baseline,
                   baseline: TextBaseline.alphabetic,
                   child: AppTextButton(
+                    underline: true,
                     onPress: () => viewModel.loadWorkspaceUserAccumulatedPoints
                         .execute(selectedAssignee.id),
                     label: context.localization.misc_tryAgain,

@@ -8,6 +8,7 @@ class AppTextButton extends StatelessWidget {
     required this.label,
     this.disabled = false,
     this.shrinkWrap = false,
+    this.underline = false,
     this.leadingIcon,
     this.color,
     this.minimumSize,
@@ -18,6 +19,7 @@ class AppTextButton extends StatelessWidget {
   final String label;
   final bool disabled;
   final bool shrinkWrap;
+  final bool underline;
   final IconData? leadingIcon;
   final Color? color;
   final Size? minimumSize;
@@ -57,6 +59,7 @@ class AppTextButton extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
               color: color ?? Theme.of(context).colorScheme.secondary,
               fontSize: 16,
+              decoration: underline ? TextDecoration.underline : null,
             ),
           ),
         ],

@@ -3,9 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/constants/rbac.dart';
+import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
+import '../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
 import '../../core/utils/user.dart';
@@ -85,35 +87,38 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
       context: context,
       enableDrag: !viewModel.deleteWorkspaceUser.running,
       isDismissable: !viewModel.deleteWorkspaceUser.running,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              AppAvatar(
-                hashString: workspaceUserId,
-                firstName: firstName,
-                imageUrl: profileImageUrl,
-              ),
-              const SizedBox(width: 12),
-              Flexible(
-                child: Text(
-                  fullName,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+      child: AppModalBottomSheetContentWrapper(
+        title: context.localization.workspaceUsersManagementUserOptions,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                AppAvatar(
+                  hashString: workspaceUserId,
+                  firstName: firstName,
+                  imageUrl: profileImageUrl,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          DeleteWorkspaceUserButton(
-            viewModel: viewModel,
-            workspaceId: workspaceId,
-            workspaceUserId: workspaceUserId,
-          ),
-        ],
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    fullName,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            DeleteWorkspaceUserButton(
+              viewModel: viewModel,
+              workspaceId: workspaceId,
+              workspaceUserId: workspaceUserId,
+            ),
+          ],
+        ),
       ),
     );
   }

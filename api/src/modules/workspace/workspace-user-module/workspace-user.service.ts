@@ -70,10 +70,17 @@ export class WorkspaceUserService {
     };
   }
 
-  async findById(
-    workspaceUserId: WorkspaceUser['id'],
-  ): Promise<Nullable<WorkspaceUserCore>> {
-    return this.workspaceUserRepository.findById({ id: workspaceUserId });
+  async findByIdAndWorkspaceId({
+    workspaceId,
+    id,
+  }: {
+    id: WorkspaceUser['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<Nullable<WorkspaceUserCore>> {
+    return this.workspaceUserRepository.findByIdAndWorkspaceId({
+      id,
+      workspaceId,
+    });
   }
 
   /**
@@ -92,18 +99,45 @@ export class WorkspaceUserService {
     });
   }
 
-  async findByIdWithUserAndCreatedByUser(
-    id: WorkspaceUser['user']['id'],
-  ): Promise<Nullable<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>> {
-    const workspaceUser = await this.workspaceUserRepository.findById({
-      id: id,
-      relations: {
-        user: true,
-        createdBy: {
+  async findByIdAndWorkspaceIdWithUser({
+    id,
+    workspaceId,
+  }: {
+    id: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<Nullable<WorkspaceUserWithUser>> {
+    const workspaceUser =
+      await this.workspaceUserRepository.findByIdAndWorkspaceId({
+        id: id,
+        workspaceId,
+        relations: {
           user: true,
         },
-      },
-    });
+      });
+
+    return workspaceUser;
+  }
+
+  async findByIdAndWorkspaceIdWithUserAndCreatedByUser({
+    id,
+    workspaceId,
+  }: {
+    id: WorkspaceUser['user']['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<
+    Nullable<WorkspaceUserWithUser & WorkspaceUserWithCreatedByUser>
+  > {
+    const workspaceUser =
+      await this.workspaceUserRepository.findByIdAndWorkspaceId({
+        id: id,
+        workspaceId,
+        relations: {
+          user: true,
+          createdBy: {
+            user: true,
+          },
+        },
+      });
 
     if (workspaceUser == null) {
       return null;
@@ -198,6 +232,14 @@ export class WorkspaceUserService {
     });
   }
 
+  async findAllByWorkspaceId(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<WorkspaceUserCore[]> {
+    return this.workspaceUserRepository.findAllByWorkspaceId({
+      workspaceId,
+    });
+  }
+
   async update({
     id,
     data,
@@ -236,7 +278,10 @@ export class WorkspaceUserService {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['user']['id'];
   }): Promise<void> {
-    const workspaceUser = await this.findById(workspaceUserId);
+    const workspaceUser = await this.findByIdAndWorkspaceId({
+      workspaceId,
+      id: workspaceUserId,
+    });
 
     if (!workspaceUser) {
       throw new ApiHttpException(
