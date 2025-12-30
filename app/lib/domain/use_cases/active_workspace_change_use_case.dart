@@ -48,7 +48,7 @@ class ActiveWorkspaceChangeUseCase {
 
     switch (resultSetActive) {
       case Ok():
-        _purgeDataCacheUseCase.purgeDataCache();
+        await _purgeDataCacheUseCase.purgeDataCache();
         return const Result.ok(null);
       case Error():
         return Result.error(resultSetActive.error);

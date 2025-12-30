@@ -29,6 +29,42 @@ class WorkspaceTask {
   /// and cached ones from origin.
   final bool isNew;
 
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'title': title,
+    'rewardPoints': rewardPoints,
+    'assignees': assignees.map((a) => a.toMap()).toList(),
+    'createdAt': createdAt.toIso8601String(),
+    'createdBy': createdBy?.toMap(),
+    'description': description,
+    'dueDate': dueDate?.toIso8601String(),
+    'isNew': isNew,
+  };
+
+  factory WorkspaceTask.fromMap(Map<dynamic, dynamic> map) => WorkspaceTask(
+    id: map['id'] as String,
+    title: map['title'] as String,
+    rewardPoints: (map['rewardPoints'] as num).toInt(),
+    assignees: ((map['assignees'] as List?) ?? const [])
+        .map(
+          (e) => WorkspaceTaskAssignee.fromMap(
+            Map<dynamic, dynamic>.from(e as Map),
+          ),
+        )
+        .toList(),
+    createdAt: DateTime.parse(map['createdAt'] as String),
+    createdBy: map['createdBy'] == null
+        ? null
+        : CreatedBy.fromMap(
+            Map<dynamic, dynamic>.from(map['createdBy'] as Map),
+          ),
+    description: map['description'] as String?,
+    dueDate: map['dueDate'] == null
+        ? null
+        : DateTime.parse(map['dueDate'] as String),
+    isNew: (map['isNew'] as bool?) ?? false,
+  );
+
   WorkspaceTask copyWith({List<WorkspaceTaskAssignee>? assignees}) {
     return WorkspaceTask(
       id: id,
@@ -54,6 +90,18 @@ class WorkspaceTaskAssignee extends Assignee {
   });
 
   final ProgressStatus status;
+
+  @override
+  Map<String, dynamic> toMap() => {...super.toMap(), 'status': status.name};
+
+  factory WorkspaceTaskAssignee.fromMap(Map<dynamic, dynamic> map) =>
+      WorkspaceTaskAssignee(
+        id: map['id'] as String,
+        firstName: map['firstName'] as String,
+        lastName: map['lastName'] as String,
+        profileImageUrl: map['profileImageUrl'] as String?,
+        status: ProgressStatus.values.byName(map['status'] as String),
+      );
 
   WorkspaceTaskAssignee copyWith({ProgressStatus? status}) {
     return WorkspaceTaskAssignee(

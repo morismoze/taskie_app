@@ -26,6 +26,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
     required String workspaceId,
     bool forceFetch = false,
   }) async {
+    // Read from in-memory cache
     if (!forceFetch &&
         _cachedWorkspaceInviteTokens[workspaceId] != null &&
         // We check if the token has expired. If it's not, it is still usable.
@@ -37,10 +38,10 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
       return Result.ok(_cachedWorkspaceInviteTokens[workspaceId]!);
     }
 
+    // Trigger API request
     final result = await _workspaceInviteApiService.createWorkspaceInviteToken(
       workspaceId,
     );
-
     switch (result) {
       case Ok<CreateWorkspaceInviteTokenResponse>():
         final workspaceInvite = WorkspaceInvite(
@@ -92,5 +93,10 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
         );
         return Result.error(result.error, result.stackTrace);
     }
+  }
+
+  @override
+  void purgeWorkspaceInvites() {
+    _cachedWorkspaceInviteTokens.clear();
   }
 }

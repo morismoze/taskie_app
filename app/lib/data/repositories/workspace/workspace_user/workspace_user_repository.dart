@@ -7,7 +7,7 @@ import '../../../services/api/user/models/response/user_response.dart';
 abstract class WorkspaceUserRepository extends ChangeNotifier {
   List<WorkspaceUser>? get users;
 
-  Future<Result<List<WorkspaceUser>>> loadWorkspaceUsers({
+  Stream<Result<List<WorkspaceUser>>> loadWorkspaceUsers({
     required String workspaceId,
     bool forceFetch,
   });
@@ -41,5 +41,5 @@ abstract class WorkspaceUserRepository extends ChangeNotifier {
     required String workspaceUserId,
   });
 
-  void purgeWorkspaceUsersCache();
+  Future<void> purgeWorkspaceUsersCache();
 }

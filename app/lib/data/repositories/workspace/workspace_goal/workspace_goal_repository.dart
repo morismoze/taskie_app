@@ -20,7 +20,7 @@ abstract class WorkspaceGoalRepository extends ChangeNotifier {
 
   Paginable<WorkspaceGoal>? get goals;
 
-  Future<Result<void>> loadGoals({
+  Stream<Result<void>> loadGoals({
     required String workspaceId,
     bool forceFetch,
     ObjectiveFilter? filter,
@@ -50,5 +50,5 @@ abstract class WorkspaceGoalRepository extends ChangeNotifier {
     required String goalId,
   });
 
-  void purgeGoalsCache();
+  Future<void> purgeGoalsCache();
 }

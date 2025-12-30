@@ -6,10 +6,10 @@ import '../../../../utils/command.dart';
 abstract class WorkspaceLeaderboardRepository extends ChangeNotifier {
   List<WorkspaceLeaderboardUser>? get leaderboard;
 
-  Future<Result<void>> loadLeaderboard({
+  Stream<Result<void>> loadLeaderboard({
     required String workspaceId,
     bool forceFetch,
   });
 
-  void purgeLeaderboardCache();
+  Future<void> purgeLeaderboardCache();
 }

@@ -7,37 +7,54 @@ import '../../../services/api/workspace/workspace_user/models/request/update_wor
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_accumulated_points_response.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_response.dart';
 import '../../../services/api/workspace/workspace_user/workspace_user_api_service.dart';
+import '../../../services/local/database_service.dart';
 import '../../../services/local/logger_service.dart';
 import 'workspace_user_repository.dart';
 
 class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   WorkspaceUserRepositoryImpl({
     required WorkspaceUserApiService workspaceUserApiService,
+    required DatabaseService databaseService,
     required LoggerService loggerService,
   }) : _workspaceUserApiService = workspaceUserApiService,
+       _databaseService = databaseService,
        _loggerService = loggerService;
 
   final WorkspaceUserApiService _workspaceUserApiService;
+  final DatabaseService _databaseService;
   final LoggerService _loggerService;
 
-  List<WorkspaceUser>? _cachedWorkspaceUsersList;
+  List<WorkspaceUser>? _cachedWorkspaceUsers;
 
   @override
-  List<WorkspaceUser>? get users => _cachedWorkspaceUsersList;
+  List<WorkspaceUser>? get users => _cachedWorkspaceUsers;
 
   @override
-  Future<Result<List<WorkspaceUser>>> loadWorkspaceUsers({
+  Stream<Result<List<WorkspaceUser>>> loadWorkspaceUsers({
     required String workspaceId,
     bool forceFetch = false,
-  }) async {
-    if (!forceFetch && _cachedWorkspaceUsersList != null) {
-      return Result.ok(_cachedWorkspaceUsersList!);
+  }) async* {
+    // Read from in-memory cache
+    if (!forceFetch && _cachedWorkspaceUsers != null) {
+      yield Result.ok(_cachedWorkspaceUsers!);
+    }
+
+    // Read from DB cache
+    if (!forceFetch) {
+      final dbResult = await _databaseService.getWorkspaceUsers();
+      if (dbResult is Ok<List<WorkspaceUser>>) {
+        final dbWorkspaceUsers = dbResult.value;
+        if (dbWorkspaceUsers.isNotEmpty) {
+          _cachedWorkspaceUsers = dbWorkspaceUsers;
+          notifyListeners();
+          yield Result.ok(dbWorkspaceUsers);
+        }
+      }
     }
 
     final result = await _workspaceUserApiService.getWorkspaceUsers(
       workspaceId,
     );
-
     switch (result) {
       case Ok<List<WorkspaceUserResponse>>():
         final mappedData = result.value
@@ -46,10 +63,13 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
             )
             .toList();
 
-        _cachedWorkspaceUsersList = mappedData;
+        _cachedWorkspaceUsers = mappedData;
         notifyListeners();
 
-        return Result.ok(mappedData);
+        // Update persistent cache
+        _updateDbCache(_cachedWorkspaceUsers!);
+
+        yield Result.ok(mappedData);
       case Error<List<WorkspaceUserResponse>>():
         _loggerService.log(
           LogLevel.warn,
@@ -57,7 +77,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           error: result.error,
           stackTrace: result.stackTrace,
         );
-        return Result.error(result.error, result.stackTrace);
+        yield Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -79,8 +99,11 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       case Ok<WorkspaceUserResponse>():
         final mappedData = _mapWorkspaceUserFromResponse(result.value);
 
-        _cachedWorkspaceUsersList!.add(mappedData);
+        _cachedWorkspaceUsers!.add(mappedData);
         notifyListeners();
+
+        // Update persistent cache
+        _updateDbCache(_cachedWorkspaceUsers!);
 
         return Result.ok(mappedData);
       case Error<WorkspaceUserResponse>():
@@ -100,7 +123,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
     required String workspaceUserId,
   }) {
     try {
-      final details = _cachedWorkspaceUsersList!.firstWhere(
+      final details = _cachedWorkspaceUsers!.firstWhere(
         (user) => user.id == workspaceUserId,
       );
       return Result.ok(details);
@@ -123,10 +146,13 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
 
     switch (result) {
       case Ok():
-        _cachedWorkspaceUsersList!.removeWhere(
+        _cachedWorkspaceUsers!.removeWhere(
           (user) => user.id == workspaceUserId,
         );
         notifyListeners();
+
+        // Update persistent cache
+        _updateDbCache(_cachedWorkspaceUsers!);
 
         return const Result.ok(null);
       case Error():
@@ -163,15 +189,18 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
         final updatedWorkspaceUser = _mapWorkspaceUserFromResponse(
           result.value,
         );
-        final userIndex = _cachedWorkspaceUsersList!.indexWhere(
+        final userIndex = _cachedWorkspaceUsers!.indexWhere(
           (user) => user.id == updatedWorkspaceUser.id,
         );
 
         if (userIndex != -1) {
           // Update the existing user in the list by replacing it
           // with the new updated instance.
-          _cachedWorkspaceUsersList![userIndex] = updatedWorkspaceUser;
+          _cachedWorkspaceUsers![userIndex] = updatedWorkspaceUser;
           notifyListeners();
+
+          // Update persistent cache
+          _updateDbCache(_cachedWorkspaceUsers!);
         }
 
         return const Result.ok(null);
@@ -212,8 +241,20 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   }
 
   @override
-  void purgeWorkspaceUsersCache() {
-    _cachedWorkspaceUsersList = null;
+  Future<void> purgeWorkspaceUsersCache() async {
+    _cachedWorkspaceUsers = null;
+    await _databaseService.clearWorkspaceUsers();
+  }
+
+  void _updateDbCache(List<WorkspaceUser> payload) async {
+    final dbSaveResult = await _databaseService.setWorkspaceUsers(payload);
+    if (dbSaveResult is Error<void>) {
+      _loggerService.log(
+        LogLevel.warn,
+        'databaseService.setWorkspaceUsers failed',
+        error: dbSaveResult.error,
+      );
+    }
   }
 
   WorkspaceUser _mapWorkspaceUserFromResponse(

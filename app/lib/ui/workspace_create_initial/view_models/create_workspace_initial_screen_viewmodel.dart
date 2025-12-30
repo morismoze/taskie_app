@@ -30,7 +30,7 @@ class CreateWorkspaceInitialScreenViewModel extends ChangeNotifier {
   User? get user => _user;
 
   Future<Result<void>> _loadUser() async {
-    final result = await _userRepository.loadUser().last;
+    final result = await firstOkOrLastError(_userRepository.loadUser());
 
     switch (result) {
       case Ok():

@@ -18,6 +18,7 @@ import '../../../services/api/workspace/workspace_task/models/response/add_task_
 import '../../../services/api/workspace/workspace_task/models/response/update_task_assignment_response.dart';
 import '../../../services/api/workspace/workspace_task/models/response/workspace_task_response.dart';
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
+import '../../../services/local/database_service.dart';
 import '../../../services/local/logger_service.dart';
 import 'workspace_task_repository.dart';
 
@@ -28,11 +29,14 @@ const _kDefaultPaginableSort = SortBy.newestFirst;
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   WorkspaceTaskRepositoryImpl({
     required WorkspaceTaskApiService workspaceTaskApiService,
+    required DatabaseService databaseService,
     required LoggerService loggerService,
   }) : _workspaceTaskApiService = workspaceTaskApiService,
+       _databaseService = databaseService,
        _loggerService = loggerService;
 
   final WorkspaceTaskApiService _workspaceTaskApiService;
+  final DatabaseService _databaseService;
   final LoggerService _loggerService;
 
   bool _isFilterSearch = false;
@@ -56,11 +60,11 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   Paginable<WorkspaceTask>? get tasks => _cachedTasks;
 
   @override
-  Future<Result<void>> loadTasks({
+  Stream<Result<void>> loadTasks({
     required String workspaceId,
     bool forceFetch = false,
     ObjectiveFilter? filter,
-  }) async {
+  }) async* {
     // Refetch when:
     // 1. forceFetch is `true`
     // 2. provided [filter] and class [_filter] are different
@@ -69,10 +73,22 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
 
-    if (!forceFetch &&
-        effectiveFilter == _activeFilter &&
-        _cachedTasks != null) {
-      return const Result.ok(null);
+    if (!forceFetch && effectiveFilter == _activeFilter) {
+      if (_cachedTasks != null) {
+        // Read from in-memory cache
+        yield const Result.ok(null);
+      } else {
+        // Read from DB cache
+        final dbResult = await _databaseService.getTasks();
+        if (dbResult is Ok<Paginable<WorkspaceTask>?>) {
+          final dbTasks = dbResult.value;
+          if (dbTasks != null) {
+            _cachedTasks = dbTasks;
+            notifyListeners();
+            yield const Result.ok(null);
+          }
+        }
+      }
     }
 
     if (effectiveFilter != _activeFilter) {
@@ -112,7 +128,10 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         _cachedTasks = paginable;
         notifyListeners();
 
-        return const Result.ok(null);
+        // Update persistent cache
+        _updateDbCache(_cachedTasks!);
+
+        yield const Result.ok(null);
       case Error<PaginableResponse<WorkspaceTaskResponse>>():
         _loggerService.log(
           LogLevel.warn,
@@ -120,7 +139,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           error: result.error,
           stackTrace: result.stackTrace,
         );
-        return Result.error(result.error, result.stackTrace);
+        yield Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -160,6 +179,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         _cachedTasks!.totalPages = (_cachedTasks!.total / _activeFilter.limit)
             .ceil();
         notifyListeners();
+
+        // Update persistent cache
+        _updateDbCache(_cachedTasks!);
 
         return const Result.ok(null);
       case Error<WorkspaceTaskResponse>():
@@ -225,6 +247,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           // with the new updated instance.
           _cachedTasks!.items[taskIndex] = updatedTask;
           notifyListeners();
+
+          // Update persistent cache
+          _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -282,6 +307,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           );
           _cachedTasks!.items[taskIndex] = updatedTask;
           notifyListeners();
+
+          // Update persistent cache
+          _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -336,6 +364,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           );
           _cachedTasks!.items[taskIndex] = updatedTask;
           notifyListeners();
+
+          // Update persistent cache
+          _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -396,6 +427,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           final updatedTask = existingTask.copyWith(assignees: newAssignees);
           _cachedTasks!.items[taskIndex] = updatedTask;
           notifyListeners();
+
+          // Update persistent cache
+          _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -432,6 +466,9 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
             .ceil();
         notifyListeners();
 
+        // Update persistent cache
+        _updateDbCache(_cachedTasks!);
+
         return const Result.ok(null);
       case Error():
         _loggerService.log(
@@ -445,7 +482,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   }
 
   @override
-  void purgeTasksCache() {
+  Future<void> purgeTasksCache() async {
     _isFilterSearch = false;
     _cachedTasks = null;
     _activeFilter = ObjectiveFilter(
@@ -455,6 +492,18 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       status: null,
       sort: _kDefaultPaginableSort,
     );
+    await _databaseService.clearTasks();
+  }
+
+  void _updateDbCache(Paginable<WorkspaceTask> payload) async {
+    final dbSaveResult = await _databaseService.setTasks(payload);
+    if (dbSaveResult is Error<void>) {
+      _loggerService.log(
+        LogLevel.warn,
+        'databaseService.setTasks failed',
+        error: dbSaveResult.error,
+      );
+    }
   }
 
   WorkspaceTask _mapTaskFromResponse(

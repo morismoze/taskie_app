@@ -37,8 +37,8 @@ class UserRepositoryImpl extends UserRepository {
       yield Result.ok(_cachedUser!);
     }
 
+    // Read from DB cache
     if (!forceFetch) {
-      // Read from DB cache
       final dbResult = await _databaseService.getUser();
       if (dbResult is Ok<User?>) {
         final dbUser = dbResult.value;

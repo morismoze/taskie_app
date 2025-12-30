@@ -100,7 +100,9 @@ class AppDrawerViewModel extends ChangeNotifier {
   }
 
   Future<Result<List<Workspace>>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.loadWorkspaces().last;
+    final result = await firstOkOrLastError(
+      _workspaceRepository.loadWorkspaces(),
+    );
 
     switch (result) {
       case Ok():

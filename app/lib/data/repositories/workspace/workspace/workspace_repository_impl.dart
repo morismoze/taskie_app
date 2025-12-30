@@ -116,12 +116,13 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   Stream<Result<List<Workspace>>> loadWorkspaces({
     bool forceFetch = false,
   }) async* {
+    // Read from in-memory cache
     if (!forceFetch && _cachedWorkspacesList != null) {
       yield Result.ok(_cachedWorkspacesList!);
     }
 
+    // Read from DB cache
     if (!forceFetch) {
-      // Read from DB cache
       final dbResult = await _databaseService.getWorkspaces();
       if (dbResult is Ok<List<Workspace>>) {
         final dbWorkspaces = dbResult.value;
@@ -144,6 +145,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         _cachedWorkspacesList = mappedData;
         notifyListeners();
 
+        // Update persistent cache
         _updateDbCache(_cachedWorkspacesList!);
 
         // If user is not part of any workspace, notify the navigation redirection listener
@@ -184,6 +186,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         _cachedWorkspacesList!.add(newWorkspace);
         notifyListeners();
 
+        // Update persistent cache
         _updateDbCache(_cachedWorkspacesList!);
 
         // We need to update [_hasNoWorkspacesNotifier] notifier, but just
@@ -224,6 +227,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         _cachedWorkspacesList!.remove(leavingWorkspace);
         notifyListeners();
 
+        // Update persistent cache
         _updateDbCache(_cachedWorkspacesList!);
 
         // If user is no more part of any workspace, notify the navigation redirection listener
@@ -282,6 +286,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           _cachedWorkspacesList![workspaceIndex] = updatedWorkspace;
           notifyListeners();
 
+          // Update persistent cache
           _updateDbCache(_cachedWorkspacesList!);
         }
 
@@ -303,6 +308,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
       _cachedWorkspacesList!.add(workspace);
       notifyListeners();
 
+      // Update persistent cache
       _updateDbCache(_cachedWorkspacesList!);
 
       return const Result.ok(null);
@@ -312,8 +318,16 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   }
 
   @override
-  void purgeWorkspacesCache() {
+  Future<void> purgeWorkspacesCache() async {
     _cachedWorkspacesList = null;
+    await _databaseService.clearWorkspaces();
+    await setActiveWorkspaceId(null);
+  }
+
+  @override
+  void dispose() {
+    _hasNoWorkspacesNotifier.dispose();
+    super.dispose();
   }
 
   Workspace _mapWorkspaceFromResponse(WorkspaceResponse workspace) {
@@ -343,11 +357,5 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         error: dbSaveResult.error,
       );
     }
-  }
-
-  @override
-  void dispose() {
-    _hasNoWorkspacesNotifier.dispose();
-    super.dispose();
   }
 }

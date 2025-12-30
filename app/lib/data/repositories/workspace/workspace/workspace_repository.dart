@@ -48,5 +48,5 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// `joinWorkspace` method.
   Future<Result<void>> addWorkspace({required Workspace workspace});
 
-  void purgeWorkspacesCache();
+  Future<void> purgeWorkspacesCache();
 }

@@ -136,6 +136,7 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceTaskRepositoryImpl(
                 workspaceTaskApiService: context.read(),
+                databaseService: context.read(),
                 loggerService: context.read(),
               )
               as WorkspaceTaskRepository,
@@ -147,6 +148,7 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceGoalRepositoryImpl(
                 workspaceGoalApiService: context.read(),
+                databaseService: context.read(),
                 loggerService: context.read(),
               )
               as WorkspaceGoalRepository,
@@ -158,6 +160,7 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceUserRepositoryImpl(
                 workspaceUserApiService: context.read(),
+                databaseService: context.read(),
                 loggerService: context.read(),
               )
               as WorkspaceUserRepository,
@@ -195,6 +198,7 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           WorkspaceLeaderboardRepositoryImpl(
                 workspaceLeaderboardApiService: context.read(),
+                databaseService: context.read(),
                 loggerService: context.read(),
               )
               as WorkspaceLeaderboardRepository,
@@ -205,6 +209,7 @@ List<SingleChildWidget> get providers {
         workspaceTaskRepository: context.read(),
         workspaceLeaderboardRepository: context.read(),
         workspaceGoalRepository: context.read(),
+        workspaceInviteRepository: context.read(),
       ),
     ),
     Provider(

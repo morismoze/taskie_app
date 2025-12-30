@@ -22,7 +22,7 @@ class EntryScreenViewModel {
 
   Future<Result<String?>> _setupInitial() async {
     // 1. Load user
-    final resultLoadUser = await _userRepository.loadUser().last;
+    final resultLoadUser = await firstOkOrLastError(_userRepository.loadUser());
 
     switch (resultLoadUser) {
       case Ok():
@@ -32,9 +32,9 @@ class EntryScreenViewModel {
     }
 
     // 2. Load workspaces
-    final resultLoadWorkspaces = await _workspaceRepository
-        .loadWorkspaces()
-        .last;
+    final resultLoadWorkspaces = await firstOkOrLastError(
+      _workspaceRepository.loadWorkspaces(),
+    );
 
     switch (resultLoadWorkspaces) {
       case Ok():

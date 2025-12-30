@@ -89,10 +89,12 @@ class TasksScreenViewModel extends ChangeNotifier {
     (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
     final (filter, forceFetch) = details;
-    final result = await _workspaceTaskRepository.loadTasks(
-      workspaceId: _activeWorkspaceId,
-      filter: filter,
-      forceFetch: forceFetch ?? false,
+    final result = await firstOkOrLastError(
+      _workspaceTaskRepository.loadTasks(
+        workspaceId: _activeWorkspaceId,
+        filter: filter,
+        forceFetch: forceFetch ?? false,
+      ),
     );
 
     switch (result) {

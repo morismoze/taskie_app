@@ -22,4 +22,28 @@ class Paginable<D> {
         total: toClone.total,
         totalPages: toClone.totalPages,
       );
+
+  Map<String, dynamic> toMap(Map<String, dynamic> Function(D item) toItemMap) =>
+      {
+        'items': items.map(toItemMap).toList(),
+        'total': total,
+        'totalPages': totalPages,
+      };
+
+  factory Paginable.fromMap(
+    Map<dynamic, dynamic> map, {
+    required D Function(Map<dynamic, dynamic> itemMap) fromItemMap,
+  }) {
+    final itemsRaw = map['items'];
+    final list = (itemsRaw is List) ? itemsRaw : const [];
+
+    final items = list
+        .map((e) => fromItemMap(Map<dynamic, dynamic>.from(e as Map)))
+        .toList();
+
+    final total = (map['total'] as num?)?.toInt() ?? items.length;
+    final totalPages = (map['totalPages'] as num?)?.toInt() ?? 1;
+
+    return Paginable<D>(items: items, total: total, totalPages: totalPages);
+  }
 }

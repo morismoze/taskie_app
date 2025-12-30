@@ -15,7 +15,7 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
   /// Assignees are sorted alphabetically by firstName and lastName
   Paginable<WorkspaceTask>? get tasks;
 
-  Future<Result<void>> loadTasks({
+  Stream<Result<void>> loadTasks({
     required String workspaceId,
     bool forceFetch,
     ObjectiveFilter? filter,
@@ -64,5 +64,5 @@ abstract class WorkspaceTaskRepository extends ChangeNotifier {
     required String taskId,
   });
 
-  void purgeTasksCache();
+  Future<void> purgeTasksCache();
 }
