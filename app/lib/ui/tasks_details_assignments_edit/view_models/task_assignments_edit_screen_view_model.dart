@@ -47,6 +47,8 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
   List<WorkspaceTaskAssignee>? get assignees => _details?.assignees;
 
+  DateTime? get dueDate => _details?.dueDate;
+
   String? get taskId => _details?.id;
 
   /// Represents workspace members other than those which

@@ -512,6 +512,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.'**
   String get tasksAmendedAssigneesError;
 
+  /// No description provided for @tasksAssigmentsCompletedStatusDueDatePassedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like this task\'s due date has passed and **Completed** status can\'t be applied to assignments anymore. Instead, use **Completed as Stale** status.'**
+  String get tasksAssigmentsCompletedStatusDueDatePassedError;
+
   /// No description provided for @tasksRemoveTaskAssignmentModalMessage.
   ///
   /// In en, this message translates to:
@@ -577,6 +583,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update assignments'**
   String get tasksAssignmentsEditStatusSubmit;
+
+  /// No description provided for @tasksAssignmentsEditStatusDueDateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot mark task/s as Completed since the due date has passed'**
+  String get tasksAssignmentsEditStatusDueDateError;
 
   /// No description provided for @tasksAssignmentsMinAssignees.
   ///

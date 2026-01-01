@@ -164,7 +164,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
     );
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();

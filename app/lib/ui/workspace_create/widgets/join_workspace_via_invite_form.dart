@@ -105,7 +105,7 @@ class _JoinWorkspaceViaInviteFormState
     );
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
     if (_formKey.currentState!.validate()) {
       final inviteLink = _inviteLinkController.text.trim();
       widget.viewModel.joinWorkspaceViaInviteLink.execute(inviteLink);

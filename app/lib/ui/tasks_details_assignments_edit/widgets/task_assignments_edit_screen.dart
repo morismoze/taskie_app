@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../data/services/api/exceptions/task_assignees_already_exist_exception.dart';
 import '../../../data/services/api/exceptions/task_assignees_count_maxed_out_exception.dart';
 import '../../../data/services/api/exceptions/task_assignees_invalid_exception.dart';
+import '../../../data/services/api/exceptions/task_assignments_completed_status_due_date_passed.dart';
 import '../../../data/services/api/exceptions/task_closed_exception.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../routing/routes.dart';
@@ -260,6 +261,9 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
         case TaskAssigneesInvalidException():
           _showAssigneesWereAmendedErrorDialog();
           break;
+        case TaskAssignmentsCompletedStatusDueDatePassed():
+          _showCompletedStatusDueDatePassedErrorDialog();
+          break;
         default:
           AppSnackbar.showError(
             context: context,
@@ -316,6 +320,29 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
           );
+        },
+      ),
+    );
+  }
+
+  void _showCompletedStatusDueDatePassedErrorDialog() {
+    AppDialog.show(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleInfo,
+        color: Theme.of(context).colorScheme.primary,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.tasksAssigmentsCompletedStatusDueDatePassedError,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: AppFilledButton(
+        label: context.localization.misc_ok,
+        onPress: () {
+          context.pop(); // Close dialog
         },
       ),
     );

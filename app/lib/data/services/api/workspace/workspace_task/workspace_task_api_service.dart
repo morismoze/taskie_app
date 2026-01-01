@@ -8,6 +8,7 @@ import '../../api_response.dart';
 import '../../exceptions/task_assignees_already_exist_exception.dart';
 import '../../exceptions/task_assignees_count_maxed_out_exception.dart';
 import '../../exceptions/task_assignees_invalid_exception.dart';
+import '../../exceptions/task_assignments_completed_status_due_date_passed.dart';
 import '../../exceptions/task_closed_exception.dart';
 import '../../paginable.dart';
 import '../paginable_objectives.dart';
@@ -198,6 +199,13 @@ class WorkspaceTaskApiService {
 
       if (apiError?.code == ApiErrorCode.taskAssigneesInvalid) {
         return const Result.error(TaskAssigneesInvalidException());
+      }
+
+      if (apiError?.code ==
+          ApiErrorCode.taskAssignmentsCompletedStatusDueDatePassed) {
+        return const Result.error(
+          TaskAssignmentsCompletedStatusDueDatePassed(),
+        );
       }
 
       return Result.error(e, stackTrace);

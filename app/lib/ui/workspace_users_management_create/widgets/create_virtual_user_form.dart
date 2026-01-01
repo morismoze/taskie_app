@@ -90,7 +90,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
     );
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();

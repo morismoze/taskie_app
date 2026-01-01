@@ -17,6 +17,7 @@ class TaskAssignmentFormField extends StatelessWidget {
     required this.firstName,
     required this.lastName,
     required this.status,
+    required this.dueDate,
     required this.onStatusChanged,
     required this.removeAssignee,
     required this.profileImageUrl,
@@ -28,23 +29,29 @@ class TaskAssignmentFormField extends StatelessWidget {
   final ProgressStatus status;
   final void Function(String assigneeId, ProgressStatus status) onStatusChanged;
   final void Function(String assigneeId) removeAssignee;
+  final DateTime? dueDate;
   final String? profileImageUrl;
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final isTaskPastDueDate = dueDate != null && dueDate!.isBefore(now);
+
     final options = [
       AppSelectFieldOption<ProgressStatus>(
         label: ProgressStatus.inProgress.l10n(context),
         value: ProgressStatus.inProgress,
       ),
-      AppSelectFieldOption<ProgressStatus>(
-        label: ProgressStatus.completed.l10n(context),
-        value: ProgressStatus.completed,
-      ),
-      AppSelectFieldOption<ProgressStatus>(
-        label: ProgressStatus.completedAsStale.l10n(context),
-        value: ProgressStatus.completedAsStale,
-      ),
+      if (!isTaskPastDueDate)
+        AppSelectFieldOption<ProgressStatus>(
+          label: ProgressStatus.completed.l10n(context),
+          value: ProgressStatus.completed,
+        ),
+      if (isTaskPastDueDate)
+        AppSelectFieldOption<ProgressStatus>(
+          label: ProgressStatus.completedAsStale.l10n(context),
+          value: ProgressStatus.completedAsStale,
+        ),
       AppSelectFieldOption<ProgressStatus>(
         label: ProgressStatus.notCompleted.l10n(context),
         value: ProgressStatus.notCompleted,

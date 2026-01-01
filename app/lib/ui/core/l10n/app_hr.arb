@@ -70,6 +70,7 @@
   "tasksAddTaskAssignmentError": "Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu",
   "tasksClosedTaskError": "Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na Početnu stranicu i osvježite svoj popis zadataka.",
   "tasksAmendedAssigneesError": "Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na Početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.",
+  "tasksAssigmentsCompletedStatusDueDatePassedError": "Uh-oh! Čini se da je rok završetka za ovaj zadatak istekao i status **Završeno** se više ne može primijeniti na dodjele. Umjesto toga, koristite status **Završeno (zastarjelo)**.",
   "tasksRemoveTaskAssignmentModalMessage": "Jeste li sigurni da želite ukloniti ovog korisnika iz dodjele zadatka?",
   "tasksRemoveTaskAssignmentModalCta": "Ukloni",
   "tasksRemoveTaskAssignmentSuccess": "Uspješno ste uklonili dodjelu s odabranoga člana",
@@ -80,6 +81,7 @@
   "tasksDetailsCloseError": "Uh-oh! Došlo je do problema prilikom zatvaranja zadatka",
   "tasksAssignmentsEdit": "Uređivanje dodjela zadatka",
   "tasksAssignmentsEditStatusSubmit": "Ažuriraj dodjele",
+  "tasksAssignmentsEditStatusDueDateError": "Zadatak/ci ne mogu biti označeni kao Završeno jer je rok završetka istekao",
   "tasksAssignmentsMinAssignees": "Uh-oh! Ovo je posljednji dodijeljeni korisnik i ne može se ukloniti. Umjesto toga, pokušajte zatvoriti zadatak.",
   "tasksAssignmentsEditAddNewAssignee": "Dodijelite ovaj zadatak dodatnome članu:",
   "tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees": "Ovom zadatku već je dodijeljen maksimalan broj od 10 ćlanova. Uklonite nekoga ako želite dodati novog.",
@@ -241,7 +243,7 @@
   "goalsGuideRequiredPointsTitle": "Potrebni bodovi",
   "goalsGuideRequiredPointsBody": "Potrebni bodovi predstavljaju ukupan broj nagradnih bodova koje član treba akumulirati izvršavanjem zadataka kako bi ostvario cilj. Budući da zadaci dodjeljuju bodove u koracima od 10 (10, 20, 30, 40, 50), broj potrebnih bodova također mora biti višekratnik broja 10 (npr. 50, 550, 5660, 25340, 30000).",
   "goalsGuideNoteTitle": "Napomena",
-  "goalsGuideNoteBody": "Ako se status nekog prethodno dovršenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.",
+  "goalsGuideNoteBody": "Ako se status nekog prethodno završenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.",
   "signOut": "Odjava",
   "signOutError": "Uh-oh! Došlo je do problema prilikom odjave"
 }

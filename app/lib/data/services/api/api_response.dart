@@ -61,7 +61,10 @@ enum ApiErrorCode {
   taskAssigneesAlreadyExist(10),
 
   @JsonValue('11')
-  goalClosed(11);
+  goalClosed(11),
+
+  @JsonValue('12')
+  taskAssignmentsCompletedStatusDueDatePassed(12);
 
   const ApiErrorCode(this.code);
 

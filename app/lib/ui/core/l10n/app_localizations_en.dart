@@ -241,6 +241,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.';
 
   @override
+  String get tasksAssigmentsCompletedStatusDueDatePassedError =>
+      'Uh-oh! It looks like this task\'s due date has passed and **Completed** status can\'t be applied to assignments anymore. Instead, use **Completed as Stale** status.';
+
+  @override
   String get tasksRemoveTaskAssignmentModalMessage =>
       'Are you sure you want to remove this user from task assignments?';
 
@@ -277,6 +281,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksAssignmentsEditStatusSubmit => 'Update assignments';
+
+  @override
+  String get tasksAssignmentsEditStatusDueDateError =>
+      'Cannot mark task/s as Completed since the due date has passed';
 
   @override
   String get tasksAssignmentsMinAssignees =>

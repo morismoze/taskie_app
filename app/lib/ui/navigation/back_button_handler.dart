@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/l10n/l10n_extensions.dart';
 import '../core/ui/app_snackbar.dart';
 import 'app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
+import 'app_shell_scaffold.dart';
 
 class BackButtonHandler extends StatefulWidget {
   const BackButtonHandler({
@@ -22,7 +23,7 @@ class BackButtonHandler extends StatefulWidget {
 
 class _BackButtonHandlerState extends State<BackButtonHandler> {
   DateTime? _lastBackPress;
-  static const exitAppPromptDuration = Duration(seconds: 2);
+  static const _exitAppPromptDuration = Duration(seconds: 2);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,14 @@ class _BackButtonHandlerState extends State<BackButtonHandler> {
           return;
         }
 
-        // 1. Check if we are on the Tasks tab
+        // 1.a) Check if we are on the Tasks tab and drawer is opened
+        if (appShellScaffoldKey.currentState != null &&
+            appShellScaffoldKey.currentState!.isDrawerOpen) {
+          context.pop();
+          return;
+        }
+
+        // 1.b) Check if we are on the Tasks tab
         final isTasksTab = widget.navigationShell.currentIndex == tasksTabIndex;
 
         if (!isTasksTab) {
@@ -46,14 +54,14 @@ class _BackButtonHandlerState extends State<BackButtonHandler> {
         final now = DateTime.now();
 
         if (_lastBackPress == null ||
-            now.difference(_lastBackPress!) > exitAppPromptDuration) {
+            now.difference(_lastBackPress!) > _exitAppPromptDuration) {
           _lastBackPress = now;
 
           if (mounted) {
             AppSnackbar.showInfo(
               context: context,
               message: context.localization.tasksPressAgainToExit,
-              duration: exitAppPromptDuration,
+              duration: _exitAppPromptDuration,
             );
           }
           return;
