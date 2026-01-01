@@ -83,9 +83,11 @@ class WorkspaceUsersManagementScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadWorkspaceMembers(bool? forceFetch) async {
-    final result = await _workspaceUserRepository.loadWorkspaceUsers(
-      workspaceId: _activeWorkspaceId,
-      forceFetch: forceFetch ?? false,
+    final result = await firstOkOrLastError(
+      _workspaceUserRepository.loadWorkspaceUsers(
+        workspaceId: _activeWorkspaceId,
+        forceFetch: forceFetch ?? false,
+      ),
     );
 
     switch (result) {

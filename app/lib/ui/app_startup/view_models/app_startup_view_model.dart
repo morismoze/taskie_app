@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../data/repositories/auth/auth_state_repository.dart';
-import '../../../data/repositories/client_info/client_info_repository_impl.dart';
+import '../../../data/repositories/client_info/client_info_repository.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
 import '../../../utils/command.dart';
 import '../../core/utils/intl.dart';

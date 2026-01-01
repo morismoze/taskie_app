@@ -13,7 +13,8 @@ import '../../../services/api/workspace/workspace_goal/models/request/create_goa
 import '../../../services/api/workspace/workspace_goal/models/request/update_goal_details_request.dart';
 import '../../../services/api/workspace/workspace_goal/models/response/workspace_goal_response.dart';
 import '../../../services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/database_service.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_goal_repository.dart';
 
 const _kDefaultPaginablePage = 1;
@@ -23,11 +24,14 @@ const _kDefaultPaginableSort = SortBy.newestFirst;
 class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   WorkspaceGoalRepositoryImpl({
     required WorkspaceGoalApiService workspaceGoalApiService,
+    required DatabaseService databaseService,
     required LoggerService loggerService,
   }) : _workspaceGoalApiService = workspaceGoalApiService,
+       _databaseService = databaseService,
        _loggerService = loggerService;
 
   final WorkspaceGoalApiService _workspaceGoalApiService;
+  final DatabaseService _databaseService;
   final LoggerService _loggerService;
 
   bool _isFilterSearch = false;
@@ -51,11 +55,11 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   Paginable<WorkspaceGoal>? get goals => _cachedGoals;
 
   @override
-  Future<Result<void>> loadGoals({
+  Stream<Result<void>> loadGoals({
     required String workspaceId,
     bool forceFetch = false,
     ObjectiveFilter? filter,
-  }) async {
+  }) async* {
     // Refetch when:
     // 1. forceFetch is `true`
     // 2. provided [filter] and class [_filter] are different
@@ -64,10 +68,22 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
 
-    if (!forceFetch &&
-        effectiveFilter == _activeFilter &&
-        _cachedGoals != null) {
-      return const Result.ok(null);
+    if (!forceFetch && effectiveFilter == _activeFilter) {
+      if (_cachedGoals != null) {
+        // Read from in-memory cache
+        yield const Result.ok(null);
+      } else {
+        // Read from DB cache
+        final dbResult = await _databaseService.getGoals();
+        if (dbResult is Ok<Paginable<WorkspaceGoal>?>) {
+          final dbGoals = dbResult.value;
+          if (dbGoals != null) {
+            _cachedGoals = dbGoals;
+            notifyListeners();
+            yield const Result.ok(null);
+          }
+        }
+      }
     }
 
     if (effectiveFilter != _activeFilter) {
@@ -79,6 +95,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
       _isFilterSearch = false;
     }
 
+    // Trigger API request
     final queryParams = ObjectiveRequestQueryParams(
       page: _activeFilter.page,
       limit: _activeFilter.limit,
@@ -107,7 +124,10 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         _cachedGoals = paginable;
         notifyListeners();
 
-        return const Result.ok(null);
+        // Update persistent cache
+        _updateDbCache(_cachedGoals!);
+
+        yield const Result.ok(null);
       case Error<PaginableResponse<WorkspaceGoalResponse>>():
         _loggerService.log(
           LogLevel.warn,
@@ -115,7 +135,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           error: result.error,
           stackTrace: result.stackTrace,
         );
-        return Result.error(result.error, result.stackTrace);
+        yield Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -154,6 +174,9 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
             .ceil();
         notifyListeners();
+
+        // Update persistent cache
+        _updateDbCache(_cachedGoals!);
 
         return const Result.ok(null);
       case Error<WorkspaceGoalResponse>():
@@ -219,6 +242,9 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           // with the new updated instance.
           _cachedGoals!.items[goalIndex] = updatedGoal;
           notifyListeners();
+
+          // Update persistent cache
+          _updateDbCache(_cachedGoals!);
         }
 
         return const Result.ok(null);
@@ -255,6 +281,9 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
             .ceil();
         notifyListeners();
 
+        // Update persistent cache
+        _updateDbCache(_cachedGoals!);
+
         return const Result.ok(null);
       case Error():
         _loggerService.log(
@@ -268,7 +297,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   }
 
   @override
-  void purgeGoalsCache() {
+  Future<void> purgeGoalsCache() async {
     _isFilterSearch = false;
     _cachedGoals = null;
     _activeFilter = ObjectiveFilter(
@@ -278,6 +307,18 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
       status: null,
       sort: _kDefaultPaginableSort,
     );
+    await _databaseService.clearGoals();
+  }
+
+  void _updateDbCache(Paginable<WorkspaceGoal> payload) async {
+    final dbSaveResult = await _databaseService.setGoals(payload);
+    if (dbSaveResult is Error<void>) {
+      _loggerService.log(
+        LogLevel.warn,
+        'databaseService.setGoals failed',
+        error: dbSaveResult.error,
+      );
+    }
   }
 
   WorkspaceGoal _mapGoalFromResponse(

@@ -31,6 +31,38 @@ class WorkspaceGoal {
   /// and cached ones from origin.
   final bool isNew;
 
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'title': title,
+    'requiredPoints': requiredPoints,
+    'accumulatedPoints': accumulatedPoints,
+    'assignee': assignee.toMap(),
+    'status': status.name,
+    'createdAt': createdAt.toIso8601String(),
+    'createdBy': createdBy?.toMap(),
+    'description': description,
+    'isNew': isNew,
+  };
+
+  factory WorkspaceGoal.fromMap(Map<dynamic, dynamic> map) => WorkspaceGoal(
+    id: map['id'] as String,
+    title: map['title'] as String,
+    requiredPoints: (map['requiredPoints'] as num).toInt(),
+    accumulatedPoints: (map['accumulatedPoints'] as num).toInt(),
+    assignee: Assignee.fromMap(
+      Map<dynamic, dynamic>.from(map['assignee'] as Map),
+    ),
+    status: ProgressStatus.values.byName(map['status'] as String),
+    createdAt: DateTime.parse(map['createdAt'] as String),
+    createdBy: map['createdBy'] == null
+        ? null
+        : CreatedBy.fromMap(
+            Map<dynamic, dynamic>.from(map['createdBy'] as Map),
+          ),
+    description: map['description'] as String?,
+    isNew: (map['isNew'] as bool?) ?? false,
+  );
+
   WorkspaceGoal copyWith({ProgressStatus? status}) {
     return WorkspaceGoal(
       id: id,

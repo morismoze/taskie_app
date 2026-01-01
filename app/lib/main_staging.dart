@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'config/dependencies.dart';
+import 'data/services/local/database_service.dart';
+import 'data/services/local/logger_service.dart';
 import 'ui/app_startup/view_models/app_startup_view_model.dart';
 import 'ui/app_startup/widgets/app_startup.dart';
 
@@ -15,12 +16,9 @@ void main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    print(
-      '[${record.loggerName}] - ${record.level.name} - ${record.time} - ${record.message} - ${record.stackTrace}',
-    );
-  });
+  await DatabaseService.init();
+
+  LoggerService.init();
 
   runApp(
     MultiProvider(

@@ -26,7 +26,7 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// Entry screen.
   Future<Result<String?>> loadActiveWorkspaceId();
 
-  Future<Result<List<Workspace>>> loadWorkspaces({bool forceFetch});
+  Stream<Result<List<Workspace>>> loadWorkspaces({bool forceFetch});
 
   /// Returns `workspaceId` of the newly created workspace.
   Future<Result<String>> createWorkspace({
@@ -48,5 +48,5 @@ abstract class WorkspaceRepository extends ChangeNotifier {
   /// `joinWorkspace` method.
   Future<Result<void>> addWorkspace({required Workspace workspace});
 
-  void purgeWorkspacesCache();
+  Future<void> purgeWorkspacesCache();
 }

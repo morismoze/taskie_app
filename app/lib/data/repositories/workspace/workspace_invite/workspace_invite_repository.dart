@@ -17,4 +17,6 @@ abstract class WorkspaceInviteRepository {
   /// workspace join is under `/invites` subroute, so it also fits this repository.
   /// TODO: Will revert to this in the future.
   Future<Result<Workspace>> joinWorkspace({required String inviteToken});
+
+  void purgeWorkspaceInvites();
 }

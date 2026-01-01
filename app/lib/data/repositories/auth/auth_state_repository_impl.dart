@@ -1,5 +1,5 @@
 import '../../../utils/command.dart';
-import '../../services/local/logger.dart';
+import '../../services/local/logger_service.dart';
 import '../../services/local/secure_storage_service.dart';
 import 'auth_state_repository.dart';
 

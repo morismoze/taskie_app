@@ -41,6 +41,7 @@ class WorkspaceInviteSection extends StatelessWidget {
           builder: (context, child) {
             if (viewModel.createWorkspaceInviteLink.error) {
               return Text.rich(
+                textAlign: TextAlign.center,
                 TextSpan(
                   text:
                       '${context.localization.workspaceUsersManagementCreateWorkspaceInviteError} ',

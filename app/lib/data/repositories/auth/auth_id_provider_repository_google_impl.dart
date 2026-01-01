@@ -1,6 +1,6 @@
 import '../../../utils/command.dart';
 import '../../services/external/google/google_auth_service.dart';
-import '../../services/local/logger.dart';
+import '../../services/local/logger_service.dart';
 import 'auth_id_provider_repository.dart';
 
 class AuthGoogleIdProviderRepositoryImpl implements AuthIdProviderRepository {

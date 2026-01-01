@@ -85,8 +85,8 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
-    final result = await _workspaceUserRepository.loadWorkspaceUsers(
-      workspaceId: workspaceId,
+    final result = await firstOkOrLastError(
+      _workspaceUserRepository.loadWorkspaceUsers(workspaceId: workspaceId),
     );
 
     switch (result) {

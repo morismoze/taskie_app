@@ -33,7 +33,7 @@ class ActiveWorkspaceChangeUseCase {
   ///
   /// 3. set the new active workspace ID.
   Future<Result<void>> handleWorkspaceChange(String workspaceId) async {
-    final resultUser = await _userRepository.loadUser(forceFetch: true);
+    final resultUser = await _userRepository.loadUser(forceFetch: true).last;
 
     switch (resultUser) {
       case Ok():
@@ -48,7 +48,7 @@ class ActiveWorkspaceChangeUseCase {
 
     switch (resultSetActive) {
       case Ok():
-        _purgeDataCacheUseCase.purgeDataCache();
+        await _purgeDataCacheUseCase.purgeDataCache();
         return const Result.ok(null);
       case Error():
         return Result.error(resultSetActive.error);

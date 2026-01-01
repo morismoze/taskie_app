@@ -5,7 +5,7 @@ import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace_invite/models/response/create_workspace_invite_token_response.dart';
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
-import '../../../services/local/logger.dart';
+import '../../../services/local/logger_service.dart';
 import 'workspace_invite_repository.dart';
 
 class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
@@ -26,6 +26,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
     required String workspaceId,
     bool forceFetch = false,
   }) async {
+    // Read from in-memory cache
     if (!forceFetch &&
         _cachedWorkspaceInviteTokens[workspaceId] != null &&
         // We check if the token has expired. If it's not, it is still usable.
@@ -37,10 +38,10 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
       return Result.ok(_cachedWorkspaceInviteTokens[workspaceId]!);
     }
 
+    // Trigger API request
     final result = await _workspaceInviteApiService.createWorkspaceInviteToken(
       workspaceId,
     );
-
     switch (result) {
       case Ok<CreateWorkspaceInviteTokenResponse>():
         final workspaceInvite = WorkspaceInvite(
@@ -92,5 +93,10 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
         );
         return Result.error(result.error, result.stackTrace);
     }
+  }
+
+  @override
+  void purgeWorkspaceInvites() {
+    _cachedWorkspaceInviteTokens.clear();
   }
 }

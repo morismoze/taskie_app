@@ -13,5 +13,7 @@ abstract class UserRepository extends ChangeNotifier {
   void setUser(User user);
 
   /// Get current user
-  Future<Result<User>> loadUser({bool forceFetch = false});
+  Stream<Result<User>> loadUser({bool forceFetch = false});
+
+  void purgeUserCache();
 }

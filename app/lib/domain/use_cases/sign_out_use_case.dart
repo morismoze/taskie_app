@@ -1,7 +1,7 @@
 import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
-import '../../data/services/local/logger.dart';
+import '../../data/services/local/logger_service.dart';
 import '../../utils/command.dart';
 import 'purge_data_cache_use_case.dart';
 
@@ -40,33 +40,13 @@ class SignOutUseCase {
 
     switch (result) {
       case Ok():
-        final resultSetActiveWorkspace = await _workspaceRepository
-            .setActiveWorkspaceId(null);
-
-        if (resultSetActiveWorkspace is Error) {
-          // This is important and an error needs to be returned in this
-          // case because if a user signs out, and then signs in with another
-          // email/provider, active workspace ID will still be from the
-          // previous user, which is fatal.
-          _loggerService.log(
-            LogLevel.error,
-            'workspaceRepository.setActiveWorkspaceId failed',
-            error: resultSetActiveWorkspace.error,
-            stackTrace: resultSetActiveWorkspace.stackTrace,
-          );
-          return Result.error(
-            resultSetActiveWorkspace.error,
-            resultSetActiveWorkspace.stackTrace,
-          );
-        }
-
-        _purgeDataCacheUseCase.purgeDataCache();
+        await _purgeDataCacheUseCase.purgeDataCache();
         // This needs to be done only in the case of a
         // sign out - hence why it is not in the
-        // purgeWorkspacesCache method.
-        _workspaceRepository.purgeWorkspacesCache();
+        // purgeDataCache method.
+        await _workspaceRepository.purgeWorkspacesCache();
         _authStateRepository.setAuthenticated(false);
-        _authStateRepository.setTokens(null);
+        await _authStateRepository.setTokens(null);
         _loggerService.clearState();
 
         return const Result.ok(null);

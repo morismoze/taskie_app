@@ -100,7 +100,9 @@ class AppDrawerViewModel extends ChangeNotifier {
   }
 
   Future<Result<List<Workspace>>> _loadWorkspaces() async {
-    final result = await _workspaceRepository.loadWorkspaces();
+    final result = await firstOkOrLastError(
+      _workspaceRepository.loadWorkspaces(),
+    );
 
     switch (result) {
       case Ok():
@@ -160,7 +162,9 @@ class AppDrawerViewModel extends ChangeNotifier {
         if (updatedWorkspacesList.isEmpty) {
           // We need to refresh the access token since we keep list of roles with
           // corresponding workspaces in the user as well.
-          final resultUser = await _userRepository.loadUser(forceFetch: true);
+          final resultUser = await _userRepository
+              .loadUser(forceFetch: true)
+              .last;
 
           switch (resultUser) {
             case Ok():
@@ -195,7 +199,9 @@ class AppDrawerViewModel extends ChangeNotifier {
 
         // We need to refresh the access token since we keep list of roles with
         // corresponding workspaces in the user as well.
-        final resultUser = await _userRepository.loadUser(forceFetch: true);
+        final resultUser = await _userRepository
+            .loadUser(forceFetch: true)
+            .last;
 
         switch (resultUser) {
           case Ok():

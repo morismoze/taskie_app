@@ -34,7 +34,7 @@ class UserProfileViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadUserDetails() async {
-    final result = await _userRepository.loadUser();
+    final result = await firstOkOrLastError(_userRepository.loadUser());
 
     switch (result) {
       case Ok():

@@ -6,7 +6,7 @@ import '../../services/api/auth/models/request/refresh_token_request.dart';
 import '../../services/api/auth/models/request/social_login_request.dart';
 import '../../services/api/auth/models/response/login_response.dart';
 import '../../services/api/auth/models/response/refresh_token_response.dart';
-import '../../services/local/logger.dart';
+import '../../services/local/logger_service.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'auth_id_provider_repository.dart';
 import 'auth_repository.dart';

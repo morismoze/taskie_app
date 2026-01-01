@@ -116,3 +116,22 @@ final class Error<T> extends Result<T> {
   @override
   String toString() => 'Result<$T>.error($error)';
 }
+
+Future<Result<T>> firstOkOrLastError<T>(Stream<Result<T>> stream) async {
+  Result<T>? last;
+
+  await for (final r in stream) {
+    last = r;
+    if (r is Ok<T>) {
+      return r;
+    }
+  }
+
+  // Stream ended without Ok
+
+  if (last is Error<T>) {
+    return last;
+  }
+
+  return Result.error(Exception('Stream emitted no values'));
+}

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../ui/core/utils/intl.dart';
 import '../../../utils/command.dart';
-import '../../services/local/logger.dart';
+import '../../services/local/logger_service.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'preferences_repository.dart';
 

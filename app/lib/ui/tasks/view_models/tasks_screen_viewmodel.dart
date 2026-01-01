@@ -89,10 +89,12 @@ class TasksScreenViewModel extends ChangeNotifier {
     (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
     final (filter, forceFetch) = details;
-    final result = await _workspaceTaskRepository.loadTasks(
-      workspaceId: _activeWorkspaceId,
-      filter: filter,
-      forceFetch: forceFetch ?? false,
+    final result = await firstOkOrLastError(
+      _workspaceTaskRepository.loadTasks(
+        workspaceId: _activeWorkspaceId,
+        filter: filter,
+        forceFetch: forceFetch ?? false,
+      ),
     );
 
     switch (result) {
@@ -104,7 +106,9 @@ class TasksScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _refreshUser() async {
-    final resultLoadUser = await _userRepository.loadUser(forceFetch: true);
+    final resultLoadUser = await _userRepository
+        .loadUser(forceFetch: true)
+        .last;
 
     switch (resultLoadUser) {
       case Ok():

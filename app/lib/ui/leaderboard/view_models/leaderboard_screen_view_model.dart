@@ -41,9 +41,11 @@ class LeaderboardScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadLeaderboard(bool? forceFetch) async {
-    final result = await _workspaceLeaderboardRepository.loadLeaderboard(
-      workspaceId: activeWorkspaceId,
-      forceFetch: forceFetch ?? false,
+    final result = await firstOkOrLastError(
+      _workspaceLeaderboardRepository.loadLeaderboard(
+        workspaceId: activeWorkspaceId,
+        forceFetch: forceFetch ?? false,
+      ),
     );
 
     switch (result) {

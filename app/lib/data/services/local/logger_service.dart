@@ -46,6 +46,20 @@ class LoggerService {
     }
   }
 
+  static void init({bool off = false}) {
+    if (off) {
+      Logger.root.level = Level.OFF;
+      return;
+    }
+
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      print(
+        '[${record.loggerName}] - ${record.level.name} - ${record.time} - ${record.message} - ${record.stackTrace}',
+      );
+    });
+  }
+
   String _safeJson(Map<String, Object?> map) {
     try {
       return jsonEncode(map);
