@@ -91,7 +91,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
     final result = await firstOkOrLastError(
-      _workspaceUserRepository.loadWorkspaceUsers(workspaceId: workspaceId),
+      _workspaceUserRepository.loadWorkspaceUsers(
+        workspaceId: workspaceId,
+        // Force fetch so we always have up-to-date users on this screen
+        forceFetch: true,
+      ),
     );
 
     switch (result) {

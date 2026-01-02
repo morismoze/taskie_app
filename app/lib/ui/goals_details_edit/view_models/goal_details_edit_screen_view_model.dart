@@ -86,7 +86,11 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
     final result = await firstOkOrLastError(
-      _workspaceUserRepository.loadWorkspaceUsers(workspaceId: workspaceId),
+      _workspaceUserRepository.loadWorkspaceUsers(
+        workspaceId: workspaceId,
+        // Force fetch so we always have up-to-date users on this screen
+        forceFetch: true,
+      ),
     );
 
     switch (result) {
@@ -140,20 +144,18 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        // This is the case when the user closes all the tasks
-        // from the current page, so we need to fetch previous
-        // page, if the current page is not first one (1). The
-        // actual UI page change is done in the ObjectivesListView
-        // and here we only amend the repository level page value.
-        if ((_workspaceGoalRepository.goals!.items.isEmpty ||
-                _workspaceGoalRepository.goals == null) &&
-            _workspaceGoalRepository.activeFilter.page > 1) {
-          _workspaceGoalRepository.loadGoals(
-            workspaceId: _activeWorkspaceId,
-            filter: _workspaceGoalRepository.activeFilter.copyWith(
-              page: _workspaceGoalRepository.activeFilter.page - 1,
-            ),
-          );
+        // Edge case: when the user closes all the goals from
+        // the current page, repository updates total and totalPages
+        // and then we just re-fetch the current page again - the
+        // thing is, current page will be updated in the repository
+        // as said previously, and we will fetch that new page.
+        // The actual UI page change is done in the ObjectivesListView and
+        // here we only amend the repository level page value.
+        final goals = _workspaceGoalRepository.goals;
+        if (goals == null || goals.items.isEmpty) {
+          _workspaceGoalRepository
+              .loadGoals(workspaceId: _activeWorkspaceId, forceFetch: true)
+              .listen((_) {});
         }
 
         return const Result.ok(null);

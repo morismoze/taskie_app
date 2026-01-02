@@ -55,6 +55,8 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
     final result = await firstOkOrLastError(
       _workspaceUserRepository.loadWorkspaceUsers(
         workspaceId: _activeWorkspaceId,
+        // Force fetch so we always have up-to-date users on this screen
+        forceFetch: true,
       ),
     );
 

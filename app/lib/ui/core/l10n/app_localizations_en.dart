@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_goToHomepage => 'Go to Homepage';
 
   @override
+  String get misc_goToGoalsPage => 'Go to Goals page';
+
+  @override
   String get misc_pointsAbbr => 'pts';
 
   @override
@@ -809,7 +812,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalsClosedGoalError =>
-      'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the Goals page and refresh your feed.';
+      'Uh-oh! It looks like this goal has been closed. Updating its details is no longer possible. Please go to the Goals page and refresh your feed.';
 
   @override
   String get goalsDetailsAssignedTo => 'Goal assigned to';

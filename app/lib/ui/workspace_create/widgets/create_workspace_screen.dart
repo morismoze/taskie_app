@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/services/api/exceptions/not_found_exception.dart';
+import '../../../data/services/api/api_response.dart';
+import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../data/services/api/workspace/workspace_invite/exceptions/workspace_invite_existing_user_exception.dart';
 import '../../../data/services/api/workspace/workspace_invite/exceptions/workspace_invite_expired_or_used_exception.dart';
 import '../../../routing/routes.dart';
@@ -127,7 +128,8 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
       widget.viewModel.joinWorkspaceViaInviteLink.clearResult();
 
       switch (errorResult.error) {
-        case NotFoundException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.notFoundWorkspaceInviteToken:
           AppSnackbar.showError(
             context: context,
             message:

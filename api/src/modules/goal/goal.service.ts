@@ -181,6 +181,16 @@ export class GoalService {
       );
     }
 
+    // Closed goals can't be updated
+    if (goal.status === ProgressStatus.CLOSED) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.GOAL_CLOSED,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     const updatedGoal = await this.goalRepository.update({
       id: goalId,
       data: {

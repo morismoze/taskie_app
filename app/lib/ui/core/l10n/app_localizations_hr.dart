@@ -51,6 +51,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_goToHomepage => 'Idi na Početnu stranicu';
 
   @override
+  String get misc_goToGoalsPage => 'Idi na stranicu ciljeva';
+
+  @override
   String get misc_pointsAbbr => 'bod.';
 
   @override

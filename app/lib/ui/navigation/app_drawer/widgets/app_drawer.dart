@@ -92,6 +92,7 @@ class _AppDrawerState extends State<AppDrawer> {
       final newActiveWorkspaceId =
           (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
       widget.viewModel.changeActiveWorkspace.clearResult();
+      context.pop();
       context.go(Routes.tasks(workspaceId: newActiveWorkspaceId));
     }
 

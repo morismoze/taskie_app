@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Go to Homepage'**
   String get misc_goToHomepage;
 
+  /// No description provided for @misc_goToGoalsPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Goals page'**
+  String get misc_goToGoalsPage;
+
   /// No description provided for @misc_pointsAbbr.
   ///
   /// In en, this message translates to:
@@ -1451,7 +1457,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsClosedGoalError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the Goals page and refresh your feed.'**
+  /// **'Uh-oh! It looks like this goal has been closed. Updating its details is no longer possible. Please go to the Goals page and refresh your feed.'**
   String get goalsClosedGoalError;
 
   /// No description provided for @goalsDetailsAssignedTo.

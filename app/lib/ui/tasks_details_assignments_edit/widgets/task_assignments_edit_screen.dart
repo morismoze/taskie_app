@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/services/api/exceptions/task_assignees_already_exist_exception.dart';
-import '../../../data/services/api/exceptions/task_assignees_count_maxed_out_exception.dart';
-import '../../../data/services/api/exceptions/task_assignees_invalid_exception.dart';
-import '../../../data/services/api/exceptions/task_assignments_completed_status_due_date_passed.dart';
-import '../../../data/services/api/exceptions/task_closed_exception.dart';
+import '../../../data/services/api/api_response.dart';
+import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
@@ -198,11 +195,14 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       final errorResult = widget.viewModel.addTaskAssignee.result as Error;
       widget.viewModel.addTaskAssignee.clearResult();
       switch (errorResult.error) {
-        case TaskClosedException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskClosed:
           _showClosedTaskErrorDialog();
           break;
-        case TaskAssigneesCountMaxedOutException():
-        case TaskAssigneesAlreadyExistException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskAssigneesCountMaxedOut:
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskAssigneesAlreadyExist:
           _showAssigneesWereAmendedErrorDialog();
           break;
         default:
@@ -229,7 +229,8 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       final errorResult = widget.viewModel.removeTaskAssignee.result as Error;
       widget.viewModel.removeTaskAssignee.clearResult();
       switch (errorResult.error) {
-        case TaskClosedException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskClosed:
           _showClosedTaskErrorDialog();
           break;
         default:
@@ -255,13 +256,24 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           widget.viewModel.updateTaskAssignments.result as Error;
       widget.viewModel.updateTaskAssignments.clearResult();
       switch (errorResult.error) {
-        case TaskClosedException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskClosed:
           _showClosedTaskErrorDialog();
           break;
-        case TaskAssigneesInvalidException():
+        // This exception is used when there was an attempt at
+        // updating a task's assignments, but the task one or
+        // more assignees was removed in the meanwhile (e.g.
+        // by another Manager).
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskAssigneesInvalid:
           _showAssigneesWereAmendedErrorDialog();
           break;
-        case TaskAssignmentsCompletedStatusDueDatePassed():
+        // This exception is used when there was an attempt at adding updating status/es of a
+        // task's assignments to Completed status, but the task's due date has passed. When
+        // due date passes, only Completed as Stale is acceptable, not Completed.
+        case GeneralApiException(error: final apiError)
+            when apiError.code ==
+                ApiErrorCode.taskAssignmentsCompletedStatusDueDatePassed:
           _showCompletedStatusDueDatePassedErrorDialog();
           break;
         default:

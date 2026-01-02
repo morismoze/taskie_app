@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/services/api/exceptions/task_closed_exception.dart';
+import '../../../data/services/api/api_response.dart';
+import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -119,7 +120,8 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
       final errorResult = widget.viewModel.editTaskDetails.result as Error;
       widget.viewModel.editTaskDetails.clearResult();
       switch (errorResult.error) {
-        case TaskClosedException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskClosed:
           AppDialog.show(
             context: context,
             canPop: false,
@@ -168,10 +170,31 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
       final errorResult = widget.viewModel.closeTask.result as Error;
       widget.viewModel.closeTask.clearResult();
       switch (errorResult.error) {
-        case TaskClosedException():
-          AppSnackbar.showError(
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.taskClosed:
+          context.pop(); // Close confirm dialog
+          AppDialog.show(
             context: context,
-            message: context.localization.tasksClosedTaskError,
+            canPop: false,
+            title: FaIcon(
+              FontAwesomeIcons.circleInfo,
+              color: Theme.of(context).colorScheme.primary,
+              size: 30,
+            ),
+            content: Text(
+              context.localization.tasksClosedTaskError,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            actions: AppFilledButton(
+              label: context.localization.misc_goToHomepage,
+              onPress: () {
+                context.pop(); // Close dialog
+                context.go(
+                  Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
+                );
+              },
+            ),
           );
           break;
         default:

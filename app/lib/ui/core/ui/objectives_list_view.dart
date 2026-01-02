@@ -32,6 +32,11 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
   final NumberPaginatorController _controller = NumberPaginatorController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void didUpdateWidget(covariant ObjectivesListView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
@@ -101,4 +106,6 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
       ],
     );
   }
+
+  void _compareRepositoryAndPaginatorCurrentPages() {}
 }
