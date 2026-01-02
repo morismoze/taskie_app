@@ -159,7 +159,7 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
         widget.viewModel.loadLeaderboard.clearResult();
         AppSnackbar.showError(
           context: context,
-          message: context.localization.leaderboardLoadError,
+          message: context.localization.leaderboardLoadRefreshError,
         );
       }
     }

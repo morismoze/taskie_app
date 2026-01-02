@@ -20,6 +20,11 @@ import 'workspace_goal_repository.dart';
 const _kDefaultPaginablePage = 1;
 const _kDefaultPaginableLimit = 15;
 const _kDefaultPaginableSort = SortBy.newestFirst;
+final _defaultFilter = ObjectiveFilter(
+  page: _kDefaultPaginablePage,
+  limit: _kDefaultPaginableLimit,
+  sort: _kDefaultPaginableSort,
+);
 
 class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   WorkspaceGoalRepositoryImpl({
@@ -39,11 +44,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   @override
   bool get isFilterSearch => _isFilterSearch;
 
-  ObjectiveFilter _activeFilter = ObjectiveFilter(
-    page: _kDefaultPaginablePage,
-    limit: _kDefaultPaginableLimit,
-    sort: _kDefaultPaginableSort,
-  );
+  ObjectiveFilter _activeFilter = _defaultFilter;
 
   @override
   ObjectiveFilter get activeFilter => _activeFilter;
@@ -68,20 +69,33 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
 
-    if (!forceFetch && effectiveFilter == _activeFilter) {
-      if (_cachedGoals != null) {
-        // Read from in-memory cache
-        yield const Result.ok(null);
-      } else {
-        // Read from DB cache
-        final dbResult = await _databaseService.getGoals();
-        if (dbResult is Ok<Paginable<WorkspaceGoal>?>) {
-          final dbGoals = dbResult.value;
-          if (dbGoals != null) {
-            _cachedGoals = dbGoals;
-            notifyListeners();
-            yield const Result.ok(null);
-          }
+    if (!forceFetch &&
+        effectiveFilter == _activeFilter &&
+        _cachedGoals != null) {
+      // Read from in-memory cache
+      yield const Result.ok(null);
+    }
+
+    if (!forceFetch && effectiveFilter == _defaultFilter) {
+      // Read from DB cache only if the filter is the default
+      // filter since we save only the goals fetched by
+      // the default filter to the DB - it doesn't make sense
+      // to save x page with y filters and z sort to the DB.
+      // There is a industry standard way to save paginable
+      // items to the DB, by taking only the items and saving
+      // them to the DB list, and then do queries over that
+      // list - basically we move querying the server DB
+      // which has all the tasks, to querying local DB
+      // which has the tasks up to the page and filters/
+      // sort which were last fetched online. That would
+      // be a through offline support.
+      final dbResult = await _databaseService.getGoals();
+      if (dbResult is Ok<Paginable<WorkspaceGoal>?>) {
+        final dbGoals = dbResult.value;
+        if (dbGoals != null) {
+          _cachedGoals = dbGoals;
+          notifyListeners();
+          yield const Result.ok(null);
         }
       }
     }
@@ -125,7 +139,11 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         notifyListeners();
 
         // Update persistent cache
-        _updateDbCache(_cachedGoals!);
+        if (effectiveFilter == _defaultFilter) {
+          // Save to DB only if filter is the same as
+          // the default filter
+          _updateDbCache(_cachedGoals!);
+        }
 
         yield const Result.ok(null);
       case Error<PaginableResponse<WorkspaceGoalResponse>>():

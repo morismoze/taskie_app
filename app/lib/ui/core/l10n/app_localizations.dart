@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksLoadRefreshError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble refreshing tasks.'**
+  /// **'Uh-oh! We\'ve had some trouble refreshing the tasks'**
   String get tasksLoadRefreshError;
 
   /// No description provided for @taskskNoFilteredTasks.
@@ -1334,11 +1334,11 @@ abstract class AppLocalizations {
   /// **'You\'ve successfully created new workspace'**
   String get workspaceCreationSuccess;
 
-  /// No description provided for @leaderboardLoadError.
+  /// No description provided for @leaderboardLoadRefreshError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble loading up the leaderboard'**
-  String get leaderboardLoadError;
+  /// **'Uh-oh! We\'ve had some trouble refreshing the leaderboard'**
+  String get leaderboardLoadRefreshError;
 
   /// No description provided for @leaderboardSubtitle.
   ///
@@ -1367,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsLoadRefreshError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble refreshing goals.'**
+  /// **'Uh-oh! We\'ve had some trouble refreshing the goals'**
   String get goalsLoadRefreshError;
 
   /// No description provided for @goalsNoGoals.

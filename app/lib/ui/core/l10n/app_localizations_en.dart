@@ -148,7 +148,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksLoadRefreshError =>
-      'Uh-oh! We\'ve had some trouble refreshing tasks.';
+      'Uh-oh! We\'ve had some trouble refreshing the tasks';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -733,8 +733,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'ve successfully created new workspace';
 
   @override
-  String get leaderboardLoadError =>
-      'Uh-oh! We\'ve had some trouble loading up the leaderboard';
+  String get leaderboardLoadRefreshError =>
+      'Uh-oh! We\'ve had some trouble refreshing the leaderboard';
 
   @override
   String get leaderboardSubtitle => 'Who’s leading the race?';
@@ -759,7 +759,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalsLoadRefreshError =>
-      'Uh-oh! We\'ve had some trouble refreshing goals.';
+      'Uh-oh! We\'ve had some trouble refreshing the goals';
 
   @override
   String get goalsNoGoals =>

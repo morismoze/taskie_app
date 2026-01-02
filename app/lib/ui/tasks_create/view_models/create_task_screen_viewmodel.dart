@@ -50,13 +50,11 @@ class CreateTaskScreenViewmodel extends ChangeNotifier {
       [];
 
   Future<Result<void>> _loadWorkspaceMembers() async {
-    final result = await firstOkOrLastError(
-      _workspaceUserRepository.loadWorkspaceUsers(
-        workspaceId: _activeWorkspaceId,
-        // Force fetch so we always have up-to-date users on this screen
-        forceFetch: true,
-      ),
-    );
+    // Using .last so we always have up-to-date users on this screen
+    // meaning it will always go to the origin when it can
+    final result = await _workspaceUserRepository
+        .loadWorkspaceUsers(workspaceId: _activeWorkspaceId)
+        .last;
 
     switch (result) {
       case Ok():

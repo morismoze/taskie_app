@@ -148,7 +148,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksLoadRefreshError =>
-      'Uh-oh! Došlo je do problema prilikom osvježavanja zadataka.';
+      'Uh-oh! Došlo je do problema prilikom osvježavanja zadataka';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -739,8 +739,8 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uspješno ste kreirali novi radni prostor';
 
   @override
-  String get leaderboardLoadError =>
-      'Uh-oh! Došlo je do problema prilikom dohvata ljestvice';
+  String get leaderboardLoadRefreshError =>
+      'Uh-oh! Došlo je do problema prilikom osvježavanja ljestvice';
 
   @override
   String get leaderboardSubtitle => 'Tko vodi utrku?';
@@ -767,7 +767,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsLoadRefreshError =>
-      'Uh-oh! Došlo je do problema prilikom osvježavanja ciljeva.';
+      'Uh-oh! Došlo je do problema prilikom osvježavanja ciljeva';
 
   @override
   String get goalsNoGoals =>
