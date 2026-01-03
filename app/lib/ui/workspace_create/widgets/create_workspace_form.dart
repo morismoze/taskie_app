@@ -90,7 +90,7 @@ class _CreateWorkspaceFormState extends State<CreateWorkspaceForm> {
     );
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
     if (_formKey.currentState!.validate()) {
       final name = _nameController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();

@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Go to Homepage'**
   String get misc_goToHomepage;
 
+  /// No description provided for @misc_goToGoalsPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Goals page'**
+  String get misc_goToGoalsPage;
+
   /// No description provided for @misc_pointsAbbr.
   ///
   /// In en, this message translates to:
@@ -347,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksLoadRefreshError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble refreshing tasks.'**
+  /// **'Uh-oh! We\'ve had some trouble refreshing the tasks'**
   String get tasksLoadRefreshError;
 
   /// No description provided for @taskskNoFilteredTasks.
@@ -512,6 +518,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! This task\'s assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.'**
   String get tasksAmendedAssigneesError;
 
+  /// No description provided for @tasksAssigmentsCompletedStatusDueDatePassedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like this task\'s due date has passed and **Completed** status can\'t be applied to assignments anymore. Instead, use **Completed as Stale** status.'**
+  String get tasksAssigmentsCompletedStatusDueDatePassedError;
+
   /// No description provided for @tasksRemoveTaskAssignmentModalMessage.
   ///
   /// In en, this message translates to:
@@ -577,6 +589,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update assignments'**
   String get tasksAssignmentsEditStatusSubmit;
+
+  /// No description provided for @tasksAssignmentsEditStatusDueDateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot mark task/s as Completed since the due date has passed'**
+  String get tasksAssignmentsEditStatusDueDateError;
 
   /// No description provided for @tasksAssignmentsMinAssignees.
   ///
@@ -1316,11 +1334,11 @@ abstract class AppLocalizations {
   /// **'You\'ve successfully created new workspace'**
   String get workspaceCreationSuccess;
 
-  /// No description provided for @leaderboardLoadError.
+  /// No description provided for @leaderboardLoadRefreshError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble loading up the leaderboard'**
-  String get leaderboardLoadError;
+  /// **'Uh-oh! We\'ve had some trouble refreshing the leaderboard'**
+  String get leaderboardLoadRefreshError;
 
   /// No description provided for @leaderboardSubtitle.
   ///
@@ -1349,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsLoadRefreshError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! We\'ve had some trouble refreshing goals.'**
+  /// **'Uh-oh! We\'ve had some trouble refreshing the goals'**
   String get goalsLoadRefreshError;
 
   /// No description provided for @goalsNoGoals.
@@ -1439,7 +1457,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsClosedGoalError.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! It looks like this goal has been closed. Updating its details. Please go to the Goals page and refresh your feed.'**
+  /// **'Uh-oh! It looks like this goal has been closed. Updating its details is no longer possible. Please go to the Goals page and refresh your feed.'**
   String get goalsClosedGoalError;
 
   /// No description provided for @goalsDetailsAssignedTo.

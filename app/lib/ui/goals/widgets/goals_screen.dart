@@ -13,9 +13,9 @@ import '../../core/ui/objectives_list_view.dart';
 import '../../core/utils/extensions.dart';
 import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/goals_screen_viewmodel.dart';
+import 'goals_filtering/goals_filtering_header_delegate.dart';
 import 'goals_header.dart';
 import 'goals_list.dart';
-import 'goals_sorting/goals_sorting_header_delegate.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key, required this.viewModel});
@@ -147,13 +147,13 @@ class _GoalssScreenState extends State<GoalsScreen> {
                       widget.viewModel.loadGoals.execute((null, true));
                     },
                     child: ObjectivesListView(
-                      headerDelegate: GoalsSortingHeaderDelegate(
+                      headerDelegate: GoalsFilteringHeaderDelegate(
                         viewModel: widget.viewModel,
                         height: 50,
                       ),
                       list: GoalsList(viewModel: widget.viewModel),
                       totalPages: widget.viewModel.goals!.totalPages,
-                      currentPage: widget.viewModel.activeFilter.page,
+                      currentFilter: widget.viewModel.activeFilter,
                       onPageChange: (page) {
                         final updatedFilter = widget.viewModel.activeFilter
                             .copyWith(page: page);

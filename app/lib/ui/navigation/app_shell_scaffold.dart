@@ -9,6 +9,8 @@ import 'app_drawer/widgets/app_drawer.dart';
 import 'app_fab/view_models/app_floating_action_button_view_model.dart';
 import 'app_fab/widgets/app_floating_action_button.dart';
 
+final GlobalKey<ScaffoldState> appShellScaffoldKey = GlobalKey<ScaffoldState>();
+
 class AppShellScaffold extends StatelessWidget {
   const AppShellScaffold({
     super.key,
@@ -24,6 +26,7 @@ class AppShellScaffold extends StatelessWidget {
     final appDrawerViewModel = context.read<AppDrawerViewModel>();
 
     return Scaffold(
+      key: appShellScaffoldKey,
       drawer: AppDrawer(viewModel: appDrawerViewModel),
       onDrawerChanged: (isOpened) {
         if (isOpened) {

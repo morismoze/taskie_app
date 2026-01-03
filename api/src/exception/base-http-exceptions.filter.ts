@@ -3,18 +3,19 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { ApiResponse } from 'src/common/types/api-response.type';
+import { AppLogger } from 'src/modules/logger/app-logger';
 import { ApiErrorCode } from './api-error-code.enum';
 
 @Catch(HttpException)
 export class BaseHttpExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(BaseHttpExceptionsFilter.name);
-
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(
+    private readonly httpAdapterHost: HttpAdapterHost,
+    private readonly logger: AppLogger,
+  ) {}
 
   catch(exception: HttpException, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;
@@ -33,6 +34,7 @@ export class BaseHttpExceptionsFilter implements ExceptionFilter {
 
     this.logger.error(
       `[${request.method}] ${httpAdapter.getRequestUrl(request)} - Status code: ${statusCode} - Message: ${message}`,
+      exception.stack,
     );
     httpAdapter.reply(response, responseBody, statusCode);
   }

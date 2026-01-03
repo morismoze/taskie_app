@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
+import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/utils/user.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
 import 'workspace_switcher.dart';
@@ -21,7 +25,6 @@ class TasksHeader extends StatelessWidget {
           vertical: Dimens.of(context).paddingScreenVertical / 2,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ValueListenableBuilder(
@@ -53,7 +56,15 @@ class TasksHeader extends StatelessWidget {
                 return const SizedBox.shrink();
               },
             ),
+            const Spacer(),
             const WorkspaceSwitcher(),
+            const SizedBox(width: 8),
+            AppHeaderActionButton(
+              iconData: FontAwesomeIcons.question,
+              onTap: () => context.push(
+                Routes.tasksGuide(workspaceId: viewModel.activeWorkspaceId),
+              ),
+            ),
           ],
         ),
       ),

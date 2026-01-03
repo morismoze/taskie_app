@@ -39,4 +39,5 @@ const _$ApiErrorCodeEnumMap = {
   ApiErrorCode.taskAssigneesInvalid: '9',
   ApiErrorCode.taskAssigneesAlreadyExist: '10',
   ApiErrorCode.goalClosed: '11',
+  ApiErrorCode.taskAssignmentsCompletedStatusDueDatePassed: '12',
 };

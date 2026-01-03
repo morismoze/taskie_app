@@ -114,7 +114,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
     );
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
     if (_formKey.currentState!.validate()) {
       final assigneeIds = _selectedAssignees
           .map((assignee) => assignee.value.id)

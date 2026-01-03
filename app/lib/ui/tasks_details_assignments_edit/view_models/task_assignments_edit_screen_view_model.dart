@@ -47,6 +47,8 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
 
   List<WorkspaceTaskAssignee>? get assignees => _details?.assignees;
 
+  DateTime? get dueDate => _details?.dueDate;
+
   String? get taskId => _details?.id;
 
   /// Represents workspace members other than those which
@@ -88,9 +90,11 @@ class TaskAssignmentsEditScreenViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _loadWorkspaceMembers(String workspaceId) async {
-    final result = await firstOkOrLastError(
-      _workspaceUserRepository.loadWorkspaceUsers(workspaceId: workspaceId),
-    );
+    // Using .last so we always have up-to-date users on this screen
+    // meaning it will always go to the origin when it can
+    final result = await _workspaceUserRepository
+        .loadWorkspaceUsers(workspaceId: workspaceId)
+        .last;
 
     switch (result) {
       case Ok():

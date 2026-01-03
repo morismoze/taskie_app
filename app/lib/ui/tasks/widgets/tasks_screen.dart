@@ -13,9 +13,9 @@ import '../../core/ui/objectives_list_view.dart';
 import '../../core/utils/extensions.dart';
 import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/tasks_screen_viewmodel.dart';
+import 'tasks_filtering/tasks_filtering_header_delegate.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';
-import 'tasks_sorting/tasks_sorting_header_delegate.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key, required this.viewModel});
@@ -153,13 +153,13 @@ class _TasksScreenState extends State<TasksScreen> {
                       widget.viewModel.refreshUser.execute();
                     },
                     child: ObjectivesListView(
-                      headerDelegate: TasksSortingHeaderDelegate(
+                      headerDelegate: TasksFilteringHeaderDelegate(
                         viewModel: widget.viewModel,
                         height: 50,
                       ),
                       list: TasksList(viewModel: widget.viewModel),
                       totalPages: widget.viewModel.tasks!.totalPages,
-                      currentPage: widget.viewModel.activeFilter.page,
+                      currentFilter: widget.viewModel.activeFilter,
                       onPageChange: (page) {
                         final updatedFilter = widget.viewModel.activeFilter
                             .copyWith(page: page);

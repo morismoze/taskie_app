@@ -1,7 +1,7 @@
 import '../../../../../config/api_endpoints.dart';
 import '../../../../../utils/command.dart';
 import '../../api_client.dart';
-import '../../api_response.dart';
+import '../../base_api_service.dart';
 import '../workspace/models/request/workspace_id_path_param.dart';
 import '../workspace_task/models/request/workspace_user_id_path_param.dart';
 import 'models/request/create_virtual_workspace_user_request.dart';
@@ -9,117 +9,74 @@ import 'models/request/update_workspace_user_details_request.dart';
 import 'models/response/workspace_user_accumulated_points_response.dart';
 import 'models/response/workspace_user_response.dart';
 
-class WorkspaceUserApiService {
+class WorkspaceUserApiService extends BaseApiService {
   WorkspaceUserApiService({required ApiClient apiClient})
-    : _apiClient = apiClient;
+    : _apiClient = apiClient,
+      super(apiClient);
 
   final ApiClient _apiClient;
 
   Future<Result<List<WorkspaceUserResponse>>> getWorkspaceUsers(
     WorkspaceIdPathParam workspaceId,
-  ) async {
-    try {
-      final response = await _apiClient.client.get(
-        ApiEndpoints.getWorkspaceUsers(workspaceId),
-      );
-
-      final apiResponse = ApiResponse<List<WorkspaceUserResponse>>.fromJson(
-        response.data,
-        (jsonList) => (jsonList as List)
-            .map<WorkspaceUserResponse>(
-              (listItem) => WorkspaceUserResponse.fromJson(listItem),
-            )
-            .toList(),
-      );
-
-      return Result.ok(apiResponse.data!);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(e, stackTrace);
-    }
+  ) {
+    return executeApiCallList(
+      apiCall: () =>
+          _apiClient.client.get(ApiEndpoints.getWorkspaceUsers(workspaceId)),
+      fromJsonItem: WorkspaceUserResponse.fromJson,
+    );
   }
 
   Future<Result<WorkspaceUserResponse>> createVirtualUser({
     required WorkspaceIdPathParam workspaceId,
     required CreateVirtualWorkspaceUserRequest payload,
-  }) async {
-    try {
-      final response = await _apiClient.client.post(
+  }) {
+    return executeApiCall(
+      apiCall: () => _apiClient.client.post(
         ApiEndpoints.createVirtualUser(workspaceId),
-        data: payload,
-      );
-
-      final apiResponse = ApiResponse<WorkspaceUserResponse>.fromJson(
-        response.data,
-        (json) => WorkspaceUserResponse.fromJson(json as Map<String, dynamic>),
-      );
-
-      return Result.ok(apiResponse.data!);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(e, stackTrace);
-    }
+        data: payload.toJson(),
+      ),
+      fromJson: WorkspaceUserResponse.fromJson,
+    );
   }
 
   Future<Result<void>> deleteWorkspaceUser({
     required WorkspaceIdPathParam workspaceId,
     required WorkspaceUserIdPathParam workspaceUserId,
-  }) async {
-    try {
-      await _apiClient.client.delete(
+  }) {
+    return executeVoidApiCall(
+      apiCall: () => _apiClient.client.delete(
         ApiEndpoints.deleteWorkspaceUser(workspaceId, workspaceUserId),
-      );
-
-      return const Result.ok(null);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(e, stackTrace);
-    }
+      ),
+    );
   }
 
   Future<Result<WorkspaceUserResponse>> updateWorkspaceUserDetails({
     required WorkspaceIdPathParam workspaceId,
     required WorkspaceUserIdPathParam workspaceUserId,
     required UpdateWorkspaceUserDetailsRequest payload,
-  }) async {
-    try {
-      final response = await _apiClient.client.patch(
+  }) {
+    return executeApiCall(
+      apiCall: () => _apiClient.client.patch(
         ApiEndpoints.updateWorkspaceUserDetails(workspaceId, workspaceUserId),
-        data: payload,
-      );
-
-      final apiResponse = ApiResponse<WorkspaceUserResponse>.fromJson(
-        response.data,
-        (json) => WorkspaceUserResponse.fromJson(json as Map<String, dynamic>),
-      );
-
-      return Result.ok(apiResponse.data!);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(e, stackTrace);
-    }
+        data: payload.toJson(),
+      ),
+      fromJson: WorkspaceUserResponse.fromJson,
+    );
   }
 
   Future<Result<WorkspaceUserAccumulatedPointsResponse>>
   getWorkspaceUserAccumulatedPoints({
     required WorkspaceIdPathParam workspaceId,
     required WorkspaceUserIdPathParam workspaceUserId,
-  }) async {
-    try {
-      final response = await _apiClient.client.get(
+  }) {
+    return executeApiCall(
+      apiCall: () => _apiClient.client.get(
         ApiEndpoints.getWorkspaceUserAccumulatedPoints(
           workspaceId,
           workspaceUserId,
         ),
-      );
-
-      final apiResponse =
-          ApiResponse<WorkspaceUserAccumulatedPointsResponse>.fromJson(
-            response.data,
-            (json) => WorkspaceUserAccumulatedPointsResponse.fromJson(
-              json as Map<String, dynamic>,
-            ),
-          );
-
-      return Result.ok(apiResponse.data!);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(e, stackTrace);
-    }
+      ),
+      fromJson: WorkspaceUserAccumulatedPointsResponse.fromJson,
+    );
   }
 }

@@ -51,6 +51,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_goToHomepage => 'Idi na Početnu stranicu';
 
   @override
+  String get misc_goToGoalsPage => 'Idi na stranicu ciljeva';
+
+  @override
   String get misc_pointsAbbr => 'bod.';
 
   @override
@@ -145,7 +148,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksLoadRefreshError =>
-      'Uh-oh! Došlo je do problema prilikom osvježavanja zadataka.';
+      'Uh-oh! Došlo je do problema prilikom osvježavanja zadataka';
 
   @override
   String get taskskNoFilteredTasks =>
@@ -242,6 +245,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na Početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.';
 
   @override
+  String get tasksAssigmentsCompletedStatusDueDatePassedError =>
+      'Uh-oh! Čini se da je rok završetka za ovaj zadatak istekao i status **Završeno** se više ne može primijeniti na dodjele. Umjesto toga, koristite status **Završeno (zastarjelo)**.';
+
+  @override
   String get tasksRemoveTaskAssignmentModalMessage =>
       'Jeste li sigurni da želite ukloniti ovog korisnika iz dodjele zadatka?';
 
@@ -278,6 +285,10 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksAssignmentsEditStatusSubmit => 'Ažuriraj dodjele';
+
+  @override
+  String get tasksAssignmentsEditStatusDueDateError =>
+      'Zadatak/ci ne mogu biti označeni kao Završeno jer je rok završetka istekao';
 
   @override
   String get tasksAssignmentsMinAssignees =>
@@ -728,8 +739,8 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uspješno ste kreirali novi radni prostor';
 
   @override
-  String get leaderboardLoadError =>
-      'Uh-oh! Došlo je do problema prilikom dohvata ljestvice';
+  String get leaderboardLoadRefreshError =>
+      'Uh-oh! Došlo je do problema prilikom osvježavanja ljestvice';
 
   @override
   String get leaderboardSubtitle => 'Tko vodi utrku?';
@@ -756,7 +767,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsLoadRefreshError =>
-      'Uh-oh! Došlo je do problema prilikom osvježavanja ciljeva.';
+      'Uh-oh! Došlo je do problema prilikom osvježavanja ciljeva';
 
   @override
   String get goalsNoGoals =>
@@ -847,7 +858,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsGuideNoteBody =>
-      'Ako se status nekog prethodno dovršenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.';
+      'Ako se status nekog prethodno završenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.';
 
   @override
   String get signOut => 'Odjava';

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
   final _formKey = GlobalKey<FormState>();
   // Status per workspace user ID
   final Map<String, ProgressStatus> _assigneesStatuses = {};
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -75,13 +77,25 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
                 lastName: assignee.lastName,
                 profileImageUrl: assignee.profileImageUrl,
                 status: _assigneesStatuses[assignee.id]!,
+                dueDate: widget.viewModel.dueDate,
                 onStatusChanged: _onStatusChanged,
                 removeAssignee: _confirmAssigneeRemoval,
               );
             }
             return const SizedBox.shrink();
           }),
-          const SizedBox(height: 20),
+          if (_errorMessage != null) ...[
+            Text(
+              _errorMessage!,
+              style:
+                  Theme.of(context).inputDecorationTheme.errorStyle ??
+                  Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+            ),
+            const SizedBox(height: 20),
+          ] else
+            const SizedBox(height: 20),
           ListenableBuilder(
             listenable: widget.viewModel.updateTaskAssignments,
             builder: (builderContext, _) {
@@ -168,8 +182,37 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
     }
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
+    setState(() {
+      _errorMessage = null;
+    });
+
     if (_formKey.currentState!.validate()) {
+      // Check if there is any updated status set to
+      // Completed, even though it should be set to
+      // Completed as Stale, in the case task has
+      // due date and which has passed. This is an
+      // edge case which can happen e.g. if user set
+      // the the Completed status to one or more
+      // assignments before the due date and submitted
+      // tried to submit the form on the day after due
+      // date - it's a stretch, but a real edge case.
+      // We also have a check on the backend for this.
+      final now = DateTime.now();
+      final isTaskPastDueDate =
+          widget.viewModel.dueDate != null &&
+          widget.viewModel.dueDate!.isBefore(now);
+      final firstCompletedTask = _assigneesStatuses.entries.firstWhereOrNull(
+        (assignment) => assignment.value == ProgressStatus.completed,
+      );
+      if (isTaskPastDueDate && firstCompletedTask != null) {
+        setState(() {
+          _errorMessage =
+              context.localization.tasksAssignmentsEditStatusDueDateError;
+        });
+        return;
+      }
+
       final assignments = _assigneesStatuses.entries
           .map((entry) => (entry.key, entry.value))
           .toList();

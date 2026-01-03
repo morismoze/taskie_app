@@ -34,6 +34,26 @@ class _SortByButtonState extends State<SortByButton> {
     _selectedOptions = List.from([widget.activeValue]);
   }
 
+  @override
+  void didUpdateWidget(covariant SortByButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Only one value can be selected in this button
+    // (this will maybe change in the future).
+    // There is a edge case when user os offline and
+    // tries to change and submit filters. Repository
+    // API request will fail and repository will
+    // revert the filte rback to previous value. This
+    // revert change can be seen on this button label,
+    // but not in the modal bottom sheet, so we have
+    // to update it.
+    final selectedValue = _selectedOptions[0];
+    if (widget.activeValue != selectedValue) {
+      _selectedOptions.clear();
+      _selectedOptions.add(widget.activeValue);
+    }
+  }
+
   void _onSubmit(List<AppSelectFieldOption> selectedOptions) {
     // All sort selectors are single value
     final selectedOption = selectedOptions[0];

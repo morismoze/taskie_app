@@ -3,11 +3,11 @@ import {
   Catch,
   ExceptionFilter,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { ApiResponse } from 'src/common/types/api-response.type';
+import { AppLogger } from 'src/modules/logger/app-logger';
 import { ApiErrorCode } from './api-error-code.enum';
 
 /**
@@ -17,9 +17,10 @@ import { ApiErrorCode } from './api-error-code.enum';
 
 @Catch(Error)
 export class UnknownExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(UnknownExceptionsFilter.name);
-
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(
+    private readonly httpAdapterHost: HttpAdapterHost,
+    private readonly logger: AppLogger,
+  ) {}
 
   catch(exception: Error, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;

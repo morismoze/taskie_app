@@ -8,8 +8,8 @@ import '../../../core/ui/sort_by_button.dart';
 import '../../../core/utils/extensions.dart';
 import '../../view_models/tasks_screen_viewmodel.dart';
 
-class SortByStatusButton extends StatelessWidget {
-  const SortByStatusButton({super.key, required this.viewModel});
+class FilterByStatusButton extends StatelessWidget {
+  const FilterByStatusButton({super.key, required this.viewModel});
 
   final TasksScreenViewModel viewModel;
 

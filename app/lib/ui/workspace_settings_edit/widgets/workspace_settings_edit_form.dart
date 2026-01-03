@@ -90,7 +90,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
     );
   }
 
-  void _onSubmit() async {
+  void _onSubmit() {
     if (_formKey.currentState!.validate()) {
       final trimmedName = _nameController.text.trim();
       final name = trimmedName.isNotEmpty ? trimmedName : null;

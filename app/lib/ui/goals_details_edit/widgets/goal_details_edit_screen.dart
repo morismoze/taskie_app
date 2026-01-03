@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/services/api/exceptions/goal_closed_exception.dart';
+import '../../../data/services/api/api_response.dart';
+import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -120,7 +121,8 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
       final errorResult = widget.viewModel.editGoalDetails.result as Error;
       widget.viewModel.editGoalDetails.clearResult();
       switch (errorResult.error) {
-        case GoalClosedException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.goalClosed:
           AppDialog.show(
             context: context,
             canPop: false,
@@ -135,7 +137,7 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
               textAlign: TextAlign.center,
             ),
             actions: AppFilledButton(
-              label: context.localization.misc_goToHomepage,
+              label: context.localization.misc_goToGoalsPage,
               onPress: () {
                 context.pop(); // Close dialog
                 context.go(
@@ -169,10 +171,31 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
       final errorResult = widget.viewModel.closeGoal.result as Error;
       widget.viewModel.closeGoal.clearResult();
       switch (errorResult.error) {
-        case GoalClosedException():
-          AppSnackbar.showError(
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.goalClosed:
+          context.pop(); // Close confirm dialog
+          AppDialog.show(
             context: context,
-            message: context.localization.goalsClosedGoalError,
+            canPop: false,
+            title: FaIcon(
+              FontAwesomeIcons.circleInfo,
+              color: Theme.of(context).colorScheme.primary,
+              size: 30,
+            ),
+            content: Text(
+              context.localization.goalsClosedGoalError,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            actions: AppFilledButton(
+              label: context.localization.misc_goToGoalsPage,
+              onPress: () {
+                context.pop(); // Close dialog
+                context.go(
+                  Routes.goals(workspaceId: widget.viewModel.activeWorkspaceId),
+                );
+              },
+            ),
           );
           break;
         default:

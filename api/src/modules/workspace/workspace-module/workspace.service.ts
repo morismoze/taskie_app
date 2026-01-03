@@ -1376,6 +1376,27 @@ export class WorkspaceService {
       );
     }
 
+    // Check if task has due date and that due date passed
+    // but the payload consists of Completed status/es, which
+    // is invalid. Task assignments whose task's due date has
+    // passed can only have statuses updated to Completed
+    // as Stale, not Completed.
+    const now = DateTime.now();
+    const isTaskPastDueDate =
+      task.dueDate != null && DateTime.fromJSDate(task.dueDate) < now;
+    const firstCompletedTask = assignments.find(
+      (assignment) => assignment.status == ProgressStatus.COMPLETED,
+    );
+
+    if (isTaskPastDueDate && firstCompletedTask) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNMENTS_COMPLETED_STATUS_DUE_DATE_PASSED,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     const updatedTaskAssignments =
       await this.taskAssignmentService.updateAssignmentsByTaskId({
         taskId,
