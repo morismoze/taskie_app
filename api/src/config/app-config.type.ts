@@ -1,5 +1,7 @@
+import { Environment } from './app.config';
+
 export type AppConfig = {
-  nodeEnv: string;
+  nodeEnv: Environment;
   name: string;
   port: number;
   serverCnameUrl: string;
