@@ -22,13 +22,10 @@ import '../../../services/local/database_service.dart';
 import '../../../services/local/logger_service.dart';
 import 'workspace_task_repository.dart';
 
-const _kDefaultPaginablePage = 1;
-const _kDefaultPaginableLimit = 15;
-const _kDefaultPaginableSort = SortBy.newestFirst;
 final _defaultFilter = ObjectiveFilter(
-  page: _kDefaultPaginablePage,
-  limit: _kDefaultPaginableLimit,
-  sort: _kDefaultPaginableSort,
+  page: 1,
+  limit: 15,
+  sort: SortBy.newestFirst,
 );
 
 class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
@@ -66,13 +63,12 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     bool forceFetch = false,
     ObjectiveFilter? filter,
   }) async* {
-    // Refetch when:
-    // 1. forceFetch is `true`
-    // 2. provided [filter] and class [_filter] are different
-    // 3. there is no value for given [effectiveFilter] cache key
-
     // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
+    // This is merely used when there was an attempt to load
+    // filtered tasks offline from the API to revert the filter
+    final prevFilter = _activeFilter;
+    final isChangingFilter = effectiveFilter != _activeFilter;
 
     if (!forceFetch &&
         effectiveFilter == _activeFilter &&
@@ -81,24 +77,19 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
       yield const Result.ok(null);
     }
 
-    if (!forceFetch && effectiveFilter == _defaultFilter) {
-      // Read from DB cache only if the filter is the default
-      // filter since we save only the tasks fetched by
-      // the default filter to the DB - it doesn't make sense
-      // to save x page with y filters and z sort to the DB.
-      // There is a industry standard way to save paginable
-      // items to the DB, by taking only the items and saving
-      // them to the DB list, and then do queries over that
-      // list - basically we move querying the server DB
-      // which has all the tasks, to querying local DB
-      // which has the tasks up to the page and filters/
-      // sort which were last fetched online. That would
-      // be a through offline support.
+    // We load from DB:
+    // 1. on the initial load only
+    // 2. if no filters were applied (this is maybe
+    // redundant because of point 1.)
+    if (!forceFetch &&
+        _cachedTasks == null &&
+        effectiveFilter == _defaultFilter) {
       final dbResult = await _databaseService.getTasks();
       if (dbResult is Ok<Paginable<WorkspaceTask>?>) {
         final dbTasks = dbResult.value;
         if (dbTasks != null) {
           _cachedTasks = dbTasks;
+          _activeFilter = effectiveFilter;
           notifyListeners();
           yield const Result.ok(null);
         }
@@ -107,13 +98,23 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
 
     if (effectiveFilter != _activeFilter) {
       _activeFilter = effectiveFilter;
-      _isFilterSearch = true;
+    }
+    _isFilterSearch = _activeFilter != _defaultFilter;
+
+    // This is an edge case when user fetches e.g. All statuses
+    // then goes to nth page, and then tries to fetch only
+    // Completed status, but the result doesn't have that page
+    // (it has less pages). So in this case we always revert to
+    // page 1.
+    if (filter != null &&
+        (prevFilter.status != filter.status ||
+            prevFilter.search != filter.search)) {
+      _activeFilter = _activeFilter.copyWith(page: 1);
+      _isFilterSearch = _activeFilter != _defaultFilter;
+      notifyListeners();
     }
 
-    if (filter == null) {
-      _isFilterSearch = false;
-    }
-
+    // Trigger API request
     final queryParams = ObjectiveRequestQueryParams(
       page: _activeFilter.page,
       limit: _activeFilter.limit,
@@ -142,12 +143,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         _cachedTasks = paginable;
         notifyListeners();
 
-        // Update persistent cache
-        if (effectiveFilter == _defaultFilter) {
-          // Save to DB only if filter is the same as
-          // the default filter
-          _updateDbCache(_cachedTasks!);
-        }
+        await _updateDbCache(_cachedTasks!);
 
         yield const Result.ok(null);
       case Error<PaginableResponse<WorkspaceTaskResponse>>():
@@ -157,6 +153,14 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           error: result.error,
           stackTrace: result.stackTrace,
         );
+
+        if (isChangingFilter) {
+          // Return to previous filter in case of an error
+          _activeFilter = prevFilter;
+          _isFilterSearch = _activeFilter != _defaultFilter;
+          notifyListeners();
+        }
+
         yield Result.error(result.error, result.stackTrace);
     }
   }
@@ -199,7 +203,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         notifyListeners();
 
         // Update persistent cache
-        _updateDbCache(_cachedTasks!);
+        await _updateDbCache(_cachedTasks!);
 
         return const Result.ok(null);
       case Error<WorkspaceTaskResponse>():
@@ -267,7 +271,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           notifyListeners();
 
           // Update persistent cache
-          _updateDbCache(_cachedTasks!);
+          await _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -327,7 +331,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           notifyListeners();
 
           // Update persistent cache
-          _updateDbCache(_cachedTasks!);
+          await _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -384,7 +388,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           notifyListeners();
 
           // Update persistent cache
-          _updateDbCache(_cachedTasks!);
+          await _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -447,7 +451,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           notifyListeners();
 
           // Update persistent cache
-          _updateDbCache(_cachedTasks!);
+          await _updateDbCache(_cachedTasks!);
         }
 
         return const Result.ok(null);
@@ -478,14 +482,25 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           (task) => task.id == taskId,
         );
         _cachedTasks!.items.remove(closedTask);
+        // Calculate total, totalPages and current page
         --_cachedTasks!.total;
-        // Re-calculate total pages
-        _cachedTasks!.totalPages = (_cachedTasks!.total / _activeFilter.limit)
+        final newTotalPages = (_cachedTasks!.total / _activeFilter.limit)
             .ceil();
+        _cachedTasks!.totalPages = newTotalPages;
+        if (_cachedTasks!.items.isEmpty && _cachedTasks!.total > 0) {
+          // Go to previous page if possible, or stay on the 1st
+          final targetPage = _activeFilter.page > 1
+              ? _activeFilter.page - 1
+              : 1;
+          _activeFilter = _activeFilter.copyWith(page: targetPage);
+          notifyListeners();
+          await loadTasks(workspaceId: workspaceId, forceFetch: true).last;
+          return const Result.ok(null);
+        }
         notifyListeners();
 
         // Update persistent cache
-        _updateDbCache(_cachedTasks!);
+        await _updateDbCache(_cachedTasks!);
 
         return const Result.ok(null);
       case Error():
@@ -503,17 +518,17 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
   Future<void> purgeTasksCache() async {
     _isFilterSearch = false;
     _cachedTasks = null;
-    _activeFilter = ObjectiveFilter(
-      page: _kDefaultPaginablePage,
-      limit: _kDefaultPaginableLimit,
-      search: null,
-      status: null,
-      sort: _kDefaultPaginableSort,
-    );
+    _activeFilter = _defaultFilter;
     await _databaseService.clearTasks();
   }
 
-  void _updateDbCache(Paginable<WorkspaceTask> payload) async {
+  Future<void> _updateDbCache(Paginable<WorkspaceTask> payload) async {
+    // Save to DB only if filter is the same as
+    // the default filter (first page with no filters)
+    if (_isFilterSearch) {
+      return;
+    }
+
     final dbSaveResult = await _databaseService.setTasks(payload);
     if (dbSaveResult is Error<void>) {
       _loggerService.log(

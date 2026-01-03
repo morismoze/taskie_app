@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../view_models/tasks_screen_viewmodel.dart';
-import 'tasks_sorting_header.dart';
+import 'tasks_filtering_header.dart';
 
-class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
-  const TasksSortingHeaderDelegate({
+class TasksFilteringHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const TasksFilteringHeaderDelegate({
     required this.viewModel,
     required this.height,
   });
@@ -14,7 +14,7 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(_, _, _) {
-    return TasksSortingHeader(viewModel: viewModel);
+    return TasksFilteringHeader(viewModel: viewModel);
   }
 
   @override
@@ -24,7 +24,7 @@ class TasksSortingHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => height;
 
   @override
-  bool shouldRebuild(covariant TasksSortingHeaderDelegate oldDelegate) {
+  bool shouldRebuild(covariant TasksFilteringHeaderDelegate oldDelegate) {
     return viewModel.activeFilter != oldDelegate.viewModel.activeFilter ||
         viewModel.loadTasks.running != oldDelegate.viewModel.loadTasks.running;
   }

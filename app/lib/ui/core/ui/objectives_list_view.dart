@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:number_paginator/number_paginator.dart';
 
+import '../../../domain/models/filter.dart';
 import '../../navigation/app_fab/widgets/app_floating_action_button.dart';
 import '../theme/dimens.dart';
 
@@ -12,13 +13,13 @@ class ObjectivesListView extends StatefulWidget {
     required this.headerDelegate,
     required this.list,
     required this.totalPages,
-    required this.currentPage,
+    required this.currentFilter,
     required this.onPageChange,
   });
 
   final SliverPersistentHeaderDelegate headerDelegate;
   final Widget list;
-  final int currentPage;
+  final ObjectiveFilter currentFilter;
   final int totalPages;
 
   /// [page] param starts from 0
@@ -30,6 +31,7 @@ class ObjectivesListView extends StatefulWidget {
 
 class _ObjectivesListViewState extends State<ObjectivesListView> {
   final NumberPaginatorController _controller = NumberPaginatorController();
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -41,19 +43,37 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
     super.didUpdateWidget(oldWidget);
 
     final paginatorCurrentPage = _controller.currentPage + 1;
-    final repositoryCurrentPage = widget.currentPage;
+    final repositoryCurrentPage = widget.currentFilter.page;
 
-    // This case can happen for example:
-    // 1. When the user closes all tasks/goals of the current page
-    // and then we need to re-navigate the user to the previous page
+    // This case can happen when the user closes all tasks/goals of the current page
+    // and then we need to change the current page. This currentPage should only
+    // visually change to the provided page and not invoke onPageChange.
     if (paginatorCurrentPage != repositoryCurrentPage) {
-      _controller.navigateToPage(repositoryCurrentPage);
+      _controller.currentPage = repositoryCurrentPage - 1;
     }
+
+    // Scroll to top when filter is changed
+    if (widget.currentFilter != oldWidget.currentFilter) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverPadding(
           padding: EdgeInsets.symmetric(
@@ -86,7 +106,9 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
                 controller: _controller,
                 numberPages: widget.totalPages,
                 // [page] param starts from 0
-                onPageChange: (page) => widget.onPageChange(page + 1),
+                onPageChange: (page) {
+                  widget.onPageChange(page + 1);
+                },
                 child: const SizedBox(
                   height: 48,
                   child: Row(
@@ -106,6 +128,4 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
       ],
     );
   }
-
-  void _compareRepositoryAndPaginatorCurrentPages() {}
 }

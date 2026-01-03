@@ -42,7 +42,8 @@ class _BackButtonHandlerState extends State<BackButtonHandler> {
         }
 
         // 1.b) Check if we are on the Tasks tab
-        final isTasksTab = widget.navigationShell.currentIndex == tasksTabIndex;
+        final isTasksTab =
+            widget.navigationShell.currentIndex == kTasksTabIndex;
 
         if (!isTasksTab) {
           // If we are not on Tasks tab, then just navigate to Tasks tab

@@ -17,13 +17,10 @@ import '../../../services/local/database_service.dart';
 import '../../../services/local/logger_service.dart';
 import 'workspace_goal_repository.dart';
 
-const _kDefaultPaginablePage = 1;
-const _kDefaultPaginableLimit = 15;
-const _kDefaultPaginableSort = SortBy.newestFirst;
 final _defaultFilter = ObjectiveFilter(
-  page: _kDefaultPaginablePage,
-  limit: _kDefaultPaginableLimit,
-  sort: _kDefaultPaginableSort,
+  page: 1,
+  limit: 15,
+  sort: SortBy.newestFirst,
 );
 
 class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
@@ -61,13 +58,12 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
     bool forceFetch = false,
     ObjectiveFilter? filter,
   }) async* {
-    // Refetch when:
-    // 1. forceFetch is `true`
-    // 2. provided [filter] and class [_filter] are different
-    // 3. there is no value for given [effectiveFilter] cache key
-
     // Either use provided filter or cached one
     final effectiveFilter = filter ?? _activeFilter;
+    // This is merely used when there was an attempt to load
+    // filtered tasks offline from the API to revert the filter
+    final prevFilter = _activeFilter;
+    final isChangingFilter = effectiveFilter != _activeFilter;
 
     if (!forceFetch &&
         effectiveFilter == _activeFilter &&
@@ -76,24 +72,19 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
       yield const Result.ok(null);
     }
 
-    if (!forceFetch && effectiveFilter == _defaultFilter) {
-      // Read from DB cache only if the filter is the default
-      // filter since we save only the goals fetched by
-      // the default filter to the DB - it doesn't make sense
-      // to save x page with y filters and z sort to the DB.
-      // There is a industry standard way to save paginable
-      // items to the DB, by taking only the items and saving
-      // them to the DB list, and then do queries over that
-      // list - basically we move querying the server DB
-      // which has all the tasks, to querying local DB
-      // which has the tasks up to the page and filters/
-      // sort which were last fetched online. That would
-      // be a through offline support.
+    // We load from DB:
+    // 1. on the initial load only
+    // 2. if no filters were applied (this is maybe
+    // redundant because of point 1.)
+    if (!forceFetch &&
+        _cachedGoals == null &&
+        effectiveFilter == _defaultFilter) {
       final dbResult = await _databaseService.getGoals();
       if (dbResult is Ok<Paginable<WorkspaceGoal>?>) {
         final dbGoals = dbResult.value;
         if (dbGoals != null) {
           _cachedGoals = dbGoals;
+          _activeFilter = effectiveFilter;
           notifyListeners();
           yield const Result.ok(null);
         }
@@ -102,11 +93,20 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
 
     if (effectiveFilter != _activeFilter) {
       _activeFilter = effectiveFilter;
-      _isFilterSearch = true;
     }
+    _isFilterSearch = _activeFilter != _defaultFilter;
 
-    if (filter == null) {
-      _isFilterSearch = false;
+    // This is an edge case when user fetches e.g. All statuses
+    // then goes to nth page, and then tries to fetch only
+    // Completed status, but the result doesn't have that page
+    // (it has less pages). So in this case we always revert to
+    // page 1.
+    if (filter != null &&
+        (prevFilter.status != filter.status ||
+            prevFilter.search != filter.search)) {
+      _activeFilter = _activeFilter.copyWith(page: 1);
+      _isFilterSearch = _activeFilter != _defaultFilter;
+      notifyListeners();
     }
 
     // Trigger API request
@@ -139,11 +139,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         notifyListeners();
 
         // Update persistent cache
-        if (effectiveFilter == _defaultFilter) {
-          // Save to DB only if filter is the same as
-          // the default filter
-          _updateDbCache(_cachedGoals!);
-        }
+        await _updateDbCache(_cachedGoals!);
 
         yield const Result.ok(null);
       case Error<PaginableResponse<WorkspaceGoalResponse>>():
@@ -153,6 +149,14 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           error: result.error,
           stackTrace: result.stackTrace,
         );
+
+        if (isChangingFilter) {
+          // Return to previous filter in case of an error
+          _activeFilter = prevFilter;
+          _isFilterSearch = _activeFilter != _defaultFilter;
+          notifyListeners();
+        }
+
         yield Result.error(result.error, result.stackTrace);
     }
   }
@@ -194,7 +198,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         notifyListeners();
 
         // Update persistent cache
-        _updateDbCache(_cachedGoals!);
+        await _updateDbCache(_cachedGoals!);
 
         return const Result.ok(null);
       case Error<WorkspaceGoalResponse>():
@@ -262,7 +266,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           notifyListeners();
 
           // Update persistent cache
-          _updateDbCache(_cachedGoals!);
+          await _updateDbCache(_cachedGoals!);
         }
 
         return const Result.ok(null);
@@ -293,14 +297,25 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           (goal) => goal.id == goalId,
         );
         _cachedGoals!.items.remove(closedGoal);
+        // Calculate total, totalPages and current page
         --_cachedGoals!.total;
-        // Re-calculate total pages
-        _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
+        final newTotalPages = (_cachedGoals!.total / _activeFilter.limit)
             .ceil();
+        _cachedGoals!.totalPages = newTotalPages;
+        if (_cachedGoals!.items.isEmpty && _cachedGoals!.total > 0) {
+          // Go to previous page if possible, or stay on the 1st
+          final targetPage = _activeFilter.page > 1
+              ? _activeFilter.page - 1
+              : 1;
+          _activeFilter = _activeFilter.copyWith(page: targetPage);
+          notifyListeners();
+          await loadGoals(workspaceId: workspaceId, forceFetch: true).last;
+          return const Result.ok(null);
+        }
         notifyListeners();
 
         // Update persistent cache
-        _updateDbCache(_cachedGoals!);
+        await _updateDbCache(_cachedGoals!);
 
         return const Result.ok(null);
       case Error():
@@ -318,17 +333,17 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
   Future<void> purgeGoalsCache() async {
     _isFilterSearch = false;
     _cachedGoals = null;
-    _activeFilter = ObjectiveFilter(
-      page: _kDefaultPaginablePage,
-      limit: _kDefaultPaginableLimit,
-      search: null,
-      status: null,
-      sort: _kDefaultPaginableSort,
-    );
+    _activeFilter = _defaultFilter;
     await _databaseService.clearGoals();
   }
 
-  void _updateDbCache(Paginable<WorkspaceGoal> payload) async {
+  Future<void> _updateDbCache(Paginable<WorkspaceGoal> payload) async {
+    // Save to DB only if filter is the same as
+    // the default filter (first page with no filters)
+    if (_isFilterSearch) {
+      return;
+    }
+
     final dbSaveResult = await _databaseService.setGoals(payload);
     if (dbSaveResult is Error<void>) {
       _loggerService.log(

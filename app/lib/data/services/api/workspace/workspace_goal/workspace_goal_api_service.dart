@@ -63,7 +63,7 @@ class WorkspaceGoalApiService extends BaseApiService {
   }) {
     return executeVoidApiCall(
       apiCall: () =>
-          _apiClient.client.post(ApiEndpoints.closeGoal(workspaceId, goalId)),
+          _apiClient.client.patch(ApiEndpoints.closeGoal(workspaceId, goalId)),
     );
   }
 }

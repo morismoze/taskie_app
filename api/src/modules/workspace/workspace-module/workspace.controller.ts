@@ -267,7 +267,7 @@ export class WorkspaceController {
     });
   }
 
-  @Post(':workspaceId/tasks/:taskId/close')
+  @Patch(':workspaceId/tasks/:taskId/close')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -374,7 +374,7 @@ export class WorkspaceController {
     });
   }
 
-  @Post(':workspaceId/goals/:goalId/close')
+  @Patch(':workspaceId/goals/:goalId/close')
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)

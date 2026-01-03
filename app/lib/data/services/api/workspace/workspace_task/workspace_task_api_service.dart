@@ -109,7 +109,7 @@ class WorkspaceTaskApiService extends BaseApiService {
   }) {
     return executeVoidApiCall(
       apiCall: () =>
-          _apiClient.client.post(ApiEndpoints.closeTask(workspaceId, taskId)),
+          _apiClient.client.patch(ApiEndpoints.closeTask(workspaceId, taskId)),
     );
   }
 }

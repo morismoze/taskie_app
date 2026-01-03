@@ -15,10 +15,9 @@ import '../view_models/app_bottom_navigation_bar_view_model.dart';
 
 const double kAppBottomNavigationBarHeight = 58.0;
 const double kAppBottomNavigationBarBorderRadius = 40.0;
-const int tasksTabIndex = 0;
-const int goalsTabIndex = 1;
-const int leaderboardTabIndex = 2;
-const int userProfileTabIndex = 3;
+const int kTasksTabIndex = 0;
+const int _kGoalsTabIndex = 1;
+const int _kLeaderboardTabIndex = 2;
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({
@@ -54,25 +53,24 @@ class AppBottomNavigationBar extends StatelessWidget {
             _TabItem(
               icon: FontAwesomeIcons.house,
               label: context.localization.bottomNavigationBarTasksLabel,
-              isActive: currentIndex == tasksTabIndex,
-              onPressed: () => _navigateToBranch(tasksTabIndex),
+              isActive: currentIndex == kTasksTabIndex,
+              onPressed: () => _navigateToBranch(kTasksTabIndex),
             ),
             _TabItem(
               icon: FontAwesomeIcons.solidFlag,
               label: context.localization.goalsLabel,
-              isActive: currentIndex == goalsTabIndex,
-              onPressed: () => _navigateToBranch(goalsTabIndex),
+              isActive: currentIndex == _kGoalsTabIndex,
+              onPressed: () => _navigateToBranch(_kGoalsTabIndex),
             ),
             if (canCreateObjective)
               const SizedBox(width: kAppFloatingActionButtonSize),
             _TabItem(
               icon: FontAwesomeIcons.trophy,
               label: context.localization.leaderboardLabel,
-              isActive: currentIndex == leaderboardTabIndex,
-              onPressed: () => _navigateToBranch(leaderboardTabIndex),
+              isActive: currentIndex == _kLeaderboardTabIndex,
+              onPressed: () => _navigateToBranch(_kLeaderboardTabIndex),
             ),
             _AvatarTabItem(
-              isActive: currentIndex == userProfileTabIndex,
               onPressed: () => _openUserProfile(context),
               user: viewModel.user!,
             ),
@@ -104,10 +102,10 @@ class AppBottomNavigationBar extends StatelessWidget {
   int _getCurrentTabIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     return switch (location) {
-      final path when path.contains(Routes.tasksRelative) => tasksTabIndex,
-      final path when path.contains(Routes.goalsRelative) => goalsTabIndex,
+      final path when path.contains(Routes.tasksRelative) => kTasksTabIndex,
+      final path when path.contains(Routes.goalsRelative) => _kGoalsTabIndex,
       final path when path.contains(Routes.leaderboardRelative) =>
-        leaderboardTabIndex,
+        _kLeaderboardTabIndex,
       _ => 0,
     };
   }
@@ -159,13 +157,8 @@ class _TabItem extends StatelessWidget {
 }
 
 class _AvatarTabItem extends StatelessWidget {
-  const _AvatarTabItem({
-    required this.isActive,
-    required this.onPressed,
-    required this.user,
-  });
+  const _AvatarTabItem({required this.onPressed, required this.user});
 
-  final bool isActive;
   final VoidCallback onPressed;
   final User user;
 
@@ -180,33 +173,20 @@ class _AvatarTabItem extends StatelessWidget {
             spacing: 4,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                decoration: isActive
-                    ? BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 2,
-                        ),
-                      )
-                    : null,
-                child: AppAvatar(
-                  hashString: user.id,
-                  firstName: user.firstName,
-                  imageUrl: user.profileImageUrl,
-                  size: 20,
-                ),
+              AppAvatar(
+                hashString: user.id,
+                firstName: user.firstName,
+                imageUrl: user.profileImageUrl,
+                size: 20,
               ),
               Text(
                 context.localization.misc_profile,
                 style: TextStyle(
                   fontSize: 10,
-                  color: isActive
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.4),
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.4),
+                  fontWeight: FontWeight.normal,
                 ),
               ),
             ],

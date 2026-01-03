@@ -96,19 +96,6 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        // Edge case: when the user closes all the tasks from
-        // the current page, repository updates total and totalPages
-        // and then we just re-fetch the current page again - the
-        // thing is, current page will be updated in the repository
-        // as said previously, and we will fetch that new page.
-        // The actual UI page change is done in the ObjectivesListView and
-        // here we only amend the repository level page value.
-        final tasks = _workspaceTaskRepository.tasks;
-        if (tasks == null || tasks.items.isEmpty) {
-          _workspaceTaskRepository
-              .loadTasks(workspaceId: _activeWorkspaceId, forceFetch: true)
-              .listen((_) {});
-        }
         return const Result.ok(null);
       case Error():
         return result;

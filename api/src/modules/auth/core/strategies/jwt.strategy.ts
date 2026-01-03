@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // singletons (not request scoped). So we resolve that service with
     // ModuleRef.
     private readonly moduleRef: ModuleRef,
-    private readonly configService: ConfigService<AggregatedConfig>,
+    configService: ConfigService<AggregatedConfig>,
   ) {
     // Calling parent constructor:
     // 1. Automatically verifies signature

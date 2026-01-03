@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/ui/activity_indicator.dart';
-import '../../view_models/tasks_screen_viewmodel.dart';
-import 'sort_by_status_button.dart';
+import '../../view_models/goals_screen_viewmodel.dart';
+import 'filter_by_status_button.dart';
 import 'sort_by_time_button.dart';
 
-class TasksSortingHeader extends StatelessWidget {
-  const TasksSortingHeader({super.key, required this.viewModel});
+class GoalsFilteringHeader extends StatelessWidget {
+  const GoalsFilteringHeader({super.key, required this.viewModel});
 
-  final TasksScreenViewModel viewModel;
+  final GoalsScreenViewmodel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +16,12 @@ class TasksSortingHeader extends StatelessWidget {
       spacing: 13,
       children: [
         SortByTimeButton(viewModel: viewModel),
-        SortByStatusButton(viewModel: viewModel),
+        FilterByStatusButton(viewModel: viewModel),
         const Spacer(),
         ListenableBuilder(
-          listenable: viewModel.loadTasks,
+          listenable: viewModel.loadGoals,
           builder: (_, child) {
-            if (viewModel.loadTasks.running) {
+            if (viewModel.loadGoals.running) {
               return child!;
             }
             return const SizedBox.shrink();
