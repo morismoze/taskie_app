@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import {
   IsValidWorkspaceDescription,
@@ -5,10 +6,17 @@ import {
 } from 'src/common/decorators/request-validation-decorators';
 
 export class UpdateWorkspaceRequest {
+  @ApiPropertyOptional({
+    type: String,
+  })
   @IsOptional()
   @IsValidWorkspaceName()
   name?: string;
 
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true, // Allows null - clears description
+  })
   @IsOptional()
   @IsValidWorkspaceDescription()
   description?: string | null;

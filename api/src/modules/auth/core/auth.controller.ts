@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   HttpCode,
@@ -8,19 +7,28 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { AuthService } from './auth.service';
 import { RequestWithUser } from './domain/request-with-user.domain';
-import { TokenRefreshRequest } from './dto/token-refresh-request.dto';
 import { TokenRefreshResponse } from './dto/token-refresh-response.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { JwtRefreshPayload } from './strategies/jwt-refresh-payload.type';
 
+@ApiTags('Auth')
+@ApiBearerAuth()
 @Controller({
   path: 'auth',
+  version: '1',
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -28,9 +36,20 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Refresh access token (use refresh token in the Bearer header)',
+  })
+  @ApiOkResponse({
+    type: TokenRefreshResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid refresh token',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while updating the session',
+  })
   refresh(
     @Req() request: Request & { user: JwtRefreshPayload },
-    @Body() _: TokenRefreshRequest,
   ): Promise<TokenRefreshResponse> {
     return this.authService.refreshToken(request.user);
   }
@@ -38,13 +57,14 @@ export class AuthController {
   @Delete('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Logout the user',
+  })
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({
+    description: 'Invalid access token',
+  })
   public async logout(@Req() request: RequestWithUser): Promise<void> {
-    throw new ApiHttpException(
-      {
-        code: ApiErrorCode.SERVER_ERROR,
-      },
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
     return this.authService.logout(request.user);
   }
 }

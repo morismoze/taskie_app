@@ -34,7 +34,7 @@ class WorkspaceInviteApiService extends BaseApiService {
   Future<Result<WorkspaceResponse>> joinWorkspace(String inviteToken) async {
     return executeApiCall(
       apiCall: () =>
-          _apiClient.client.put(ApiEndpoints.joinWorkspace(inviteToken)),
+          _apiClient.client.post(ApiEndpoints.joinWorkspace(inviteToken)),
       fromJson: WorkspaceResponse.fromJson,
     );
   }

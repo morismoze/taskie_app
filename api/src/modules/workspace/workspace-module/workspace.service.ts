@@ -16,7 +16,6 @@ import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
 import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
-import { WorkspaceUserCore } from '../workspace-user-module/domain/workspace-user-core.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
@@ -47,14 +46,8 @@ import {
   WorkspaceTasksResponse,
 } from './dto/response/workspace-tasks-response.dto';
 import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
-import {
-  WorkspaceUserResponse,
-  WorkspaceUsersResponse,
-} from './dto/response/workspace-users-response.dto';
-import {
-  WorkspaceResponse,
-  WorkspacesResponse,
-} from './dto/response/workspaces-response.dto';
+import { WorkspaceUserResponse } from './dto/response/workspace-users-response.dto';
+import { WorkspaceResponse } from './dto/response/workspaces-response.dto';
 import { WorkspaceRepository } from './persistence/workspace.repository';
 
 @Injectable()
@@ -334,12 +327,20 @@ export class WorkspaceService {
       );
     }
 
-    // Using assertion because workspace user should be always found based on how JWT works (custom secret)
     const creatorWorkspaceUser =
-      (await this.workspaceUserService.findByUserIdAndWorkspaceId({
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
         userId: createdById,
         workspaceId,
-      })) as WorkspaceUserCore;
+      });
+
+    if (!creatorWorkspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const { newUser, newWorkspaceUser } =
       await this.unitOfWorkService.withTransaction(async () => {
@@ -388,7 +389,7 @@ export class WorkspaceService {
 
   async getWorkspacesByUser(
     userId: JwtPayload['sub'],
-  ): Promise<WorkspacesResponse> {
+  ): Promise<WorkspaceResponse[]> {
     const userWorkspaces = await this.workspaceRepository.findAllByUserId({
       userId,
       relations: {
@@ -396,7 +397,7 @@ export class WorkspaceService {
       },
     });
 
-    const response: WorkspacesResponse = userWorkspaces.map((workspace) => ({
+    const response: WorkspaceResponse[] = userWorkspaces.map((workspace) => ({
       id: workspace.id,
       name: workspace.name,
       description: workspace.description,
@@ -418,7 +419,7 @@ export class WorkspaceService {
 
   async getWorkspaceUsers(
     workspaceId: Workspace['id'],
-  ): Promise<WorkspaceUsersResponse> {
+  ): Promise<WorkspaceUserResponse[]> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
       relations: {
@@ -440,7 +441,7 @@ export class WorkspaceService {
       );
     }
 
-    const response: WorkspaceUsersResponse = workspace.members
+    const response: WorkspaceUserResponse[] = workspace.members
       .map((member) => ({
         id: member.id,
         firstName: member.user.firstName,
@@ -1055,12 +1056,12 @@ export class WorkspaceService {
       );
     }
 
+    await this.invalidateUserSession({ workspaceId, workspaceUserId });
+
     await this.workspaceUserService.delete({
       workspaceId,
       workspaceUserId,
     });
-
-    await this.invalidateUserSession({ workspaceId, workspaceUserId });
   }
 
   async leaveWorkspace({

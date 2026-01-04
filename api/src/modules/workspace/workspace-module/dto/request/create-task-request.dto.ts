@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -14,20 +15,39 @@ import {
 import { TASK_MAXIMUM_ASSIGNEES_COUNT } from 'src/modules/task/task-module/domain/task.constants';
 
 export class CreateTaskRequest {
+  @ApiProperty()
   @IsValidTaskTitle()
   title: string;
 
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+  })
   @IsOptional()
   @IsValidTaskDescription()
   description: string | null;
 
+  @ApiProperty()
   @IsValidTaskRewardPoints()
   rewardPoints: number;
 
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    format: 'date',
+  })
   @IsOptional()
   @IsValidTaskDueDate()
   dueDate: string | null;
 
+  @ApiProperty({
+    description: 'Array of WorkspaceUser IDs',
+    type: String,
+    isArray: true,
+    format: 'uuid',
+    minItems: 1,
+    maxItems: TASK_MAXIMUM_ASSIGNEES_COUNT,
+  })
   @IsArray()
   @IsUUID('4', { each: true })
   @ArrayMinSize(1)

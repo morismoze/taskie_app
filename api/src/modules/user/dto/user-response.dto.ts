@@ -1,17 +1,33 @@
-import { WorkspaceResponse } from 'src/modules/workspace/workspace-module/dto/response/workspaces-response.dto';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
 
-export interface UserResponse {
-  id: string;
-  firstName: string;
-  lastName: string;
-  roles: RolePerWorkspace[];
-  email: string | null;
-  profileImageUrl: string | null;
-  createdAt: string;
+export class RolePerWorkspace {
+  @ApiProperty()
+  workspaceId!: string;
+
+  @ApiProperty({ enum: WorkspaceUserRole })
+  role!: WorkspaceUserRole;
 }
 
-export interface RolePerWorkspace {
-  workspaceId: WorkspaceResponse['id'];
-  role: WorkspaceUserRole;
+export class UserResponse {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  firstName!: string;
+
+  @ApiProperty()
+  lastName!: string;
+
+  @ApiProperty({ type: [RolePerWorkspace] })
+  roles!: RolePerWorkspace[];
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  email!: string | null;
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  profileImageUrl!: string | null;
+
+  @ApiProperty()
+  createdAt!: string;
 }
