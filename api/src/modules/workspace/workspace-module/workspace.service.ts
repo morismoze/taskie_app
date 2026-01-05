@@ -1359,24 +1359,6 @@ export class WorkspaceService {
     // Closed task can't be updated
     await this.checkTaskIsClosed(taskId);
 
-    // We need to check if provided assignee IDs exist as this specific task assignments
-    const providedAssigneeIds = assignments.map((item) => item.assigneeId);
-    const existingTaskAssignments =
-      await this.taskAssignmentService.findAllByTaskIdAndAssigneeIds({
-        taskId,
-        assigneeIds: providedAssigneeIds,
-      });
-
-    if (existingTaskAssignments.length !== providedAssigneeIds.length) {
-      // One or more provided assignee IDs doesn't exist in task assignments for the given task
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
     // Check if task has due date and that due date passed
     // but the payload consists of Completed status/es, which
     // is invalid. Task assignments whose task's due date has

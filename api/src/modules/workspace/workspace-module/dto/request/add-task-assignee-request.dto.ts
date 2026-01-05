@@ -13,8 +13,9 @@ export class AddTaskAssigneeRequest {
   })
   @IsArray()
   @ArrayMinSize(1)
-  // Not sure about this one as this request type is about
-  // adding new assignees to already existing assignees list
+  // This is just defining a reasonable upper limit.
+  // The actual max assignees count is done in the
+  // service business layer.
   @ArrayMaxSize(TASK_MAXIMUM_ASSIGNEES_COUNT)
   @IsUUID('4', { each: true })
   assigneeIds: string[];

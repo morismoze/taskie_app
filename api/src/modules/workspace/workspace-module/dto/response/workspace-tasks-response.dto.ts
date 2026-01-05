@@ -42,7 +42,7 @@ export class WorkspaceTaskResponse {
   @ApiProperty({ type: String, nullable: true })
   description!: string | null;
 
-  @ApiProperty({ type: String, nullable: true, format: 'date' })
+  @ApiProperty({ type: String, nullable: true, format: 'date-time' })
   dueDate!: string | null;
 
   @ApiProperty()

@@ -196,20 +196,31 @@ export class TaskAssignmentService {
     workspaceId: TaskAssignment['task']['workspace']['id'];
     data: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<TaskAssignmentWithAssigneeUser[]> {
-    // 1. Get task assignments
-    const taskAssignments = await this.findAllByTaskIdWithAssigneeUser(taskId);
+    // We need to check if provided assignee IDs exist as this specific
+    // task assignments. Possible case is another Manager removed one or
+    // more of these workspace users.
+    const providedAssigneeIds = data.map((item) => item.assigneeId);
+    const existingTaskAssignments = await this.findAllByTaskIdAndAssigneeIds({
+      taskId,
+      assigneeIds: providedAssigneeIds,
+    });
 
-    if (taskAssignments.length === 0) {
-      // If there are no assignments, return empty array
-      return [];
+    if (existingTaskAssignments.length !== providedAssigneeIds.length) {
+      // One or more provided assignee IDs doesn't exist in task assignments for the given task
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     // 2. Update existing task assignments statuses
     await this.unitOfWorkService.withTransaction(async () => {
       for (const assignment of data) {
-        const existingAssignment = taskAssignments.find(
+        const existingAssignment = existingTaskAssignments.find(
           (existingAssignment) =>
-            existingAssignment.assignee.id === assignment.assigneeId,
+            existingAssignment.id === assignment.assigneeId,
         );
         const isNewStatus =
           existingAssignment && assignment.status !== existingAssignment.status;

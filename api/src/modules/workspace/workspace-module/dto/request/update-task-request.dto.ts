@@ -6,9 +6,22 @@ import {
   IsValidTaskRewardPoints,
   IsValidTaskTitle,
 } from 'src/common/decorators/request-validation-decorators';
+import {
+  OBJECTIVE_DESCRIPTION_MAX_CHARS,
+  OBJECTIVE_NAME_MAX_CHARS,
+  OBJECTIVE_NAME_MIN_CHARS,
+} from 'src/common/helper/constants';
+import {
+  TASK_REWARD_POINTS_MAXIMAL,
+  TASK_REWARD_POINTS_MINIMAL,
+  TASK_REWARD_POINTS_STEP,
+} from 'src/modules/task/task-module/domain/task.constants';
 
 export class UpdateTaskRequest {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    minLength: OBJECTIVE_NAME_MIN_CHARS,
+    maxLength: OBJECTIVE_NAME_MAX_CHARS,
+  })
   @IsValidTaskTitle()
   @NotEquals(null)
   @ValidateIf((_, value) => value !== undefined)
@@ -18,13 +31,19 @@ export class UpdateTaskRequest {
     type: String,
     nullable: true,
     description: 'Setting it to null, removes description',
+    maxLength: OBJECTIVE_DESCRIPTION_MAX_CHARS,
   })
   @IsOptional()
   @IsValidTaskDescription()
   // Can be set to null - resets it
   description?: string | null;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: `Reward points must be an integer between ${TASK_REWARD_POINTS_MINIMAL} and ${TASK_REWARD_POINTS_MAXIMAL}, and a multiple of ${TASK_REWARD_POINTS_STEP}.`,
+    minimum: TASK_REWARD_POINTS_MINIMAL,
+    maximum: TASK_REWARD_POINTS_MAXIMAL,
+    multipleOf: TASK_REWARD_POINTS_STEP,
+  })
   @IsValidTaskRewardPoints()
   @NotEquals(null)
   @ValidateIf((_, value) => value !== undefined)
@@ -33,8 +52,8 @@ export class UpdateTaskRequest {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
-    format: 'date',
-    description: 'Setting it to null, removes due date',
+    format: 'date-time',
+    description: 'Due date in ISO 8601 (UTC). Must not be in the past.',
   })
   @IsOptional()
   @IsValidTaskDueDate()

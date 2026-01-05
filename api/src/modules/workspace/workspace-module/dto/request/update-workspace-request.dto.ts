@@ -4,10 +4,16 @@ import {
   IsValidWorkspaceDescription,
   IsValidWorkspaceName,
 } from 'src/common/decorators/request-validation-decorators';
+import {
+  WORKSPACE_DESCRIPTION_MAX_CHARS,
+  WORKSPACE_NAME_MAX_CHARS,
+  WORKSPACE_NAME_MIN_CHARS,
+} from 'src/common/helper/constants';
 
 export class UpdateWorkspaceRequest {
   @ApiPropertyOptional({
-    type: String,
+    minLength: WORKSPACE_NAME_MIN_CHARS,
+    maxLength: WORKSPACE_NAME_MAX_CHARS,
   })
   @IsOptional()
   @IsValidWorkspaceName()
@@ -17,6 +23,7 @@ export class UpdateWorkspaceRequest {
     type: String,
     nullable: true,
     description: 'Setting it to null, removes description',
+    maxLength: WORKSPACE_DESCRIPTION_MAX_CHARS,
   })
   @IsOptional()
   @IsValidWorkspaceDescription()
