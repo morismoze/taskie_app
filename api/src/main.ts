@@ -2,9 +2,9 @@ import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'dotenv/config';
 import { AppModule } from './app.module';
+import setupApiDocs from './common/helper/api-docs';
 import { Environment } from './config/app.config';
 import { AggregatedConfig } from './config/config.type';
 import { AppLogger } from './modules/logger/app-logger';
@@ -31,41 +31,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
-  const options = new DocumentBuilder()
-    .setTitle('Taskie API')
-    .setDescription('API docs')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addGlobalParameters(
-      {
-        in: 'header',
-        required: false,
-        name: 'x-device-model',
-        schema: {
-          example: 'SM-S911B',
-        },
-      },
-      {
-        in: 'header',
-        required: false,
-        name: 'x-os-version',
-        schema: {
-          example: '14',
-        },
-      },
-      {
-        in: 'header',
-        required: false,
-        name: 'x-app-version',
-        schema: {
-          example: '1.0.0',
-        },
-      },
-    )
-    .build();
-
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup(`${apiPrefix}/docs`, app, document);
+  setupApiDocs(app, apiPrefix);
 
   if (!isDevelopment) {
     // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP

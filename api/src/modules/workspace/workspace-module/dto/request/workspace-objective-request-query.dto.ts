@@ -31,6 +31,7 @@ export class WorkspaceObjectiveRequestQuery {
 
   @ApiPropertyOptional({
     enum: ProgressStatus,
+    description: 'Default - all statuses are returned',
   })
   @IsOptional()
   @IsEnum(ProgressStatus)
@@ -39,7 +40,6 @@ export class WorkspaceObjectiveRequestQuery {
   @ApiPropertyOptional({
     type: String,
     description: 'Search by title - THIS IS NOT YET IMPLEMENTED',
-    example: 'design',
   })
   @IsOptional()
   @IsString()
@@ -47,6 +47,7 @@ export class WorkspaceObjectiveRequestQuery {
 
   @ApiPropertyOptional({
     enum: SortBy,
+    default: SortBy.NEWEST,
   })
   @IsOptional()
   @IsEnum(SortBy)

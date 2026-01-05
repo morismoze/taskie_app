@@ -8,7 +8,6 @@ import {
 export class UpdateWorkspaceRequest {
   @ApiPropertyOptional({
     type: String,
-    nullable: false,
   })
   @IsOptional()
   @IsValidWorkspaceName()
@@ -16,7 +15,8 @@ export class UpdateWorkspaceRequest {
 
   @ApiPropertyOptional({
     type: String,
-    nullable: true, // Allows null - clears description
+    nullable: true,
+    description: 'Setting it to null, removes description',
   })
   @IsOptional()
   @IsValidWorkspaceDescription()
