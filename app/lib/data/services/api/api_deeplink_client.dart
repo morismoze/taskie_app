@@ -18,11 +18,32 @@ class ApiDeepLinkClient {
            baseUrl: Env.deepLinkBaseUrl,
            headers: {'Content-Type': 'application/json'},
          ),
+       ),
+       _refreshClient = Dio(
+         BaseOptions(
+           baseUrl: Env.backendUrl,
+           headers: {'Content-Type': 'application/json'},
+         ),
        ) {
+    _refreshClient.interceptors.addAll([
+      RequestHeadersInterceptor(
+        authStateRepository: _authStateRepository,
+        clientInfoService: _clientInfoService,
+        authHeaderTokenType: AuthHeaderTokenType.refresh,
+      ),
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        enabled: Env.env != Environment.production,
+      ),
+    ]);
+
     _client.interceptors.addAll([
       RequestHeadersInterceptor(
         authStateRepository: _authStateRepository,
         clientInfoService: _clientInfoService,
+        authHeaderTokenType: AuthHeaderTokenType.access,
       ),
       PrettyDioLogger(
         requestHeader: true,
@@ -32,14 +53,17 @@ class ApiDeepLinkClient {
       ),
       UnauthorizedInterceptor(
         client: _client,
+        refreshClient: _refreshClient,
         authStateRepository: _authStateRepository,
       ),
     ]);
   }
 
   final Dio _client;
+  final Dio _refreshClient;
   final AuthStateRepository _authStateRepository;
   final ClientInfoService _clientInfoService;
 
   Dio get client => _client;
+  Dio get refreshClient => _refreshClient;
 }

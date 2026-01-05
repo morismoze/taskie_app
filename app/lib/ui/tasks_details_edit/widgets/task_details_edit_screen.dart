@@ -167,42 +167,11 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
     }
 
     if (widget.viewModel.closeTask.error) {
-      final errorResult = widget.viewModel.closeTask.result as Error;
       widget.viewModel.closeTask.clearResult();
-      switch (errorResult.error) {
-        case GeneralApiException(error: final apiError)
-            when apiError.code == ApiErrorCode.taskClosed:
-          context.pop(); // Close confirm dialog
-          AppDialog.show(
-            context: context,
-            canPop: false,
-            title: FaIcon(
-              FontAwesomeIcons.circleInfo,
-              color: Theme.of(context).colorScheme.primary,
-              size: 30,
-            ),
-            content: Text(
-              context.localization.tasksClosedTaskError,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            actions: AppFilledButton(
-              label: context.localization.misc_goToHomepage,
-              onPress: () {
-                context.pop(); // Close dialog
-                context.go(
-                  Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
-                );
-              },
-            ),
-          );
-          break;
-        default:
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.tasksDetailsEditError,
-          );
-      }
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.tasksCloseTaskError,
+      );
     }
   }
 }

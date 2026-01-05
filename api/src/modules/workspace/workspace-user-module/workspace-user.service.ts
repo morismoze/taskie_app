@@ -313,7 +313,7 @@ export class WorkspaceUserService {
 
   async getLeaderboardData(
     workspaceId: WorkspaceUser['workspace']['id'],
-  ): Promise<WorkspaceLeaderboardResponse> {
+  ): Promise<WorkspaceLeaderboardResponse[]> {
     const leaderboardData =
       await this.workspaceUserRepository.getWorkspaceLeaderboard(workspaceId);
 

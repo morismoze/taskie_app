@@ -1,5 +1,5 @@
 import { Nullable } from 'src/common/types/nullable.type';
-import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { FindOptionsRelations } from 'typeorm';
 import { ProgressStatus } from '../domain/progress-status.enum';
 import { Task } from '../domain/task.domain';
@@ -43,15 +43,15 @@ export abstract class TaskRepository {
 
   abstract findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search },
+    query,
   }: {
     workspaceId: Task['workspace']['id'];
     query: {
       page: number;
       limit: number;
+      sort: SortBy;
       status: ProgressStatus | null;
       search: string | null;
-      sort: SortBy | null;
     };
   }): Promise<{
     data: TaskEntity[];

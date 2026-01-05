@@ -5,7 +5,8 @@ import '../data/services/api/workspace/workspace_task/models/request/workspace_t
 import '../data/services/api/workspace/workspace_task/models/request/workspace_user_id_path_param.dart';
 
 abstract final class ApiEndpoints {
-  static const _prefix = '/api';
+  static const _prefix = '/api/v1';
+
   // Auth
   static String socialLogin(AuthProvider p) {
     switch (p) {

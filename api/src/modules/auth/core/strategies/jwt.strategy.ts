@@ -9,8 +9,10 @@ import { AggregatedConfig } from 'src/config/config.type';
 import { SessionService } from 'src/modules/session/session.service';
 import { JwtPayload } from './jwt-payload.type';
 
+export const jwtStrategyName = 'jwt';
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, jwtStrategyName) {
   constructor(
     // Injecting SessionService directly does not work because it depends on the
     // transactional repo, which is request scoped, but strategies are
@@ -63,6 +65,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // write the session atv value to the access token
     // at the time of login and compare it with the current
     // value at the time of JWT strategy execution.
+    // We use atv and not deleting sessions, because on token
+    // refresh we actually update the session with new hash.
     const ctxId = ContextIdFactory.getByRequest(request);
     const sessionService = await this.moduleRef.resolve(SessionService, ctxId, {
       strict: false,

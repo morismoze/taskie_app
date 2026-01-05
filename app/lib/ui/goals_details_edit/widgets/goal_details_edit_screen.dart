@@ -168,42 +168,11 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
     }
 
     if (widget.viewModel.closeGoal.error) {
-      final errorResult = widget.viewModel.closeGoal.result as Error;
       widget.viewModel.closeGoal.clearResult();
-      switch (errorResult.error) {
-        case GeneralApiException(error: final apiError)
-            when apiError.code == ApiErrorCode.goalClosed:
-          context.pop(); // Close confirm dialog
-          AppDialog.show(
-            context: context,
-            canPop: false,
-            title: FaIcon(
-              FontAwesomeIcons.circleInfo,
-              color: Theme.of(context).colorScheme.primary,
-              size: 30,
-            ),
-            content: Text(
-              context.localization.goalsClosedGoalError,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            actions: AppFilledButton(
-              label: context.localization.misc_goToGoalsPage,
-              onPress: () {
-                context.pop(); // Close dialog
-                context.go(
-                  Routes.goals(workspaceId: widget.viewModel.activeWorkspaceId),
-                );
-              },
-            ),
-          );
-          break;
-        default:
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.goalsDetailsEditError,
-          );
-      }
+      AppSnackbar.showError(
+        context: context,
+        message: context.localization.goalsCloseGoalError,
+      );
     }
   }
 }

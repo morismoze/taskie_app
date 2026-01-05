@@ -220,6 +220,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble editing task details';
 
   @override
+  String get tasksCloseTaskError =>
+      'Uh-oh! We\'ve had some trouble closing the task';
+
+  @override
   String get tasksUpdateTaskAssignmentsSuccess =>
       'Successfully updated task assignments';
 
@@ -795,6 +799,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get goalsDetailsEditError =>
       'Uh-oh! We\'ve had some trouble editing goal details';
+
+  @override
+  String get goalsCloseGoalError =>
+      'Uh-oh! We\'ve had some trouble closing the goal';
 
   @override
   String get goalsDetailsCloseGoal => 'Close goal';

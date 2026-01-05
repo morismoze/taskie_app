@@ -5,7 +5,11 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
 import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
-import { WorkspaceObjectiveRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import {
+  SortBy,
+  WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
+  WorkspaceObjectiveRequestQuery,
+} from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { TaskCore } from './domain/task-core.domain';
 import { TaskWithAssigneesCoreAndCreatedByUser } from './domain/task-with-assignees-core.domain';
 import { Task } from './domain/task.domain';
@@ -26,13 +30,20 @@ export class TaskService {
     totalPages: number;
     total: number;
   }> {
+    const effectiveQuery = {
+      page: query.page ?? 1,
+      limit: query.limit ?? WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
+      status: query.status ?? null,
+      search: query.search?.trim() || null,
+      sort: query.sort ?? SortBy.NEWEST,
+    };
     const {
       data: taskEntities,
       totalPages,
       total,
     } = await this.taskRepository.findAllByWorkspaceId({
       workspaceId,
-      query,
+      query: effectiveQuery,
     });
 
     const tasks: TaskWithAssigneesCoreAndCreatedByUser[] = taskEntities.map(

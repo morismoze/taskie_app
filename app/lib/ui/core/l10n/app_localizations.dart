@@ -482,6 +482,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble editing task details'**
   String get tasksDetailsEditError;
 
+  /// No description provided for @tasksCloseTaskError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble closing the task'**
+  String get tasksCloseTaskError;
+
   /// No description provided for @tasksUpdateTaskAssignmentsSuccess.
   ///
   /// In en, this message translates to:
@@ -1429,6 +1435,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble editing goal details'**
   String get goalsDetailsEditError;
+
+  /// No description provided for @goalsCloseGoalError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble closing the goal'**
+  String get goalsCloseGoalError;
 
   /// No description provided for @goalsDetailsCloseGoal.
   ///

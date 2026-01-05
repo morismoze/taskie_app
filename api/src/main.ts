@@ -1,8 +1,10 @@
+import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import 'dotenv/config';
 import { AppModule } from './app.module';
+import setupApiDocs from './common/helper/api-docs';
 import { Environment } from './config/app.config';
 import { AggregatedConfig } from './config/config.type';
 import { AppLogger } from './modules/logger/app-logger';
@@ -21,12 +23,15 @@ async function bootstrap() {
     configService.getOrThrow('app.nodeEnv', { infer: true }) ===
     Environment.DEVELOPMENT;
 
-  app.setGlobalPrefix(
-    configService.getOrThrow('app.apiPrefix', { infer: true }),
-    {
-      exclude: ['/'],
-    },
-  );
+  const apiPrefix = configService.getOrThrow('app.apiPrefix', { infer: true });
+  app.setGlobalPrefix(apiPrefix, {
+    exclude: ['/'],
+  });
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+
+  setupApiDocs(app, apiPrefix);
 
   if (!isDevelopment) {
     // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP

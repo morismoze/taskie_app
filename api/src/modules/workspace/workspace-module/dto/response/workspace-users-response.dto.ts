@@ -1,22 +1,50 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
 
-export interface WorkspaceUserResponse {
-  id: string; // WorkspaceUser ID
-  firstName: string;
-  lastName: string;
-  email: string | null;
-  profileImageUrl: string | null;
-  role: WorkspaceUserRole;
-  userId: string; // core User ID
-  createdAt: string;
-  // Will be null in the case workspace user was the one
-  // who created the workspace
-  createdBy: {
-    id: WorkspaceUserResponse['id'];
-    firstName: WorkspaceUserResponse['firstName'];
-    lastName: WorkspaceUserResponse['lastName'];
-    profileImageUrl: WorkspaceUserResponse['profileImageUrl'];
-  } | null;
+export class WorkspaceUserCreatedByResponse {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  firstName!: string;
+
+  @ApiProperty()
+  lastName!: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  profileImageUrl!: string | null;
 }
 
-export type WorkspaceUsersResponse = WorkspaceUserResponse[];
+export class WorkspaceUserResponse {
+  @ApiProperty({ description: 'WorkspaceUser ID' })
+  id!: string;
+
+  @ApiProperty()
+  firstName!: string;
+
+  @ApiProperty()
+  lastName!: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  email!: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  profileImageUrl!: string | null;
+
+  @ApiProperty({ enum: WorkspaceUserRole })
+  role!: WorkspaceUserRole;
+
+  @ApiProperty({ description: 'Core User ID' })
+  userId!: string;
+
+  @ApiProperty({ format: 'date-time' })
+  createdAt!: string;
+
+  @ApiProperty({
+    description:
+      'Will be null in the case workspace user was the one who created the workspace',
+    type: () => WorkspaceUserCreatedByResponse,
+    nullable: true,
+  })
+  createdBy!: WorkspaceUserCreatedByResponse | null;
+}

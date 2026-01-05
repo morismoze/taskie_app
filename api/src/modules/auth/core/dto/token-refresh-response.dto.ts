@@ -1,3 +1,12 @@
-import { LoginResponse } from './login-response.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
-export type TokenRefreshResponse = Omit<LoginResponse, 'user'>;
+export class TokenRefreshResponse {
+  @ApiProperty()
+  accessToken!: string;
+
+  @ApiProperty()
+  refreshToken!: string;
+
+  @ApiProperty()
+  tokenExpires!: number;
+}

@@ -16,7 +16,6 @@ import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
 import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
-import { WorkspaceUserCore } from '../workspace-user-module/domain/workspace-user-core.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
@@ -33,10 +32,10 @@ import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignme
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
-import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-objective-request-query.dto';
 import { AddTaskAssigneeResponse } from './dto/response/add-task-assignee-response.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
-import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { UpdateTaskAssignmentResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -47,14 +46,8 @@ import {
   WorkspaceTasksResponse,
 } from './dto/response/workspace-tasks-response.dto';
 import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
-import {
-  WorkspaceUserResponse,
-  WorkspaceUsersResponse,
-} from './dto/response/workspace-users-response.dto';
-import {
-  WorkspaceResponse,
-  WorkspacesResponse,
-} from './dto/response/workspaces-response.dto';
+import { WorkspaceUserResponse } from './dto/response/workspace-users-response.dto';
+import { WorkspaceResponse } from './dto/response/workspaces-response.dto';
 import { WorkspaceRepository } from './persistence/workspace.repository';
 
 @Injectable()
@@ -334,12 +327,20 @@ export class WorkspaceService {
       );
     }
 
-    // Using assertion because workspace user should be always found based on how JWT works (custom secret)
     const creatorWorkspaceUser =
-      (await this.workspaceUserService.findByUserIdAndWorkspaceId({
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
         userId: createdById,
         workspaceId,
-      })) as WorkspaceUserCore;
+      });
+
+    if (!creatorWorkspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const { newUser, newWorkspaceUser } =
       await this.unitOfWorkService.withTransaction(async () => {
@@ -388,7 +389,7 @@ export class WorkspaceService {
 
   async getWorkspacesByUser(
     userId: JwtPayload['sub'],
-  ): Promise<WorkspacesResponse> {
+  ): Promise<WorkspaceResponse[]> {
     const userWorkspaces = await this.workspaceRepository.findAllByUserId({
       userId,
       relations: {
@@ -396,7 +397,7 @@ export class WorkspaceService {
       },
     });
 
-    const response: WorkspacesResponse = userWorkspaces.map((workspace) => ({
+    const response: WorkspaceResponse[] = userWorkspaces.map((workspace) => ({
       id: workspace.id,
       name: workspace.name,
       description: workspace.description,
@@ -418,7 +419,7 @@ export class WorkspaceService {
 
   async getWorkspaceUsers(
     workspaceId: Workspace['id'],
-  ): Promise<WorkspaceUsersResponse> {
+  ): Promise<WorkspaceUserResponse[]> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
       relations: {
@@ -440,7 +441,7 @@ export class WorkspaceService {
       );
     }
 
-    const response: WorkspaceUsersResponse = workspace.members
+    const response: WorkspaceUserResponse[] = workspace.members
       .map((member) => ({
         id: member.id,
         firstName: member.user.firstName,
@@ -888,7 +889,6 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     goalId: Goal['id'];
   }): Promise<void> {
-    // Closed goal can't be updated
     await this.goalService.closeByGoalIdAndWorkspaceId({
       goalId,
       workspaceId,
@@ -926,7 +926,7 @@ export class WorkspaceService {
 
   async getWorkspaceLeaderboard(
     workspaceId: Workspace['id'],
-  ): Promise<WorkspaceLeaderboardResponse> {
+  ): Promise<WorkspaceLeaderboardResponse[]> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -1055,12 +1055,12 @@ export class WorkspaceService {
       );
     }
 
+    await this.invalidateUserSession({ workspaceId, workspaceUserId });
+
     await this.workspaceUserService.delete({
       workspaceId,
       workspaceUserId,
     });
-
-    await this.invalidateUserSession({ workspaceId, workspaceUserId });
   }
 
   async leaveWorkspace({
@@ -1208,8 +1208,9 @@ export class WorkspaceService {
       );
     }
 
-    // Closed task can't be updated
-    await this.checkTaskIsClosed(taskId);
+    // No check if task is closed, because this should be idempotent
+    // functionality, meaning there is no problem if a closed task
+    // gets closed again. That is not an error.
 
     await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
   }
@@ -1222,7 +1223,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
     payload: AddTaskAssigneeRequest;
-  }): Promise<AddTaskAssigneeResponse> {
+  }): Promise<AddTaskAssigneeResponse[]> {
     const task = await this.taskService.findByTaskIdAndWorkspaceId({
       taskId,
       workspaceId,
@@ -1340,7 +1341,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
     assignments: UpdateTaskAssignmentsRequest['assignments'];
-  }): Promise<UpdateTaskAssignmentsStatusesResponse> {
+  }): Promise<UpdateTaskAssignmentResponse[]> {
     const task = await this.taskService.findByTaskIdAndWorkspaceId({
       taskId,
       workspaceId,
@@ -1357,24 +1358,6 @@ export class WorkspaceService {
 
     // Closed task can't be updated
     await this.checkTaskIsClosed(taskId);
-
-    // We need to check if provided assignee IDs exist as this specific task assignments
-    const providedAssigneeIds = assignments.map((item) => item.assigneeId);
-    const existingTaskAssignments =
-      await this.taskAssignmentService.findAllByTaskIdAndAssigneeIds({
-        taskId,
-        assigneeIds: providedAssigneeIds,
-      });
-
-    if (existingTaskAssignments.length !== providedAssigneeIds.length) {
-      // One or more provided assignee IDs doesn't exist in task assignments for the given task
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
 
     // Check if task has due date and that due date passed
     // but the payload consists of Completed status/es, which
@@ -1404,11 +1387,12 @@ export class WorkspaceService {
         data: assignments,
       });
 
-    const response: UpdateTaskAssignmentsStatusesResponse =
-      updatedTaskAssignments.map((taskAssignment) => ({
+    const response: UpdateTaskAssignmentResponse[] = updatedTaskAssignments.map(
+      (taskAssignment) => ({
         assigneeId: taskAssignment.assignee.id,
         status: taskAssignment.status,
-      }));
+      }),
+    );
 
     return response;
   }
@@ -1446,17 +1430,14 @@ export class WorkspaceService {
   // access token versioning. Basically, that's a plain integer
   // field on Session entity (defaults to 0) which we increment
   // in the WorkspaceService in those two cases (endpoints).
-  // We also add that value to the access token payload itself.
-  // And then here we detect that increment change, comparing
-  // these two values, and if the value from the access token
-  // does not equal to the one on the found session record,
-  // we unauthorize the user.
   // We use incremental flag and not e.g. a boolean flag,
   // because a boolean flag would require switching back
   // to default value on token refresh. This way we just
   // write the session atv value to the access token
   // at the time of login and compare it with the current
   // value at the time of JWT strategy execution.
+  // We use atv and not deleting sessions, because on token
+  // refresh we actually update the session with new hash.
   private async invalidateUserSession({
     workspaceId,
     workspaceUserId,

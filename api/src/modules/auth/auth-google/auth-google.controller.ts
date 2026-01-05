@@ -6,6 +6,13 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from '../core/auth.service';
 import { AuthProvider } from '../core/domain/auth-provider.enum';
@@ -13,8 +20,10 @@ import { LoginResponse } from '../core/dto/login-response.dto';
 import { SocialLoginRequest } from '../core/dto/social-login-request.dto';
 import { AuthGoogleService } from './auth-google.service';
 
+@ApiTags('Auth')
 @Controller({
   path: 'auth/google',
+  version: '1',
 })
 export class AuthGoogleController {
   constructor(
@@ -24,6 +33,16 @@ export class AuthGoogleController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Sign in with Google' })
+  @ApiOkResponse({
+    type: LoginResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication failed',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while creating the user or the session',
+  })
   async signIn(
     @Req() request: Request,
     @Body() loginDto: SocialLoginRequest,

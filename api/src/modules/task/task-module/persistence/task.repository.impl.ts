@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
-import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { TaskAssignmentEntity } from '../../task-assignment/persistence/task-assignment.entity';
 import { ProgressStatus } from '../domain/progress-status.enum';
@@ -91,9 +91,9 @@ export class TaskRepositoryImpl implements TaskRepository {
     query: {
       page: number;
       limit: number;
+      sort: SortBy;
       status: ProgressStatus | null;
       search: string | null;
-      sort: SortBy | null;
     };
   }): Promise<{
     data: TaskEntity[];
@@ -143,8 +143,6 @@ export class TaskRepositoryImpl implements TaskRepository {
       case SortBy.OLDEST:
         baseQb.orderBy('task.createdAt', 'ASC');
         break;
-      default:
-        baseQb.orderBy('task.createdAt', 'DESC');
     }
 
     const offset = (page - 1) * limit;

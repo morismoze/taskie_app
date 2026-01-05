@@ -7,5 +7,5 @@ abstract class AuthRepository {
 
   Future<Result<void>> signOut();
 
-  Future<Result<(String, String)>> refreshToken(String? refreshToken);
+  Future<Result<(String, String)>> refreshToken();
 }

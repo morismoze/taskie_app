@@ -221,6 +221,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom uređivanja detalja zadatka';
 
   @override
+  String get tasksCloseTaskError =>
+      'Uh-oh! Došlo je do problema prilikom zatvaranja zadatka';
+
+  @override
   String get tasksUpdateTaskAssignmentsSuccess =>
       'Uspješno ste ažurirali dodjele zadatka';
 
@@ -803,6 +807,10 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get goalsDetailsEditError =>
       'Uh-oh! Došlo je do problema prilikom uređivanja detalja cilja';
+
+  @override
+  String get goalsCloseGoalError =>
+      'Uh-oh! Došlo je do problema prilikom zatvaranja cilja';
 
   @override
   String get goalsDetailsCloseGoal => 'Zatvori cilj';
