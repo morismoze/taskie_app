@@ -2,7 +2,6 @@ import '../../../domain/models/auth.dart';
 import '../../../domain/models/user.dart';
 import '../../../utils/command.dart';
 import '../../services/api/auth/auth_api_service.dart';
-import '../../services/api/auth/models/request/refresh_token_request.dart';
 import '../../services/api/auth/models/request/social_login_request.dart';
 import '../../services/api/auth/models/response/login_response.dart';
 import '../../services/api/auth/models/response/refresh_token_response.dart';
@@ -195,14 +194,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<(String, String)>> refreshToken(String? refreshToken) async {
-    if (refreshToken == null) {
-      return Result.error(Exception('refreshToken is null'));
-    }
-
-    final result = await _authApiService.refreshAccessToken(
-      RefreshTokenRequest(refreshToken),
-    );
+  Future<Result<(String, String)>> refreshToken() async {
+    final result = await _authApiService.refreshAccessToken();
 
     switch (result) {
       case Ok<RefreshTokenResponse>():

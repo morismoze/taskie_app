@@ -4,13 +4,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { OrNever } from 'src/common/types/or-never.type';
 import { AggregatedConfig } from 'src/config/config.type';
-import { TokenRefreshRequest } from '../dto/token-refresh-request.dto';
 import { JwtRefreshPayload } from './jwt-refresh-payload.type';
+
+export const jwtRefrestStrategyName = 'jwt-refresh';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh',
+  jwtRefrestStrategyName,
 ) {
   // Calling parent constructor will:
   // 1. Automatically verifies signature
@@ -23,9 +24,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
   // is invoked, and if it fails for any reason, it will throw UnauthorizedException
   constructor(configService: ConfigService<AggregatedConfig>) {
     super({
-      jwtFromRequest: ExtractJwt.fromBodyField(
-        TokenRefreshRequest.REFRESH_TOKEN_FIELD_NAME,
-      ),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false, // To be explicit
       secretOrKey: configService.get('auth.refreshSecret', { infer: true })!,
     });

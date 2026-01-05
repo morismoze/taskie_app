@@ -9,8 +9,10 @@ import { AggregatedConfig } from 'src/config/config.type';
 import { SessionService } from 'src/modules/session/session.service';
 import { JwtPayload } from './jwt-payload.type';
 
+export const jwtStrategyName = 'jwt';
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, jwtStrategyName) {
   constructor(
     // Injecting SessionService directly does not work because it depends on the
     // transactional repo, which is request scoped, but strategies are

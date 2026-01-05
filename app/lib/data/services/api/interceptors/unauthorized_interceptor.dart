@@ -6,17 +6,19 @@ import '../../../../config/api_endpoints.dart';
 import '../../../../utils/command.dart';
 import '../../../repositories/auth/auth_state_repository.dart';
 import '../api_response.dart';
-import '../auth/models/request/refresh_token_request.dart';
 import '../auth/models/response/refresh_token_response.dart';
 
 class UnauthorizedInterceptor extends Interceptor {
   UnauthorizedInterceptor({
     required AuthStateRepository authStateRepository,
     required Dio client,
+    required Dio refreshClient,
   }) : _authStateRepository = authStateRepository,
-       _client = client;
+       _client = client,
+       _refreshClient = refreshClient;
 
   final Dio _client;
+  final Dio _refreshClient;
   final AuthStateRepository _authStateRepository;
 
   // Semaphore for token refresh
@@ -33,6 +35,7 @@ class UnauthorizedInterceptor extends Interceptor {
     if (err.requestOptions.path.contains(ApiEndpoints.refreshToken)) {
       await _authStateRepository.setTokens(null);
       _authStateRepository.setAuthenticated(false);
+
       return handler.reject(err);
     }
 
@@ -81,9 +84,9 @@ class UnauthorizedInterceptor extends Interceptor {
         return false;
       }
 
-      final refreshTokenResponse = await _client.post(
+      // Refresh token is added automatically to the Bearer header in the ApiClient.refreshClient
+      final refreshTokenResponse = await _refreshClient.post(
         ApiEndpoints.refreshToken,
-        data: RefreshTokenRequest(refreshToken),
       );
       final apiResponse = ApiResponse<RefreshTokenResponse>.fromJson(
         refreshTokenResponse.data,

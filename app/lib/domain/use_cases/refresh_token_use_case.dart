@@ -21,8 +21,7 @@ class RefreshTokenUseCase {
   /// And alse because this logic is used in bunch of places, so this acts as a single source of truth.
   Future<Result<void>> refreshAcessToken() async {
     try {
-      final (_, refreshToken) = await _authStateRepository.tokens;
-      final result = await _authRepository.refreshToken(refreshToken);
+      final result = await _authRepository.refreshToken();
 
       switch (result) {
         case Ok():
