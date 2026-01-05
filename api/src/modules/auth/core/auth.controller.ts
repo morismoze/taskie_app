@@ -48,7 +48,7 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     description: 'Internal error while updating the session',
   })
-  refresh(
+  refreshToken(
     @Req() request: Request & { user: JwtRefreshPayload },
   ): Promise<TokenRefreshResponse> {
     return this.authService.refreshToken(request.user);

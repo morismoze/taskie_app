@@ -2,7 +2,11 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
-import { WorkspaceObjectiveRequestQuery } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import {
+  SortBy,
+  WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
+  WorkspaceObjectiveRequestQuery,
+} from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { ProgressStatus } from '../task/task-module/domain/progress-status.enum';
 import { CreateGoalRequest } from '../workspace/workspace-module/dto/request/create-goal-request.dto';
 import { WorkspaceUser } from '../workspace/workspace-user-module/domain/workspace-user.domain';
@@ -26,13 +30,20 @@ export class GoalService {
     totalPages: number;
     total: number;
   }> {
+    const effectiveQuery = {
+      page: query.page ?? 1,
+      limit: query.limit ?? WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
+      status: query.status ?? null,
+      search: query.search?.trim() || null,
+      sort: query.sort ?? SortBy.NEWEST,
+    };
     const {
       data: goalEntities,
       totalPages,
       total,
     } = await this.goalRepository.findAllByWorkspaceId({
       workspaceId,
-      query,
+      query: effectiveQuery,
       relations: {
         assignee: {
           user: true,
@@ -253,12 +264,43 @@ export class GoalService {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
   }): Promise<void> {
-    await this.updateByGoalIdAndWorkspaceId({
-      goalId,
-      workspaceId,
+    // Not using already existing this.updateByGoalIdAndWorkspaceId method
+    // because we want to have idempotency here, meaning closing a closed
+    // task again should be idempotent, not an error.
+
+    const goal = await this.findByGoalIdAndWorkspaceId({ goalId, workspaceId });
+
+    if (!goal) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const updatedGoal = await this.goalRepository.update({
+      id: goalId,
       data: {
         status: ProgressStatus.CLOSED,
       },
+      relations: {
+        assignee: {
+          user: true,
+        },
+        createdBy: {
+          user: true,
+        },
+      },
     });
+
+    if (!updatedGoal) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

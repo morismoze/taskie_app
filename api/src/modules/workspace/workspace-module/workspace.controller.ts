@@ -22,9 +22,9 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { RequestWithUser } from 'src/modules/auth/core/domain/request-with-user.domain';
 import { JwtAuthGuard } from 'src/modules/auth/core/guards/jwt-auth.guard';
@@ -45,11 +45,11 @@ import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.d
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
 import { WorkspaceIdRequestPathParam } from './dto/request/workspace-id-path-param-request.dto';
 import { WorkspaceInviteTokenRequestPathParam } from './dto/request/workspace-invite-token-path-param-request.dto';
-import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-objective-request-query.dto';
 import { WorkspaceUserIdRequestPathParam } from './dto/request/workspace-user-id-path-param-request.dto';
 import { AddTaskAssigneeResponse } from './dto/response/add-task-assignee-response.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
-import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { UpdateTaskAssignmentResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -110,11 +110,6 @@ export class WorkspaceController {
     summary: 'Update workspace details',
     description: 'Minimal required workspace role: MANAGER',
   })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
   @ApiOkResponse({
     type: WorkspaceResponse,
   })
@@ -146,11 +141,6 @@ export class WorkspaceController {
       'Create workspace invite token to be used in the workspace invite link',
     description: 'Minimal required workspace role: MANAGER',
   })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
   @ApiCreatedResponse({
     type: CreateWorkspaceInviteTokenResponse,
   })
@@ -179,11 +169,6 @@ export class WorkspaceController {
   @ApiOperation({
     summary: 'Get workspace information by the workspace {inviteToken}',
   })
-  @ApiParam({
-    name: 'inviteToken',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
   @ApiOkResponse({
     type: WorkspaceResponse,
   })
@@ -203,11 +188,6 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Join a workspace by workspace {inviteToken}',
-  })
-  @ApiParam({
-    name: 'inviteToken',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
   })
   @ApiCreatedResponse({
     type: WorkspaceResponse,
@@ -256,11 +236,6 @@ export class WorkspaceController {
     summary: 'Create a virtual user for the {workspaceId} workspace',
     description: 'Minimal required workspace role: MANAGER',
   })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
   @ApiCreatedResponse({
     type: WorkspaceUserResponse,
   })
@@ -292,19 +267,16 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get users in the {workspaceId} workspace',
-    description: 'Minimal required workspace role: MEMBER',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
+    description:
+      'Minimal required workspace role: MEMBER (must be member of the workspace)',
   })
   @ApiOkResponse({
     type: WorkspaceUserResponse,
     isArray: true,
   })
   @ApiForbiddenResponse({
-    description: 'Requires minimal workspace role MEMBER',
+    description:
+      'Requires minimal workspace role MEMBER (must be member of the workspace)',
   })
   @ApiNotFoundResponse({
     description: 'Provided {workspaceId} was not found',
@@ -329,16 +301,6 @@ export class WorkspaceController {
     description:
       '• Minimal required workspace role: MANAGER.\n\n' +
       '• MANAGERS can change firstName and lastName properties of virtual users and role property on non-virtual users.',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
-  @ApiParam({
-    name: 'workspaceUserId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
   })
   @ApiOkResponse({
     type: WorkspaceUserResponse,
@@ -375,23 +337,15 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Get workspace user's accumulated points",
-    description: 'Minimal required workspace role: MEMBER',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
-  @ApiParam({
-    name: 'workspaceUserId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
+    description:
+      'Minimal required workspace role: MEMBER (must be member of the workspace)',
   })
   @ApiOkResponse({
     type: WorkspaceUserAccumulatedPointsResponse,
   })
   @ApiForbiddenResponse({
-    description: 'Requires minimal workspace role MEMBER',
+    description:
+      'Requires minimal workspace role MEMBER (must be member of the workspace)',
   })
   @ApiNotFoundResponse({
     description:
@@ -414,21 +368,18 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Leave a workspace',
-    description: 'Minimal required workspace role: MEMBER',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
+    description:
+      'Minimal required workspace role: MEMBER (must be member of the workspace)',
   })
   @ApiNoContentResponse()
   @ApiForbiddenResponse({
-    description: 'Requires minimal workspace role MEMBER',
+    description:
+      'Requires minimal workspace role MEMBER (must be member of the workspace)',
   })
   @ApiNotFoundResponse({
     description:
       '• Provided {workspaceId} was not found\n\n' +
-      '• Provided {workspaceUserId} is not part of the provided {workspaceId} workspace',
+      '• User is not part of the provided {workspaceId} workspace',
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal error',
@@ -450,16 +401,6 @@ export class WorkspaceController {
   @ApiOperation({
     summary: 'Remove workspace user',
     description: 'Minimal required workspace role: MANAGER',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
-  })
-  @ApiParam({
-    name: 'workspaceUserId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
   })
   @ApiNoContentResponse()
   @ApiForbiddenResponse({
@@ -489,18 +430,15 @@ export class WorkspaceController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get workspace tasks',
-    description: 'Minimal required workspace role: MEMBER',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
+    description:
+      'Minimal required workspace role: MEMBER (must be member of the workspace)',
   })
   @ApiOkResponse({
     type: WorkspaceTasksResponse,
   })
   @ApiForbiddenResponse({
-    description: 'Requires minimal workspace role MEMBER',
+    description:
+      'Requires minimal workspace role MEMBER (must be member of the workspace)',
   })
   @ApiNotFoundResponse({
     description: 'Provided {workspaceId} was not found',
@@ -522,11 +460,6 @@ export class WorkspaceController {
   @ApiOperation({
     summary: 'Create task',
     description: 'Minimal required workspace role: MANAGER',
-  })
-  @ApiParam({
-    name: 'workspaceId',
-    required: true,
-    schema: { type: 'string', format: 'uuid' },
   })
   @ApiCreatedResponse({
     type: WorkspaceTaskResponse,
@@ -560,6 +493,27 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update task details',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiOkResponse({
+    type: WorkspaceTaskResponse,
+  })
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {taskId} was not found',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'Update is not available as task is closed',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while updating the task',
+  })
   updateTask(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
@@ -576,6 +530,22 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Close a task',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiNoContentResponse()
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {taskId} was not found',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while closing the task',
+  })
   closeTask(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
@@ -590,11 +560,38 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Add assignees to a task',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiOkResponse({
+    type: AddTaskAssigneeResponse,
+    isArray: true,
+  })
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {taskId} was not found\n\n' +
+      '• Provided {taskId} is not part of the given {workspaceId} workspace\n\n' +
+      '• One or more provided assignee IDs are not part of the given {workspaceId} workspace',
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      '• Update is not available as task is closed\n\n' +
+      '• Maximum of 10 assignees are already assigned to the provided {taskId} task\n\n' +
+      '• One or more provided assignee IDs already are assigned to the provided {taskId} task',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while creating task assignments',
+  })
   addTaskAssignees(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
     @Body() payload: AddTaskAssigneeRequest,
-  ): Promise<AddTaskAssigneeResponse> {
+  ): Promise<AddTaskAssigneeResponse[]> {
     return this.workspaceService.addTaskAssignees({
       workspaceId,
       taskId,
@@ -606,6 +603,23 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Remove assignee from a task',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiNoContentResponse()
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {taskId} is not part of the given {workspaceId} workspace\n\n' +
+      '• Provided {taskId} was not found',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'Update is not available as task is closed',
+  })
   removeTaskAssignee(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
@@ -622,11 +636,37 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "Update assignments' statuses of a task",
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiOkResponse({
+    type: UpdateTaskAssignmentResponse,
+    isArray: true,
+  })
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {taskId} is not part of the given {workspaceId} workspace\n\n' +
+      '• Provided {taskId} was not found',
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      '• Update is not available as task is closed\n\n' +
+      "• One or more provided assignee IDs doesn't exist in task assignments for the given task\n\n" +
+      "• One or more provided statuses is COMPLETED, which is invalid. Task assignments whose task's due date has passed can only have statuses updated to COMPLETED_AS_STALE, not COMPLETED.",
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while updating task assignments',
+  })
   updateTaskAssignments(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { taskId }: TaskIdRequestPathParam,
     @Body() { assignments }: UpdateTaskAssignmentsRequest,
-  ): Promise<UpdateTaskAssignmentsStatusesResponse> {
+  ): Promise<UpdateTaskAssignmentResponse[]> {
     return this.workspaceService.updateTaskAssignments({
       workspaceId,
       taskId,
@@ -638,6 +678,29 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Create a goal',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiCreatedResponse({
+    type: WorkspaceGoalResponse,
+  })
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Creator user is not part of the {workspaceId} workspace\n\n' +
+      '• Provided assignee ID is not part of the {workspaceId} workspace',
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Provided required points are lower than assignee's current accumulated points",
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while creating the goal',
+  })
   createGoal(
     @Param() params: WorkspaceIdRequestPathParam,
     @Req() request: RequestWithUser,
@@ -653,6 +716,21 @@ export class WorkspaceController {
   @Get(':workspaceId/goals')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get workspace goals',
+    description:
+      'Minimal required workspace role: MEMBER (must be member of the workspace)',
+  })
+  @ApiOkResponse({
+    type: WorkspaceGoalsResponse,
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Requires minimal workspace role MEMBER (must be member of the workspace)',
+  })
+  @ApiNotFoundResponse({
+    description: 'Provided {workspaceId} was not found',
+  })
   getGoals(
     @Param() params: WorkspaceIdRequestPathParam,
     @Query() query: WorkspaceObjectiveRequestQuery,
@@ -667,6 +745,28 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update goal details',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiOkResponse({
+    type: WorkspaceGoalResponse,
+  })
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {goalId} was not found\n\n' +
+      '• Provided assignee ID is not part of the {workspaceId} workspace',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'Update is not available as goal is closed',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while updating the goal',
+  })
   updateGoal(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { goalId }: GoalIdRequestPathParam,
@@ -683,6 +783,22 @@ export class WorkspaceController {
   @RequireWorkspaceUserRole('workspaceId', WorkspaceUserRole.MANAGER)
   @UseGuards(JwtAuthGuard, WorkspaceRoleGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Close a goal',
+    description: 'Minimal required workspace role: MANAGER',
+  })
+  @ApiNoContentResponse()
+  @ApiForbiddenResponse({
+    description: 'Requires minimal workspace role MANAGER',
+  })
+  @ApiNotFoundResponse({
+    description:
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {goalId} was not found',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while updating the goal',
+  })
   closeGoal(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { goalId }: GoalIdRequestPathParam,
@@ -696,9 +812,25 @@ export class WorkspaceController {
   @Get(':workspaceId/leaderboard')
   @UseGuards(JwtAuthGuard, WorkspaceMembershipGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get workspace leaderboard',
+    description:
+      'Minimal required workspace role: MEMBER (must be member of the workspace)',
+  })
+  @ApiOkResponse({
+    type: WorkspaceLeaderboardResponse,
+    isArray: true,
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Requires minimal workspace role MEMBER (must be member of the workspace)',
+  })
+  @ApiNotFoundResponse({
+    description: 'Provided {workspaceId} was not found',
+  })
   getLeaderboard(
     @Param() params: WorkspaceIdRequestPathParam,
-  ): Promise<WorkspaceLeaderboardResponse> {
+  ): Promise<WorkspaceLeaderboardResponse[]> {
     return this.workspaceService.getWorkspaceLeaderboard(params.workspaceId);
   }
 }

@@ -215,10 +215,20 @@ export class TaskAssignmentService {
           existingAssignment && assignment.status !== existingAssignment.status;
 
         if (existingAssignment && isNewStatus) {
-          await this.taskAssignmentRepository.update({
-            id: existingAssignment.id,
-            data: { status: assignment.status },
-          });
+          const updatedTaskAssignment =
+            await this.taskAssignmentRepository.update({
+              id: existingAssignment.id,
+              data: { status: assignment.status },
+            });
+
+          if (!updatedTaskAssignment) {
+            throw new ApiHttpException(
+              {
+                code: ApiErrorCode.SERVER_ERROR,
+              },
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
         }
       }
     });
@@ -268,10 +278,20 @@ export class TaskAssignmentService {
 
     await this.unitOfWorkService.withTransaction(async () => {
       for (const assignment of assignments) {
-        await this.taskAssignmentRepository.update({
-          id: assignment.id,
-          data: { status: ProgressStatus.CLOSED },
-        });
+        const updatedTaskAssignment =
+          await this.taskAssignmentRepository.update({
+            id: assignment.id,
+            data: { status: ProgressStatus.CLOSED },
+          });
+
+        if (!updatedTaskAssignment) {
+          throw new ApiHttpException(
+            {
+              code: ApiErrorCode.SERVER_ERROR,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
       }
     });
   }

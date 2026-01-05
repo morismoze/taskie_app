@@ -20,7 +20,7 @@ import { JwtAuthGuard } from '../auth/core/guards/jwt-auth.guard';
 import { UserResponse } from './dto/user-response.dto';
 import { UserService } from './user.service';
 
-@ApiTags('Auth')
+@ApiTags('Users')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Invalid access token',
@@ -52,7 +52,7 @@ export class UserController {
     summary: 'Delete current authenticated user',
   })
   @ApiNoContentResponse()
-  softDelete(@Req() request: RequestWithUser): Promise<void> {
+  deleteMe(@Req() request: RequestWithUser): Promise<void> {
     return this.userService.delete(request.user.sub);
   }
 }

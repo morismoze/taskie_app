@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import {
   FindManyOptions,
@@ -88,16 +88,16 @@ export class GoalRepositoryImpl implements GoalRepository {
 
   async findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search, sort },
+    query: { page, limit, sort, status, search },
     relations,
   }: {
     workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
       limit: number;
+      sort: SortBy;
       status: ProgressStatus | null;
       search: string | null;
-      sort: SortBy | null;
     };
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{
@@ -128,15 +128,13 @@ export class GoalRepositoryImpl implements GoalRepository {
       };
     }
 
-    if (sort) {
-      switch (sort) {
-        case SortBy.NEWEST:
-          findOptions.order = { createdAt: 'DESC' };
-          break;
-        case SortBy.OLDEST:
-          findOptions.order = { createdAt: 'ASC' };
-          break;
-      }
+    switch (sort) {
+      case SortBy.NEWEST:
+        findOptions.order = { createdAt: 'DESC' };
+        break;
+      case SortBy.OLDEST:
+        findOptions.order = { createdAt: 'ASC' };
+        break;
     }
 
     const [goalEntities, totalCount] =

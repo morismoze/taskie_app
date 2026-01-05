@@ -63,6 +63,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // write the session atv value to the access token
     // at the time of login and compare it with the current
     // value at the time of JWT strategy execution.
+    // We use atv and not deleting sessions, because on token
+    // refresh we actually update the session with new hash.
     const ctxId = ContextIdFactory.getByRequest(request);
     const sessionService = await this.moduleRef.resolve(SessionService, ctxId, {
       strict: false,

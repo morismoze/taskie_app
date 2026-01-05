@@ -1,9 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
-export interface UpdateTaskAssignmentResponse {
-  assigneeId: string;
-  status: ProgressStatus;
-}
+export class UpdateTaskAssignmentResponse {
+  @ApiProperty({ description: 'WorkspaceUser ID', format: 'uuid' })
+  assigneeId!: string;
 
-export type UpdateTaskAssignmentsStatusesResponse =
-  UpdateTaskAssignmentResponse[];
+  @ApiProperty({ enum: ProgressStatus })
+  status!: ProgressStatus;
+}

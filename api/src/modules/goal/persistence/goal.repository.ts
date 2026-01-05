@@ -1,6 +1,6 @@
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
-import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-item-request.dto';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import { FindOptionsRelations } from 'typeorm';
 import { Goal } from '../domain/goal.domain';
@@ -44,16 +44,16 @@ export abstract class GoalRepository {
 
   abstract findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search },
+    query,
     relations,
   }: {
     workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
       limit: number;
+      sort: SortBy;
       status: ProgressStatus | null;
       search: string | null;
-      sort: SortBy | null;
     };
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{

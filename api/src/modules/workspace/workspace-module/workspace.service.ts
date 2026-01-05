@@ -32,10 +32,10 @@ import { UpdateTaskAssignmentsRequest } from './dto/request/update-task-assignme
 import { UpdateTaskRequest } from './dto/request/update-task-request.dto';
 import { UpdateWorkspaceRequest } from './dto/request/update-workspace-request.dto';
 import { UpdateWorkspaceUserRequest } from './dto/request/update-workspace-user-request.dto';
-import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-item-request.dto';
+import { WorkspaceObjectiveRequestQuery } from './dto/request/workspace-objective-request-query.dto';
 import { AddTaskAssigneeResponse } from './dto/response/add-task-assignee-response.dto';
 import { CreateWorkspaceInviteTokenResponse } from './dto/response/create-workspace-invite-token-response.dto';
-import { UpdateTaskAssignmentsStatusesResponse } from './dto/response/update-task-assignments-statuses-response.dto';
+import { UpdateTaskAssignmentResponse } from './dto/response/update-task-assignments-statuses-response.dto';
 import {
   WorkspaceGoalResponse,
   WorkspaceGoalsResponse,
@@ -889,7 +889,6 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     goalId: Goal['id'];
   }): Promise<void> {
-    // Closed goal can't be updated
     await this.goalService.closeByGoalIdAndWorkspaceId({
       goalId,
       workspaceId,
@@ -927,7 +926,7 @@ export class WorkspaceService {
 
   async getWorkspaceLeaderboard(
     workspaceId: Workspace['id'],
-  ): Promise<WorkspaceLeaderboardResponse> {
+  ): Promise<WorkspaceLeaderboardResponse[]> {
     const workspace = await this.workspaceRepository.findById({
       id: workspaceId,
     });
@@ -1209,8 +1208,9 @@ export class WorkspaceService {
       );
     }
 
-    // Closed task can't be updated
-    await this.checkTaskIsClosed(taskId);
+    // No check if task is closed, because this should be idempotent
+    // functionality, meaning there is no problem if a closed task
+    // gets closed again. That is not an error.
 
     await this.taskAssignmentService.closeAssignmentsByTaskId(taskId);
   }
@@ -1223,7 +1223,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
     payload: AddTaskAssigneeRequest;
-  }): Promise<AddTaskAssigneeResponse> {
+  }): Promise<AddTaskAssigneeResponse[]> {
     const task = await this.taskService.findByTaskIdAndWorkspaceId({
       taskId,
       workspaceId,
@@ -1341,7 +1341,7 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     taskId: Task['id'];
     assignments: UpdateTaskAssignmentsRequest['assignments'];
-  }): Promise<UpdateTaskAssignmentsStatusesResponse> {
+  }): Promise<UpdateTaskAssignmentResponse[]> {
     const task = await this.taskService.findByTaskIdAndWorkspaceId({
       taskId,
       workspaceId,
@@ -1405,11 +1405,12 @@ export class WorkspaceService {
         data: assignments,
       });
 
-    const response: UpdateTaskAssignmentsStatusesResponse =
-      updatedTaskAssignments.map((taskAssignment) => ({
+    const response: UpdateTaskAssignmentResponse[] = updatedTaskAssignments.map(
+      (taskAssignment) => ({
         assigneeId: taskAssignment.assignee.id,
         status: taskAssignment.status,
-      }));
+      }),
+    );
 
     return response;
   }
@@ -1447,17 +1448,14 @@ export class WorkspaceService {
   // access token versioning. Basically, that's a plain integer
   // field on Session entity (defaults to 0) which we increment
   // in the WorkspaceService in those two cases (endpoints).
-  // We also add that value to the access token payload itself.
-  // And then here we detect that increment change, comparing
-  // these two values, and if the value from the access token
-  // does not equal to the one on the found session record,
-  // we unauthorize the user.
   // We use incremental flag and not e.g. a boolean flag,
   // because a boolean flag would require switching back
   // to default value on token refresh. This way we just
   // write the session atv value to the access token
   // at the time of login and compare it with the current
   // value at the time of JWT strategy execution.
+  // We use atv and not deleting sessions, because on token
+  // refresh we actually update the session with new hash.
   private async invalidateUserSession({
     workspaceId,
     workspaceUserId,
