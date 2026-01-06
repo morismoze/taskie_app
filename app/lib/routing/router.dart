@@ -57,7 +57,7 @@ import '../ui/workspace_users_management_user_details_edit/view_models/workspace
 import '../ui/workspace_users_management_user_details_edit/widgets/workspace_user_details_edit_screen.dart';
 import 'routes.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
 final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
@@ -104,7 +104,7 @@ GoRouter router({
     authStateRepository,
     workspaceRepository.hasNoWorkspacesNotifier,
   ]),
-  navigatorKey: _rootNavigatorKey,
+  navigatorKey: rootNavigatorKey,
   routes: [
     GoRoute(
       path: Routes.entry,
@@ -223,7 +223,7 @@ GoRouter router({
                       create: (notifierContext) => UserProfileViewModel(
                         workspaceId: workspaceId,
                         userRepository: context.read(),
-                        signOutUserCase: context.read(),
+                        signOutUseCase: context.read(),
                       ),
                     ),
                   ],
@@ -260,7 +260,7 @@ GoRouter router({
                       routes: [
                         GoRoute(
                           path: Routes.createRelative,
-                          parentNavigatorKey: _rootNavigatorKey,
+                          parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
@@ -313,7 +313,7 @@ GoRouter router({
                         ),
                         GoRoute(
                           path: Routes.guideRelative,
-                          parentNavigatorKey: _rootNavigatorKey,
+                          parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             return CustomTransitionPage(
                               transitionDuration: const Duration(
@@ -340,7 +340,7 @@ GoRouter router({
                         ),
                         GoRoute(
                           path: ':taskId',
-                          parentNavigatorKey: _rootNavigatorKey,
+                          parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
@@ -377,7 +377,7 @@ GoRouter router({
                           routes: [
                             GoRoute(
                               path: Routes.editRelative,
-                              parentNavigatorKey: _rootNavigatorKey,
+                              parentNavigatorKey: rootNavigatorKey,
                               pageBuilder: (context, state) {
                                 final workspaceId =
                                     state.pathParameters['workspaceId']!;
@@ -417,7 +417,7 @@ GoRouter router({
                             GoRoute(
                               path:
                                   '${Routes.taskDetailsAssignmentsRelative}/${Routes.editRelative}',
-                              parentNavigatorKey: _rootNavigatorKey,
+                              parentNavigatorKey: rootNavigatorKey,
                               pageBuilder: (context, state) {
                                 final workspaceId =
                                     state.pathParameters['workspaceId']!;
@@ -486,7 +486,7 @@ GoRouter router({
                       routes: [
                         GoRoute(
                           path: Routes.createRelative,
-                          parentNavigatorKey: _rootNavigatorKey,
+                          parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
@@ -539,7 +539,7 @@ GoRouter router({
                         ),
                         GoRoute(
                           path: Routes.guideRelative,
-                          parentNavigatorKey: _rootNavigatorKey,
+                          parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             return CustomTransitionPage(
                               transitionDuration: const Duration(
@@ -566,7 +566,7 @@ GoRouter router({
                         ),
                         GoRoute(
                           path: ':goalId',
-                          parentNavigatorKey: _rootNavigatorKey,
+                          parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             final workspaceId =
                                 state.pathParameters['workspaceId']!;
@@ -603,7 +603,7 @@ GoRouter router({
                           routes: [
                             GoRoute(
                               path: Routes.editRelative,
-                              parentNavigatorKey: _rootNavigatorKey,
+                              parentNavigatorKey: rootNavigatorKey,
                               pageBuilder: (context, state) {
                                 final workspaceId =
                                     state.pathParameters['workspaceId']!;

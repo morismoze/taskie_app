@@ -947,10 +947,12 @@ export class WorkspaceService {
   }
 
   async updateWorkspaceUser({
+    updatedById,
     workspaceId,
     workspaceUserId,
     data,
   }: {
+    updatedById: JwtPayload['sub'];
     workspaceId: Workspace['id'];
     workspaceUserId: WorkspaceUser['id'];
     data: UpdateWorkspaceUserRequest;
@@ -980,6 +982,32 @@ export class WorkspaceService {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
         HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const workspaceUserUpdatedBy =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: updatedById,
+        workspaceId,
+      });
+
+    if (!workspaceUserUpdatedBy) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // User can't edit itself - this is not possible through
+    // the app - a security measure
+    if (workspaceUserUpdatedBy.id === workspaceUser.id) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.BAD_REQUEST,
       );
     }
 

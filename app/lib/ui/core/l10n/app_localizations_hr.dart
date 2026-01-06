@@ -64,6 +64,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_retry => 'Pokušajmo ponovno';
 
   @override
+  String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -873,4 +876,12 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get signOutError => 'Uh-oh! Došlo je do problema prilikom odjave';
+
+  @override
+  String get workspaceAccessRevocationMessage =>
+      'Uh-oh! Izgleda da ste uklonjeni iz ovog radnog prostora. Nastavite pritiskom na gumb ispod. Bit ćete preusmjereni na prvi dostupni radni prostor.';
+
+  @override
+  String get workspaceRoleChangeMessage =>
+      'Uh-oh! Izgleda da vam je uloga u ovom radnom prostoru promijenjena. Nastavite pritiskom na gumb ispod.';
 }

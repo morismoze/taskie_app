@@ -102,17 +102,18 @@ class ActionButtonBar extends StatelessWidget {
     return Row(
       spacing: Dimens.paddingHorizontal,
       children: [
-        Expanded(
-          flex: 2,
-          child: AppOutlinedButton(
-            onPress: () => onCancel?.call(context),
-            label: cancelButtonText != null
-                ? cancelButtonText(context)
-                : context.localization.misc_cancel,
-            color: Theme.of(context).colorScheme.secondary,
-            disabled: isLoading,
+        if (onCancel != null)
+          Expanded(
+            flex: 2,
+            child: AppOutlinedButton(
+              onPress: () => onCancel!(context),
+              label: cancelButtonText != null
+                  ? cancelButtonText(context)
+                  : context.localization.misc_cancel,
+              color: Theme.of(context).colorScheme.secondary,
+              disabled: isLoading,
+            ),
           ),
-        ),
         Expanded(
           flex: 4,
           child: AppFilledButton(

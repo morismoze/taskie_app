@@ -17,6 +17,7 @@
   "misc_pointsAbbr": "bod.",
   "misc_errorPrompt": "Uh-oh! Nešto nije pošlo po planu pri učitavanju.",
   "misc_retry": "Pokušajmo ponovno",
+  "misc_somethingWentWrong": "Uh-oh! Nešto je pošlo po zlu",
   "signInTitleStart": "Organizirajte zadatke, ostvarite ciljeve.",
   "signInTitleEnd": "Uspješno.",
   "signInSubtitle": "Učinkovito upravljajte obavezama, potaknite angažman i proslavite svaki uspjeh.",
@@ -248,5 +249,7 @@
   "goalsGuideNoteTitle": "Napomena",
   "goalsGuideNoteBody": "Ako se status nekog prethodno završenog zadatka naknadno promijeni iz __Završeno__ u __U tijeku__, __Završeno (zastarjelo)__ ili __Nezavršeno__, ili se zadatak zatvori (__Closed__), ili je član uklonjen sa dodjele zadatka, akumulirani bodovi se ponovno izračunavaju (obično padnu). Zbog toga se neki ranije izvršeni ciljevi mogu automatski vratiti u status __U tijeku__ dok član ponovno ne skupi dovoljno bodova.",
   "signOut": "Odjava",
-  "signOutError": "Uh-oh! Došlo je do problema prilikom odjave"
+  "signOutError": "Uh-oh! Došlo je do problema prilikom odjave",
+  "workspaceAccessRevocationMessage": "Uh-oh! Izgleda da ste uklonjeni iz ovog radnog prostora. Nastavite pritiskom na gumb ispod. Bit ćete preusmjereni na prvi dostupni radni prostor.",
+  "workspaceRoleChangeMessage": "Uh-oh! Izgleda da vam je uloga u ovom radnom prostoru promijenjena. Nastavite pritiskom na gumb ispod."
 }
