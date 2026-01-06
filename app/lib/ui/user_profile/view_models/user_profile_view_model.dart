@@ -9,10 +9,10 @@ class UserProfileViewModel extends ChangeNotifier {
   UserProfileViewModel({
     required String workspaceId,
     required UserRepository userRepository,
-    required SignOutUseCase signOutUserCase,
+    required SignOutUseCase signOutUseCase,
   }) : _activeWorkspaceId = workspaceId,
        _userRepository = userRepository,
-       _signOutUserCase = signOutUserCase {
+       _signOutUseCase = signOutUseCase {
     _userRepository.addListener(_onUserChanged);
     loadUserDetails = Command0(_loadUserDetails)..execute();
     signOut = Command0(_signOut);
@@ -20,7 +20,7 @@ class UserProfileViewModel extends ChangeNotifier {
 
   final String _activeWorkspaceId;
   final UserRepository _userRepository;
-  final SignOutUseCase _signOutUserCase;
+  final SignOutUseCase _signOutUseCase;
 
   late Command0 loadUserDetails;
   late Command0 signOut;
@@ -45,7 +45,7 @@ class UserProfileViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _signOut() async {
-    final result = await _signOutUserCase.signOut();
+    final result = await _signOutUseCase.signOut();
 
     switch (result) {
       case Ok():

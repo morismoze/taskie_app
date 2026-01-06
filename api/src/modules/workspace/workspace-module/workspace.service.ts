@@ -947,10 +947,12 @@ export class WorkspaceService {
   }
 
   async updateWorkspaceUser({
+    updatedById,
     workspaceId,
     workspaceUserId,
     data,
   }: {
+    updatedById: JwtPayload['sub'];
     workspaceId: Workspace['id'];
     workspaceUserId: WorkspaceUser['id'];
     data: UpdateWorkspaceUserRequest;
@@ -968,26 +970,73 @@ export class WorkspaceService {
       );
     }
 
+    const workspaceUser =
+      await this.workspaceUserService.findByIdAndWorkspaceIdWithUser({
+        id: workspaceUserId,
+        workspaceId,
+      });
+
+    if (!workspaceUser) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const workspaceUserUpdatedBy =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: updatedById,
+        workspaceId,
+      });
+
+    if (!workspaceUserUpdatedBy) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // User can't edit itself - this is not possible through
+    // the app - a security measure
+    if (workspaceUserUpdatedBy.id === workspaceUser.id) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Virtual users can get only firstName and lastName changed
+    // as they are always Members. Non-virtual users can get
+    // only the role changed as their firstName and lastName
+    // comes from social login.
     const { updatedWorkspaceUserId } =
       await this.unitOfWorkService.withTransaction(async () => {
-        const updatedWorkspaceUser = await this.workspaceUserService.update({
-          id: workspaceUserId,
-          data: {
-            workspaceRole: data.role,
-          },
-        });
+        const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
 
-        if (data.firstName || data.lastName) {
+        if (isVirtualUser) {
           await this.userService.update({
-            id: updatedWorkspaceUser.user.id,
+            id: workspaceUser.user.id,
             data: {
               firstName: data.firstName,
               lastName: data.lastName,
             },
           });
+        } else {
+          await this.workspaceUserService.update({
+            id: workspaceUserId,
+            data: {
+              workspaceRole: data.role,
+            },
+          });
         }
 
-        return { updatedWorkspaceUserId: updatedWorkspaceUser.id };
+        return { updatedWorkspaceUserId: workspaceUser.id };
       });
 
     await this.invalidateUserSession({ workspaceId, workspaceUserId });
@@ -1265,28 +1314,29 @@ export class WorkspaceService {
       taskId,
     });
 
-    const mappedResponse = existingWorkspaceUsers.map((workspaceUser) => {
-      return {
-        id: workspaceUser.id,
-        firstName: workspaceUser.user.firstName,
-        lastName: workspaceUser.user.lastName,
-        email: workspaceUser.user.email,
-        profileImageUrl: workspaceUser.user.profileImageUrl,
-        role: workspaceUser.workspaceRole,
-        userId: workspaceUser.user.id,
-        createdBy:
-          workspaceUser.createdBy === null
-            ? null
-            : {
-                id: workspaceUser.createdBy.id,
-                firstName: workspaceUser.createdBy.firstName,
-                lastName: workspaceUser.createdBy.lastName,
-                profileImageUrl: workspaceUser.createdBy.profileImageUrl,
-              },
-        createdAt: DateTime.fromJSDate(workspaceUser.createdAt).toISO()!,
-        status: ProgressStatus.IN_PROGRESS,
-      };
-    });
+    const mappedResponse: AddTaskAssigneeResponse[] =
+      existingWorkspaceUsers.map((workspaceUser) => {
+        return {
+          id: workspaceUser.id,
+          firstName: workspaceUser.user.firstName,
+          lastName: workspaceUser.user.lastName,
+          email: workspaceUser.user.email,
+          profileImageUrl: workspaceUser.user.profileImageUrl,
+          role: workspaceUser.workspaceRole,
+          userId: workspaceUser.user.id,
+          createdBy:
+            workspaceUser.createdBy === null
+              ? null
+              : {
+                  id: workspaceUser.createdBy.id,
+                  firstName: workspaceUser.createdBy.firstName,
+                  lastName: workspaceUser.createdBy.lastName,
+                  profileImageUrl: workspaceUser.createdBy.profileImageUrl,
+                },
+          createdAt: DateTime.fromJSDate(workspaceUser.createdAt).toISO()!,
+          status: ProgressStatus.IN_PROGRESS,
+        };
+      });
 
     return mappedResponse;
   }

@@ -64,7 +64,13 @@ enum ApiErrorCode {
   goalClosed(11),
 
   @JsonValue('12')
-  taskAssignmentsCompletedStatusDueDatePassed(12);
+  taskAssignmentsCompletedStatusDueDatePassed(12),
+
+  @JsonValue('13')
+  workspaceAccessRevoked(13),
+
+  @JsonValue('14')
+  insufficientPermissions(14);
 
   const ApiErrorCode(this.code);
 

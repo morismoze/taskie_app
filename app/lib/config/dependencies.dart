@@ -36,6 +36,7 @@ import '../data/services/api/workspace/workspace_leaderboard/workspace_leaderboa
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
+import '../data/services/local/auth_event_bus.dart';
 import '../data/services/local/client_info_service.dart';
 import '../data/services/local/database_service.dart';
 import '../data/services/local/logger_service.dart';
@@ -59,6 +60,7 @@ List<SingleChildWidget> get providers {
     Provider(create: (context) => GoogleAuthService()),
     Provider(create: (context) => ClientInfoService()),
     Provider(create: (context) => DatabaseService()),
+    Provider(create: (context) => AuthEventBus()),
     ChangeNotifierProvider(
       create: (context) =>
           AuthStateRepositoryImpl(
@@ -71,6 +73,7 @@ List<SingleChildWidget> get providers {
       create: (context) => ApiClient(
         authStateRepository: context.read(),
         clientInfoService: context.read(),
+        authEventBus: context.read(),
       ),
     ),
     Provider(

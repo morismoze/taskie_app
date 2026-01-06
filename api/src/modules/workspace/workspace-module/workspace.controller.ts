@@ -321,11 +321,13 @@ export class WorkspaceController {
       '• Internal error while updating the workspace user',
   })
   updateWorkspaceUser(
+    @Req() request: RequestWithUser,
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { workspaceUserId }: WorkspaceUserIdRequestPathParam,
     @Body() data: UpdateWorkspaceUserRequest,
   ): Promise<WorkspaceUserResponse> {
     return this.workspaceService.updateWorkspaceUser({
+      updatedById: request.user.sub,
       workspaceId,
       workspaceUserId,
       data,

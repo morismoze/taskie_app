@@ -17,6 +17,7 @@
   "misc_pointsAbbr": "pts",
   "misc_errorPrompt": "Uh-oh! We've ran into a small hiccup loading this.",
   "misc_retry": "Let's try again",
+  "misc_somethingWentWrong": "Uh-oh! Something went wrong",
   "signInTitleStart": "Organize Tasks, Achieve Goals.",
   "signInTitleEnd": "Successfully.",
   "signInSubtitle": "Effectively manage obligations, encourage engagement, and celebrate every success.",
@@ -247,5 +248,7 @@
   "goalsGuideNoteTitle": "Note",
   "goalsGuideNoteBody": "If the status of a previously completed task is later changed from __Completed__ to __In Progress__, __Completed as Stale__ or __Not Completed__, or if the task is closed (__Closed__), or if the member was removed from a task as an assignee, the accumulated points are recalculated (they usually decrease). As a result, some goals that were previously completed may automatically revert to __In Progress__ until the member collects enough points again.",
   "signOut": "Sign out",
-  "signOutError": "Uh-oh! We've had some trouble signing you out"
+  "signOutError": "Uh-oh! We've had some trouble signing you out",
+  "workspaceAccessRevocationMessage": "Uh-oh! It looks like you have been removed from this workspace. Please continue by pressing the button below. You will be redirected to the first available workspace.",
+  "workspaceRoleChangeMessage": "Uh-oh! It looks like your role has been changed for this workspace. Please continue by pressing the button below."
 }

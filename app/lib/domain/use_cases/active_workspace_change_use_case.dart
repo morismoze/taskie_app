@@ -26,7 +26,8 @@ class ActiveWorkspaceChangeUseCase {
   /// we need to:
   ///
   /// 1. clear the data cache which is relevant to the current active
-  /// workspace. This data includes: workspace users, tasks, leaderboard, goals,
+  /// workspace. This data includes: workspace users, tasks, leaderboard,
+  /// goals, workspace invites
   ///
   /// 2. re-fetch user data - this is important as the user's role for that
   /// workspace could have been changed in the meantime

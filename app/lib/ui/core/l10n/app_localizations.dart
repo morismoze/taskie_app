@@ -206,6 +206,12 @@ abstract class AppLocalizations {
   /// **'Let\'s try again'**
   String get misc_retry;
 
+  /// No description provided for @misc_somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! Something went wrong'**
+  String get misc_somethingWentWrong;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -1549,6 +1555,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble signing you out'**
   String get signOutError;
+
+  /// No description provided for @workspaceAccessRevocationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like you have been removed from this workspace. Please continue by pressing the button below. You will be redirected to the first available workspace.'**
+  String get workspaceAccessRevocationMessage;
+
+  /// No description provided for @workspaceRoleChangeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like your role has been changed for this workspace. Please continue by pressing the button below.'**
+  String get workspaceRoleChangeMessage;
 }
 
 class _AppLocalizationsDelegate

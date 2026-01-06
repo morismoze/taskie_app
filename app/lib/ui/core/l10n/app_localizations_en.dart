@@ -64,6 +64,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_retry => 'Let\'s try again';
 
   @override
+  String get misc_somethingWentWrong => 'Uh-oh! Something went wrong';
+
+  @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
 
   @override
@@ -865,4 +868,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutError => 'Uh-oh! We\'ve had some trouble signing you out';
+
+  @override
+  String get workspaceAccessRevocationMessage =>
+      'Uh-oh! It looks like you have been removed from this workspace. Please continue by pressing the button below. You will be redirected to the first available workspace.';
+
+  @override
+  String get workspaceRoleChangeMessage =>
+      'Uh-oh! It looks like your role has been changed for this workspace. Please continue by pressing the button below.';
 }

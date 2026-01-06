@@ -14,7 +14,7 @@ class ActionButtonBar extends StatelessWidget {
   const ActionButtonBar._({
     super.key,
     required this.onSubmit,
-    required this.onCancel,
+    this.onCancel,
     this.command,
     this.submitButtonText,
     this.cancelButtonText,
@@ -22,7 +22,7 @@ class ActionButtonBar extends StatelessWidget {
   });
 
   final void Function(BuildContext) onSubmit;
-  final void Function(BuildContext) onCancel;
+  final void Function(BuildContext)? onCancel;
   final Command? command;
   // These three below are functions because we need the builder's context
   // for text (localisation) and for the color (Theme style)
@@ -54,7 +54,7 @@ class ActionButtonBar extends StatelessWidget {
     Key? key,
     required Command command,
     required void Function(BuildContext builderContext) onSubmit,
-    required void Function(BuildContext builderContext) onCancel,
+    void Function(BuildContext builderContext)? onCancel,
     String Function(BuildContext builderContext)? submitButtonText,
     String Function(BuildContext builderContext)? cancelButtonText,
     Color Function(BuildContext builderContext)? submitButtonColor,
@@ -102,17 +102,18 @@ class ActionButtonBar extends StatelessWidget {
     return Row(
       spacing: Dimens.paddingHorizontal,
       children: [
-        Expanded(
-          flex: 2,
-          child: AppOutlinedButton(
-            onPress: () => onCancel(context),
-            label: cancelButtonText != null
-                ? cancelButtonText(context)
-                : context.localization.misc_cancel,
-            color: Theme.of(context).colorScheme.secondary,
-            disabled: isLoading,
+        if (onCancel != null)
+          Expanded(
+            flex: 2,
+            child: AppOutlinedButton(
+              onPress: () => onCancel!(context),
+              label: cancelButtonText != null
+                  ? cancelButtonText(context)
+                  : context.localization.misc_cancel,
+              color: Theme.of(context).colorScheme.secondary,
+              disabled: isLoading,
+            ),
           ),
-        ),
         Expanded(
           flex: 4,
           child: AppFilledButton(
