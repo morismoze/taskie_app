@@ -31,6 +31,7 @@ class MainApp extends StatelessWidget {
           workspaceRepository: context.read(),
           userRepository: context.read(),
           activeWorkspaceChangeUseCase: context.read(),
+          signOutUseCase: context.read(),
         ),
         child: child!,
       ),
