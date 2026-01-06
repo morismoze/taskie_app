@@ -121,7 +121,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleWorkspaceRoleChange,
           onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.handleRemovalFromWorkspace.execute(),
+              widget.viewModel.handleWorkspaceRoleChange.execute(),
           submitButtonText: (BuildContext builderContext) =>
               builderContext.localization.misc_ok,
           submitButtonColor: (BuildContext builderContext) =>
@@ -207,15 +207,15 @@ class _AuthEventListenerState extends State<AuthEventListener> {
               .value;
       widget.viewModel.handleRemovalFromWorkspace.clearResult();
 
-      if (workspaceId == null) {
+      if (rootNavigatorContext == null) {
         // Sign out if any error
         widget.viewModel.signOut.execute();
         return;
       }
 
-      if (rootNavigatorContext == null) {
-        // Sign out if any error
-        widget.viewModel.signOut.execute();
+      if (workspaceId == null) {
+        // User doesn't have any workspace left, so we navigate to initial workspace creation screen
+        rootNavigatorContext.go(Routes.workspaceCreateInitial);
         return;
       }
 
