@@ -3,7 +3,9 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../config/environment/env.dart';
 import '../../repositories/auth/auth_state_repository.dart';
+import '../local/auth_event_bus.dart';
 import '../local/client_info_service.dart';
+import 'interceptors/forbidden_interceptor.dart';
 import 'interceptors/request_headers_interceptor.dart';
 import 'interceptors/unauthorized_interceptor.dart';
 
@@ -11,8 +13,10 @@ class ApiClient {
   ApiClient({
     required AuthStateRepository authStateRepository,
     required ClientInfoService clientInfoService,
+    required AuthEventBus authEventBus,
   }) : _authStateRepository = authStateRepository,
        _clientInfoService = clientInfoService,
+       _authEventBus = authEventBus,
        _client = Dio(
          BaseOptions(
            baseUrl: Env.backendUrl,
@@ -56,6 +60,7 @@ class ApiClient {
         refreshClient: _refreshClient,
         authStateRepository: _authStateRepository,
       ),
+      ForbiddenInterceptor(authEventBus: _authEventBus),
     ]);
   }
 
@@ -63,6 +68,7 @@ class ApiClient {
   final Dio _refreshClient;
   final AuthStateRepository _authStateRepository;
   final ClientInfoService _clientInfoService;
+  final AuthEventBus _authEventBus;
 
   Dio get client => _client;
   Dio get refreshClient => _refreshClient;

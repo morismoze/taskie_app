@@ -40,4 +40,6 @@ const _$ApiErrorCodeEnumMap = {
   ApiErrorCode.taskAssigneesAlreadyExist: '10',
   ApiErrorCode.goalClosed: '11',
   ApiErrorCode.taskAssignmentsCompletedStatusDueDatePassed: '12',
+  ApiErrorCode.workspaceAccessRevoked: '13',
+  ApiErrorCode.insufficientPermissions: '14',
 };
