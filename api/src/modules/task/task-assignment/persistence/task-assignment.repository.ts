@@ -102,5 +102,5 @@ export abstract class TaskAssignmentRepository {
   }: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
-  }): Promise<Nullable<void>>;
+  }): Promise<boolean>;
 }

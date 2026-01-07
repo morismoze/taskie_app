@@ -59,9 +59,9 @@ export class UserService {
   async createVirtualUser(
     data: Pick<User, 'firstName' | 'lastName' | 'status'>,
   ): Promise<User> {
-    const newVirtalUser = await this.userRepository.createVirtualUser(data);
+    const newVirtualUser = await this.userRepository.createVirtualUser(data);
 
-    if (!newVirtalUser) {
+    if (!newVirtualUser) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -70,7 +70,7 @@ export class UserService {
       );
     }
 
-    return newVirtalUser;
+    return newVirtualUser;
   }
 
   async me(data: JwtPayload): Promise<UserResponse> {
@@ -97,17 +97,15 @@ export class UserService {
     return userDto;
   }
 
-  async findById(id: User['id']): Promise<Nullable<User>> {
+  findById(id: User['id']): Promise<Nullable<User>> {
     return this.userRepository.findById(id);
   }
 
-  async findByEmail(
-    email: NonNullable<User['email']>,
-  ): Promise<Nullable<User>> {
+  findByEmail(email: NonNullable<User['email']>): Promise<Nullable<User>> {
     return this.userRepository.findByEmail(email);
   }
 
-  async findBySocialIdAndProvider({
+  findBySocialIdAndProvider({
     socialId,
     provider,
   }: {
@@ -160,9 +158,9 @@ export class UserService {
     if (!updatedUser) {
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -170,6 +168,15 @@ export class UserService {
   }
 
   async delete(userId: User['id']): Promise<void> {
-    await this.userRepository.delete(userId);
+    const result = await this.userRepository.delete(userId);
+
+    if (!result) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }

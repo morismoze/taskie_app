@@ -104,7 +104,7 @@ export class GoalService {
   }
 
   async findById(id: Goal['id']): Promise<Nullable<GoalCore>> {
-    return await this.goalRepository.findById({
+    return this.goalRepository.findById({
       id,
     });
   }

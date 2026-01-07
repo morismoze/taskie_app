@@ -114,33 +114,33 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     return newEntity;
   }
 
-  async findById({
+  findById({
     id,
     relations,
   }: {
     id: TaskAssignment['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    return await this.repositoryContext.findOne({
+    return this.repositoryContext.findOne({
       where: { id },
       relations,
     });
   }
 
-  async findAllByTaskId({
+  findAllByTaskId({
     taskId,
     relations,
   }: {
     taskId: TaskAssignment['task']['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]> {
-    return await this.repositoryContext.find({
+    return this.repositoryContext.find({
       where: { task: { id: taskId } },
       relations,
     });
   }
 
-  async findAllByTaskIdAndAssigneeId({
+  findAllByTaskIdAndAssigneeId({
     taskId,
     assigneeIds,
     relations,
@@ -149,13 +149,13 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]> {
-    return await this.repositoryContext.find({
+    return this.repositoryContext.find({
       where: { task: { id: taskId }, assignee: { id: In(assigneeIds) } },
       relations,
     });
   }
 
-  async findAllByAssigneeIdAndWorkspaceIdAndStatus({
+  findAllByAssigneeIdAndWorkspaceIdAndStatus({
     workspaceUserId,
     workspaceId,
     status,
@@ -164,7 +164,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     workspaceId: TaskAssignment['task']['workspace']['id'];
     status: TaskAssignment['status'];
   }): Promise<TaskAssignmentEntity[]> {
-    return await this.repositoryContext.find({
+    return this.repositoryContext.find({
       where: {
         assignee: {
           id: workspaceUserId,
@@ -246,15 +246,11 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
   }: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
-  }): Promise<Nullable<void>> {
+  }): Promise<boolean> {
     const result = await this.repositoryContext.delete({
       task: { id: taskId },
       assignee: { id: In(assigneeIds) },
     });
-
-    // Early return - provided ID does not exist
-    if (result.affected === 0) {
-      return null;
-    }
+    return (result.affected ?? 0) > 0;
   }
 }

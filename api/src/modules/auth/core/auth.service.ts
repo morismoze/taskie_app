@@ -207,7 +207,7 @@ export class AuthService {
     };
   }
 
-  async logout(data: JwtPayload) {
+  logout(data: JwtPayload) {
     return this.sessionService.deleteById(data.sessionId);
   }
 

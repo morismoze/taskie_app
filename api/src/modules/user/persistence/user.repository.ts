@@ -36,5 +36,5 @@ export abstract class UserRepository {
     data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
   }): Promise<Nullable<UserEntity>>;
 
-  abstract delete(id: User['id']): Promise<void>;
+  abstract delete(id: User['id']): Promise<boolean>;
 }

@@ -28,4 +28,28 @@ export abstract class TransactionalSessionRepository {
     };
     relations?: FindOptionsRelations<SessionEntity>;
   }): Promise<Nullable<SessionEntity>>;
+
+  abstract findById({
+    id,
+    relations,
+  }: {
+    id: Session['id'];
+    relations?: FindOptionsRelations<SessionEntity>;
+  }): Promise<Nullable<SessionEntity>>;
+
+  abstract update({
+    id,
+    data,
+  }: {
+    id: Session['id'];
+    data: Partial<
+      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>
+    >;
+  }): Promise<Nullable<SessionEntity>>;
+
+  abstract incrementAccessTokenVersionByUserId(
+    id: Session['user']['id'],
+  ): Promise<void>;
+
+  abstract deleteById(id: Session['id']): Promise<boolean>;
 }

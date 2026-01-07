@@ -4,7 +4,6 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { SessionCore } from './domain/session-core.domain';
 import { Session } from './domain/session.domain';
-import { SessionRepository } from './persistence/session.repository';
 import { TransactionalSessionRepository } from './persistence/transactional/transactional-session.repository';
 
 /**
@@ -19,8 +18,7 @@ import { TransactionalSessionRepository } from './persistence/transactional/tran
 @Injectable()
 export class SessionService {
   constructor(
-    private readonly sessionRepository: SessionRepository,
-    private readonly transactionalSessionRepository: TransactionalSessionRepository,
+    private readonly sessionRepository: TransactionalSessionRepository,
   ) {}
 
   async create(data: {
@@ -31,7 +29,7 @@ export class SessionService {
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
   }): Promise<SessionCore> {
-    const newSession = await this.transactionalSessionRepository.create({
+    const newSession = await this.sessionRepository.create({
       data,
     });
 
@@ -47,14 +45,14 @@ export class SessionService {
     return newSession;
   }
 
-  async findById(id: Session['id']): Promise<Nullable<SessionCore>> {
-    return await this.sessionRepository.findById({
+  findById(id: Session['id']): Promise<Nullable<SessionCore>> {
+    return this.sessionRepository.findById({
       id,
     });
   }
 
-  async findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {
-    return await this.sessionRepository.findById({
+  findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {
+    return this.sessionRepository.findById({
       id,
       relations: { user: true },
     });
@@ -96,10 +94,10 @@ export class SessionService {
     return updatedSession;
   }
 
-  async incrementAccessTokenVersionByUserId(
+  incrementAccessTokenVersionByUserId(
     id: Session['user']['id'],
   ): Promise<void> {
-    await this.sessionRepository.incrementAccessTokenVersionByUserId(id);
+    return this.sessionRepository.incrementAccessTokenVersionByUserId(id);
   }
 
   async deleteById(id: Session['id']): Promise<void> {

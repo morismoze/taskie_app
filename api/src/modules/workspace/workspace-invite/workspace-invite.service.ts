@@ -16,13 +16,11 @@ import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceU
 import { WorkspaceInviteWithWorkspaceWithCreatedByUser } from './domain/workspace-invite-with-workspace-with-created-by-user.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
 import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
-import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteService {
   constructor(
-    private readonly workspaceInviteRepository: WorkspaceInviteRepository,
-    private readonly transactionalWorkspaceInviteRepository: TransactionalWorkspaceInviteRepository,
+    private readonly workspaceInviteRepository: TransactionalWorkspaceInviteRepository,
     private readonly workspaceUserService: WorkspaceUserService,
     private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
@@ -30,7 +28,6 @@ export class WorkspaceInviteService {
   /**
    * Invite links will last up to 1 day and be one-time only
    */
-
   async createInviteToken({
     workspaceId,
     createdById,
@@ -78,10 +75,10 @@ export class WorkspaceInviteService {
     return newInvite;
   }
 
-  async findByTokenWithWorkspace(
+  findByTokenWithWorkspace(
     token: WorkspaceInvite['token'],
   ): Promise<Nullable<WorkspaceInviteWithWorkspaceWithCreatedByUser>> {
-    return await this.workspaceInviteRepository.findByToken({
+    return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
         workspace: true,
@@ -89,12 +86,12 @@ export class WorkspaceInviteService {
     });
   }
 
-  async findByTokenWithWorkspaceAndUser(
+  findByTokenWithWorkspaceAndUser(
     token: WorkspaceInvite['token'],
   ): Promise<
     Nullable<WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore>
   > {
-    return await this.workspaceInviteRepository.findByToken({
+    return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
         workspace: true,
@@ -176,21 +173,20 @@ export class WorkspaceInviteService {
         });
 
         // Mark the invite as used
-        const updatedInvite =
-          await this.transactionalWorkspaceInviteRepository.markUsedBy({
-            id: workspaceInvite.id,
-            usedById: newWorkspaceUser.id,
-            relations: {
-              workspace: true,
-            },
-          });
+        const updatedInvite = await this.workspaceInviteRepository.markUsedBy({
+          id: workspaceInvite.id,
+          usedById: newWorkspaceUser.id,
+          relations: {
+            workspace: true,
+          },
+        });
 
         if (!updatedInvite) {
           throw new ApiHttpException(
             {
-              code: ApiErrorCode.SERVER_ERROR,
+              code: ApiErrorCode.INVALID_PAYLOAD,
             },
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.NOT_FOUND,
           );
         }
 
