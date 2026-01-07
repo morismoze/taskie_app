@@ -37,7 +37,12 @@ export class SessionRepositoryImpl implements SessionRepository {
     >;
     relations?: FindOptionsRelations<SessionEntity>;
   }): Promise<Nullable<SessionEntity>> {
-    await this.repo.update(id, data);
+    const result = await this.repo.update(id, data);
+
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
 
     const newEntity = await this.findById({
       id,
@@ -50,16 +55,17 @@ export class SessionRepositoryImpl implements SessionRepository {
   async incrementAccessTokenVersionByUserId(
     id: Session['user']['id'],
   ): Promise<void> {
-    await this.repo
-      .createQueryBuilder()
-      .update(SessionEntity)
-      .set({ accessTokenVersion: () => 'access_token_version + 1' })
-      .where('user_id = :id', { id })
-      .execute();
+    const column: keyof SessionEntity = 'accessTokenVersion';
+
+    await this.repo.increment({ user: { id } }, column, 1);
   }
 
-  async deleteById(id: Session['id']): Promise<void> {
-    await this.repo.delete(id);
+  async deleteById(id: Session['id']): Promise<Nullable<void>> {
+    const result = await this.repo.delete(id);
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
   }
 
   async deleteInactiveSessionsBefore(

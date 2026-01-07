@@ -51,6 +51,8 @@ export class TransactionalSessionRepositoryImpl
   }
 
   private get transactionalSessionRepo(): Repository<SessionEntity> {
-    return this.transactionalRepository.getRepository(SessionEntity);
+    // Transactionl repo will be available because we use this
+    // method inside a unitOfWork
+    return this.transactionalRepository.getRepository(SessionEntity)!;
   }
 }

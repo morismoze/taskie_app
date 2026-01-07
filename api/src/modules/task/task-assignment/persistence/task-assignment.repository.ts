@@ -1,10 +1,19 @@
 import { Nullable } from 'src/common/types/nullable.type';
+import { Workspace } from 'src/modules/workspace/workspace-module/domain/workspace.domain';
 import { FindOptionsRelations } from 'typeorm';
 import { TaskAssignmentCore } from '../domain/task-assignment-core.domain';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
 
 export abstract class TaskAssignmentRepository {
+  abstract sumPointsByAssignee({
+    workspaceUserId,
+    workspaceId,
+  }: {
+    workspaceUserId: TaskAssignment['assignee']['id'];
+    workspaceId: Workspace['id'];
+  }): Promise<number>;
+
   abstract create({
     workspaceUserId,
     taskId,
@@ -55,23 +64,7 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 
-  abstract findByIdWithAssigneeUser({
-    id,
-    relations,
-  }: {
-    id: TaskAssignment['id'];
-    relations?: FindOptionsRelations<TaskAssignmentEntity>;
-  }): Promise<Nullable<TaskAssignmentEntity>>;
-
-  abstract findByTaskId({
-    id,
-    relations,
-  }: {
-    id: TaskAssignment['task']['id'];
-    relations?: FindOptionsRelations<TaskAssignmentEntity>;
-  }): Promise<Nullable<TaskAssignmentEntity>>;
-
-  abstract findyAllByAssigneeIdAndWorkspaceIdAndStatus({
+  abstract findAllByAssigneeIdAndWorkspaceIdAndStatus({
     workspaceUserId,
     workspaceId,
     status,
@@ -91,11 +84,23 @@ export abstract class TaskAssignmentRepository {
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
+  abstract updateAllByTaskId({
+    taskId,
+    data,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    data: Partial<TaskAssignmentCore>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity[]>>;
+
+  abstract countByTaskId(id: TaskAssignment['task']['id']): Promise<number>;
+
   abstract deleteByTaskIdAndAssigneeIds({
     taskId,
     assigneeIds,
   }: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
-  }): Promise<void>;
+  }): Promise<Nullable<void>>;
 }

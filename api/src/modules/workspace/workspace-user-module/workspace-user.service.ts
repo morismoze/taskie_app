@@ -4,7 +4,6 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { WorkspaceLeaderboardResponse } from '../workspace-module/dto/response/workspace-leaderboard-response.dto';
 import { WorkspaceUserCore } from './domain/workspace-user-core.domain';
-import { WorkspaceUserRole } from './domain/workspace-user-role.enum';
 import { WorkspaceUserWithCreatedByUser } from './domain/workspace-user-with-created-by.domain';
 import { WorkspaceUserWithUser } from './domain/workspace-user-with-user.domain';
 import { WorkspaceUserWithWorkspaceCore } from './domain/workspace-user-with-workspace.domain';
@@ -245,11 +244,7 @@ export class WorkspaceUserService {
     data,
   }: {
     id: WorkspaceUser['id'];
-    data: Partial<{
-      workspaceRole: WorkspaceUserRole;
-      firstName: string;
-      lastName: string;
-    }>;
+    data: Partial<Pick<WorkspaceUser, 'workspaceRole'>>;
   }): Promise<WorkspaceUserWithUser> {
     const updatedWorkspaceUser = await this.workspaceUserRepository.update({
       id,
@@ -262,9 +257,9 @@ export class WorkspaceUserService {
     if (!updatedWorkspaceUser) {
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 

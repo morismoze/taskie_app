@@ -4,10 +4,10 @@ import { Session } from '../../domain/session.domain';
 import { SessionEntity } from '../session.entity';
 
 /**
- * We use SessionRepository in CRON service which needs classic single instance
+ * We use plain SessionRepository in CRON service which needs classic single instance
  * (singleton) provider. Because of that, SessionRepository can't use TransactionalRepository
- * because that provider is request scoped, meaning it is defined on each HTTP request - so
- * it exists only within the lifecycle of each HTTP request. CRON services are run outside of
+ * because TransactionalRepository is request scoped, meaning it is defined on each HTTP request
+ * - it exists only within the lifecycle of each HTTP request. CRON services are run outside of
  * HTTP request scope, so they can't have a provider which directly or transitively depends
  * on the request scoped provider. And because of all that we create another SessionRepository
  * specifically to be transactional.

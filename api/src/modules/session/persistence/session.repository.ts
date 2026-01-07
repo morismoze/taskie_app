@@ -26,7 +26,7 @@ export abstract class SessionRepository {
     id: Session['user']['id'],
   ): Promise<void>;
 
-  abstract deleteById(id: Session['id']): Promise<void>;
+  abstract deleteById(id: Session['id']): Promise<Nullable<void>>;
 
   /**
    * This is used as part of the session deletion CRON job

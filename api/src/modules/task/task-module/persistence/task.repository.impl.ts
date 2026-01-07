@@ -18,6 +18,15 @@ export class TaskRepositoryImpl implements TaskRepository {
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
+  private get repositoryContext(): Repository<TaskEntity> {
+    const transactional =
+      this.transactionalRepository.getRepository(TaskEntity);
+
+    // If there is a transactional repo available (a transaction bound to the
+    // request is available), use it. Otherwise, use normal repo.
+    return transactional || this.repo;
+  }
+
   async create({
     data,
     workspaceId,
@@ -34,7 +43,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     createdById: Task['createdBy']['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.repositoryContext.create({
       workspace: {
         id: workspaceId,
       },
@@ -45,9 +54,9 @@ export class TaskRepositoryImpl implements TaskRepository {
       createdBy: { id: createdById },
     });
 
-    const savedEntity = await this.transactionalTaskRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalTaskRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
       relations,
     });
@@ -62,7 +71,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     id: Task['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    return await this.repo.findOne({
+    return await this.repositoryContext.findOne({
       where: { id },
       relations,
     });
@@ -77,7 +86,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     workspaceId: Task['workspace']['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    return await this.repo.findOne({
+    return await this.repositoryContext.findOne({
       where: { id: taskId, workspace: { id: workspaceId } },
       relations,
     });
@@ -110,7 +119,7 @@ export class TaskRepositoryImpl implements TaskRepository {
 
     // Phase 1: paginate only the "main" table: filtering and sorting only on
     // the Task table, take total and take tasks' IDs
-    const baseQb = this.repo
+    const baseQb = this.repositoryContext
       .createQueryBuilder('task')
       .where('task.workspace.id = :workspaceId', { workspaceId });
 
@@ -131,8 +140,20 @@ export class TaskRepositoryImpl implements TaskRepository {
     }
 
     if (search) {
+      // Escape special characters used in SQL LIKE/ILIKE
+      // 1. Escape backslash first
+      // 2. Escape percent sign
+      // 3. Escape underscore
+      // E.g. ILIKE '%%%' - this would return all the goals
+      // which, if there are many goals, would fill up RAM
+      // and possibly fail the server.
+      const sanitizedSearch = search
+        .replace(/\\/g, '\\\\')
+        .replace(/%/g, '\\%')
+        .replace(/_/g, '\\_');
+
       baseQb.andWhere('LOWER(task.title) LIKE :search', {
-        search: `%${search.toLowerCase()}%`,
+        search: `%${sanitizedSearch.toLowerCase()}%`,
       });
     }
 
@@ -171,7 +192,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     }
 
     // Phase 2: retrieval of needed relations for IDs from phase 1
-    const data = await this.repo
+    const data = await this.repositoryContext
       .createQueryBuilder('task')
       .whereInIds(ids)
       .leftJoinAndSelect('task.taskAssignments', 'assignment')
@@ -210,7 +231,12 @@ export class TaskRepositoryImpl implements TaskRepository {
     >;
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>> {
-    await this.repo.update(id, data);
+    const result = await this.repositoryContext.update(id, data);
+
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
 
     const newEntity = await this.findById({
       id,
@@ -218,9 +244,5 @@ export class TaskRepositoryImpl implements TaskRepository {
     });
 
     return newEntity;
-  }
-
-  private get transactionalTaskRepo(): Repository<TaskEntity> {
-    return this.transactionalRepository.getRepository(TaskEntity);
   }
 }

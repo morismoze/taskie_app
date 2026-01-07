@@ -53,14 +53,6 @@ export class SessionService {
     });
   }
 
-  async findLastByUserId(
-    id: Session['user']['id'],
-  ): Promise<Nullable<SessionCore>> {
-    return await this.sessionRepository.findById({
-      id,
-    });
-  }
-
   async findByIdWithUser(id: Session['id']): Promise<Nullable<Session>> {
     return await this.sessionRepository.findById({
       id,
@@ -91,11 +83,13 @@ export class SessionService {
     });
 
     if (!updatedSession) {
+      // This should not happen in a normal user flow.
+      // We delete user session only on logout.
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -108,7 +102,7 @@ export class SessionService {
     await this.sessionRepository.incrementAccessTokenVersionByUserId(id);
   }
 
-  deleteById(id: Session['id']): Promise<void> {
-    return this.sessionRepository.deleteById(id);
+  async deleteById(id: Session['id']): Promise<void> {
+    await this.sessionRepository.deleteById(id);
   }
 }
