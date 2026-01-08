@@ -119,9 +119,6 @@ export class WorkspaceController {
   @ApiNotFoundResponse({
     description: 'Provided {workspaceId} was not found',
   })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while updating the workspace',
-  })
   updateWorkspace(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Body() payload: UpdateWorkspaceRequest,
@@ -201,9 +198,6 @@ export class WorkspaceController {
       '• The {invite token} was already used\n\n' +
       '• The {invite token} has expired',
   })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while updating the workspace invite',
-  })
   joinWorkspace(
     @Param() params: WorkspaceInviteTokenRequestPathParam,
     @Req() request: RequestWithUser,
@@ -281,11 +275,6 @@ export class WorkspaceController {
   @ApiNotFoundResponse({
     description: 'Provided {workspaceId} was not found',
   })
-  @ApiInternalServerErrorResponse({
-    description:
-      '• Internal error while creating the core user\n\n' +
-      '• Internal error while creating the workspace user',
-  })
   getWorkspaceUsers(
     @Param() params: WorkspaceIdRequestPathParam,
   ): Promise<WorkspaceUserResponse[]> {
@@ -312,13 +301,7 @@ export class WorkspaceController {
     description:
       '• Provided {workspaceId} was not found\n\n' +
       '• Provided {workspaceUserId} is not part of the provided {workspaceId} workspace\n\n' +
-      '• Core user was not found' +
-      '• Internal error',
-  })
-  @ApiInternalServerErrorResponse({
-    description:
-      '• Internal error while updating the core user\n\n' +
-      '• Internal error while updating the workspace user',
+      '• Core user was not found',
   })
   updateWorkspaceUser(
     @Req() request: RequestWithUser,
@@ -351,7 +334,8 @@ export class WorkspaceController {
   })
   @ApiNotFoundResponse({
     description:
-      'Provided {workspaceUserId} is not part of the provided {workspaceId} workspace',
+      '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {workspaceUserId} is not part of the provided {workspaceId} workspace',
   })
   getWorkspaceUserAccumulatedPoints(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
@@ -379,9 +363,7 @@ export class WorkspaceController {
       'Requires minimal workspace role MEMBER (must be member of the workspace)',
   })
   @ApiNotFoundResponse({
-    description:
-      '• Provided {workspaceId} was not found\n\n' +
-      '• User is not part of the provided {workspaceId} workspace',
+    description: 'Provided {workspaceId} was not found',
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal error',
@@ -411,11 +393,7 @@ export class WorkspaceController {
   @ApiNotFoundResponse({
     description:
       '• Provided {workspaceId} was not found\n\n' +
-      '• Provided {workspaceUserId} is not part of the provided {workspaceId} workspace\n\n' +
-      '• Internal error',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error',
+      '• Provided {workspaceUserId} is not part of the provided {workspaceId} workspace',
   })
   removeUserFromWorkspace(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
@@ -470,9 +448,7 @@ export class WorkspaceController {
     description: 'Requires minimal workspace role MANAGER',
   })
   @ApiNotFoundResponse({
-    description:
-      '• Provided {workspaceId} was not found\n\n' +
-      '• Creator user is not part of the {workspaceId} workspace',
+    description: 'Provided {workspaceId} was not found',
   })
   @ApiInternalServerErrorResponse({
     description:
@@ -508,13 +484,11 @@ export class WorkspaceController {
   @ApiNotFoundResponse({
     description:
       '• Provided {workspaceId} was not found\n\n' +
-      '• Provided {taskId} was not found',
+      '• Provided {taskId} was not found\n\n' +
+      '• Provided {taskId} is not part of the given {workspaceId} workspace',
   })
   @ApiUnprocessableEntityResponse({
     description: 'Update is not available as task is closed',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while updating the task',
   })
   updateTask(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
@@ -542,11 +516,10 @@ export class WorkspaceController {
   })
   @ApiNotFoundResponse({
     description:
+      '• There are no assignments on {taskId} task\n\n' +
       '• Provided {workspaceId} was not found\n\n' +
+      '• Provided {taskId} is not part of the given {workspaceId} workspace\n\n' +
       '• Provided {taskId} was not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while closing the task',
   })
   closeTask(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
@@ -652,17 +625,14 @@ export class WorkspaceController {
   @ApiNotFoundResponse({
     description:
       '• Provided {workspaceId} was not found\n\n' +
-      '• Provided {taskId} is not part of the given {workspaceId} workspace\n\n' +
-      '• Provided {taskId} was not found',
+      '• Provided {taskId} was not found\n\n' +
+      '• Provided {taskId} is not part of the given {workspaceId} workspace',
   })
   @ApiUnprocessableEntityResponse({
     description:
       '• Update is not available as task is closed\n\n' +
       "• One or more provided assignee IDs doesn't exist in task assignments for the given task\n\n" +
       "• One or more provided statuses is COMPLETED, which is invalid. Task assignments whose task's due date has passed can only have statuses updated to COMPLETED_AS_STALE, not COMPLETED.",
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while updating task assignments',
   })
   updateTaskAssignments(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
@@ -693,12 +663,11 @@ export class WorkspaceController {
   @ApiNotFoundResponse({
     description:
       '• Provided {workspaceId} was not found\n\n' +
-      '• Creator user is not part of the {workspaceId} workspace\n\n' +
       '• Provided assignee ID is not part of the {workspaceId} workspace',
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Provided required points are lower than assignee's current accumulated points",
+      "Provided required points are lower or equal to the assignee's current accumulated points",
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal error while creating the goal',
@@ -766,9 +735,6 @@ export class WorkspaceController {
   @ApiUnprocessableEntityResponse({
     description: 'Update is not available as goal is closed',
   })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while updating the goal',
-  })
   updateGoal(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,
     @Param() { goalId }: GoalIdRequestPathParam,
@@ -797,9 +763,6 @@ export class WorkspaceController {
     description:
       '• Provided {workspaceId} was not found\n\n' +
       '• Provided {goalId} was not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal error while updating the goal',
   })
   closeGoal(
     @Param() { workspaceId }: WorkspaceIdRequestPathParam,

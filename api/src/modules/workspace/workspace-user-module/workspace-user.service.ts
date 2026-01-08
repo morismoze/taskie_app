@@ -21,13 +21,11 @@ export class WorkspaceUserService {
     createdById,
     userId,
     workspaceRole,
-    status,
   }: {
     workspaceId: WorkspaceUser['workspace']['id'];
     createdById: WorkspaceUser['id'] | null;
     userId: WorkspaceUser['user']['id'];
     workspaceRole: WorkspaceUser['workspaceRole'];
-    status: WorkspaceUser['status'];
   }): Promise<WorkspaceUserWithCreatedByUser> {
     const workspaceUser = await this.workspaceUserRepository.create({
       data: {
@@ -35,7 +33,6 @@ export class WorkspaceUserService {
         createdById,
         userId,
         workspaceRole,
-        status,
       },
       relations: {
         createdBy: {
@@ -69,7 +66,7 @@ export class WorkspaceUserService {
     };
   }
 
-  async findByIdAndWorkspaceId({
+  findByIdAndWorkspaceId({
     workspaceId,
     id,
   }: {
@@ -85,7 +82,7 @@ export class WorkspaceUserService {
   /**
    * This function returns workspace user membership a user has in a specific workspace
    */
-  async findByUserIdAndWorkspaceId({
+  findByUserIdAndWorkspaceId({
     userId,
     workspaceId,
   }: {
@@ -209,7 +206,7 @@ export class WorkspaceUserService {
    * This function returns workspace user memberships a user has in
    * different workspaces with workspace relation loaded.
    */
-  async findAllByUserIdWithWorkspace(
+  findAllByUserIdWithWorkspace(
     userId: WorkspaceUser['user']['id'],
   ): Promise<WorkspaceUserWithWorkspaceCore[]> {
     return this.workspaceUserRepository.findAllByUserId({
@@ -218,7 +215,7 @@ export class WorkspaceUserService {
     });
   }
 
-  async findAllByIds({
+  findAllByIds({
     workspaceId,
     ids,
   }: {
@@ -231,10 +228,18 @@ export class WorkspaceUserService {
     });
   }
 
-  async findAllByWorkspaceId(
+  findAllByWorkspaceId(
     workspaceId: WorkspaceUser['workspace']['id'],
   ): Promise<WorkspaceUserCore[]> {
     return this.workspaceUserRepository.findAllByWorkspaceId({
+      workspaceId,
+    });
+  }
+
+  countManagers(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<number> {
+    return this.workspaceUserRepository.countManagers({
       workspaceId,
     });
   }
@@ -273,12 +278,12 @@ export class WorkspaceUserService {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['user']['id'];
   }): Promise<void> {
-    const workspaceUser = await this.findByIdAndWorkspaceId({
+    const result = await this.workspaceUserRepository.delete({
       workspaceId,
-      id: workspaceUserId,
+      workspaceUserId,
     });
 
-    if (!workspaceUser) {
+    if (!result) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -286,36 +291,11 @@ export class WorkspaceUserService {
         HttpStatus.NOT_FOUND,
       );
     }
-
-    await this.workspaceUserRepository.delete({
-      workspaceId,
-      workspaceUserId: workspaceUser.id,
-    });
   }
 
-  async getWorkspaceUserAccumulatedPoints({
-    workspaceId,
-    workspaceUserId,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    workspaceUserId: WorkspaceUser['id'];
-  }): Promise<Nullable<number>> {
-    return this.workspaceUserRepository.getWorkspaceUserAccumulatedPoints({
-      workspaceId,
-      workspaceUserId,
-    });
-  }
-
-  async getLeaderboardData(
+  getLeaderboardData(
     workspaceId: WorkspaceUser['workspace']['id'],
   ): Promise<WorkspaceLeaderboardResponse[]> {
-    const leaderboardData =
-      await this.workspaceUserRepository.getWorkspaceLeaderboard(workspaceId);
-
-    return leaderboardData.map((row) => ({
-      ...row,
-      accumulatedPoints: Number(row.accumulatedPoints),
-      completedTasks: Number(row.completedTasks),
-    }));
+    return this.workspaceUserRepository.getWorkspaceLeaderboard(workspaceId);
   }
 }

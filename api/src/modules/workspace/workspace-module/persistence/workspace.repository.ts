@@ -46,5 +46,5 @@ export abstract class WorkspaceRepository {
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<WorkspaceEntity[]>;
 
-  abstract deleteById(id: Workspace['id']): Promise<void>;
+  abstract deleteById(id: Workspace['id']): Promise<boolean>;
 }

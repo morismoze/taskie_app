@@ -156,6 +156,7 @@ export class UserService {
     });
 
     if (!updatedUser) {
+      // Somebody deleted themselves in the meantime
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -171,6 +172,8 @@ export class UserService {
     const result = await this.userRepository.delete(userId);
 
     if (!result) {
+      // Should never happen because we read userId from JWT
+      // and if JWT is invalid, it will fail on the JWT guard
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,

@@ -16,10 +16,11 @@ const getValidationOptions = (
 ): ValidationPipeOptions => ({
   enableDebugMessages:
     configService.getOrThrow('app.nodeEnv', { infer: true }) !==
-    Environment.PRODUCTION
+    Environment.DEVELOPMENT
       ? true
       : false,
   transform: true,
+  // Strip validated (returned) object of any properties that do not use any validation decorators
   whitelist: true,
   errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {

@@ -61,6 +61,12 @@ export abstract class WorkspaceUserRepository {
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 
+  abstract countManagers({
+    workspaceId,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+  }): Promise<number>;
+
   abstract create({
     data,
     relations,
@@ -70,7 +76,6 @@ export abstract class WorkspaceUserRepository {
       createdById: WorkspaceUser['id'] | null;
       userId: WorkspaceUser['user']['id'];
       workspaceRole: WorkspaceUser['workspaceRole'];
-      status: WorkspaceUser['status'];
     };
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
@@ -91,15 +96,7 @@ export abstract class WorkspaceUserRepository {
   }: {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['user']['id'];
-  }): Promise<void>;
-
-  abstract getWorkspaceUserAccumulatedPoints({
-    workspaceId,
-    workspaceUserId,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    workspaceUserId;
-  }): Promise<Nullable<number>>;
+  }): Promise<boolean>;
 
   abstract getWorkspaceLeaderboard(
     workspaceId: WorkspaceUser['workspace']['id'],

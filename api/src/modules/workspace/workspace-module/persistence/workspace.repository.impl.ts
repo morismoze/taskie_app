@@ -18,6 +18,15 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
+  private get repositoryContext(): Repository<WorkspaceEntity> {
+    const transactional =
+      this.transactionalRepository.getRepository(WorkspaceEntity);
+
+    // If there is a transactional repo available (a transaction bound to the
+    // request is available), use it. Otherwise, use normal repo.
+    return transactional || this.repo;
+  }
+
   async create({
     data: { name, description, pictureUrl },
     createdById,
@@ -31,17 +40,16 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     createdById: User['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.repositoryContext.create({
       name,
       description,
       pictureUrl,
       createdBy: { id: createdById },
     });
 
-    const savedEntity =
-      await this.transactionalWorkspaceRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalWorkspaceRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
       relations,
     });
@@ -57,9 +65,14 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     data: Partial<WorkspaceCore>;
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>> {
-    await this.repo.update(id, data);
+    const result = await this.repositoryContext.update(id, data);
 
-    const updatedEntity = await this.repo.findOne({
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
+
+    const updatedEntity = await this.repositoryContext.findOne({
       where: { id },
       relations,
     });
@@ -67,27 +80,27 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     return updatedEntity;
   }
 
-  async findById({
+  findById({
     id,
     relations,
   }: {
     id: Workspace['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>> {
-    return await this.repo.findOne({
+    return this.repositoryContext.findOne({
       where: { id },
       relations,
     });
   }
 
-  async findAllByUserId({
+  findAllByUserId({
     userId,
     relations,
   }: {
     userId: WorkspaceUser['user']['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<WorkspaceEntity[]> {
-    return await this.repo.find({
+    return this.repositoryContext.find({
       where: {
         members: {
           user: {
@@ -99,11 +112,8 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     });
   }
 
-  async deleteById(id: Workspace['id']): Promise<void> {
-    await this.repo.delete(id);
-  }
-
-  private get transactionalWorkspaceRepo(): Repository<WorkspaceEntity> {
-    return this.transactionalRepository.getRepository(WorkspaceEntity);
+  async deleteById(id: Workspace['id']): Promise<boolean> {
+    const result = await this.repositoryContext.delete(id);
+    return (result.affected ?? 0) > 0;
   }
 }

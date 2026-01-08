@@ -38,9 +38,8 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
       .createQueryBuilder('assignment')
       .leftJoin('assignment.task', 'task')
       .select('SUM(task.rewardPoints)', 'total')
-      // TODO: test if it should be assignment.assignee.id or assignment.assignee
-      .where('assignment.assignee.id = :workspaceUserId', { workspaceUserId })
-      .andWhere('task.workspaceId = :workspaceId', { workspaceId })
+      .where('assignment.assignee = :workspaceUserId', { workspaceUserId })
+      .andWhere('task.workspace = :workspaceId', { workspaceId })
       .andWhere('assignment.status = :status', {
         status: ProgressStatus.COMPLETED,
       })

@@ -8,7 +8,6 @@ import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
@@ -43,6 +42,7 @@ export class WorkspaceInviteService {
       });
 
     if (!createdByWorkspaceUser) {
+      // Should not be possible since we have JWT role guard
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -169,7 +169,6 @@ export class WorkspaceInviteService {
             ? workspaceInvite.createdBy.id
             : null,
           workspaceRole: WorkspaceUserRole.MEMBER,
-          status: WorkspaceUserStatus.ACTIVE,
         });
 
         // Mark the invite as used
