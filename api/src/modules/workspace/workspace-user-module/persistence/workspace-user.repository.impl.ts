@@ -236,7 +236,6 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
       .addOrderBy('u.lastName', 'ASC')
       // This returns raw data as defined in the SQL query itself. Function getMany on the other hand
       // returns data and tries to build the array of entity type records (WorkspaceUser[] in this case)
-      // TODO: check if accumulatedPoints and completedTasks are numbers in the response and not strings
       .getRawMany();
 
     return rawResults.map((row) => ({

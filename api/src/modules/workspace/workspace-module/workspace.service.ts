@@ -196,9 +196,26 @@ export class WorkspaceService {
       );
     }
 
+    // Check if workspace user by user ID exists
+    const createdByWorkspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: createdById,
+        workspaceId,
+      });
+
+    if (!createdByWorkspaceUser) {
+      // Should not be possible since we have JWT role guard
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const invite = await this.workspaceInviteService.createInviteToken({
       workspaceId,
-      createdById,
+      createdByWorkspaceUserId: createdByWorkspaceUser.id,
     });
 
     const response: CreateWorkspaceInviteTokenResponse = {
@@ -593,17 +610,17 @@ export class WorkspaceService {
         createdAt: DateTime.fromJSDate(newTask.createdAt).toISO()!,
       };
 
-      // TODO: update this so it uses createMultiple of the taskAssignmentService
-      const assignmentPromises = data.assignees.map(async (assigneeId) => {
-        const newTaskAssignment = await this.taskAssignmentService.create({
-          workspaceUserId: assigneeId,
-          taskId: newTask.id,
-          status: ProgressStatus.IN_PROGRESS,
-        });
-        return newTaskAssignment;
-      });
+      const assignments = data.assignees.map((assigneeId) => ({
+        workspaceUserId: assigneeId,
+        status: ProgressStatus.IN_PROGRESS,
+      }));
 
-      const createdAssignments = await Promise.all(assignmentPromises);
+      // Create task assignments
+      const createdAssignments =
+        await this.taskAssignmentService.createMultiple({
+          assignments,
+          taskId: newTask.id,
+        });
 
       for (const assignment of createdAssignments) {
         response.assignees.push({
@@ -751,8 +768,9 @@ export class WorkspaceService {
     const responseData: WorkspaceGoalsResponse['items'] = [];
 
     for (const goal of goals) {
-      // This is currently (as the limit is 20) 20 queries
-      // TODO: check if acc points fetch should be from workspace user entity so we fetch goals and acc points together in SQL
+      // Current max limit of goals per page is 20, so this should not
+      // cause efficiency problems, but should be revisited in the future
+      // if there would be some problems
       const accumulatedPoints =
         await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
           workspaceUserId: goal.assignee.id,
@@ -1008,44 +1026,37 @@ export class WorkspaceService {
     // as they are always Members. Non-virtual users can get
     // only the role changed as their firstName and lastName
     // comes from social login.
-    const { updatedWorkspaceUserId } =
-      await this.unitOfWorkService.withTransaction(async () => {
-        const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
-
-        if (isVirtualUser) {
-          await this.userService.update({
-            id: workspaceUser.user.id,
-            data: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-            },
-          });
-        } else {
-          await this.workspaceUserService.update({
-            id: workspaceUserId,
-            data: {
-              workspaceRole: data.role,
-            },
-          });
-        }
-
-        return { updatedWorkspaceUserId: workspaceUser.id };
+    const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
+    if (isVirtualUser) {
+      await this.userService.update({
+        id: workspaceUser.user.id,
+        data: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+        },
       });
+    } else {
+      await this.workspaceUserService.update({
+        id: workspaceUserId,
+        data: {
+          workspaceRole: data.role,
+        },
+      });
+    }
 
     await this.invalidateUserSession({ workspaceId, workspaceUserId });
 
-    // This is freshly updated workspace user because former code is
-    // executed inside a transaction, so doing this find inside would result
-    // in not updated workspace user.
+    // Re-fetch the workspace user
     const updatedWorkspaceUser =
       await this.workspaceUserService.findByIdAndWorkspaceIdWithUserAndCreatedByUser(
         {
-          id: updatedWorkspaceUserId,
+          id: workspaceUser.id,
           workspaceId,
         },
       );
 
     if (updatedWorkspaceUser == null) {
+      // Sanity check
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -1293,9 +1304,13 @@ export class WorkspaceService {
       );
     }
 
-    await this.taskAssignmentService.createMultiple({
-      workspaceUserIds: payload.assigneeIds,
+    const assignments = payload.assigneeIds.map((assigneeId) => ({
+      workspaceUserId: assigneeId,
       status: ProgressStatus.IN_PROGRESS,
+    }));
+
+    await this.taskAssignmentService.createMultiple({
+      assignments,
       taskId,
     });
 

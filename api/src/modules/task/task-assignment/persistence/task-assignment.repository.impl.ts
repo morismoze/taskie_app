@@ -80,25 +80,26 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
   }
 
   async createMultiple({
-    workspaceUserIds,
+    assignments,
     taskId,
-    status,
     relations,
   }: {
-    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    assignments: Array<{
+      workspaceUserId: TaskAssignment['assignee']['id'];
+      status: TaskAssignment['status'];
+    }>;
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Array<TaskAssignmentEntity>> {
     const persistenceModel = this.repositoryContext.create(
-      workspaceUserIds.map((id) => ({
+      assignments.map((assignment) => ({
         assignee: {
-          id,
+          id: assignment.workspaceUserId,
         },
         task: {
           id: taskId,
         },
-        status,
+        status: assignment.status,
       })),
     );
 

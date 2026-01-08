@@ -29,28 +29,11 @@ export class WorkspaceInviteService {
    */
   async createInviteToken({
     workspaceId,
-    createdById,
+    createdByWorkspaceUserId,
   }: {
     workspaceId: WorkspaceInvite['workspace']['id'];
-    createdById: WorkspaceUser['id'];
+    createdByWorkspaceUserId: WorkspaceUser['id'];
   }): Promise<WorkspaceInviteCore> {
-    // Check if workspace user by user ID exists
-    const createdByWorkspaceUser =
-      await this.workspaceUserService.findByUserIdAndWorkspaceId({
-        userId: createdById,
-        workspaceId,
-      });
-
-    if (!createdByWorkspaceUser) {
-      // Should not be possible since we have JWT role guard
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
     const now = DateTime.now().toUTC();
     const expiresAt = now.plus({ hours: 24 }).toISO();
@@ -58,7 +41,7 @@ export class WorkspaceInviteService {
       data: {
         token,
         workspaceId,
-        createdById: createdByWorkspaceUser.id,
+        createdById: createdByWorkspaceUserId,
         expiresAt,
       },
     });
@@ -159,6 +142,10 @@ export class WorkspaceInviteService {
       );
     }
 
+    // WorkspaceUserService is injected into this class only because of the
+    // code below. There is no easy/not messy way to move this WorkspaceUserService
+    // code to the WorkspaceService method, so we will leave it like this
+    // for the sake of easier code understanding.
     const { updatedInvite } = await this.unitOfWorkService.withTransaction(
       async () => {
         // Create a new workspace user

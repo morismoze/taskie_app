@@ -35,47 +35,16 @@ export class TaskAssignmentService {
     });
   }
 
-  async create({
-    workspaceUserId,
-    taskId,
-    status,
-  }: {
-    workspaceUserId: TaskAssignment['assignee']['id'];
-    taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<TaskAssignmentWithAssigneeUser> {
-    const newTaskAssignment = await this.taskAssignmentRepository.create({
-      workspaceUserId,
-      taskId,
-      status,
-      relations: {
-        assignee: {
-          user: true,
-        },
-      },
-    });
-
-    if (!newTaskAssignment) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.SERVER_ERROR,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return newTaskAssignment;
-  }
-
   async createMultiple({
-    workspaceUserIds,
+    assignments,
     taskId,
-    status,
   }: {
-    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    assignments: Array<{
+      workspaceUserId: TaskAssignment['assignee']['id'];
+      status: TaskAssignment['status'];
+    }>;
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<Array<TaskAssignmentCore>> {
+  }): Promise<Array<TaskAssignmentWithAssigneeUser>> {
     // Check if there already are 10 assignees assigned (= 10 assignments)
     const taskAssignments = await this.findAllByTaskId(taskId);
 
@@ -87,6 +56,10 @@ export class TaskAssignmentService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+
+    const workspaceUserIds = assignments.map(
+      (assignment) => assignment.workspaceUserId,
+    );
 
     // Check if any of the provided assignee IDs already exists as assignment
     const existingTaskAssignments = await this.findAllByTaskIdAndAssigneeIds({
@@ -104,17 +77,18 @@ export class TaskAssignmentService {
       );
     }
 
-    const newTaskAssignments = await this.unitOfWorkService.withTransaction(
-      async () => {
-        return await this.taskAssignmentRepository.createMultiple({
-          workspaceUserIds,
-          taskId,
-          status,
-        });
-      },
-    );
+    const newTaskAssignments =
+      await this.taskAssignmentRepository.createMultiple({
+        assignments,
+        taskId,
+        relations: {
+          assignee: {
+            user: true,
+          },
+        },
+      });
 
-    if (newTaskAssignments.length !== workspaceUserIds.length) {
+    if (newTaskAssignments.length !== assignments.length) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
