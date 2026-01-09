@@ -7,10 +7,7 @@ import { Workspace } from '../domain/workspace.domain';
 import { WorkspaceEntity } from './workspace.entity';
 
 export abstract class WorkspaceRepository {
-  abstract create({
-    data,
-    relations,
-  }: {
+  abstract create(args: {
     data: {
       name: Workspace['name'];
       description: Workspace['description'];
@@ -20,28 +17,18 @@ export abstract class WorkspaceRepository {
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>>;
 
-  abstract update({
-    id,
-    data,
-    relations,
-  }: {
+  abstract update(args: {
     id: Workspace['id'];
     data: Partial<WorkspaceCore>;
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>>;
 
-  abstract findById({
-    id,
-    relations,
-  }: {
+  abstract findById(args: {
     id: Workspace['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<Nullable<WorkspaceEntity>>;
 
-  abstract findAllByUserId({
-    userId,
-    relations,
-  }: {
+  abstract findAllByUserId(args: {
     userId: WorkspaceUser['user']['id'];
     relations?: FindOptionsRelations<WorkspaceEntity>;
   }): Promise<WorkspaceEntity[]>;

@@ -125,11 +125,9 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
-  async countManagers({
-    workspaceId,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-  }): Promise<number> {
+  async countManagersInWorkspace(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<number> {
     return this.repositoryContext.count({
       where: {
         workspace: { id: workspaceId },

@@ -215,6 +215,14 @@ export class WorkspaceUserService {
     });
   }
 
+  findAllByUserId(
+    userId: WorkspaceUser['user']['id'],
+  ): Promise<WorkspaceUserWithWorkspaceCore[]> {
+    return this.workspaceUserRepository.findAllByUserId({
+      userId,
+    });
+  }
+
   findAllByIds({
     workspaceId,
     ids,
@@ -239,9 +247,7 @@ export class WorkspaceUserService {
   countManagers(
     workspaceId: WorkspaceUser['workspace']['id'],
   ): Promise<number> {
-    return this.workspaceUserRepository.countManagers({
-      workspaceId,
-    });
+    return this.workspaceUserRepository.countManagersInWorkspace(workspaceId);
   }
 
   async update({

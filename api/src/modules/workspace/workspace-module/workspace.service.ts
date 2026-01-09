@@ -47,6 +47,7 @@ import {
 import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
 import { WorkspaceUserResponse } from './dto/response/workspace-users-response.dto';
 import { WorkspaceResponse } from './dto/response/workspaces-response.dto';
+import { WorkspaceSoleOwnershipResponse } from './dto/response/workspaces-sole-ownership-response.dto';
 import { WorkspaceRepository } from './persistence/workspace.repository';
 
 @Injectable()
@@ -410,6 +411,24 @@ export class WorkspaceService {
               profileImageUrl: workspace.createdBy.profileImageUrl,
             },
     }));
+
+    return response;
+  }
+
+  async getUserWorkspacesSoleOwner(
+    userId: JwtPayload['sub'],
+  ): Promise<WorkspaceSoleOwnershipResponse[]> {
+    const workspaceUsers =
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(userId);
+    const workspaceUsersLastManager = workspaceUsers.filter(
+      (wu) => wu.workspaceRole === WorkspaceUserRole.MANAGER,
+    );
+
+    const response: WorkspaceSoleOwnershipResponse[] =
+      workspaceUsersLastManager.map((workspaceUser) => ({
+        id: workspaceUser.workspace.id,
+        name: workspaceUser.workspace.name,
+      }));
 
     return response;
   }

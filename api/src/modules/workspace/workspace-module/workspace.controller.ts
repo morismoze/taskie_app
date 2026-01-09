@@ -62,6 +62,7 @@ import {
 import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
 import { WorkspaceUserResponse } from './dto/response/workspace-users-response.dto';
 import { WorkspaceResponse } from './dto/response/workspaces-response.dto';
+import { WorkspaceSoleOwnershipResponse } from './dto/response/workspaces-sole-ownership-response.dto';
 import { WorkspaceMembershipGuard } from './guards/workspace-membership.guard';
 import { WorkspaceRoleGuard } from './guards/workspace-role.guard';
 import { WorkspaceService } from './workspace.service';
@@ -220,6 +221,25 @@ export class WorkspaceController {
   })
   getUserWorkspaces(@Req() req: RequestWithUser): Promise<WorkspaceResponse[]> {
     return this.workspaceService.getWorkspacesByUser(req.user.sub);
+  }
+
+  @Get('me/sole-ownership')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      "Get current authenticated user's workspaces in which he is the last Manager",
+    description:
+      'This endpoint is primarily used to resolve the SOLE_MANAGER_CONFLICT error returned by the core user deletion endpoint.',
+  })
+  @ApiOkResponse({
+    type: WorkspaceSoleOwnershipResponse,
+    isArray: true,
+  })
+  getUserWorkspacesSoleOwner(
+    @Req() req: RequestWithUser,
+  ): Promise<WorkspaceSoleOwnershipResponse[]> {
+    return this.workspaceService.getUserWorkspacesSoleOwner(req.user.sub);
   }
 
   @Post(':workspaceId/users/virtual')

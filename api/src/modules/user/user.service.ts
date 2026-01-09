@@ -4,6 +4,7 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
+import { WorkspaceUserRole } from '../workspace/workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserService } from '../workspace/workspace-user-module/workspace-user.service';
 import { User } from './domain/user.domain';
 import { RolePerWorkspace, UserResponse } from './dto/user-response.dto';
@@ -168,7 +169,34 @@ export class UserService {
     return updatedUser;
   }
 
+  /**
+   * This should cascadely delete workspace_user,
+   * goal, task_assignment and session entities
+   * and set NULL to specific entities' properties.
+   */
   async delete(userId: User['id']): Promise<void> {
+    // We firstly need to check if user is the last Manager
+    // in any workspace. Because if he was, deleting
+    // it immediately would leave that/those workspace/s
+    // in a state where it can't be admistrated anymore.
+    const workspaceUsers =
+      await this.workspaceUserService.findAllByUserId(userId);
+    const workspaceUsersLastManager = workspaceUsers.filter(
+      (wu) => wu.workspaceRole === WorkspaceUserRole.MANAGER,
+    );
+
+    // If there are some workspaces user is part of and is Manager in them
+    // we block the deletion, and send those workspaces in the response
+    // and prompt the user to delete them before deleting the account.
+    if (workspaceUsersLastManager.length > 0) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const result = await this.userRepository.delete(userId);
 
     if (!result) {

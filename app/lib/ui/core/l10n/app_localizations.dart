@@ -1544,6 +1544,24 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble signing you out'**
   String get signOutError;
 
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountText.
+  ///
+  /// In en, this message translates to:
+  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to.\n\nDeleting your account will remove all your workspace memberships, task assignments, and goals.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
+  String get deleteAccountText;
+
+  /// No description provided for @deleteAccountConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I understand'**
+  String get deleteAccountConfirmButton;
+
   /// No description provided for @workspaceAccessRevocationMessage.
   ///
   /// In en, this message translates to:

@@ -870,6 +870,16 @@ class AppLocalizationsHr extends AppLocalizations {
   String get signOutError => 'Uh-oh! Došlo je do problema prilikom odjave';
 
   @override
+  String get deleteAccount => 'Izbriši račun';
+
+  @override
+  String get deleteAccountText =>
+      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjeri da nisi jedini Menadžer u nekom radnom prostoru čiji si član.\n\nBrisanjem računa brišu se sva tvoja članstva u radnim prostorima, sve tvoje dodjele na zadacima te svi tvoji ciljevi.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
+
+  @override
+  String get deleteAccountConfirmButton => 'Da, razumijem';
+
+  @override
   String get workspaceAccessRevocationMessage =>
       'Uh-oh! Izgleda da ste uklonjeni iz ovog radnog prostora. Nastavite pritiskom na gumb ispod. Bit ćete preusmjereni na prvi dostupni radni prostor.';
 

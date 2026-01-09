@@ -14,10 +14,7 @@ import { SessionEntity } from '../session.entity';
  */
 
 export abstract class TransactionalSessionRepository {
-  abstract create({
-    data,
-    relations,
-  }: {
+  abstract create(args: {
     data: {
       userId: Session['user']['id'];
       hash: Session['hash'];
@@ -29,18 +26,12 @@ export abstract class TransactionalSessionRepository {
     relations?: FindOptionsRelations<SessionEntity>;
   }): Promise<Nullable<SessionEntity>>;
 
-  abstract findById({
-    id,
-    relations,
-  }: {
+  abstract findById(args: {
     id: Session['id'];
     relations?: FindOptionsRelations<SessionEntity>;
   }): Promise<Nullable<SessionEntity>>;
 
-  abstract update({
-    id,
-    data,
-  }: {
+  abstract update(args: {
     id: Session['id'];
     data: Partial<
       Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>

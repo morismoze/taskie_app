@@ -6,12 +6,7 @@ import { Task } from '../domain/task.domain';
 import { TaskEntity } from './task.entity';
 
 export abstract class TaskRepository {
-  abstract create({
-    data,
-    workspaceId,
-    createdById,
-    relations,
-  }: {
+  abstract create(args: {
     data: {
       title: Task['title'];
       description: Task['description'];
@@ -23,28 +18,18 @@ export abstract class TaskRepository {
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>>;
 
-  abstract findById({
-    id,
-    relations,
-  }: {
+  abstract findById(args: {
     id: Task['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>>;
 
-  abstract findByTaskIdAndWorkspaceId({
-    taskId,
-    workspaceId,
-    relations,
-  }: {
+  abstract findByTaskIdAndWorkspaceId(args: {
     taskId: Task['id'];
     workspaceId: Task['workspace']['id'];
     relations?: FindOptionsRelations<TaskEntity>;
   }): Promise<Nullable<TaskEntity>>;
 
-  abstract findAllByWorkspaceId({
-    workspaceId,
-    query,
-  }: {
+  abstract findAllByWorkspaceId(args: {
     workspaceId: Task['workspace']['id'];
     query: {
       page: number;
@@ -59,11 +44,7 @@ export abstract class TaskRepository {
     total: number;
   }>;
 
-  abstract update({
-    id,
-    data,
-    relations,
-  }: {
+  abstract update(args: {
     id: Task['id'];
     data: Partial<
       Omit<

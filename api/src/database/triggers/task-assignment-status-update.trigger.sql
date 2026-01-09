@@ -75,6 +75,19 @@ BEGIN
         RETURN NEW;
 
     ELSIF TG_OP = 'DELETE' THEN
+        -- We need to check if this DELETE OP is caused by the workspace_user
+        -- entity being cascadely deleted by deleting user entity.
+        -- PERFORM means: do this SELECT, but throw the result away, as
+        -- we are only interested if something was found (set FOUND 
+        -- variable to TRUE or FALSE).
+        PERFORM 1 FROM public.workspace_user WHERE id = OLD.assignee_id;
+        
+        IF NOT FOUND THEN
+        -- If the workspace_user was deleted cascadely by deleting
+        -- the user entity, we should enter here and early return.
+            RETURN OLD;
+        END IF;
+
         -- If deleted assignment was not COMPLETED, skip
         IF OLD.status NOT IN ('COMPLETED') THEN
             RETURN OLD;

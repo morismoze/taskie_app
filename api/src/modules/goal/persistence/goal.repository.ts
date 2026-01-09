@@ -7,12 +7,7 @@ import { Goal } from '../domain/goal.domain';
 import { GoalEntity } from './goal.entity';
 
 export abstract class GoalRepository {
-  abstract create({
-    data,
-    workspaceId,
-    createdById,
-    relations,
-  }: {
+  abstract create(args: {
     data: {
       title: Goal['title'];
       description: Goal['description'];
@@ -24,29 +19,18 @@ export abstract class GoalRepository {
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
-  abstract findById({
-    id,
-    relations,
-  }: {
+  abstract findById(args: {
     id: Goal['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
-  abstract findByGoalIdAndWorkspaceId({
-    goalId,
-    workspaceId,
-    relations,
-  }: {
+  abstract findByGoalIdAndWorkspaceId(args: {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
-  abstract findAllByWorkspaceId({
-    workspaceId,
-    query,
-    relations,
-  }: {
+  abstract findAllByWorkspaceId(args: {
     workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
@@ -62,10 +46,7 @@ export abstract class GoalRepository {
     total: number;
   }>;
 
-  abstract update({
-    id,
-    data,
-  }: {
+  abstract update(args: {
     id: Goal['id'];
     data: Partial<
       Omit<

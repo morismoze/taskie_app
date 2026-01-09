@@ -16,6 +16,7 @@ class UserProfileViewModel extends ChangeNotifier {
     _userRepository.addListener(_onUserChanged);
     loadUserDetails = Command0(_loadUserDetails)..execute();
     signOut = Command0(_signOut);
+    deleteAccount = Command0(_deleteAccount);
   }
 
   final String _activeWorkspaceId;
@@ -24,6 +25,7 @@ class UserProfileViewModel extends ChangeNotifier {
 
   late Command0 loadUserDetails;
   late Command0 signOut;
+  late Command0 deleteAccount;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -53,6 +55,10 @@ class UserProfileViewModel extends ChangeNotifier {
       case Error():
         return result;
     }
+  }
+
+  Future<Result<void>> _deleteAccount() async {
+    return Future.delayed(const Duration(seconds: 2));
   }
 
   @override

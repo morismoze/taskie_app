@@ -862,6 +862,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutError => 'Uh-oh! We\'ve had some trouble signing you out';
 
   @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountText =>
+      '**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to.\n\nDeleting your account will remove all your workspace memberships, task assignments, and goals.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**';
+
+  @override
+  String get deleteAccountConfirmButton => 'Yes, I understand';
+
+  @override
   String get workspaceAccessRevocationMessage =>
       'Uh-oh! It looks like you have been removed from this workspace. Please continue by pressing the button below. You will be redirected to the first available workspace.';
 
