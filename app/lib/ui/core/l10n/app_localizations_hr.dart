@@ -147,7 +147,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksNoTasks =>
-      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod ili osvježiti popis!';
 
   @override
   String get tasksLoadRefreshError =>
@@ -156,10 +156,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
-
-  @override
-  String get tasksEmptyPageTasks =>
-      'Uh-oh! Ova stranica nema više zadataka. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis zadataka!';
 
   @override
   String get tasksPressAgainToExit =>
@@ -767,7 +763,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get leaderboardEmpty =>
-      'Izgleda da vaš workspace još nema završenih zadataka. Pokušajte ažurirati i završiti neke kako biste započeli!';
+      'Izgleda da vaš workspace još nema završenih zadataka. Pokušajte ažurirati i završiti neke kako biste započeli ili osvježiti popis!';
 
   @override
   String get goalsLabel => 'Ciljevi';
@@ -778,15 +774,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsNoGoals =>
-      'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+      'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod ili osvježiti popis!';
 
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
-
-  @override
-  String get goalsEmptyPageGoals =>
-      'Uh-oh! Ova stranica nema više ciljeva. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis ciljeva!';
 
   @override
   String get goalsDetails => 'Detalji cilja';

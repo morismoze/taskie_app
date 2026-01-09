@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksNoTasks.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!'**
+  /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below or refreshing the feed!'**
   String get tasksNoTasks;
 
   /// No description provided for @tasksLoadRefreshError.
@@ -367,12 +367,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
   String get taskskNoFilteredTasks;
-
-  /// No description provided for @tasksEmptyPageTasks.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!'**
-  String get tasksEmptyPageTasks;
 
   /// No description provided for @tasksPressAgainToExit.
   ///
@@ -1367,7 +1361,7 @@ abstract class AppLocalizations {
   /// No description provided for @leaderboardEmpty.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!'**
+  /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started or refreshing the feed!'**
   String get leaderboardEmpty;
 
   /// No description provided for @goalsLabel.
@@ -1385,7 +1379,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsNoGoals.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!'**
+  /// **'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below or refreshing the feed!'**
   String get goalsNoGoals;
 
   /// No description provided for @goalsNoFilteredGoals.
@@ -1393,12 +1387,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
   String get goalsNoFilteredGoals;
-
-  /// No description provided for @goalsEmptyPageGoals.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!'**
-  String get goalsEmptyPageGoals;
 
   /// No description provided for @goalsDetails.
   ///

@@ -4,14 +4,13 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 
 @Injectable()
 export class WorkspaceMembershipGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor() {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();

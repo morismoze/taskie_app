@@ -147,7 +147,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksNoTasks =>
-      'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!';
+      'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below or refreshing the feed!';
 
   @override
   String get tasksLoadRefreshError =>
@@ -156,10 +156,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
-
-  @override
-  String get tasksEmptyPageTasks =>
-      'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!';
 
   @override
   String get tasksPressAgainToExit => 'Press again to exit the app';
@@ -759,7 +755,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardEmpty =>
-      'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!';
+      'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started or refreshing the feed!';
 
   @override
   String get goalsLabel => 'Goals';
@@ -770,15 +766,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalsNoGoals =>
-      'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!';
+      'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below or refreshing the feed!';
 
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
-
-  @override
-  String get goalsEmptyPageGoals =>
-      'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!';
 
   @override
   String get goalsDetails => 'Goal details';

@@ -80,6 +80,7 @@ List<SingleChildWidget> get providers {
       create: (context) => ApiDeepLinkClient(
         authStateRepository: context.read(),
         clientInfoService: context.read(),
+        authEventBus: context.read(),
       ),
     ),
     Provider(create: (context) => AuthApiService(apiClient: context.read())),

@@ -56,6 +56,8 @@ class _AuthEventListenerState extends State<AuthEventListener> {
             _showRoleChangedDialog();
           case UserRemovedFromWorkspaceEvent():
             _showRemovedFromWorkspaceDialog();
+          case AccessTokenRefreshFailed():
+            widget.viewModel.signOutLocally.execute();
         }
       });
     });
@@ -184,6 +186,8 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         widget.viewModel.signOut.execute();
         return;
       }
+      // Close dialog
+      rootNavigatorContext.pop();
       rootNavigatorContext.go(Routes.tasks(workspaceId: activeWorkspaceId));
     }
 
