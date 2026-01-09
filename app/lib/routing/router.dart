@@ -143,11 +143,31 @@ GoRouter router({
                       child: child,
                     );
                   },
-              child: CreateWorkspaceInitialScreen(
-                viewModel: CreateWorkspaceInitialScreenViewModel(
-                  workspaceRepository: context.read(),
+              // We need user profile also on the CreateWorkspaceInitialScreen
+              // because of two scenarios:
+              // 1. User accidentally logs in with wrong account which doesn't have
+              // any workspaces, and so the user can log out.
+              // 2. User tries deleting account on the homepage (tasks screen)
+              // but in all the workspaces he is part of he is the last Manager.
+              // In that case user needs to leave all the workspaces (unless
+              // the user promotes someone else to Manager role). When user
+              // leaves all the workspaces, redirect gorouter function will
+              // kick in and land the user on CreateWorkspaceInitialScreen,
+              // where he can again click on user profile button and delete
+              // the account. Handling of this case is prone to refactor in
+              // the future.
+              child: ChangeNotifierProvider(
+                create: (context) => UserProfileViewModel(
+                  workspaceId: null,
                   userRepository: context.read(),
-                  createWorkspaceUseCase: context.read(),
+                  signOutUseCase: context.read(),
+                ),
+                child: CreateWorkspaceInitialScreen(
+                  viewModel: CreateWorkspaceInitialScreenViewModel(
+                    workspaceRepository: context.read(),
+                    userRepository: context.read(),
+                    createWorkspaceUseCase: context.read(),
+                  ),
                 ),
               ),
             );

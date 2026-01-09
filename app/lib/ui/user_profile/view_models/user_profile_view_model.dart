@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
+import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/use_cases/sign_out_use_case.dart';
 import '../../../utils/command.dart';
 
 class UserProfileViewModel extends ChangeNotifier {
   UserProfileViewModel({
-    required String workspaceId,
+    required String? workspaceId,
     required UserRepository userRepository,
     required SignOutUseCase signOutUseCase,
   }) : _activeWorkspaceId = workspaceId,
@@ -19,7 +20,7 @@ class UserProfileViewModel extends ChangeNotifier {
     deleteAccount = Command0(_deleteAccount);
   }
 
-  final String _activeWorkspaceId;
+  final String? _activeWorkspaceId;
   final UserRepository _userRepository;
   final SignOutUseCase _signOutUseCase;
 
@@ -27,9 +28,13 @@ class UserProfileViewModel extends ChangeNotifier {
   late Command0 signOut;
   late Command0 deleteAccount;
 
-  String get activeWorkspaceId => _activeWorkspaceId;
-
   User? get details => _userRepository.user;
+
+  WorkspaceRole? get currentWorkspaceRole => _activeWorkspaceId == null
+      ? null
+      : _userRepository.user?.roles
+            .firstWhere((role) => role.workspaceId == _activeWorkspaceId)
+            .role;
 
   void _onUserChanged() {
     notifyListeners();

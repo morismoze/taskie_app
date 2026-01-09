@@ -249,7 +249,7 @@
   "signOut": "Odjava",
   "signOutError": "Uh-oh! Došlo je do problema prilikom odjave",
   "deleteAccount": "Izbriši račun",
-  "deleteAccountText": "**Ovo treba imati na umu:**\n\nPrije brisanja računa provjeri da nisi jedini Menadžer u nekom radnom prostoru čiji si član.\n\nBrisanjem računa brišu se sva tvoja članstva u radnim prostorima, sve tvoje dodjele na zadacima te svi tvoji ciljevi.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**",
+  "deleteAccountText": "**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U tom slučaju, molimo razmotrite imenovanje drugog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**",
   "deleteAccountConfirmButton": "Da, razumijem",
   "workspaceAccessRevocationMessage": "Uh-oh! Izgleda da ste uklonjeni iz ovog radnog prostora. Nastavite pritiskom na gumb ispod. Bit ćete preusmjereni na prvi dostupni radni prostor.",
   "workspaceRoleChangeMessage": "Uh-oh! Izgleda da vam je uloga u ovom radnom prostoru promijenjena. Nastavite pritiskom na gumb ispod."

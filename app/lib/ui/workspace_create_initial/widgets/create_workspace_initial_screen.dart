@@ -11,6 +11,7 @@ import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/create_workspace_initial_screen_viewmodel.dart';
 import 'create_workspace_initial_form.dart';
+import 'user_profile_button.dart';
 
 class CreateWorkspaceInitialScreen extends StatefulWidget {
   const CreateWorkspaceInitialScreen({super.key, required this.viewModel});
@@ -64,6 +65,20 @@ class _CreateWorkspaceInitialScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      ListenableBuilder(
+                        listenable: widget.viewModel,
+                        builder: (builderContext, _) {
+                          if (widget.viewModel.user != null) {
+                            return Align(
+                              alignment: Alignment.topRight,
+                              child: UserProfileButton(
+                                user: widget.viewModel.user!,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                       const FractionallySizedBox(
                         widthFactor: 0.8,
                         child: Image(

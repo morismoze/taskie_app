@@ -1553,7 +1553,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountText.
   ///
   /// In en, this message translates to:
-  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to.\n\nDeleting your account will remove all your workspace memberships, task assignments, and goals.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
+  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. In that case, please consider promoting another member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
   String get deleteAccountText;
 
   /// No description provided for @deleteAccountConfirmButton.

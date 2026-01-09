@@ -874,7 +874,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get deleteAccountText =>
-      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjeri da nisi jedini Menadžer u nekom radnom prostoru čiji si član.\n\nBrisanjem računa brišu se sva tvoja članstva u radnim prostorima, sve tvoje dodjele na zadacima te svi tvoji ciljevi.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
+      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U tom slučaju, molimo razmotrite imenovanje drugog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
 
   @override
   String get deleteAccountConfirmButton => 'Da, razumijem';

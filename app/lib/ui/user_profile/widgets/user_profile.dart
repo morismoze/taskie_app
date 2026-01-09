@@ -68,11 +68,6 @@ class _UserProfileState extends State<UserProfile> {
           firstName: details.firstName,
           lastName: details.lastName,
         );
-        final currentWorkspaceRole = details.roles
-            .firstWhere(
-              (role) => role.workspaceId == widget.viewModel.activeWorkspaceId,
-            )
-            .role;
 
         return Padding(
           padding: const EdgeInsets.symmetric(
@@ -99,9 +94,10 @@ class _UserProfileState extends State<UserProfile> {
                         style: Theme.of(builderContext).textTheme.titleLarge!
                             .copyWith(fontWeight: FontWeight.bold, height: 1),
                       ),
-                      // Flutter Chip for some reason has vertical padding even though
-                      // it is set to 0 in RoleChip impl.
-                      RoleChip(role: currentWorkspaceRole),
+                      if (widget.viewModel.currentWorkspaceRole != null)
+                        // Flutter Chip for some reason has vertical padding even though
+                        // it is set to 0 in RoleChip impl.
+                        RoleChip(role: widget.viewModel.currentWorkspaceRole!),
                     ],
                   ),
                 ],
@@ -126,10 +122,10 @@ class _UserProfileState extends State<UserProfile> {
               const Separator(),
               const SizedBox(height: 20),
               UserProfileButton(
-                onPress: () => _showAccountDeletionConfirmationDialog(context),
+                onPress: _showAccountDeletionConfirmationDialog,
                 text: context.localization.deleteAccount,
                 icon: FontAwesomeIcons.trash,
-                isLoading: widget.viewModel.signOut.running,
+                isLoading: widget.viewModel.deleteAccount.running,
                 isDanger: true,
               ),
             ],
@@ -153,7 +149,7 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
-  void _showAccountDeletionConfirmationDialog(BuildContext context) {
+  void _showAccountDeletionConfirmationDialog() {
     AppDialog.showAlert(
       context: context,
       canPop: false,
