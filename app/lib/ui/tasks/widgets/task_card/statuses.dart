@@ -18,6 +18,11 @@ class TaskStatuses extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (assignees.isEmpty) {
+      // Workspace user got removed or the user deleted account
+      return const SizedBox.shrink();
+    }
+
     if (assignees.length == 1) {
       final status = assignees[0].status;
       final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(

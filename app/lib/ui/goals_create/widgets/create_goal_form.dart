@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../domain/models/workspace_user.dart';
-import '../../core/goals_workspace_member_accumulated_points/widgets/workspace_member_accumulated_points.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -13,6 +12,7 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
+import '../../goals_workspace_member_accumulated_points/widgets/workspace_member_accumulated_points.dart';
 import '../view_models/create_goal_screen_viewmodel.dart';
 
 class CreateGoalForm extends StatefulWidget {

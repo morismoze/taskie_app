@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../domain/models/workspace_user.dart';
-import '../../../../utils/command.dart';
-import '../../l10n/l10n_extensions.dart';
-import '../../ui/activity_indicator.dart';
-import '../../ui/app_text_button.dart';
+import '../../../domain/models/workspace_user.dart';
+import '../../../utils/command.dart';
+import '../../core/l10n/l10n_extensions.dart';
+import '../../core/ui/activity_indicator.dart';
+import '../../core/ui/app_text_button.dart';
 
 class WorkspaceMemberAccumulatedPoints extends StatelessWidget {
   const WorkspaceMemberAccumulatedPoints({

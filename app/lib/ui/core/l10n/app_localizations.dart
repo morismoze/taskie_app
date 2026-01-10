@@ -440,6 +440,12 @@ abstract class AppLocalizations {
   /// **'{points} points'**
   String tasksCardPoints(Object points);
 
+  /// No description provided for @tasksUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get tasksUnassigned;
+
   /// No description provided for @tasksDetails.
   ///
   /// In en, this message translates to:
@@ -584,6 +590,12 @@ abstract class AppLocalizations {
   /// **'Edit task assignments'**
   String get tasksAssignmentsEdit;
 
+  /// No description provided for @tasksAssignmentsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This task currently has no assigned members.\nAdd assignees below to get started.'**
+  String get tasksAssignmentsEmpty;
+
   /// No description provided for @progressStatusLabel.
   ///
   /// In en, this message translates to:
@@ -601,12 +613,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cannot mark task/s as Completed since the due date has passed'**
   String get tasksAssignmentsEditStatusDueDateError;
-
-  /// No description provided for @tasksAssignmentsMinAssignees.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.'**
-  String get tasksAssignmentsMinAssignees;
 
   /// No description provided for @tasksAssignmentsEditAddNewAssignee.
   ///

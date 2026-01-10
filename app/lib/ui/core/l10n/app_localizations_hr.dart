@@ -197,6 +197,9 @@ class AppLocalizationsHr extends AppLocalizations {
   }
 
   @override
+  String get tasksUnassigned => 'Nedodijeljeno';
+
+  @override
   String get tasksDetails => 'Detalji zadatka';
 
   @override
@@ -284,6 +287,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
+  String get tasksAssignmentsEmpty =>
+      'Ovaj zadatak trenutno nema dodijeljenih članova.\nDodaj ih ispod.';
+
+  @override
   String get progressStatusLabel => 'Status';
 
   @override
@@ -292,10 +299,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get tasksAssignmentsEditStatusDueDateError =>
       'Zadatak/ci ne mogu biti označeni kao Završeno jer je rok završetka istekao';
-
-  @override
-  String get tasksAssignmentsMinAssignees =>
-      'Uh-oh! Ovo je posljednji dodijeljeni korisnik i ne može se ukloniti. Umjesto toga, pokušajte zatvoriti zadatak.';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>

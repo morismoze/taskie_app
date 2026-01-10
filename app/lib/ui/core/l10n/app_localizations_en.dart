@@ -196,6 +196,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tasksUnassigned => 'Unassigned';
+
+  @override
   String get tasksDetails => 'Task details';
 
   @override
@@ -283,6 +286,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
+  String get tasksAssignmentsEmpty =>
+      'This task currently has no assigned members.\nAdd assignees below to get started.';
+
+  @override
   String get progressStatusLabel => 'Status';
 
   @override
@@ -291,10 +298,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tasksAssignmentsEditStatusDueDateError =>
       'Cannot mark task/s as Completed since the due date has passed';
-
-  @override
-  String get tasksAssignmentsMinAssignees =>
-      'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>

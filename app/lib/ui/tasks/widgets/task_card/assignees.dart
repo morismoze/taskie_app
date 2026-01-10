@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/ui/app_avatar.dart';
+import 'unassigned_label.dart';
 
 /// Defines how many avatars will be shown before overflow avatar.
 const _kShownAvatarsNumbers = 3;
@@ -15,6 +16,10 @@ class TaskAssignees extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (assignees.isEmpty) {
+      return const UnassignedLabel();
+    }
+
     final shownAssignees = assignees.take(_kShownAvatarsNumbers);
     // How much each avatar will overlap with each other
     const overlap = kAppAvatarDefaultSize / 2;

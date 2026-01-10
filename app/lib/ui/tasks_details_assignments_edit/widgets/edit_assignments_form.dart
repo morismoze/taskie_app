@@ -124,62 +124,32 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
   }
 
   void _confirmAssigneeRemoval(String assigneeId) {
-    // If there is only one assignee left, we will make the user
-    // close the task instead of removing that last assignee.
-    final isRemovalAvailable = widget.viewModel.assignees!.length > 1;
-
-    if (isRemovalAvailable) {
-      AppDialog.showAlert(
-        context: context,
-        canPop: !widget.viewModel.removeTaskAssignee.running,
-        title: FaIcon(
-          FontAwesomeIcons.circleExclamation,
-          color: Theme.of(context).colorScheme.error,
-          size: 30,
-        ),
-        content: Text(
-          context.localization.tasksRemoveTaskAssignmentModalMessage,
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          ActionButtonBar.withCommand(
-            command: widget.viewModel.removeTaskAssignee,
-            onSubmit: (BuildContext builderContext) =>
-                widget.viewModel.removeTaskAssignee.execute(assigneeId),
-            onCancel: (BuildContext builderContext) => builderContext.pop(),
-            submitButtonText: (BuildContext builderContext) =>
-                builderContext.localization.tasksRemoveTaskAssignmentModalCta,
-            submitButtonColor: (BuildContext builderContext) =>
-                Theme.of(builderContext).colorScheme.error,
-          ),
-        ],
-      );
-    } else {
-      AppDialog.show(
-        context: context,
-        canPop: false,
-        title: FaIcon(
-          FontAwesomeIcons.circleInfo,
-          color: Theme.of(context).colorScheme.primary,
-          size: 30,
-        ),
-        content: Text(
-          context.localization.tasksAssignmentsMinAssignees,
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
-        ),
-        actions: ActionButtonBar(
-          onSubmit: () {
-            context.pop(); // Close dialog
-            context.pop(); // Go to task's details page
-          },
-          onCancel: () => context.pop(), // Close dialog
+    AppDialog.showAlert(
+      context: context,
+      canPop: !widget.viewModel.removeTaskAssignee.running,
+      title: FaIcon(
+        FontAwesomeIcons.circleExclamation,
+        color: Theme.of(context).colorScheme.error,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.tasksRemoveTaskAssignmentModalMessage,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        ActionButtonBar.withCommand(
+          command: widget.viewModel.removeTaskAssignee,
+          onSubmit: (BuildContext builderContext) =>
+              widget.viewModel.removeTaskAssignee.execute(assigneeId),
+          onCancel: (BuildContext builderContext) => builderContext.pop(),
           submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.tasksDetails,
+              builderContext.localization.tasksRemoveTaskAssignmentModalCta,
+          submitButtonColor: (BuildContext builderContext) =>
+              Theme.of(builderContext).colorScheme.error,
         ),
-      );
-    }
+      ],
+    );
   }
 
   void _onSubmit() {

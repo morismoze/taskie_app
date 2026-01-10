@@ -125,7 +125,15 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),
                         children: [
-                          EditAssignmentsForm(viewModel: widget.viewModel),
+                          if (widget.viewModel.assignees!.isEmpty)
+                            Text(
+                              context.localization.tasksAssignmentsEmpty,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleSmall!
+                                  .copyWith(fontStyle: FontStyle.italic),
+                            )
+                          else
+                            EditAssignmentsForm(viewModel: widget.viewModel),
                           Column(
                             children: [
                               const SizedBox(height: 40),
