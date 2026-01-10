@@ -59,6 +59,7 @@ class ApiClient {
         client: _client,
         refreshClient: _refreshClient,
         authStateRepository: _authStateRepository,
+        authEventBus: _authEventBus,
       ),
       ForbiddenInterceptor(authEventBus: _authEventBus),
     ]);

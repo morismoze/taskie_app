@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import '../../../../config/api_endpoints.dart';
 import '../../../../utils/command.dart';
 import '../../../repositories/auth/auth_state_repository.dart';
+import '../../local/auth_event_bus.dart';
 import '../api_response.dart';
 import '../auth/models/response/refresh_token_response.dart';
 
@@ -13,13 +14,16 @@ class UnauthorizedInterceptor extends Interceptor {
     required AuthStateRepository authStateRepository,
     required Dio client,
     required Dio refreshClient,
+    required AuthEventBus authEventBus,
   }) : _authStateRepository = authStateRepository,
        _client = client,
-       _refreshClient = refreshClient;
+       _refreshClient = refreshClient,
+       _authEventBus = authEventBus;
 
   final Dio _client;
   final Dio _refreshClient;
   final AuthStateRepository _authStateRepository;
+  final AuthEventBus _authEventBus;
 
   // Semaphore for token refresh
   bool _isRefreshing = false;
@@ -33,9 +37,7 @@ class UnauthorizedInterceptor extends Interceptor {
     }
 
     if (err.requestOptions.path.contains(ApiEndpoints.refreshToken)) {
-      await _authStateRepository.setTokens(null);
-      _authStateRepository.setAuthenticated(false);
-
+      _authEventBus.emit(AccessTokenRefreshFailed());
       return handler.reject(err);
     }
 
@@ -113,8 +115,7 @@ class UnauthorizedInterceptor extends Interceptor {
       return true;
     } catch (e) {
       _refreshTokenCompleter!.completeError(e);
-      await _authStateRepository.setTokens(null);
-      _authStateRepository.setAuthenticated(false);
+      _authEventBus.emit(AccessTokenRefreshFailed());
       handler.reject(originalError);
       return false;
     } finally {
@@ -133,8 +134,7 @@ class UnauthorizedInterceptor extends Interceptor {
       // Log out the user only if the request failed with 401 again
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        await _authStateRepository.setTokens(null);
-        _authStateRepository.setAuthenticated(false);
+        _authEventBus.emit(AccessTokenRefreshFailed());
       }
       return handler.reject(e);
     }

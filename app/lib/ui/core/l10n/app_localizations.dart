@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksNoTasks.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!'**
+  /// **'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below or refreshing the feed!'**
   String get tasksNoTasks;
 
   /// No description provided for @tasksLoadRefreshError.
@@ -367,12 +367,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!'**
   String get taskskNoFilteredTasks;
-
-  /// No description provided for @tasksEmptyPageTasks.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!'**
-  String get tasksEmptyPageTasks;
 
   /// No description provided for @tasksPressAgainToExit.
   ///
@@ -445,6 +439,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{points} points'**
   String tasksCardPoints(Object points);
+
+  /// No description provided for @tasksUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get tasksUnassigned;
 
   /// No description provided for @tasksDetails.
   ///
@@ -590,6 +590,12 @@ abstract class AppLocalizations {
   /// **'Edit task assignments'**
   String get tasksAssignmentsEdit;
 
+  /// No description provided for @tasksAssignmentsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This task currently has no assigned members.\nAdd assignees below to get started.'**
+  String get tasksAssignmentsEmpty;
+
   /// No description provided for @progressStatusLabel.
   ///
   /// In en, this message translates to:
@@ -607,12 +613,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cannot mark task/s as Completed since the due date has passed'**
   String get tasksAssignmentsEditStatusDueDateError;
-
-  /// No description provided for @tasksAssignmentsMinAssignees.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.'**
-  String get tasksAssignmentsMinAssignees;
 
   /// No description provided for @tasksAssignmentsEditAddNewAssignee.
   ///
@@ -647,7 +647,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAssignmentsGuideAssignmentLimitBody.
   ///
   /// In en, this message translates to:
-  /// **'Each task can have up to __{taskAssigneesMaxCount} assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
+  /// **'Each task can have up to **{taskAssigneesMaxCount} assignees**.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
   String tasksAssignmentsGuideAssignmentLimitBody(Object taskAssigneesMaxCount);
 
   /// No description provided for @tasksAssignmentsGuideAssignmentStatusesTitle.
@@ -1367,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @leaderboardEmpty.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!'**
+  /// **'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started or refreshing the feed!'**
   String get leaderboardEmpty;
 
   /// No description provided for @goalsLabel.
@@ -1385,7 +1385,7 @@ abstract class AppLocalizations {
   /// No description provided for @goalsNoGoals.
   ///
   /// In en, this message translates to:
-  /// **'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!'**
+  /// **'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below or refreshing the feed!'**
   String get goalsNoGoals;
 
   /// No description provided for @goalsNoFilteredGoals.
@@ -1393,12 +1393,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!'**
   String get goalsNoFilteredGoals;
-
-  /// No description provided for @goalsEmptyPageGoals.
-  ///
-  /// In en, this message translates to:
-  /// **'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!'**
-  String get goalsEmptyPageGoals;
 
   /// No description provided for @goalsDetails.
   ///
@@ -1555,6 +1549,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! We\'ve had some trouble signing you out'**
   String get signOutError;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountText.
+  ///
+  /// In en, this message translates to:
+  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. Otherwise, please consider promoting another non-virtual member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
+  String get deleteAccountText;
+
+  /// No description provided for @deleteAccountConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I understand'**
+  String get deleteAccountConfirmButton;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully deleted your account'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @deleteAccountSoleManagerConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deletion is not possible because you are the sole Manager in certain workspaces you are part of. Please consider promoting another member to Manager or leave those workspaces.'**
+  String get deleteAccountSoleManagerConflict;
 
   /// No description provided for @workspaceAccessRevocationMessage.
   ///

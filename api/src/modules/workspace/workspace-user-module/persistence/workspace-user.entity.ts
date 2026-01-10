@@ -13,7 +13,6 @@ import {
 } from 'typeorm';
 import { WorkspaceEntity } from '../../workspace-module/persistence/workspace.entity';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from '../domain/workspace-user-status.enum';
 
 /**
  * Represents a user's membership in a specific workspace.
@@ -43,12 +42,6 @@ export class WorkspaceUserEntity extends RootBaseEntity {
     enum: WorkspaceUserRole,
   })
   workspaceRole!: WorkspaceUserRole;
-
-  @Column({
-    type: 'enum',
-    enum: WorkspaceUserStatus,
-  })
-  status!: WorkspaceUserStatus;
 
   // The user who created this WorkspaceUser
   // Applicable in cases:

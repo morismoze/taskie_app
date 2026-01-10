@@ -85,13 +85,13 @@ class GoalsScreenViewmodel extends ChangeNotifier {
     (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
     final (filter, forceFetch) = details;
-    final result = await firstOkOrLastError(
-      _workspaceGoalRepository.loadGoals(
-        workspaceId: _activeWorkspaceId,
-        filter: filter,
-        forceFetch: forceFetch ?? false,
-      ),
-    );
+    final result = await _workspaceGoalRepository
+        .loadGoals(
+          workspaceId: _activeWorkspaceId,
+          filter: filter,
+          forceFetch: forceFetch ?? false,
+        )
+        .last;
 
     switch (result) {
       case Ok():

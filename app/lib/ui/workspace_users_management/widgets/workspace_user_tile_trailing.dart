@@ -39,7 +39,6 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
     return IntrinsicWidth(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        spacing: 10,
         children: [
           RoleChip(role: role),
           if (!isCurrentUser)
@@ -55,12 +54,18 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                   workspaceUserId,
                   profileImageUrl,
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  child: FaIcon(
-                    FontAwesomeIcons.ellipsisVertical,
-                    color: AppColors.grey2,
-                    size: 20,
+                child: Container(
+                  // Space between RoleChip and InkWell. Not used as spacing: 10 on Row
+                  // because when current user is Member there will be Row[RoleChip,SizedBox.shrink()]
+                  // meaning there will whitespace of 10 width because SizedBox.shrink() is still a widget
+                  margin: const EdgeInsets.only(left: 10),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: AppColors.grey2,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),

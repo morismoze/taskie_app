@@ -112,7 +112,6 @@ class GoalCard extends StatelessWidget {
           children: [
             AppTextButton(
               onPress: () {
-                context.pop(); // Close bottom sheet
                 context.push(
                   Routes.goalDetails(
                     workspaceId: activeWorkspaceId,
@@ -128,7 +127,6 @@ class GoalCard extends StatelessWidget {
                 permission: RbacPermission.objectiveEdit,
                 child: AppTextButton(
                   onPress: () {
-                    context.pop(); // Close bottom sheet
                     context.push(
                       Routes.goalDetailsEdit(
                         workspaceId: activeWorkspaceId,

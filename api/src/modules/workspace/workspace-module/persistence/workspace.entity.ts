@@ -19,7 +19,7 @@ export class WorkspaceEntity extends RootBaseEntity {
   @OneToMany(() => GoalEntity, (goal) => goal.workspace)
   goals!: GoalEntity[];
 
-  @OneToMany(() => WorkspaceUserEntity, (wm) => wm.workspace)
+  @OneToMany(() => WorkspaceUserEntity, (wu) => wu.workspace)
   members!: WorkspaceUserEntity[];
 
   @Column({ type: 'varchar' })

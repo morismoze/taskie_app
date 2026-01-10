@@ -6,6 +6,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/objective_status_chip.dart';
 import '../../core/utils/color.dart';
 import '../../core/utils/user.dart';
+import '../../tasks/widgets/task_card/unassigned_label.dart';
 
 class TaskAssignmentsDetails extends StatelessWidget {
   const TaskAssignmentsDetails({super.key, required this.assignments});
@@ -14,6 +15,10 @@ class TaskAssignmentsDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (assignments.isEmpty) {
+      return const UnassignedLabel();
+    }
+
     // Calculates row with the biggest width, so that all others are the same width
     return IntrinsicWidth(
       child: Column(

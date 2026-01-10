@@ -27,11 +27,20 @@ export class WorkspaceRoleGuard implements CanActivate {
 
     const workspaceId = request.params[workspaceIdParam];
 
-    const hasRole = user.roles.some(
-      (r) => r.workspaceId === workspaceId && r.role === role,
+    const userWorkspaceRole = user.roles.find(
+      (r) => r.workspaceId === workspaceId,
     );
 
-    if (!hasRole) {
+    if (!userWorkspaceRole) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.WORKSPACE_ACCESS_REVOKED,
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (userWorkspaceRole.role !== role) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INSUFFICIENT_PERMISSIONS,

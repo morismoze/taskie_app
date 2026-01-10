@@ -8,7 +8,6 @@ import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
@@ -16,13 +15,11 @@ import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceU
 import { WorkspaceInviteWithWorkspaceWithCreatedByUser } from './domain/workspace-invite-with-workspace-with-created-by-user.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
 import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
-import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteService {
   constructor(
-    private readonly workspaceInviteRepository: WorkspaceInviteRepository,
-    private readonly transactionalWorkspaceInviteRepository: TransactionalWorkspaceInviteRepository,
+    private readonly workspaceInviteRepository: TransactionalWorkspaceInviteRepository,
     private readonly workspaceUserService: WorkspaceUserService,
     private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
@@ -30,30 +27,13 @@ export class WorkspaceInviteService {
   /**
    * Invite links will last up to 1 day and be one-time only
    */
-
   async createInviteToken({
     workspaceId,
-    createdById,
+    createdByWorkspaceUserId,
   }: {
     workspaceId: WorkspaceInvite['workspace']['id'];
-    createdById: WorkspaceUser['id'];
+    createdByWorkspaceUserId: WorkspaceUser['id'];
   }): Promise<WorkspaceInviteCore> {
-    // Check if workspace user by user ID exists
-    const createdByWorkspaceUser =
-      await this.workspaceUserService.findByUserIdAndWorkspaceId({
-        userId: createdById,
-        workspaceId,
-      });
-
-    if (!createdByWorkspaceUser) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
     const now = DateTime.now().toUTC();
     const expiresAt = now.plus({ hours: 24 }).toISO();
@@ -61,7 +41,7 @@ export class WorkspaceInviteService {
       data: {
         token,
         workspaceId,
-        createdById: createdByWorkspaceUser.id,
+        createdById: createdByWorkspaceUserId,
         expiresAt,
       },
     });
@@ -78,10 +58,10 @@ export class WorkspaceInviteService {
     return newInvite;
   }
 
-  async findByTokenWithWorkspace(
+  findByTokenWithWorkspace(
     token: WorkspaceInvite['token'],
   ): Promise<Nullable<WorkspaceInviteWithWorkspaceWithCreatedByUser>> {
-    return await this.workspaceInviteRepository.findByToken({
+    return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
         workspace: true,
@@ -89,12 +69,12 @@ export class WorkspaceInviteService {
     });
   }
 
-  async findByTokenWithWorkspaceAndUser(
+  findByTokenWithWorkspaceAndUser(
     token: WorkspaceInvite['token'],
   ): Promise<
     Nullable<WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore>
   > {
-    return await this.workspaceInviteRepository.findByToken({
+    return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
         workspace: true,
@@ -162,6 +142,10 @@ export class WorkspaceInviteService {
       );
     }
 
+    // WorkspaceUserService is injected into this class only because of the
+    // code below. There is no easy/not messy way to move this WorkspaceUserService
+    // code to the WorkspaceService method, so we will leave it like this
+    // for the sake of easier code understanding.
     const { updatedInvite } = await this.unitOfWorkService.withTransaction(
       async () => {
         // Create a new workspace user
@@ -172,25 +156,23 @@ export class WorkspaceInviteService {
             ? workspaceInvite.createdBy.id
             : null,
           workspaceRole: WorkspaceUserRole.MEMBER,
-          status: WorkspaceUserStatus.ACTIVE,
         });
 
         // Mark the invite as used
-        const updatedInvite =
-          await this.transactionalWorkspaceInviteRepository.markUsedBy({
-            id: workspaceInvite.id,
-            usedById: newWorkspaceUser.id,
-            relations: {
-              workspace: true,
-            },
-          });
+        const updatedInvite = await this.workspaceInviteRepository.markUsedBy({
+          id: workspaceInvite.id,
+          usedById: newWorkspaceUser.id,
+          relations: {
+            workspace: true,
+          },
+        });
 
         if (!updatedInvite) {
           throw new ApiHttpException(
             {
-              code: ApiErrorCode.SERVER_ERROR,
+              code: ApiErrorCode.INVALID_PAYLOAD,
             },
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.NOT_FOUND,
           );
         }
 

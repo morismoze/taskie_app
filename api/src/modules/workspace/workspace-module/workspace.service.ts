@@ -17,7 +17,6 @@ import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceInvite } from '../workspace-invite/domain/workspace-invite.domain';
 import { WorkspaceInviteService } from '../workspace-invite/workspace-invite.service';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { Workspace } from './domain/workspace.domain';
@@ -48,6 +47,7 @@ import {
 import { WorkspaceUserAccumulatedPointsResponse } from './dto/response/workspace-user-accumulated-points-response.dto';
 import { WorkspaceUserResponse } from './dto/response/workspace-users-response.dto';
 import { WorkspaceResponse } from './dto/response/workspaces-response.dto';
+import { WorkspaceSoleOwnershipResponse } from './dto/response/workspaces-sole-ownership-response.dto';
 import { WorkspaceRepository } from './persistence/workspace.repository';
 
 @Injectable()
@@ -101,7 +101,6 @@ export class WorkspaceService {
           userId: createdById,
           createdById: null,
           workspaceRole: WorkspaceUserRole.MANAGER,
-          status: WorkspaceUserStatus.ACTIVE,
         });
 
         return { newWorkspace };
@@ -135,24 +134,6 @@ export class WorkspaceService {
     workspaceId: Workspace['id'];
     data: UpdateWorkspaceRequest;
   }): Promise<WorkspaceResponse> {
-    const workspace = await this.workspaceRepository.findById({
-      id: workspaceId,
-      relations: {
-        members: {
-          user: true,
-        },
-      },
-    });
-
-    if (!workspace) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     const updatedWorkspace = await this.workspaceRepository.update({
       id: workspaceId,
       data,
@@ -164,9 +145,9 @@ export class WorkspaceService {
     if (!updatedWorkspace) {
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -216,9 +197,26 @@ export class WorkspaceService {
       );
     }
 
+    // Check if workspace user by user ID exists
+    const createdByWorkspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: createdById,
+        workspaceId,
+      });
+
+    if (!createdByWorkspaceUser) {
+      // Should not be possible since we have JWT role guard
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const invite = await this.workspaceInviteService.createInviteToken({
       workspaceId,
-      createdById,
+      createdByWorkspaceUserId: createdByWorkspaceUser.id,
     });
 
     const response: CreateWorkspaceInviteTokenResponse = {
@@ -334,6 +332,7 @@ export class WorkspaceService {
       });
 
     if (!creatorWorkspaceUser) {
+      // Should not be possible since we have JWT role guard
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -357,7 +356,6 @@ export class WorkspaceService {
           userId: newUser.id,
           createdById: creatorWorkspaceUser.id,
           workspaceRole: WorkspaceUserRole.MEMBER,
-          status: WorkspaceUserStatus.ACTIVE,
         });
 
         return { newUser, newWorkspaceUser };
@@ -413,6 +411,24 @@ export class WorkspaceService {
               profileImageUrl: workspace.createdBy.profileImageUrl,
             },
     }));
+
+    return response;
+  }
+
+  async getUserSoleOwnerWorkspaces(
+    userId: JwtPayload['sub'],
+  ): Promise<WorkspaceSoleOwnershipResponse[]> {
+    const workspaceUsers =
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(userId);
+    const workspaceUsersLastManager = workspaceUsers.filter(
+      (wu) => wu.workspaceRole === WorkspaceUserRole.MANAGER,
+    );
+
+    const response: WorkspaceSoleOwnershipResponse[] =
+      workspaceUsersLastManager.map((workspaceUser) => ({
+        id: workspaceUser.workspace.id,
+        name: workspaceUser.workspace.name,
+      }));
 
     return response;
   }
@@ -577,6 +593,7 @@ export class WorkspaceService {
       });
 
     if (!createdByWorkspaceUser) {
+      // Should not be possible since we have JWT role guard
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -612,19 +629,25 @@ export class WorkspaceService {
         createdAt: DateTime.fromJSDate(newTask.createdAt).toISO()!,
       };
 
-      // Create new task assignment for each given assignee
-      for (const assigneeId of data.assignees) {
-        const newTaskAssignment = await this.taskAssignmentService.create({
-          workspaceUserId: assigneeId,
+      const assignments = data.assignees.map((assigneeId) => ({
+        workspaceUserId: assigneeId,
+        status: ProgressStatus.IN_PROGRESS,
+      }));
+
+      // Create task assignments
+      const createdAssignments =
+        await this.taskAssignmentService.createMultiple({
+          assignments,
           taskId: newTask.id,
-          status: ProgressStatus.IN_PROGRESS,
         });
+
+      for (const assignment of createdAssignments) {
         response.assignees.push({
-          id: newTaskAssignment.assignee.id,
-          firstName: newTaskAssignment.assignee.user.firstName,
-          lastName: newTaskAssignment.assignee.user.lastName,
-          status: newTaskAssignment.status,
-          profileImageUrl: newTaskAssignment.assignee.user.profileImageUrl,
+          id: assignment.assignee.id,
+          firstName: assignment.assignee.user.firstName,
+          lastName: assignment.assignee.user.lastName,
+          status: assignment.status,
+          profileImageUrl: assignment.assignee.user.profileImageUrl,
         });
       }
 
@@ -661,6 +684,7 @@ export class WorkspaceService {
       });
 
     if (!createdByWorkspaceUser) {
+      // Should not be possible since we have JWT role guard
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -672,9 +696,9 @@ export class WorkspaceService {
     // We firstly need to check if the provided required points is
     // greater than workspace user's current accumulated points
     const workspaceUserAccumulatedPoints =
-      await this.workspaceUserService.getWorkspaceUserAccumulatedPoints({
-        workspaceId,
+      await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
         workspaceUserId: data.assignee,
+        workspaceId,
       });
 
     // getWorkspaceUserAccumulatedPoints will also in the SQL query check if
@@ -763,6 +787,9 @@ export class WorkspaceService {
     const responseData: WorkspaceGoalsResponse['items'] = [];
 
     for (const goal of goals) {
+      // Current max limit of goals per page is 20, so this should not
+      // cause efficiency problems, but should be revisited in the future
+      // if there would be some problems
       const accumulatedPoints =
         await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
           workspaceUserId: goal.assignee.id,
@@ -882,14 +909,14 @@ export class WorkspaceService {
     return response;
   }
 
-  async closeGoal({
+  closeGoal({
     workspaceId,
     goalId,
   }: {
     workspaceId: Workspace['id'];
     goalId: Goal['id'];
   }): Promise<void> {
-    await this.goalService.closeByGoalIdAndWorkspaceId({
+    return this.goalService.closeByGoalIdAndWorkspaceId({
       goalId,
       workspaceId,
     });
@@ -903,9 +930,9 @@ export class WorkspaceService {
     workspaceUserId: WorkspaceUser['id'];
   }): Promise<WorkspaceUserAccumulatedPointsResponse> {
     const accumulatedPoints =
-      await this.workspaceUserService.getWorkspaceUserAccumulatedPoints({
-        workspaceId,
+      await this.taskAssignmentService.getAccumulatedPointsForWorkspaceUser({
         workspaceUserId,
+        workspaceId,
       });
 
     // getWorkspaceUserAccumulatedPoints will check in the SQL query if
@@ -992,17 +1019,20 @@ export class WorkspaceService {
       });
 
     if (!workspaceUserUpdatedBy) {
+      // Should not be possible since we have JWT role guard
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 
     // User can't edit itself - this is not possible through
     // the app - a security measure
     if (workspaceUserUpdatedBy.id === workspaceUser.id) {
+      // Should happen only when there was an attempt to
+      // call this endpoint outside of the app
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -1015,44 +1045,37 @@ export class WorkspaceService {
     // as they are always Members. Non-virtual users can get
     // only the role changed as their firstName and lastName
     // comes from social login.
-    const { updatedWorkspaceUserId } =
-      await this.unitOfWorkService.withTransaction(async () => {
-        const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
-
-        if (isVirtualUser) {
-          await this.userService.update({
-            id: workspaceUser.user.id,
-            data: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-            },
-          });
-        } else {
-          await this.workspaceUserService.update({
-            id: workspaceUserId,
-            data: {
-              workspaceRole: data.role,
-            },
-          });
-        }
-
-        return { updatedWorkspaceUserId: workspaceUser.id };
+    const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
+    if (isVirtualUser) {
+      await this.userService.update({
+        id: workspaceUser.user.id,
+        data: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+        },
       });
+    } else {
+      await this.workspaceUserService.update({
+        id: workspaceUserId,
+        data: {
+          workspaceRole: data.role,
+        },
+      });
+    }
 
     await this.invalidateUserSession({ workspaceId, workspaceUserId });
 
-    // This is freshly updated workspace user because former code is
-    // executed inside a transaction, so doing this find inside would result
-    // in not updated workspace user.
+    // Re-fetch the workspace user
     const updatedWorkspaceUser =
       await this.workspaceUserService.findByIdAndWorkspaceIdWithUserAndCreatedByUser(
         {
-          id: updatedWorkspaceUserId,
+          id: workspaceUser.id,
           workspaceId,
         },
       );
 
     if (updatedWorkspaceUser == null) {
+      // Sanity check
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -1134,33 +1157,25 @@ export class WorkspaceService {
       );
     }
 
-    const allWorkspaceUsers =
-      await this.workspaceUserService.findAllByWorkspaceId(workspaceId);
-
-    if (allWorkspaceUsers.length === 0) {
-      // Something's wrong since there has to be atleast one workspace
-      // user - the current user
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.SERVER_ERROR,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    // Original implementation was fetching all workspace users
+    // from the given workspaceId and then filtering Managers
+    // and checking if there is only 1 Manager left. This is bad
+    // because there can be large number of workspace user, and
+    // which we are loading into RAM.
+    const noOfManagers =
+      await this.workspaceUserService.countManagers(workspaceId);
 
     const currentUserIsManager =
       workspaceUser.workspaceRole === WorkspaceUserRole.MANAGER;
-    const currentUserIsLastManager =
-      allWorkspaceUsers.filter(
-        (user) => user.workspaceRole === WorkspaceUserRole.MANAGER,
-      ).length === 1;
+    const currentUserIsLastManager = noOfManagers === 1;
 
     if (currentUserIsLastManager && currentUserIsManager) {
       // This user is the last Manager so we delete the entire workspace which
-      // cascadely deletes every task assignments, workspace users, etc.
+      // cascadely deletes all task assignments, workspace users, etc.
       await this.workspaceRepository.deleteById(workspaceId);
     } else {
-      // This user is not the last Manager, so just delete that workspace user
+      // This user is not the last Manager, so just delete that workspace user.
+      // Should not throw NOT_FOUND since we have JWT role guard
       await this.workspaceUserService.delete({
         workspaceId,
         workspaceUserId: workspaceUser.id,
@@ -1308,9 +1323,13 @@ export class WorkspaceService {
       );
     }
 
-    await this.taskAssignmentService.createMultiple({
-      workspaceUserIds: payload.assigneeIds,
+    const assignments = payload.assigneeIds.map((assigneeId) => ({
+      workspaceUserId: assigneeId,
       status: ProgressStatus.IN_PROGRESS,
+    }));
+
+    await this.taskAssignmentService.createMultiple({
+      assignments,
       taskId,
     });
 

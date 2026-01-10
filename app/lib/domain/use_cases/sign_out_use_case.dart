@@ -40,15 +40,7 @@ class SignOutUseCase {
 
     switch (result) {
       case Ok():
-        await _purgeDataCacheUseCase.purgeDataCache();
-        // This needs to be done only in the case of a
-        // sign out - hence why it is not in the
-        // purgeDataCache method.
-        await _workspaceRepository.purgeWorkspacesCache();
-        _authStateRepository.setAuthenticated(false);
-        await _authStateRepository.setTokens(null);
-        _loggerService.clearState();
-
+        _performLocalCleanup();
         return const Result.ok(null);
       case Error():
         _loggerService.log(
@@ -59,5 +51,23 @@ class SignOutUseCase {
         );
         return Result.error(result.error, result.stackTrace);
     }
+  }
+
+  Future<void> forceLocalSignOut() async {
+    // Not calling API since we don't have valid
+    // token anymore because token refresh failed
+    await _authRepository.signOutFromActiveProvider();
+    await _performLocalCleanup();
+  }
+
+  Future<void> _performLocalCleanup() async {
+    await _purgeDataCacheUseCase.purgeDataCache();
+    // This needs to be done only in the case of a
+    // sign out - hence why it is not in the
+    // purgeDataCache method.
+    await _workspaceRepository.purgeWorkspacesCache();
+    _authStateRepository.setAuthenticated(false);
+    await _authStateRepository.setTokens(null);
+    _loggerService.clearState();
   }
 }

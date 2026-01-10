@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
 export enum SortBy {
@@ -21,12 +21,14 @@ export class WorkspaceObjectiveRequestQuery {
   @ApiPropertyOptional({
     type: Number,
     minimum: 1,
+    maximum: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
     default: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT)
   limit?: number;
 
   @ApiPropertyOptional({

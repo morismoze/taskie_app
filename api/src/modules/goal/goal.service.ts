@@ -54,35 +54,7 @@ export class GoalService {
       },
     });
 
-    const goals: GoalWithAssigneeUserCore[] = [];
-
-    for (const goal of goalEntities) {
-      goals.push({
-        id: goal.id,
-        title: goal.title,
-        description: goal.description,
-        requiredPoints: goal.requiredPoints,
-        status: goal.status,
-        assignee: {
-          id: goal.assignee.id, // Workspace user ID
-          firstName: goal.assignee.user.firstName,
-          lastName: goal.assignee.user.lastName,
-          profileImageUrl: goal.assignee.user.profileImageUrl,
-        },
-        createdBy:
-          goal.createdBy === null
-            ? null
-            : {
-                id: goal.createdBy.id,
-                firstName: goal.createdBy.user.firstName,
-                lastName: goal.createdBy.user.lastName,
-                profileImageUrl: goal.createdBy.user.profileImageUrl,
-              },
-        createdAt: goal.createdAt,
-        deletedAt: goal.deletedAt,
-        updatedAt: goal.updatedAt,
-      });
-    }
+    const goals = goalEntities.map(this.toGoalWithAssigneeUserCore);
 
     return {
       data: goals,
@@ -128,28 +100,11 @@ export class GoalService {
       );
     }
 
-    return {
-      ...newGoal,
-      createdBy:
-        newGoal.createdBy === null
-          ? null
-          : {
-              id: newGoal.createdBy.id, // Workspace user ID
-              firstName: newGoal.createdBy.user.firstName,
-              lastName: newGoal.createdBy.user.lastName,
-              profileImageUrl: newGoal.createdBy.user.profileImageUrl,
-            },
-      assignee: {
-        id: newGoal.assignee.id, // Workspace user ID
-        firstName: newGoal.assignee.user.firstName,
-        lastName: newGoal.assignee.user.lastName,
-        profileImageUrl: newGoal.assignee.user.profileImageUrl,
-      },
-    };
+    return this.toGoalWithAssigneeUserCore(newGoal);
   }
 
   async findById(id: Goal['id']): Promise<Nullable<GoalCore>> {
-    return await this.goalRepository.findById({
+    return this.goalRepository.findById({
       id,
     });
   }
@@ -174,9 +129,16 @@ export class GoalService {
   }: {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
+    // Status is updated by the user only in the case of closing the goal
+    // using the method closeByGoalIdAndWorkspaceId. Other updates:
+    // IN_PROGRESS => COMPLETED or vice versa are done automatically
+    // through the DB trigger once the user completes enough tasks
+    // and earns enough reward points or get its reward points
+    // decreased if it is removed from a task assignment or
+    // gets its status on the assignment to another status from
+    // COMPLETED.
     data: Partial<
-      Omit<Goal, 'assignee' | 'workspace' | 'createdBy'> & {
-        status: ProgressStatus;
+      Omit<Goal, 'assignee' | 'status' | 'workspace' | 'createdBy'> & {
         assigneeId: Goal['assignee']['id'];
       }
     >;
@@ -209,7 +171,6 @@ export class GoalService {
         description: data.description,
         requiredPoints: data.requiredPoints,
         assigneeId: data.assigneeId,
-        status: data.status,
       },
       relations: {
         assignee: {
@@ -222,39 +183,18 @@ export class GoalService {
     });
 
     if (!updatedGoal) {
+      // Somebody deleted the goal in the meantime.
+      // Currently there is no way to delete a goal,
+      // so this is just a sanity check.
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 
-    return {
-      id: updatedGoal.id,
-      title: updatedGoal.title,
-      description: updatedGoal.description,
-      requiredPoints: updatedGoal.requiredPoints,
-      status: updatedGoal.status,
-      assignee: {
-        id: updatedGoal.assignee.id, // Workspace user ID
-        firstName: updatedGoal.assignee.user.firstName,
-        lastName: updatedGoal.assignee.user.lastName,
-        profileImageUrl: updatedGoal.assignee.user.profileImageUrl,
-      },
-      createdBy:
-        updatedGoal.createdBy === null
-          ? null
-          : {
-              id: updatedGoal.createdBy.id, // Workspace user ID
-              firstName: updatedGoal.createdBy.user.firstName,
-              lastName: updatedGoal.createdBy.user.lastName,
-              profileImageUrl: updatedGoal.createdBy.user.profileImageUrl,
-            },
-      createdAt: updatedGoal.createdAt,
-      deletedAt: updatedGoal.deletedAt,
-      updatedAt: updatedGoal.updatedAt,
-    };
+    return this.toGoalWithAssigneeUserCore(updatedGoal);
   }
 
   async closeByGoalIdAndWorkspaceId({
@@ -264,19 +204,19 @@ export class GoalService {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
   }): Promise<void> {
-    // Not using already existing this.updateByGoalIdAndWorkspaceId method
-    // because we want to have idempotency here, meaning closing a closed
-    // task again should be idempotent, not an error.
-
+    // Verify tenancy (ensure goal belongs to this workspace) and enable idempotent early exit
     const goal = await this.findByGoalIdAndWorkspaceId({ goalId, workspaceId });
 
     if (!goal) {
       throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
+        { code: ApiErrorCode.INVALID_PAYLOAD },
         HttpStatus.NOT_FOUND,
       );
+    }
+
+    if (goal.status === ProgressStatus.CLOSED) {
+      // Early return - idempotency
+      return;
     }
 
     const updatedGoal = await this.goalRepository.update({
@@ -284,23 +224,46 @@ export class GoalService {
       data: {
         status: ProgressStatus.CLOSED,
       },
-      relations: {
-        assignee: {
-          user: true,
-        },
-        createdBy: {
-          user: true,
-        },
-      },
     });
 
     if (!updatedGoal) {
+      // Somebody deleted the goal in the meantime.
+      // Currently there is no way to delete a goal,
+      // so this is just a sanity check.
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
+  }
+
+  private toGoalWithAssigneeUserCore(goal: any): GoalWithAssigneeUserCore {
+    return {
+      id: goal.id,
+      title: goal.title,
+      description: goal.description,
+      requiredPoints: goal.requiredPoints,
+      status: goal.status,
+      assignee: {
+        id: goal.assignee.id,
+        firstName: goal.assignee.user.firstName,
+        lastName: goal.assignee.user.lastName,
+        profileImageUrl: goal.assignee.user.profileImageUrl,
+      },
+      createdBy:
+        goal.createdBy === null
+          ? null
+          : {
+              id: goal.createdBy.id,
+              firstName: goal.createdBy.user.firstName,
+              lastName: goal.createdBy.user.lastName,
+              profileImageUrl: goal.createdBy.user.profileImageUrl,
+            },
+      createdAt: goal.createdAt,
+      deletedAt: goal.deletedAt,
+      updatedAt: goal.updatedAt,
+    };
   }
 }

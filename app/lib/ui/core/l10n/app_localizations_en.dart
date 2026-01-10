@@ -147,7 +147,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksNoTasks =>
-      'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below!';
+      'It looks like your workspace doesn\'t have any tasks yet. Try creating your first one using the main **+** button below or refreshing the feed!';
 
   @override
   String get tasksLoadRefreshError =>
@@ -156,10 +156,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! It looks like there aren\'t any tasks for the chosen filters. Try different ones!';
-
-  @override
-  String get tasksEmptyPageTasks =>
-      'Uh-oh! This page doesn\'t have any tasks left. Try changing the active page or refreshing the feed!';
 
   @override
   String get tasksPressAgainToExit => 'Press again to exit the app';
@@ -198,6 +194,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String tasksCardPoints(Object points) {
     return '$points points';
   }
+
+  @override
+  String get tasksUnassigned => 'Unassigned';
 
   @override
   String get tasksDetails => 'Task details';
@@ -287,6 +286,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Edit task assignments';
 
   @override
+  String get tasksAssignmentsEmpty =>
+      'This task currently has no assigned members.\nAdd assignees below to get started.';
+
+  @override
   String get progressStatusLabel => 'Status';
 
   @override
@@ -295,10 +298,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tasksAssignmentsEditStatusDueDateError =>
       'Cannot mark task/s as Completed since the due date has passed';
-
-  @override
-  String get tasksAssignmentsMinAssignees =>
-      'Uh-oh! This is the last assignee and can\'t be removed. Try closing the task instead.';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
@@ -322,7 +321,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String tasksAssignmentsGuideAssignmentLimitBody(
     Object taskAssigneesMaxCount,
   ) {
-    return 'Each task can have up to __$taskAssigneesMaxCount assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.';
+    return 'Each task can have up to **$taskAssigneesMaxCount assignees**.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.';
   }
 
   @override
@@ -759,7 +758,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardEmpty =>
-      'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started!';
+      'It looks like your workspace doesn\'t have any Completed tasks yet. Try updating and completing some to get started or refreshing the feed!';
 
   @override
   String get goalsLabel => 'Goals';
@@ -770,15 +769,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goalsNoGoals =>
-      'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below!';
+      'It looks like your workspace doesn\'t have any goals yet. Try creating your first one using the main **+** button below or refreshing the feed!';
 
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! It looks like there aren\'t any goals for the chosen filters. Try different ones!';
-
-  @override
-  String get goalsEmptyPageGoals =>
-      'Uh-oh! This page doesn\'t have any goals left. Try changing the active page or refreshing the feed!';
 
   @override
   String get goalsDetails => 'Goal details';
@@ -868,6 +863,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutError => 'Uh-oh! We\'ve had some trouble signing you out';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountText =>
+      '**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. Otherwise, please consider promoting another non-virtual member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**';
+
+  @override
+  String get deleteAccountConfirmButton => 'Yes, I understand';
+
+  @override
+  String get deleteAccountSuccess => 'Successfully deleted your account';
+
+  @override
+  String get deleteAccountSoleManagerConflict =>
+      'Account deletion is not possible because you are the sole Manager in certain workspaces you are part of. Please consider promoting another member to Manager or leave those workspaces.';
 
   @override
   String get workspaceAccessRevocationMessage =>

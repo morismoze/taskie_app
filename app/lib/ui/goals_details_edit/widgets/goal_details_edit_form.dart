@@ -12,6 +12,7 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
+import '../../goals_workspace_member_accumulated_points/widgets/workspace_member_accumulated_points.dart';
 import '../view_models/goal_details_edit_screen_view_model.dart';
 
 class GoalDetailsEditForm extends StatefulWidget {
@@ -126,6 +127,25 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
                   validator: (assignee) =>
                       _validateAssignee(builderContext, assignee),
                 ),
+          ),
+          ValueListenableBuilder(
+            valueListenable: _selectedAssigneeNotifier,
+            builder: (builderContext, selectedAssigneeValue, _) {
+              if (_selectedAssigneeNotifier.value != null) {
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: WorkspaceMemberAccumulatedPoints(
+                    selectedAssignee: selectedAssigneeValue!.value,
+                    loadAccumulatedPointsCommand:
+                        widget.viewModel.loadWorkspaceUserAccumulatedPoints,
+                    workspaceUserAccumulatedPointsNotifier: widget
+                        .viewModel
+                        .workspaceUserAccumulatedPointsListenable,
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
           const SizedBox(height: 20),
           AppTextFormField(

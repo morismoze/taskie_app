@@ -23,18 +23,15 @@ export abstract class UserRepository {
     email: NonNullable<User['email']>,
   ): Promise<Nullable<UserEntity>>;
 
-  abstract findBySocialIdAndProvider(input: {
+  abstract findBySocialIdAndProvider(args: {
     socialId: NonNullable<User['socialId']>;
     provider: NonNullable<User['provider']>;
   }): Promise<Nullable<UserEntity>>;
 
-  abstract update({
-    id,
-    data,
-  }: {
+  abstract update(args: {
     id: User['id'];
     data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
   }): Promise<Nullable<UserEntity>>;
 
-  abstract delete(id: User['id']): Promise<void>;
+  abstract delete(id: User['id']): Promise<boolean>;
 }

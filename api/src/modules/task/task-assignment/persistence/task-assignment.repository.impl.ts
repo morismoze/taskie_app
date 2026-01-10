@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
+import { Workspace } from 'src/modules/workspace/workspace-module/domain/workspace.domain';
 import { FindOptionsRelations, In, Repository } from 'typeorm';
+import { ProgressStatus } from '../../task-module/domain/progress-status.enum';
 import { TaskAssignmentCore } from '../domain/task-assignment-core.domain';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
@@ -16,6 +18,36 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
+  private get repositoryContext(): Repository<TaskAssignmentEntity> {
+    const transactional =
+      this.transactionalRepository.getRepository(TaskAssignmentEntity);
+
+    // If there is a transactional repo available (a transaction bound to the
+    // request is available), use it. Otherwise, use normal repo.
+    return transactional || this.repo;
+  }
+
+  async sumPointsByAssignee({
+    workspaceUserId,
+    workspaceId,
+  }: {
+    workspaceUserId: TaskAssignment['assignee']['id'];
+    workspaceId: Workspace['id'];
+  }): Promise<number> {
+    const result = await this.repositoryContext
+      .createQueryBuilder('assignment')
+      .leftJoin('assignment.task', 'task')
+      .select('SUM(task.rewardPoints)', 'total')
+      .where('assignment.assignee = :workspaceUserId', { workspaceUserId })
+      .andWhere('task.workspace = :workspaceId', { workspaceId })
+      .andWhere('assignment.status = :status', {
+        status: ProgressStatus.COMPLETED,
+      })
+      .getRawOne();
+
+    return result.total ? parseInt(result.total, 10) : 0;
+  }
+
   async create({
     workspaceUserId,
     taskId,
@@ -27,7 +59,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.repositoryContext.create({
       assignee: {
         id: workspaceUserId,
       },
@@ -37,10 +69,9 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
       status,
     });
 
-    const savedEntity =
-      await this.transactionalTaskAssignmentRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalTaskAssignmentRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
       relations,
     });
@@ -49,33 +80,33 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
   }
 
   async createMultiple({
-    workspaceUserIds,
+    assignments,
     taskId,
-    status,
     relations,
   }: {
-    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    assignments: Array<{
+      workspaceUserId: TaskAssignment['assignee']['id'];
+      status: TaskAssignment['status'];
+    }>;
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Array<TaskAssignmentEntity>> {
-    const persistenceModel = this.repo.create(
-      workspaceUserIds.map((id) => ({
+    const persistenceModel = this.repositoryContext.create(
+      assignments.map((assignment) => ({
         assignee: {
-          id,
+          id: assignment.workspaceUserId,
         },
         task: {
           id: taskId,
         },
-        status,
+        status: assignment.status,
       })),
     );
 
-    const savedEntities =
-      await this.transactionalTaskAssignmentRepo.save(persistenceModel);
+    const savedEntities = await this.repositoryContext.save(persistenceModel);
     const savedEntitiesIds = savedEntities.map((entity) => entity.id);
 
-    const newEntity = await this.transactionalTaskAssignmentRepo.find({
+    const newEntity = await this.repositoryContext.find({
       where: { id: In(savedEntitiesIds) },
       relations,
     });
@@ -83,33 +114,33 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     return newEntity;
   }
 
-  async findById({
+  findById({
     id,
     relations,
   }: {
     id: TaskAssignment['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    return await this.repo.findOne({
+    return this.repositoryContext.findOne({
       where: { id },
       relations,
     });
   }
 
-  async findAllByTaskId({
+  findAllByTaskId({
     taskId,
     relations,
   }: {
     taskId: TaskAssignment['task']['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]> {
-    return await this.repo.find({
+    return this.repositoryContext.find({
       where: { task: { id: taskId } },
       relations,
     });
   }
 
-  async findAllByTaskIdAndAssigneeId({
+  findAllByTaskIdAndAssigneeId({
     taskId,
     assigneeIds,
     relations,
@@ -118,39 +149,13 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]> {
-    return await this.repo.find({
+    return this.repositoryContext.find({
       where: { task: { id: taskId }, assignee: { id: In(assigneeIds) } },
       relations,
     });
   }
 
-  async findByIdWithAssigneeUser({
-    id,
-    relations,
-  }: {
-    id: TaskAssignment['id'];
-    relations?: FindOptionsRelations<TaskAssignmentEntity>;
-  }): Promise<Nullable<TaskAssignmentEntity>> {
-    return await this.repo.findOne({
-      where: { id },
-      relations,
-    });
-  }
-
-  async findByTaskId({
-    id,
-    relations,
-  }: {
-    id: TaskAssignment['task']['id'];
-    relations?: FindOptionsRelations<TaskAssignmentEntity>;
-  }): Promise<Nullable<TaskAssignmentEntity>> {
-    return await this.repo.findOne({
-      where: { task: { id } },
-      relations,
-    });
-  }
-
-  async findyAllByAssigneeIdAndWorkspaceIdAndStatus({
+  findAllByAssigneeIdAndWorkspaceIdAndStatus({
     workspaceUserId,
     workspaceId,
     status,
@@ -159,7 +164,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     workspaceId: TaskAssignment['task']['workspace']['id'];
     status: TaskAssignment['status'];
   }): Promise<TaskAssignmentEntity[]> {
-    return await this.repo.find({
+    return this.repositoryContext.find({
       where: {
         assignee: {
           id: workspaceUserId,
@@ -189,14 +194,50 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     data: Partial<TaskAssignmentCore>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>> {
-    await this.transactionalTaskAssignmentRepo.update(id, data);
+    const result = await this.repositoryContext.update(id, data);
 
-    const newEntity = await this.transactionalTaskAssignmentRepo.findOne({
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
+
+    const newEntity = await this.repositoryContext.findOne({
       where: { id },
       relations,
     });
 
     return newEntity;
+  }
+
+  async updateAllByTaskId({
+    taskId,
+    data,
+    relations,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    data: Partial<TaskAssignmentCore>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity[]>> {
+    const result = await this.repositoryContext.update(
+      { task: { id: taskId } },
+      data,
+    );
+
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
+
+    const newEntity = await this.repositoryContext.find({
+      where: { task: { id: taskId } },
+      relations,
+    });
+
+    return newEntity;
+  }
+
+  async countByTaskId(id: TaskAssignment['task']['id']): Promise<number> {
+    return this.repositoryContext.countBy({ task: { id } });
   }
 
   async deleteByTaskIdAndAssigneeIds({
@@ -205,14 +246,11 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
   }: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
-  }): Promise<void> {
-    this.transactionalTaskAssignmentRepo.delete({
+  }): Promise<boolean> {
+    const result = await this.repositoryContext.delete({
       task: { id: taskId },
       assignee: { id: In(assigneeIds) },
     });
-  }
-
-  private get transactionalTaskAssignmentRepo(): Repository<TaskAssignmentEntity> {
-    return this.transactionalRepository.getRepository(TaskAssignmentEntity);
+    return (result.affected ?? 0) > 0;
   }
 }

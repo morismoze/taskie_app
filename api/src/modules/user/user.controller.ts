@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -52,6 +53,11 @@ export class UserController {
     summary: 'Delete current authenticated user',
   })
   @ApiNoContentResponse()
+  @ApiConflictResponse({
+    description:
+      'Cannot delete account. User is the sole manager of one or more workspaces.\n\n' +
+      'Resolve conflicts by fetching GET /workspaces/me/sole-ownership.',
+  })
   deleteMe(@Req() request: RequestWithUser): Promise<void> {
     return this.userService.delete(request.user.sub);
   }

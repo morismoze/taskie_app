@@ -58,20 +58,20 @@ export class GoalRepositoryImpl implements GoalRepository {
     return newEntity;
   }
 
-  async findById({
+  findById({
     id,
     relations,
   }: {
     id: Goal['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    return await this.repo.findOne({
+    return this.repo.findOne({
       where: { id },
       relations,
     });
   }
 
-  async findByGoalIdAndWorkspaceId({
+  findByGoalIdAndWorkspaceId({
     goalId,
     workspaceId,
     relations,
@@ -80,7 +80,7 @@ export class GoalRepositoryImpl implements GoalRepository {
     workspaceId: Goal['workspace']['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    return await this.repo.findOne({
+    return this.repo.findOne({
       where: { id: goalId, workspace: { id: workspaceId } },
       relations,
     });
@@ -122,9 +122,21 @@ export class GoalRepositoryImpl implements GoalRepository {
     }
 
     if (search) {
+      // Escape special characters used in SQL LIKE/ILIKE
+      // 1. Escape backslash first
+      // 2. Escape percent sign
+      // 3. Escape underscore
+      // E.g. ILIKE '%%%' - this would return all the goals
+      // which, if there are many goals, would fill up RAM
+      // and possibly fail the server.
+      const sanitizedSearch = search
+        .replace(/\\/g, '\\\\')
+        .replace(/%/g, '\\%')
+        .replace(/_/g, '\\_');
+
       findOptions.where = {
         ...findOptions.where,
-        title: ILike(`%${search}%`),
+        title: ILike(`%${sanitizedSearch}%`),
       };
     }
 
@@ -170,7 +182,12 @@ export class GoalRepositoryImpl implements GoalRepository {
       };
     }
 
-    await this.repo.update(id, updateData);
+    const result = await this.repo.update(id, updateData);
+
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
 
     const newEntity = await this.findById({ id, relations });
 

@@ -5,101 +5,64 @@ import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
 
 export abstract class WorkspaceUserRepository {
-  abstract findByIdAndWorkspaceId({
-    id,
-    workspaceId,
-    relations,
-  }: {
+  abstract findByIdAndWorkspaceId(args: {
     id: WorkspaceUser['id'];
     workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
-  abstract findByUserIdAndWorkspaceId({
-    userId,
-    workspaceId,
-    relations,
-  }: {
+  abstract findByUserIdAndWorkspaceId(args: {
     userId: WorkspaceUser['user']['id'];
     workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
-  abstract findByIdsAndWorkspaceId({
-    ids,
-    workspaceId,
-    relations,
-  }: {
+  abstract findByIdsAndWorkspaceId(args: {
     ids: Array<WorkspaceUser['user']['id']>;
     workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Array<WorkspaceUserEntity>>;
 
-  abstract findAllByUserId({
-    userId,
-    relations,
-  }: {
+  abstract findAllByUserId(args: {
     userId: WorkspaceUser['user']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 
-  abstract findAllByIds({
-    workspaceId,
-    ids,
-    relations,
-  }: {
+  abstract findAllByIds(args: {
     workspaceId: WorkspaceUser['workspace']['id'];
     ids: WorkspaceUser['id'][];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 
-  abstract findAllByWorkspaceId({
-    workspaceId,
-    relations,
-  }: {
+  abstract findAllByWorkspaceId(args: {
     workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 
-  abstract create({
-    data,
-    relations,
-  }: {
+  abstract countManagersInWorkspace(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<number>;
+
+  abstract create(args: {
     data: {
       workspaceId: WorkspaceUser['workspace']['id'];
       createdById: WorkspaceUser['id'] | null;
       userId: WorkspaceUser['user']['id'];
       workspaceRole: WorkspaceUser['workspaceRole'];
-      status: WorkspaceUser['status'];
     };
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
-  abstract update({
-    id,
-    data,
-    relations,
-  }: {
+  abstract update(args: {
     id: WorkspaceUser['id'];
     data: Partial<WorkspaceUserCore>;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
-  abstract delete({
-    workspaceId,
-    workspaceUserId,
-  }: {
+  abstract delete(args: {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['user']['id'];
-  }): Promise<void>;
-
-  abstract getWorkspaceUserAccumulatedPoints({
-    workspaceId,
-    workspaceUserId,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    workspaceUserId;
-  }): Promise<Nullable<number>>;
+  }): Promise<boolean>;
 
   abstract getWorkspaceLeaderboard(
     workspaceId: WorkspaceUser['workspace']['id'],

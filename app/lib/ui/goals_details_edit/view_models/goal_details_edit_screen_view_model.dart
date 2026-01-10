@@ -18,12 +18,19 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
        _goalId = goalId,
        _workspaceGoalRepository = workspaceGoalRepository,
        _workspaceUserRepository = workspaceUserRepository {
-    _loadWorkspaceGoalDetails();
+    final details = _loadWorkspaceGoalDetails();
     _workspaceUserRepository.addListener(_onWorkspaceUsersChanged);
     workspaceGoalRepository.addListener(_onWorkspaceGoalsChanged);
     // This is loading for the select field for adding new assignees
     loadWorkspaceMembers = Command1(_loadWorkspaceMembers)
       ..execute(workspaceId);
+
+    if (details is Ok<WorkspaceGoal?> && details.value != null) {
+      loadWorkspaceUserAccumulatedPoints = Command1(
+        _loadWorkspaceUserAccumulatedPoints,
+      )..execute(details.value!.id);
+    }
+
     editGoalDetails = Command1(_editGoalDetails);
     closeGoal = Command0(_closeGoal);
   }
@@ -34,6 +41,7 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
   final WorkspaceUserRepository _workspaceUserRepository;
 
   late Command1<void, String> loadWorkspaceMembers;
+  late Command1<void, String> loadWorkspaceUserAccumulatedPoints;
   late Command0 closeGoal;
   late Command1<
     void,
@@ -58,6 +66,12 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
           .toList() ??
       [];
 
+  final ValueNotifier<int?> _workspaceUserAccumulatedPointsNotifier =
+      ValueNotifier(null);
+
+  ValueListenable<int?> get workspaceUserAccumulatedPointsListenable =>
+      _workspaceUserAccumulatedPointsNotifier;
+
   void _onWorkspaceUsersChanged() {
     notifyListeners();
   }
@@ -66,14 +80,14 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
     _loadWorkspaceGoalDetails();
   }
 
-  Result<void> _loadWorkspaceGoalDetails() {
+  Result<WorkspaceGoal?> _loadWorkspaceGoalDetails() {
     final result = _workspaceGoalRepository.loadGoalDetails(goalId: _goalId);
 
     switch (result) {
       case Ok():
         _details = result.value;
         notifyListeners();
-        return const Result.ok(null);
+        return Result.ok(_details);
       case Error():
         // This can happen when a goal gets closed and removed from the cache
         // and the repository notifies listeners, in this case the goal details
@@ -93,6 +107,25 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        return const Result.ok(null);
+      case Error():
+        return result;
+    }
+  }
+
+  Future<Result<void>> _loadWorkspaceUserAccumulatedPoints(
+    String workspaceUserId,
+  ) async {
+    final result = await _workspaceUserRepository
+        .getWorkspaceUserAccumulatedPoints(
+          workspaceId: _activeWorkspaceId,
+          workspaceUserId: workspaceUserId,
+        );
+
+    switch (result) {
+      case Ok():
+        _workspaceUserAccumulatedPointsNotifier.value = result.value;
+        notifyListeners();
         return const Result.ok(null);
       case Error():
         return result;

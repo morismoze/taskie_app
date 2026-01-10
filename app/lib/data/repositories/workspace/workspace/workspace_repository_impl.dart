@@ -322,6 +322,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
     _cachedWorkspacesList = null;
     await _databaseService.clearWorkspaces();
     await setActiveWorkspaceId(null);
+    _hasNoWorkspacesNotifier.value = null;
   }
 
   @override

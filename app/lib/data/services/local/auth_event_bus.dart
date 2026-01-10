@@ -6,6 +6,8 @@ class UserRoleChangedEvent extends AuthEvent {}
 
 class UserRemovedFromWorkspaceEvent extends AuthEvent {}
 
+class AccessTokenRefreshFailed extends AuthEvent {}
+
 class AuthEventBus {
   final _controller = StreamController<AuthEvent>.broadcast();
 

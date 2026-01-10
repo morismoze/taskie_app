@@ -6,7 +6,7 @@ import '../../../domain/use_cases/active_workspace_change_use_case.dart';
 import '../../../domain/use_cases/sign_out_use_case.dart';
 import '../../../utils/command.dart';
 
-// There are 4 important cases:
+// There are 5 important cases:
 // 1. The user got kicked out from the currently active workspace. On the backend
 // we edit that user's current session, and on that user's next auth guarded request
 // the user will get 401 and then on the frontend do token refresh. After that, the
@@ -26,6 +26,7 @@ import '../../../utils/command.dart';
 // 401 and then on the frontend do token refresh. After that user will have new role for the
 // current workspace in the access token, but not yet in the user repository. Once user does
 // pull to refresh on the homepage, user will be force fetched with the new role.
+// 5. Token refresh failed - we want to sign out the user locally using the SignOutUseCase
 
 class AuthEventListenerViewmodel extends ChangeNotifier {
   AuthEventListenerViewmodel({
@@ -40,6 +41,7 @@ class AuthEventListenerViewmodel extends ChangeNotifier {
     handleWorkspaceRoleChange = Command0(_handleWorkspaceRoleChange);
     handleRemovalFromWorkspace = Command0(_handleRemovalFromWorkspace);
     signOut = Command0(_signOut);
+    signOutLocally = Command0(_signOutLocally);
   }
 
   final WorkspaceRepository _workspaceRepository;
@@ -55,6 +57,7 @@ class AuthEventListenerViewmodel extends ChangeNotifier {
   /// null if there are no more workspaces user is part of
   late Command0<String?> handleRemovalFromWorkspace;
   late Command0 signOut;
+  late Command0 signOutLocally;
 
   Future<Result<void>> _handleWorkspaceRoleChange() async {
     // For this case we only need to re-fetch the user (token refresh already happened)
@@ -112,5 +115,10 @@ class AuthEventListenerViewmodel extends ChangeNotifier {
       case Error():
         return result;
     }
+  }
+
+  Future<Result<void>> _signOutLocally() async {
+    await _signOutUseCase.forceLocalSignOut();
+    return const Result.ok(null);
   }
 }

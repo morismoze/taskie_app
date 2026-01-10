@@ -352,15 +352,6 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
     String taskId,
     String assigneeId,
   ) async {
-    final existingTaskResult =
-        loadWorkspaceTaskDetails(taskId: taskId) as Ok<WorkspaceTask>;
-
-    if (existingTaskResult.value.assignees.length == 1) {
-      // Guard case, the actual user's guard is done in the
-      // uI with a modal blocking the removal of the last assignee
-      return const Result.ok(null);
-    }
-
     final result = await _workspaceTaskApiService.removeTaskAssignee(
       workspaceId: workspaceId,
       taskId: taskId,

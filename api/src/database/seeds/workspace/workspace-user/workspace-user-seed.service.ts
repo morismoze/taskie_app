@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { WorkspaceEntity } from 'src/modules/workspace/workspace-module/persistence/workspace.entity';
 import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUserEntity } from 'src/modules/workspace/workspace-user-module/persistence/workspace-user.entity';
 import { Repository } from 'typeorm';
 
@@ -63,7 +62,6 @@ export class WorkspaceUserSeedService {
         workspace: workspace1,
         user: user1,
         workspaceRole: WorkspaceUserRole.MANAGER,
-        status: WorkspaceUserStatus.ACTIVE,
         createdBy: null,
       });
       await this.workspaceUserRepository.save(workspaceUser1);
@@ -82,7 +80,6 @@ export class WorkspaceUserSeedService {
         workspace: workspace2,
         user: user2,
         workspaceRole: WorkspaceUserRole.MANAGER,
-        status: WorkspaceUserStatus.ACTIVE,
         createdBy: null,
       });
       await this.workspaceUserRepository.save(workspaceUser2);
@@ -101,7 +98,6 @@ export class WorkspaceUserSeedService {
         workspace: workspace1,
         user: user3,
         workspaceRole: WorkspaceUserRole.MEMBER,
-        status: WorkspaceUserStatus.ACTIVE,
         createdBy: workspaceUser1,
       });
       await this.workspaceUserRepository.save(workspaceUser3);
@@ -120,7 +116,6 @@ export class WorkspaceUserSeedService {
         workspace: workspace2,
         user: user4,
         workspaceRole: WorkspaceUserRole.MEMBER,
-        status: WorkspaceUserStatus.ACTIVE,
         createdBy: workspaceUser2,
       });
       await this.workspaceUserRepository.save(workspaceUser4);
@@ -139,7 +134,6 @@ export class WorkspaceUserSeedService {
         workspace: workspace1,
         user: user5,
         workspaceRole: WorkspaceUserRole.MEMBER,
-        status: WorkspaceUserStatus.ACTIVE,
         createdBy: workspaceUser1,
       });
       await this.workspaceUserRepository.save(workspaceUser5);

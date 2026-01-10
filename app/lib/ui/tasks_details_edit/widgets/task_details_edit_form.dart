@@ -111,7 +111,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
           AppSelectFieldSelectedOptions(
             label: context.localization.objectiveAssigneeLabel,
             selectedOptions: selectedAssignees,
-            isFieldFocused: true,
+            isFieldFocused: selectedAssignees.isNotEmpty,
             onTap: () => context.push(
               Routes.taskDetailsAssignmentsEdit(
                 workspaceId: widget.viewModel.activeWorkspaceId,

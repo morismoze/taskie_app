@@ -1,101 +1,70 @@
 import { Nullable } from 'src/common/types/nullable.type';
+import { Workspace } from 'src/modules/workspace/workspace-module/domain/workspace.domain';
 import { FindOptionsRelations } from 'typeorm';
 import { TaskAssignmentCore } from '../domain/task-assignment-core.domain';
 import { TaskAssignment } from '../domain/task-assignment.domain';
 import { TaskAssignmentEntity } from './task-assignment.entity';
 
 export abstract class TaskAssignmentRepository {
-  abstract create({
-    workspaceUserId,
-    taskId,
-    status,
-    relations,
-  }: {
+  abstract sumPointsByAssignee(args: {
+    workspaceUserId: TaskAssignment['assignee']['id'];
+    workspaceId: Workspace['id'];
+  }): Promise<number>;
+
+  abstract create(args: {
     workspaceUserId: TaskAssignment['assignee']['id'];
     taskId: TaskAssignment['task']['id'];
     status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
-  abstract createMultiple({
-    workspaceUserIds,
-    taskId,
-    status,
-    relations,
-  }: {
-    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+  abstract createMultiple(args: {
+    assignments: Array<{
+      workspaceUserId: TaskAssignment['assignee']['id'];
+      status: TaskAssignment['status'];
+    }>;
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Array<TaskAssignmentEntity>>;
 
-  abstract findById({
-    id,
-    relations,
-  }: {
+  abstract findById(args: {
     id: TaskAssignment['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
-  abstract findAllByTaskId({
-    taskId,
-    relations,
-  }: {
+  abstract findAllByTaskId(args: {
     taskId: TaskAssignment['task']['id'];
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 
-  abstract findAllByTaskIdAndAssigneeId({
-    taskId,
-    assigneeIds,
-    relations,
-  }: {
+  abstract findAllByTaskIdAndAssigneeId(args: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<TaskAssignmentEntity[]>;
 
-  abstract findByIdWithAssigneeUser({
-    id,
-    relations,
-  }: {
-    id: TaskAssignment['id'];
-    relations?: FindOptionsRelations<TaskAssignmentEntity>;
-  }): Promise<Nullable<TaskAssignmentEntity>>;
-
-  abstract findByTaskId({
-    id,
-    relations,
-  }: {
-    id: TaskAssignment['task']['id'];
-    relations?: FindOptionsRelations<TaskAssignmentEntity>;
-  }): Promise<Nullable<TaskAssignmentEntity>>;
-
-  abstract findyAllByAssigneeIdAndWorkspaceIdAndStatus({
-    workspaceUserId,
-    workspaceId,
-    status,
-  }: {
+  abstract findAllByAssigneeIdAndWorkspaceIdAndStatus(args: {
     workspaceUserId: TaskAssignment['assignee']['id'];
     workspaceId: TaskAssignment['task']['workspace']['id'];
     status: TaskAssignment['status'];
   }): Promise<TaskAssignmentEntity[]>;
 
-  abstract update({
-    id,
-    data,
-    relations,
-  }: {
+  abstract update(args: {
     id: TaskAssignment['id'];
     data: Partial<TaskAssignmentCore>;
     relations?: FindOptionsRelations<TaskAssignmentEntity>;
   }): Promise<Nullable<TaskAssignmentEntity>>;
 
-  abstract deleteByTaskIdAndAssigneeIds({
-    taskId,
-    assigneeIds,
-  }: {
+  abstract updateAllByTaskId(args: {
+    taskId: TaskAssignment['task']['id'];
+    data: Partial<TaskAssignmentCore>;
+    relations?: FindOptionsRelations<TaskAssignmentEntity>;
+  }): Promise<Nullable<TaskAssignmentEntity[]>>;
+
+  abstract countByTaskId(id: TaskAssignment['task']['id']): Promise<number>;
+
+  abstract deleteByTaskIdAndAssigneeIds(args: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
-  }): Promise<void>;
+  }): Promise<boolean>;
 }

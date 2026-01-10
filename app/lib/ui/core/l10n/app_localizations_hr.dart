@@ -147,7 +147,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksNoTasks =>
-      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+      'Izgleda da vaš radni prostor još nema nijedan zadatak. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod ili osvježiti popis!';
 
   @override
   String get tasksLoadRefreshError =>
@@ -156,10 +156,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get taskskNoFilteredTasks =>
       'Uh-oh! Čini se da nema zadataka za odabrane filtre. Pokušajte s drugačijima!';
-
-  @override
-  String get tasksEmptyPageTasks =>
-      'Uh-oh! Ova stranica nema više zadataka. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis zadataka!';
 
   @override
   String get tasksPressAgainToExit =>
@@ -199,6 +195,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String tasksCardPoints(Object points) {
     return '$points bodova';
   }
+
+  @override
+  String get tasksUnassigned => 'Nedodijeljeno';
 
   @override
   String get tasksDetails => 'Detalji zadatka';
@@ -288,6 +287,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get tasksAssignmentsEdit => 'Uređivanje dodjela zadatka';
 
   @override
+  String get tasksAssignmentsEmpty =>
+      'Ovaj zadatak trenutno nema dodijeljenih članova.\nDodaj ih ispod.';
+
+  @override
   String get progressStatusLabel => 'Status';
 
   @override
@@ -296,10 +299,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get tasksAssignmentsEditStatusDueDateError =>
       'Zadatak/ci ne mogu biti označeni kao Završeno jer je rok završetka istekao';
-
-  @override
-  String get tasksAssignmentsMinAssignees =>
-      'Uh-oh! Ovo je posljednji dodijeljeni korisnik i ne može se ukloniti. Umjesto toga, pokušajte zatvoriti zadatak.';
 
   @override
   String get tasksAssignmentsEditAddNewAssignee =>
@@ -324,7 +323,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String tasksAssignmentsGuideAssignmentLimitBody(
     Object taskAssigneesMaxCount,
   ) {
-    return 'Svaki zadatak može imati do $taskAssigneesMaxCount dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+    return 'Svaki zadatak može imati do **$taskAssigneesMaxCount dodijeljenih članova**.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
   }
 
   @override
@@ -767,7 +766,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get leaderboardEmpty =>
-      'Izgleda da vaš workspace još nema završenih zadataka. Pokušajte ažurirati i završiti neke kako biste započeli!';
+      'Izgleda da vaš workspace još nema završenih zadataka. Pokušajte ažurirati i završiti neke kako biste započeli ili osvježiti popis!';
 
   @override
   String get goalsLabel => 'Ciljevi';
@@ -778,21 +777,17 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get goalsNoGoals =>
-      'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod!';
+      'Izgleda da vaš radni prostor još nema nijedan cilj. Pokušajte kreirati prvi koristeći glavni gumb **+** ispod ili osvježiti popis!';
 
   @override
   String get goalsNoFilteredGoals =>
       'Uh-oh! Čini se da nema ciljeva za odabrane filtre. Pokušajte s drugačijima!';
 
   @override
-  String get goalsEmptyPageGoals =>
-      'Uh-oh! Ova stranica nema više ciljeva. Pokušajte promijeniti aktivnu stranicu ili osvježiti popis ciljeva!';
-
-  @override
   String get goalsDetails => 'Detalji cilja';
 
   @override
-  String get goalsDetailsEdit => 'Uređivanje detalja zadatka';
+  String get goalsDetailsEdit => 'Uređivanje detalja cilja';
 
   @override
   String get goalsDetailsEditCreatedBy => 'Cilj kreirao/la';
@@ -876,6 +871,23 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get signOutError => 'Uh-oh! Došlo je do problema prilikom odjave';
+
+  @override
+  String get deleteAccount => 'Izbriši račun';
+
+  @override
+  String get deleteAccountText =>
+      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U suprotnom slučaju, molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
+
+  @override
+  String get deleteAccountConfirmButton => 'Da, razumijem';
+
+  @override
+  String get deleteAccountSuccess => 'Uspješno ste izbrisali račun';
+
+  @override
+  String get deleteAccountSoleManagerConflict =>
+      'Brisanje računa nije moguće jer ste jedini Menadžer u određenim radnim prostorima kojih ste član. Molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom ili napustite te radne prostore.';
 
   @override
   String get workspaceAccessRevocationMessage =>

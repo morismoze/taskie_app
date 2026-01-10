@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/services/api/api_response.dart';
+import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
+import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_avatar.dart';
+import '../../core/ui/app_dialog.dart';
+import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/role_chip.dart';
+import '../../core/ui/separator.dart';
+import '../../core/utils/extensions.dart';
 import '../../core/utils/user.dart';
 import '../view_models/user_profile_view_model.dart';
 import 'user_profile_button.dart';
@@ -27,18 +35,22 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     super.initState();
     widget.viewModel.signOut.addListener(_onSignOutResult);
+    widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
   }
 
   @override
   void didUpdateWidget(covariant UserProfile oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
+    oldWidget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
     widget.viewModel.signOut.addListener(_onSignOutResult);
+    widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
   }
 
   @override
   void dispose() {
     widget.viewModel.signOut.removeListener(_onSignOutResult);
+    widget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
     super.dispose();
   }
 
@@ -64,11 +76,6 @@ class _UserProfileState extends State<UserProfile> {
           firstName: details.firstName,
           lastName: details.lastName,
         );
-        final currentWorkspaceRole = details.roles
-            .firstWhere(
-              (role) => role.workspaceId == widget.viewModel.activeWorkspaceId,
-            )
-            .role;
 
         return Padding(
           padding: const EdgeInsets.symmetric(
@@ -95,9 +102,10 @@ class _UserProfileState extends State<UserProfile> {
                         style: Theme.of(builderContext).textTheme.titleLarge!
                             .copyWith(fontWeight: FontWeight.bold, height: 1),
                       ),
-                      // Flutter Chip for some reason has vertical padding even though
-                      // it is set to 0 in RoleChip impl.
-                      RoleChip(role: currentWorkspaceRole),
+                      if (widget.viewModel.currentWorkspaceRole != null)
+                        // Flutter Chip for some reason has vertical padding even though
+                        // it is set to 0 in RoleChip impl.
+                        RoleChip(role: widget.viewModel.currentWorkspaceRole!),
                     ],
                   ),
                 ],
@@ -118,6 +126,16 @@ class _UserProfileState extends State<UserProfile> {
                 icon: FontAwesomeIcons.arrowRightFromBracket,
                 isLoading: widget.viewModel.signOut.running,
               ),
+              const SizedBox(height: 20),
+              const Separator(),
+              const SizedBox(height: 20),
+              UserProfileButton(
+                onPress: _showAccountDeletionConfirmationDialog,
+                text: context.localization.deleteAccount,
+                icon: FontAwesomeIcons.trash,
+                isLoading: widget.viewModel.deleteAccount.running,
+                isDanger: true,
+              ),
             ],
           ),
         );
@@ -137,5 +155,82 @@ class _UserProfileState extends State<UserProfile> {
         message: context.localization.signOutError,
       );
     }
+  }
+
+  void _onAccountDeleteResult() {
+    if (widget.viewModel.deleteAccount.completed) {
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.deleteAccountSuccess,
+      );
+      widget.viewModel.signOut.clearResult();
+    }
+
+    if (widget.viewModel.deleteAccount.error) {
+      final errorResult = widget.viewModel.deleteAccount.result as Error;
+      widget.viewModel.deleteAccount.clearResult();
+      switch (errorResult.error) {
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.soleManagerConflict:
+          context.pop(); // Close account deletion confirmation dialog
+          _showSoleManagerConflictDialog();
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.tasksAddTaskAssignmentError,
+          );
+      }
+    }
+  }
+
+  void _showAccountDeletionConfirmationDialog() {
+    AppDialog.showAlert(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleExclamation,
+        color: Theme.of(context).colorScheme.error,
+        size: 30,
+      ),
+      content: context.localization.deleteAccountText.format(
+        style: Theme.of(context).textTheme.bodyMedium!,
+      ),
+      actions: [
+        ActionButtonBar.withCommand(
+          command: widget.viewModel.deleteAccount,
+          onSubmit: (BuildContext builderContext) =>
+              widget.viewModel.deleteAccount.execute(),
+          onCancel: (BuildContext builderContext) => builderContext.pop(),
+          submitButtonText: (BuildContext builderContext) =>
+              builderContext.localization.deleteAccountConfirmButton,
+          submitButtonColor: (BuildContext builderContext) =>
+              Theme.of(builderContext).colorScheme.error,
+        ),
+      ],
+    );
+  }
+
+  void _showSoleManagerConflictDialog() {
+    AppDialog.show(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleInfo,
+        color: Theme.of(context).colorScheme.primary,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.deleteAccountSoleManagerConflict,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: AppFilledButton(
+        label: context.localization.misc_ok,
+        onPress: () {
+          context.pop(); // Close dialog
+        },
+      ),
+    );
   }
 }

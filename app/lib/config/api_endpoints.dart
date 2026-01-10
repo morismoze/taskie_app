@@ -18,12 +18,6 @@ abstract final class ApiEndpoints {
   static const logout = '$_prefix/auth/logout';
   static const refreshToken = '$_prefix/auth/refresh';
 
-  // Workspaces
-  static const getWorkspaces = '$_prefix/workspaces/me';
-  static const createWorkspace = '$_prefix/workspaces';
-  static String updateWorkspaceDetails(WorkspaceIdPathParam workspaceId) =>
-      '$_prefix/workspaces/$workspaceId';
-
   // Workspace invites
   static String createWorkspaceInviteToken(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/invites';
@@ -74,6 +68,15 @@ abstract final class ApiEndpoints {
 
   // Users
   static const getCurrentUser = '$_prefix/users/me';
+  static const deleteAccount = '$_prefix/users/me';
+
+  // Workspaces
+  static const getWorkspaces = '$_prefix/workspaces/me';
+  static const getWorkspacesSoleOwnership =
+      '$_prefix/workspaces/me/sole-ownership';
+  static const createWorkspace = '$_prefix/workspaces';
+  static String updateWorkspaceDetails(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId';
   static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId/users/me';
   static String getWorkspaceUsers(WorkspaceIdPathParam workspaceId) =>

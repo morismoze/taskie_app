@@ -17,9 +17,11 @@ class TasksList extends StatelessWidget {
       return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           final task = viewModel.tasks!.items[index];
-          final isTaskClosed = task.assignees.every(
-            (assignment) => assignment.status == ProgressStatus.closed,
-          );
+          final isTaskClosed =
+              task.assignees.isNotEmpty &&
+              task.assignees.every(
+                (assignment) => assignment.status == ProgressStatus.closed,
+              );
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),

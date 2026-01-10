@@ -70,7 +70,10 @@ enum ApiErrorCode {
   workspaceAccessRevoked(13),
 
   @JsonValue('14')
-  insufficientPermissions(14);
+  insufficientPermissions(14),
+
+  @JsonValue('15')
+  soleManagerConflict(15);
 
   const ApiErrorCode(this.code);
 

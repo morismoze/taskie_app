@@ -164,6 +164,7 @@ export class TaskService {
     workspaceId: Task['workspace']['id'];
     data: UpdateTaskRequest;
   }): Promise<TaskWithAssigneesCoreAndCreatedByUser> {
+    // Verify tenancy (ensure task belongs to this workspace)
     const task = await this.findByTaskIdAndWorkspaceId({ taskId, workspaceId });
 
     if (!task) {
@@ -199,11 +200,14 @@ export class TaskService {
     });
 
     if (!updatedTask) {
+      // Somebody deleted the task in the meantime.
+      // Currently there is no way to delete a task,
+      // so this is just a sanity check.
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 

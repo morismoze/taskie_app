@@ -1,39 +1,42 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../domain/models/workspace_user.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_text_button.dart';
-import '../view_models/create_goal_screen_viewmodel.dart';
 
-class WorkspaceUserAccumulatedPoints extends StatelessWidget {
-  const WorkspaceUserAccumulatedPoints({
+class WorkspaceMemberAccumulatedPoints extends StatelessWidget {
+  const WorkspaceMemberAccumulatedPoints({
     super.key,
-    required this.viewModel,
     required this.selectedAssignee,
+    required this.loadAccumulatedPointsCommand,
+    required this.workspaceUserAccumulatedPointsNotifier,
   });
 
-  final CreateGoalScreenViewmodel viewModel;
   final WorkspaceUser selectedAssignee;
+  final Command1<void, String> loadAccumulatedPointsCommand;
+  final ValueListenable<int?> workspaceUserAccumulatedPointsNotifier;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: viewModel.loadWorkspaceUserAccumulatedPoints,
+      listenable: loadAccumulatedPointsCommand,
       builder: (builderContext, child) {
-        if (viewModel.loadWorkspaceUserAccumulatedPoints.running) {
+        if (loadAccumulatedPointsCommand.running) {
           return ActivityIndicator(
             radius: 10,
             color: Theme.of(builderContext).colorScheme.primary,
           );
         }
 
-        if (viewModel.loadWorkspaceUserAccumulatedPoints.error) {
+        if (loadAccumulatedPointsCommand.error) {
           return Text.rich(
             TextSpan(
               text:
-                  '${context.localization.goalRequiredPointsCurrentAccumulatedPointsError} ',
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  '${builderContext.localization.goalRequiredPointsCurrentAccumulatedPointsError} ',
+              style: Theme.of(builderContext).textTheme.labelMedium!.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.normal,
               ),
@@ -43,9 +46,10 @@ class WorkspaceUserAccumulatedPoints extends StatelessWidget {
                   baseline: TextBaseline.alphabetic,
                   child: AppTextButton(
                     underline: true,
-                    onPress: () => viewModel.loadWorkspaceUserAccumulatedPoints
-                        .execute(selectedAssignee.id),
-                    label: context.localization.misc_tryAgain,
+                    onPress: () => loadAccumulatedPointsCommand.execute(
+                      selectedAssignee.id,
+                    ),
+                    label: builderContext.localization.misc_tryAgain,
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shrinkWrap: true,
@@ -58,9 +62,9 @@ class WorkspaceUserAccumulatedPoints extends StatelessWidget {
 
         return child!;
       },
-      child: ListenableBuilder(
-        listenable: viewModel,
-        builder: (innerBuilderContext, _) {
+      child: ValueListenableBuilder(
+        valueListenable: workspaceUserAccumulatedPointsNotifier,
+        builder: (innerBuilderContext, workspaceUserAccumulatedPointsvalue, _) {
           final fullName =
               '${selectedAssignee.firstName} ${selectedAssignee.lastName}';
 
@@ -78,7 +82,7 @@ class WorkspaceUserAccumulatedPoints extends StatelessWidget {
                       .copyWith(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 TextSpan(
-                  text: viewModel.workspaceUserAccumulatedPoints!.toString(),
+                  text: workspaceUserAccumulatedPointsvalue.toString(),
                   style: Theme.of(innerBuilderContext).textTheme.labelMedium!
                       .copyWith(
                         fontSize: 15,

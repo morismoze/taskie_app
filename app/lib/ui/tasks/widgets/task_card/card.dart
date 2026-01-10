@@ -120,7 +120,6 @@ class TaskCard extends StatelessWidget {
           children: [
             AppTextButton(
               onPress: () {
-                context.pop(); // Close bottom sheet
                 context.push(
                   Routes.taskDetails(
                     workspaceId: activeWorkspaceId,
@@ -136,7 +135,6 @@ class TaskCard extends StatelessWidget {
                 permission: RbacPermission.objectiveEdit,
                 child: AppTextButton(
                   onPress: () {
-                    context.pop(); // Close bottom sheet
                     context.push(
                       Routes.taskDetailsEdit(
                         workspaceId: activeWorkspaceId,

@@ -42,4 +42,5 @@ const _$ApiErrorCodeEnumMap = {
   ApiErrorCode.taskAssignmentsCompletedStatusDueDatePassed: '12',
   ApiErrorCode.workspaceAccessRevoked: '13',
   ApiErrorCode.insufficientPermissions: '14',
+  ApiErrorCode.soleManagerConflict: '15',
 };

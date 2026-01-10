@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
@@ -8,6 +7,7 @@ import { ProgressStatus } from '../task-module/domain/progress-status.enum';
 import { TASK_MAXIMUM_ASSIGNEES_COUNT } from '../task-module/domain/task.constants';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
 import { TaskAssignmentWithAssigneeUser } from './domain/task-assignment-with-assignee-user.domain';
+import { TaskAssignmentWithAssignee } from './domain/task-assignment-with-assignee.domain';
 import { TaskAssignment } from './domain/task-assignment.domain';
 import { TaskAssignmentRepository } from './persistence/task-assignment.repository';
 
@@ -25,64 +25,26 @@ export class TaskAssignmentService {
     workspaceId: string;
     workspaceUserId: string;
   }): Promise<number> {
-    const completedAssignments =
-      await this.taskAssignmentRepository.findyAllByAssigneeIdAndWorkspaceIdAndStatus(
-        {
-          workspaceUserId,
-          workspaceId,
-          // COMPLETED_AS_STALE won't fall into accumulated points
-          status: ProgressStatus.COMPLETED,
-        },
-      );
-
-    let totalPoints = 0;
-    for (const assignment of completedAssignments) {
-      totalPoints += assignment.task.rewardPoints;
-    }
-    return totalPoints;
-  }
-
-  async create({
-    workspaceUserId,
-    taskId,
-    status,
-  }: {
-    workspaceUserId: TaskAssignment['assignee']['id'];
-    taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<TaskAssignmentWithAssigneeUser> {
-    const newTaskAssignment = await this.taskAssignmentRepository.create({
+    // Initial implementation was finding all Completed assignments
+    // of the given user in the given workspace. This is not good
+    // because we could read a large number of objects into RAM
+    // this way and kill the server.
+    return this.taskAssignmentRepository.sumPointsByAssignee({
+      workspaceId,
       workspaceUserId,
-      taskId,
-      status,
-      relations: {
-        assignee: {
-          user: true,
-        },
-      },
     });
-
-    if (!newTaskAssignment) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.SERVER_ERROR,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return newTaskAssignment;
   }
 
   async createMultiple({
-    workspaceUserIds,
+    assignments,
     taskId,
-    status,
   }: {
-    workspaceUserIds: Array<TaskAssignment['assignee']['id']>;
+    assignments: Array<{
+      workspaceUserId: TaskAssignment['assignee']['id'];
+      status: TaskAssignment['status'];
+    }>;
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<Array<TaskAssignmentCore>> {
+  }): Promise<Array<TaskAssignmentWithAssigneeUser>> {
     // Check if there already are 10 assignees assigned (= 10 assignments)
     const taskAssignments = await this.findAllByTaskId(taskId);
 
@@ -94,6 +56,10 @@ export class TaskAssignmentService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+
+    const workspaceUserIds = assignments.map(
+      (assignment) => assignment.workspaceUserId,
+    );
 
     // Check if any of the provided assignee IDs already exists as assignment
     const existingTaskAssignments = await this.findAllByTaskIdAndAssigneeIds({
@@ -111,17 +77,18 @@ export class TaskAssignmentService {
       );
     }
 
-    const newTaskAssignments = await this.unitOfWorkService.withTransaction(
-      async () => {
-        return await this.taskAssignmentRepository.createMultiple({
-          workspaceUserIds,
-          taskId,
-          status,
-        });
-      },
-    );
+    const newTaskAssignments =
+      await this.taskAssignmentRepository.createMultiple({
+        assignments,
+        taskId,
+        relations: {
+          assignee: {
+            user: true,
+          },
+        },
+      });
 
-    if (newTaskAssignments.length !== workspaceUserIds.length) {
+    if (newTaskAssignments.length !== assignments.length) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -133,31 +100,10 @@ export class TaskAssignmentService {
     return newTaskAssignments;
   }
 
-  async findByIdWithAssigneeUser(
-    taskAssignmentId: TaskAssignment['id'],
-  ): Promise<Nullable<TaskAssignmentCore>> {
-    return await this.taskAssignmentRepository.findByIdWithAssigneeUser({
-      id: taskAssignmentId,
-      relations: {
-        assignee: {
-          user: true,
-        },
-      },
-    });
-  }
-
-  async findByTaskId(
-    taskId: TaskAssignment['task']['id'],
-  ): Promise<Nullable<TaskAssignmentCore>> {
-    return await this.taskAssignmentRepository.findByTaskId({
-      id: taskId,
-    });
-  }
-
-  async findAllByTaskIdWithAssigneeUser(
+  findAllByTaskIdWithAssigneeUser(
     taskId: TaskAssignment['task']['id'],
   ): Promise<TaskAssignmentWithAssigneeUser[]> {
-    return await this.taskAssignmentRepository.findAllByTaskId({
+    return this.taskAssignmentRepository.findAllByTaskId({
       taskId,
       relations: {
         assignee: {
@@ -167,24 +113,40 @@ export class TaskAssignmentService {
     });
   }
 
-  async findAllByTaskId(
+  findAllByTaskId(
     taskId: TaskAssignment['task']['id'],
   ): Promise<TaskAssignmentCore[]> {
-    return await this.taskAssignmentRepository.findAllByTaskId({
+    return this.taskAssignmentRepository.findAllByTaskId({
       taskId,
     });
   }
 
-  async findAllByTaskIdAndAssigneeIds({
+  findAllByTaskIdAndAssigneeIds({
     taskId,
     assigneeIds,
   }: {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
   }): Promise<TaskAssignmentCore[]> {
-    return await this.taskAssignmentRepository.findAllByTaskIdAndAssigneeId({
+    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeId({
       taskId,
       assigneeIds,
+    });
+  }
+
+  findAllByTaskIdAndAssigneeIdsWithAssignee({
+    taskId,
+    assigneeIds,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+  }): Promise<TaskAssignmentWithAssignee[]> {
+    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeId({
+      taskId,
+      assigneeIds,
+      relations: {
+        assignee: true,
+      },
     });
   }
 
@@ -196,31 +158,32 @@ export class TaskAssignmentService {
     workspaceId: TaskAssignment['task']['workspace']['id'];
     data: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<TaskAssignmentWithAssigneeUser[]> {
-    // We need to check if provided assignee IDs exist as this specific
-    // task assignments. Possible case is another Manager removed one or
-    // more of these workspace users.
-    const providedAssigneeIds = data.map((item) => item.assigneeId);
-    const existingTaskAssignments = await this.findAllByTaskIdAndAssigneeIds({
-      taskId,
-      assigneeIds: providedAssigneeIds,
-    });
-
-    if (existingTaskAssignments.length !== providedAssigneeIds.length) {
-      // One or more provided assignee IDs doesn't exist in task assignments for the given task
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    // 2. Update existing task assignments statuses
     await this.unitOfWorkService.withTransaction(async () => {
+      // We need to check if provided assignee IDs exist as this specific
+      // task assignments. Possible case is another Manager removed one or
+      // more of these workspace users. Also, we do this in the transaction
+      // for race condition edge cases.
+      const providedAssigneeIds = data.map((item) => item.assigneeId);
+      const existingTaskAssignments =
+        await this.findAllByTaskIdAndAssigneeIdsWithAssignee({
+          taskId,
+          assigneeIds: providedAssigneeIds,
+        });
+
+      if (existingTaskAssignments.length !== providedAssigneeIds.length) {
+        // One or more provided assignee IDs doesn't exist in task assignments for the given task
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
       for (const assignment of data) {
         const existingAssignment = existingTaskAssignments.find(
           (existingAssignment) =>
-            existingAssignment.id === assignment.assigneeId,
+            existingAssignment.assignee.id === assignment.assigneeId,
         );
         const isNewStatus =
           existingAssignment && assignment.status !== existingAssignment.status;
@@ -233,11 +196,15 @@ export class TaskAssignmentService {
             });
 
           if (!updatedTaskAssignment) {
+            // Another Manager deleted this assignment
+            // in the meantime.
+            // Not possible as there is no way for the
+            // user to delete assignments.
             throw new ApiHttpException(
               {
-                code: ApiErrorCode.SERVER_ERROR,
+                code: ApiErrorCode.INVALID_PAYLOAD,
               },
-              HttpStatus.INTERNAL_SERVER_ERROR,
+              HttpStatus.NOT_FOUND,
             );
           }
         }
@@ -264,45 +231,51 @@ export class TaskAssignmentService {
     assigneeId: TaskAssignment['assignee']['id'];
     taskId: TaskAssignment['task']['id'];
   }): Promise<void> {
-    this.taskAssignmentRepository.deleteByTaskIdAndAssigneeIds({
+    await this.taskAssignmentRepository.deleteByTaskIdAndAssigneeIds({
       taskId,
       assigneeIds: [assigneeId],
     });
   }
 
+  // Idempotent solution
   async closeAssignmentsByTaskId(taskId: string): Promise<void> {
-    // Not using TaskService class to check taskId validity here
-    // because I don't want this class to depend on that service.
-    // Furthermore, a task must have a minimum of 1 assignee, so
-    // checking here if there are no assignments by the provided
-    // taskId is enough.
-    const assignments = await this.findAllByTaskId(taskId);
+    // Initial implementation was finding all assignments by taskId
+    // in the given workspace and then doing update query for each
+    // assignment. This is not optimal. Better solution is to do
+    // one larger query update by taskId.
+    const assignmentsCount =
+      await this.taskAssignmentRepository.countByTaskId(taskId);
 
-    if (assignments.length === 0) {
+    if (assignmentsCount === 0) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.NOT_FOUND,
       );
     }
 
     await this.unitOfWorkService.withTransaction(async () => {
-      for (const assignment of assignments) {
-        const updatedTaskAssignment =
-          await this.taskAssignmentRepository.update({
-            id: assignment.id,
-            data: { status: ProgressStatus.CLOSED },
-          });
+      const updatedTaskAssignments =
+        await this.taskAssignmentRepository.updateAllByTaskId({
+          taskId,
+          data: { status: ProgressStatus.CLOSED },
+        });
 
-        if (!updatedTaskAssignment) {
-          throw new ApiHttpException(
-            {
-              code: ApiErrorCode.SERVER_ERROR,
-            },
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
+      if (
+        !updatedTaskAssignments ||
+        updatedTaskAssignments.length != assignmentsCount
+      ) {
+        // Another Manager deleted this assignment
+        // in the meantime.
+        // Not possible as there is no way for the
+        // user to delete assignments.
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.INVALID_PAYLOAD,
+          },
+          HttpStatus.NOT_FOUND,
+        );
       }
     });
   }
