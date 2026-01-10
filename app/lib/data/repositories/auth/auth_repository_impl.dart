@@ -148,16 +148,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<void>> signOut() async {
-    // Get active provider
-    final resultActiveProvider = await _getActiveProvider();
-
-    if (resultActiveProvider is Error<AuthProvider?>) {
-      return Result.error(
-        resultActiveProvider.error,
-        resultActiveProvider.stackTrace,
-      );
-    }
-
     final resultApiLogout = await _authApiService.logout();
 
     if (resultApiLogout is Error) {
@@ -168,6 +158,41 @@ class AuthRepositoryImpl implements AuthRepository {
         'authApiService.logout failed',
         error: resultApiLogout.error,
         stackTrace: resultApiLogout.stackTrace,
+      );
+    }
+
+    return signOutFromActiveProvider();
+  }
+
+  @override
+  Future<Result<(String, String)>> refreshToken() async {
+    final result = await _authApiService.refreshAccessToken();
+
+    switch (result) {
+      case Ok<RefreshTokenResponse>():
+        final accessToken = result.value.accessToken;
+        final refreshToken = result.value.refreshToken;
+        return Result.ok((accessToken, refreshToken));
+      case Error<RefreshTokenResponse>():
+        _loggerService.log(
+          LogLevel.warn,
+          'authApiService.refreshAccessToken failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
+    }
+  }
+
+  @override
+  Future<Result<void>> signOutFromActiveProvider() async {
+    // Get active provider
+    final resultActiveProvider = await _getActiveProvider();
+
+    if (resultActiveProvider is Error<AuthProvider?>) {
+      return Result.error(
+        resultActiveProvider.error,
+        resultActiveProvider.stackTrace,
       );
     }
 
@@ -191,25 +216,5 @@ class AuthRepositoryImpl implements AuthRepository {
     // Best-effort as we delete tokens and do other actual
     // UI-wise logout stuff in separate methods
     return const Result.ok(null);
-  }
-
-  @override
-  Future<Result<(String, String)>> refreshToken() async {
-    final result = await _authApiService.refreshAccessToken();
-
-    switch (result) {
-      case Ok<RefreshTokenResponse>():
-        final accessToken = result.value.accessToken;
-        final refreshToken = result.value.refreshToken;
-        return Result.ok((accessToken, refreshToken));
-      case Error<RefreshTokenResponse>():
-        _loggerService.log(
-          LogLevel.warn,
-          'authApiService.refreshAccessToken failed',
-          error: result.error,
-          stackTrace: result.stackTrace,
-        );
-        return Result.error(result.error, result.stackTrace);
-    }
   }
 }

@@ -641,7 +641,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAssignmentsGuideAssignmentLimitBody.
   ///
   /// In en, this message translates to:
-  /// **'Each task can have up to __{taskAssigneesMaxCount} assignees__.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
+  /// **'Each task can have up to **{taskAssigneesMaxCount} assignees**.\nIf you want to remove any assignments, you can do so by clicking the **X** icon next to the assignment.\nYou can add new assignees to the current task using the form at the bottom.'**
   String tasksAssignmentsGuideAssignmentLimitBody(Object taskAssigneesMaxCount);
 
   /// No description provided for @tasksAssignmentsGuideAssignmentStatusesTitle.
@@ -1553,7 +1553,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountText.
   ///
   /// In en, this message translates to:
-  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. In that case, please consider promoting another member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
+  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. Otherwise, please consider promoting another non-virtual member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
   String get deleteAccountText;
 
   /// No description provided for @deleteAccountConfirmButton.
@@ -1561,6 +1561,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, I understand'**
   String get deleteAccountConfirmButton;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully deleted your account'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @deleteAccountSoleManagerConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deletion is not possible because you are the sole Manager in certain workspaces you are part of. Please consider promoting another member to Manager or leave those workspaces.'**
+  String get deleteAccountSoleManagerConflict;
 
   /// No description provided for @workspaceAccessRevocationMessage.
   ///

@@ -17,4 +17,10 @@ class UserApiService extends BaseApiService {
       fromJson: UserResponse.fromJson,
     );
   }
+
+  Future<Result<void>> deleteAccount() {
+    return executeVoidApiCall(
+      apiCall: () => _apiClient.client.delete(ApiEndpoints.deleteAccount),
+    );
+  }
 }

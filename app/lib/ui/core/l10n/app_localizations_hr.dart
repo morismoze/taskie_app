@@ -320,7 +320,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String tasksAssignmentsGuideAssignmentLimitBody(
     Object taskAssigneesMaxCount,
   ) {
-    return 'Svaki zadatak može imati do $taskAssigneesMaxCount dodijeljenih članova__.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
+    return 'Svaki zadatak može imati do **$taskAssigneesMaxCount dodijeljenih članova**.\nUkoliko želite ukloniti neke od dodjela, možete to napraviti klikom na ikonicu **X** pored same dodjele.\nNove članove možete dodijeliti trenutnom zadatku koristeći formu na dnu.';
   }
 
   @override
@@ -784,7 +784,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get goalsDetails => 'Detalji cilja';
 
   @override
-  String get goalsDetailsEdit => 'Uređivanje detalja zadatka';
+  String get goalsDetailsEdit => 'Uređivanje detalja cilja';
 
   @override
   String get goalsDetailsEditCreatedBy => 'Cilj kreirao/la';
@@ -874,10 +874,17 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get deleteAccountText =>
-      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U tom slučaju, molimo razmotrite imenovanje drugog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
+      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U suprotnom slučaju, molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
 
   @override
   String get deleteAccountConfirmButton => 'Da, razumijem';
+
+  @override
+  String get deleteAccountSuccess => 'Uspješno ste izbrisali račun';
+
+  @override
+  String get deleteAccountSoleManagerConflict =>
+      'Brisanje računa nije moguće jer ste jedini Menadžer u određenim radnim prostorima kojih ste član. Molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom ili napustite te radne prostore.';
 
   @override
   String get workspaceAccessRevocationMessage =>

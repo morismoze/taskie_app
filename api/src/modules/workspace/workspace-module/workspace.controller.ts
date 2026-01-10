@@ -236,10 +236,10 @@ export class WorkspaceController {
     type: WorkspaceSoleOwnershipResponse,
     isArray: true,
   })
-  getUserWorkspacesSoleOwner(
+  getUserSoleOwnerWorkspaces(
     @Req() req: RequestWithUser,
   ): Promise<WorkspaceSoleOwnershipResponse[]> {
-    return this.workspaceService.getUserWorkspacesSoleOwner(req.user.sub);
+    return this.workspaceService.getUserSoleOwnerWorkspaces(req.user.sub);
   }
 
   @Post(':workspaceId/users/virtual')

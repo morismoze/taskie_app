@@ -6,6 +6,24 @@ import '../../../domain/models/user.dart';
 import '../../../domain/use_cases/sign_out_use_case.dart';
 import '../../../utils/command.dart';
 
+/// We need user profile also on the CreateWorkspaceInitialScreen
+/// because of two scenarios:
+/// 1. User accidentally logs in with wrong account which doesn't have
+/// any workspaces, and so the user can log out.
+/// 2. User tries deleting account on the homepage (tasks screen)
+/// but in all the workspaces he is part of he is the last Manager.
+/// In that case user needs to leave all the workspaces (unless
+/// the user promotes someone else to Manager role). When user
+/// leaves all the workspaces, redirect gorouter function will
+/// kick in and land the user on CreateWorkspaceInitialScreen,
+/// where he can again click on user profile button and delete
+/// the account. In this case there is no workspaceId available
+/// since this screen is above :workspaceId shell route - this
+/// was taken into consideration in the UserProfileViewModel
+/// (workspaceId is used only for displaying user role chip and
+/// there is not point in displaying role chip on this screen
+/// as it's not part of the :workspaceId shell route). Handling
+/// of this case is prone to refactor in the future.
 class UserProfileViewModel extends ChangeNotifier {
   UserProfileViewModel({
     required String? workspaceId,
@@ -63,7 +81,15 @@ class UserProfileViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _deleteAccount() async {
-    return Future.delayed(const Duration(seconds: 2));
+    final result = await _userRepository.deleteAccount();
+
+    switch (result) {
+      case Ok():
+        await _signOutUseCase.forceLocalSignOut();
+        return const Result.ok(null);
+      case Error():
+        return result;
+    }
   }
 
   @override

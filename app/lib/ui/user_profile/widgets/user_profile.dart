@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/services/api/api_response.dart';
+import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_dialog.dart';
+import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/role_chip.dart';
 import '../../core/ui/separator.dart';
@@ -31,18 +35,22 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     super.initState();
     widget.viewModel.signOut.addListener(_onSignOutResult);
+    widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
   }
 
   @override
   void didUpdateWidget(covariant UserProfile oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
+    oldWidget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
     widget.viewModel.signOut.addListener(_onSignOutResult);
+    widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
   }
 
   @override
   void dispose() {
     widget.viewModel.signOut.removeListener(_onSignOutResult);
+    widget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
     super.dispose();
   }
 
@@ -149,6 +157,33 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
+  void _onAccountDeleteResult() {
+    if (widget.viewModel.deleteAccount.completed) {
+      AppSnackbar.showSuccess(
+        context: context,
+        message: context.localization.deleteAccountSuccess,
+      );
+      widget.viewModel.signOut.clearResult();
+    }
+
+    if (widget.viewModel.deleteAccount.error) {
+      final errorResult = widget.viewModel.deleteAccount.result as Error;
+      widget.viewModel.deleteAccount.clearResult();
+      switch (errorResult.error) {
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.soleManagerConflict:
+          context.pop(); // Close account deletion confirmation dialog
+          _showSoleManagerConflictDialog();
+          break;
+        default:
+          AppSnackbar.showError(
+            context: context,
+            message: context.localization.tasksAddTaskAssignmentError,
+          );
+      }
+    }
+  }
+
   void _showAccountDeletionConfirmationDialog() {
     AppDialog.showAlert(
       context: context,
@@ -173,6 +208,29 @@ class _UserProfileState extends State<UserProfile> {
               Theme.of(builderContext).colorScheme.error,
         ),
       ],
+    );
+  }
+
+  void _showSoleManagerConflictDialog() {
+    AppDialog.show(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleInfo,
+        color: Theme.of(context).colorScheme.primary,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.deleteAccountSoleManagerConflict,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: AppFilledButton(
+        label: context.localization.misc_ok,
+        onPress: () {
+          context.pop(); // Close dialog
+        },
+      ),
     );
   }
 }

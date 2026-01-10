@@ -8,4 +8,8 @@ abstract class AuthRepository {
   Future<Result<void>> signOut();
 
   Future<Result<(String, String)>> refreshToken();
+
+  /// Separate method because it is used on user triggered
+  /// signout and when user deletes the account.
+  Future<Result<void>> signOutFromActiveProvider();
 }

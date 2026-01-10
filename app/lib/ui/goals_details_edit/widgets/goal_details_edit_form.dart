@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../domain/models/workspace_user.dart';
+import '../../core/goals_workspace_member_accumulated_points/widgets/workspace_member_accumulated_points.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -126,6 +127,25 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
                   validator: (assignee) =>
                       _validateAssignee(builderContext, assignee),
                 ),
+          ),
+          ValueListenableBuilder(
+            valueListenable: _selectedAssigneeNotifier,
+            builder: (builderContext, selectedAssigneeValue, _) {
+              if (_selectedAssigneeNotifier.value != null) {
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: WorkspaceMemberAccumulatedPoints(
+                    selectedAssignee: selectedAssigneeValue!.value,
+                    loadAccumulatedPointsCommand:
+                        widget.viewModel.loadWorkspaceUserAccumulatedPoints,
+                    workspaceUserAccumulatedPointsNotifier: widget
+                        .viewModel
+                        .workspaceUserAccumulatedPointsListenable,
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
           const SizedBox(height: 20),
           AppTextFormField(

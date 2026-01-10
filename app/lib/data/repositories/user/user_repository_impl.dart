@@ -91,6 +91,23 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
+  Future<Result<void>> deleteAccount() async {
+    final apiResult = await _userApiService.deleteAccount();
+    switch (apiResult) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        _loggerService.log(
+          LogLevel.error,
+          'userApiService.getCurrentUser failed',
+          error: apiResult.error,
+          stackTrace: apiResult.stackTrace,
+        );
+        return Result.error(apiResult.error);
+    }
+  }
+
+  @override
   void purgeUserCache() {
     _cachedUser = null;
     _databaseService.clearUser();

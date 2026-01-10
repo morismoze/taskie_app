@@ -154,8 +154,13 @@ GoRouter router({
               // leaves all the workspaces, redirect gorouter function will
               // kick in and land the user on CreateWorkspaceInitialScreen,
               // where he can again click on user profile button and delete
-              // the account. Handling of this case is prone to refactor in
-              // the future.
+              // the account. In this case there is no workspaceId available
+              // since this screen is above :workspaceId shell route - this
+              // was taken into consideration in the UserProfileViewModel
+              // (workspaceId is used only for displaying user role chip and
+              // there is not point in displaying role chip on this screen
+              // as it's not part of the :workspaceId shell route). Handling
+              // of this case is prone to refactor in the future.
               child: ChangeNotifierProvider(
                 create: (context) => UserProfileViewModel(
                   workspaceId: null,
@@ -925,13 +930,13 @@ GoRouter router({
 );
 
 String? _redirect(BuildContext context, GoRouterState state) {
-  // if the user is not part of any workspace anymore (e.g. left all workspaces),
+  // If the user is not part of any workspace anymore (e.g. left all workspaces),
   // we need to redirect the user to workspace initial creation screen
   final hasNoWorkspaces = context
       .read<WorkspaceRepository>()
       .hasNoWorkspacesNotifier
       .value;
-  // if the user is not logged in, they need to login
+  // If the user is not logged in, they need to login
   final loggedIn = context.read<AuthStateRepository>().isAuthenticated;
   final loggingIn = state.matchedLocation == Routes.login;
 
@@ -939,16 +944,16 @@ String? _redirect(BuildContext context, GoRouterState state) {
     return Routes.login;
   }
 
-  // if the user is logged in but still on the login page, send them to the initial route
+  // If the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
     return Routes.entry;
   }
 
-  // if the user is not part of any workspace, redirect the user to the initial workspace creation page
+  // If the user is not part of any workspace, redirect the user to the initial workspace creation page
   if (hasNoWorkspaces != null && hasNoWorkspaces) {
     return Routes.workspaceCreateInitial;
   }
 
-  // no need to redirect
+  // No need to redirect
   return null;
 }

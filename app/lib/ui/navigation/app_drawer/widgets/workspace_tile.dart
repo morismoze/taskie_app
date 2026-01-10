@@ -105,7 +105,6 @@ class WorkspaceTile extends StatelessWidget {
               ),
               AppTextButton(
                 onPress: () {
-                  context.pop(); // Close bottom sheet
                   context.push(Routes.workspaceUsers(workspaceId: id));
                 },
                 label: context.localization.appDrawerManageUsers,

@@ -6,13 +6,6 @@ import '../../../../domain/models/workspace_goal.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/value_patch.dart';
 
-/// This is a [ChangeNotifier] beacuse of 2 reasons:
-///
-/// 1. when creating new goals, those goals are pushed into the
-/// current cached list of goals,
-///
-/// 2. when user does pull-to-refresh, cached list of goals
-/// will be updated
 abstract class WorkspaceGoalRepository extends ChangeNotifier {
   bool get isFilterSearch;
 

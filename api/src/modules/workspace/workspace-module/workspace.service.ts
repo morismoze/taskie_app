@@ -415,7 +415,7 @@ export class WorkspaceService {
     return response;
   }
 
-  async getUserWorkspacesSoleOwner(
+  async getUserSoleOwnerWorkspaces(
     userId: JwtPayload['sub'],
   ): Promise<WorkspaceSoleOwnershipResponse[]> {
     const workspaceUsers =

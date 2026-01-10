@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../data/repositories/workspace/workspace_goal/workspace_goal_repository.dart';
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
@@ -37,15 +37,17 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
-  int? _workspaceUserAccumulatedPoints;
-
-  int? get workspaceUserAccumulatedPoints => _workspaceUserAccumulatedPoints;
-
   List<WorkspaceUser> get workspaceMembers =>
       _workspaceUserRepository.users
           ?.where((user) => user.role == WorkspaceRole.member)
           .toList() ??
       [];
+
+  final ValueNotifier<int?> _workspaceUserAccumulatedPointsNotifier =
+      ValueNotifier(null);
+
+  ValueListenable<int?> get workspaceUserAccumulatedPointsListenable =>
+      _workspaceUserAccumulatedPointsNotifier;
 
   void _onWorkspaceUsersChanged() {
     notifyListeners();
@@ -77,7 +79,7 @@ class CreateGoalScreenViewmodel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
-        _workspaceUserAccumulatedPoints = result.value;
+        _workspaceUserAccumulatedPointsNotifier.value = result.value;
         notifyListeners();
         return const Result.ok(null);
       case Error():

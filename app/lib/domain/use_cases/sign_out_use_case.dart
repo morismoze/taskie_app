@@ -56,6 +56,7 @@ class SignOutUseCase {
   Future<void> forceLocalSignOut() async {
     // Not calling API since we don't have valid
     // token anymore because token refresh failed
+    await _authRepository.signOutFromActiveProvider();
     await _performLocalCleanup();
   }
 
