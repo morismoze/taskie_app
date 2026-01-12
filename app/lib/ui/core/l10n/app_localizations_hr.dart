@@ -914,8 +914,12 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Već ste član ovog radnog prostora te ćemo vas preusmjeriti na isti';
 
   @override
-  String get workspaceJoinViaInviteText =>
-      'Pridružit će te se sljedećem radnom prostoru:';
+  String get workspaceJoinViaInviteTitle => 'Prihvatite pozivnicu';
+
+  @override
+  String workspaceJoinViaInviteText(Object invitedFirstName) {
+    return 'Dobrodošli, [$invitedFirstName]! 🎉\nOduševljeni smo što ste s nama.\nPozvani ste da se pridružite sljedećem radnom prostoru:';
+  }
 
   @override
   String get workspaceJoinViaInviteTextConfirm =>

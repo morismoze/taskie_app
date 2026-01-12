@@ -143,7 +143,7 @@ GoRouter router({
                     return SharedAxisTransition(
                       animation: animation,
                       secondaryAnimation: secondaryAnimation,
-                      transitionType: SharedAxisTransitionType.scaled,
+                      transitionType: SharedAxisTransitionType.horizontal,
                       child: child,
                     );
                   },
@@ -151,7 +151,9 @@ GoRouter router({
                 viewModel: JoinWorkspaceScreenViewmodel(
                   inviteToken: inviteToken,
                   workspaceInviteRepository: context.read(),
+                  userRepository: context.read(),
                   joinWorkspaceUseCase: context.read(),
+                  activeWorkspaceChangeUseCase: context.read(),
                 ),
               ),
             );
@@ -969,12 +971,19 @@ String? _redirect(BuildContext context, GoRouterState state) {
   final loggingIn = state.matchedLocation == Routes.login;
 
   if (!loggedIn) {
-    return Routes.login;
+    if (loggingIn) {
+      return null;
+    }
+
+    final savedLocation = state.matchedLocation == '/'
+        ? ''
+        : '?from=${state.matchedLocation}';
+    return '${Routes.login}$savedLocation';
   }
 
   // If the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
-    return Routes.entry;
+    return state.uri.queryParameters['from'] ?? Routes.entry;
   }
 
   // If the user is not part of any workspace, redirect the user to the initial workspace creation page

@@ -227,7 +227,7 @@ List<SingleChildWidget> get providers {
       create: (context) => JoinWorkspaceUseCase(
         workspaceInviteRepository: context.read(),
         workspaceRepository: context.read(),
-        userRepository: context.read(),
+        activeWorkspaceChangeUseCase: context.read(),
         refreshTokenUseCase: context.read(),
       ),
     ),

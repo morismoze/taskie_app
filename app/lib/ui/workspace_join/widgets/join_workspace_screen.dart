@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/api_response.dart';
@@ -6,6 +7,7 @@ import '../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -59,100 +61,127 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
     return Scaffold(
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                  minWidth: constraints.maxWidth,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: Dimens.of(context).paddingScreenVertical,
-                    horizontal: Dimens.of(context).paddingScreenHorizontal,
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                    minWidth: constraints.maxWidth,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ListenableBuilder(
-                        listenable:
-                            widget.viewModel.fetchWorkspaceInfoByInviteToken,
-                        builder: (builderContext, child) {
-                          if (widget
-                              .viewModel
-                              .fetchWorkspaceInfoByInviteToken
-                              .running) {
-                            return ActivityIndicator(
-                              radius: 16,
-                              color: Theme.of(
-                                builderContext,
-                              ).colorScheme.primary,
-                            );
-                          }
-
-                          if (widget
-                              .viewModel
-                              .fetchWorkspaceInfoByInviteToken
-                              .error) {
-                            final error =
-                                widget
-                                        .viewModel
-                                        .fetchWorkspaceInfoByInviteToken
-                                        .result
-                                    as Error;
-                            String errorMessage;
-
-                            switch (error.error) {
-                              case GeneralApiException(error: final apiError)
-                                  when apiError.code ==
-                                      ApiErrorCode.notFoundWorkspaceInviteToken:
-                                errorMessage = builderContext
-                                    .localization
-                                    .workspaceCreateJoinViaInviteLinkNotFound;
-                              case GeneralApiException(error: final apiError)
-                                  when apiError.code ==
-                                      ApiErrorCode.invalidPayload:
-                                errorMessage = builderContext
-                                    .localization
-                                    .workspaceJoinViaInviteLinkInvalid;
-                              default:
-                                errorMessage = builderContext
-                                    .localization
-                                    .workspaceJoinViaInviteWorkspaceInfoError;
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: Dimens.of(context).paddingScreenHorizontal,
+                      right: Dimens.of(context).paddingScreenHorizontal,
+                      bottom: Dimens.of(context).paddingScreenVertical,
+                      top: Dimens.of(context).paddingScreenVertical * 2,
+                    ),
+                    child: Column(
+                      children: [
+                        ListenableBuilder(
+                          listenable:
+                              widget.viewModel.fetchWorkspaceInfoByInviteToken,
+                          builder: (builderContext, child) {
+                            if (widget
+                                .viewModel
+                                .fetchWorkspaceInfoByInviteToken
+                                .running) {
+                              return ActivityIndicator(
+                                radius: 16,
+                                color: Theme.of(
+                                  builderContext,
+                                ).colorScheme.primary,
+                              );
                             }
 
-                            return ErrorPrompt(
-                              text: errorMessage,
-                              onRetry: () => widget
-                                  .viewModel
-                                  .fetchWorkspaceInfoByInviteToken
-                                  .execute(),
-                            );
-                          }
+                            if (widget
+                                .viewModel
+                                .fetchWorkspaceInfoByInviteToken
+                                .error) {
+                              final error =
+                                  widget
+                                          .viewModel
+                                          .fetchWorkspaceInfoByInviteToken
+                                          .result
+                                      as Error;
+                              String errorMessage;
 
-                          return child!;
-                        },
-                        child: ListenableBuilder(
-                          listenable: Listenable.merge([
-                            widget.viewModel,
-                            widget.viewModel.joinWorkspaceViaInviteLink,
-                          ]),
-                          builder: (innderBuilderContext, _) => Column(
-                            children: [
-                              if (widget.viewModel.workspaceInfo != null) ...[
-                                Text(
-                                  innderBuilderContext
+                              switch (error.error) {
+                                case GeneralApiException(error: final apiError)
+                                    when apiError.code ==
+                                        ApiErrorCode
+                                            .notFoundWorkspaceInviteToken:
+                                  errorMessage = builderContext
                                       .localization
-                                      .workspaceJoinViaInviteText,
-                                ),
+                                      .workspaceCreateJoinViaInviteLinkNotFound;
+                                case GeneralApiException(error: final apiError)
+                                    when apiError.code ==
+                                        ApiErrorCode.invalidPayload:
+                                  errorMessage = builderContext
+                                      .localization
+                                      .workspaceJoinViaInviteLinkInvalid;
+                                default:
+                                  errorMessage = builderContext
+                                      .localization
+                                      .workspaceJoinViaInviteWorkspaceInfoError;
+                              }
+
+                              return ErrorPrompt(
+                                text: errorMessage,
+                                onRetry: () => widget
+                                    .viewModel
+                                    .fetchWorkspaceInfoByInviteToken
+                                    .execute(),
+                              );
+                            }
+
+                            return child!;
+                          },
+                          child: ListenableBuilder(
+                            listenable: Listenable.merge([
+                              widget.viewModel,
+                              widget.viewModel.joinWorkspaceViaInviteLink,
+                            ]),
+                            builder: (innerBuilderContext, _) => Column(
+                              children: [
                                 const SizedBox(height: 30),
+                                FaIcon(
+                                  FontAwesomeIcons.envelopeCircleCheck,
+                                  color: AppColors.green1,
+                                  size: 45,
+                                ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  innerBuilderContext
+                                      .localization
+                                      .workspaceJoinViaInviteTitle,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.headlineSmall,
+                                ),
+                                const SizedBox(height: 10),
+                                if (widget.viewModel.user != null)
+                                  FractionallySizedBox(
+                                    widthFactor: 0.7,
+                                    child: Text(
+                                      innerBuilderContext.localization
+                                          .workspaceJoinViaInviteText(
+                                            widget.viewModel.user!.firstName,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                  ),
+                                const SizedBox(height: 40),
                                 WorkspaceInfo(
                                   info: widget.viewModel.workspaceInfo!,
                                 ),
-                                const SizedBox(height: 25),
+                                const SizedBox(height: 40),
                                 const Separator(),
                                 const SizedBox(height: 25),
-                                innderBuilderContext
+                                innerBuilderContext
                                     .localization
                                     .workspaceJoinViaInviteTextConfirm
                                     .format(
@@ -166,7 +195,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                       .viewModel
                                       .joinWorkspaceViaInviteLink
                                       .execute(),
-                                  label: innderBuilderContext
+                                  label: innerBuilderContext
                                       .localization
                                       .workspaceCreateJoinViaInviteLinkSubmit,
                                   loading: widget
@@ -175,11 +204,11 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                       .running,
                                 ),
                               ],
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

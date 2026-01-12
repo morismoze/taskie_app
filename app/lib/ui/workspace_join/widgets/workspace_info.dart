@@ -15,7 +15,7 @@ class WorkspaceInfo extends StatelessWidget {
     return Column(
       spacing: Dimens.paddingVertical,
       children: [
-        WorkspaceImage(isActive: false, url: info.pictureUrl, size: 100),
+        WorkspaceImage(isActive: false, url: info.pictureUrl, size: 90),
         FractionallySizedBox(
           widthFactor: 0.8,
           child: Text(

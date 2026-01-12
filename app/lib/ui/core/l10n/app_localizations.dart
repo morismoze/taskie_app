@@ -1616,11 +1616,17 @@ abstract class AppLocalizations {
   /// **'Uh-oh! You already are part of this workspace and will be redirected to it'**
   String get workspaceJoinViaInviteLinkExistingUser;
 
+  /// No description provided for @workspaceJoinViaInviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Invitation'**
+  String get workspaceJoinViaInviteTitle;
+
   /// No description provided for @workspaceJoinViaInviteText.
   ///
   /// In en, this message translates to:
-  /// **'You are about to join the following workspace:'**
-  String get workspaceJoinViaInviteText;
+  /// **'Welcome, [{invitedFirstName}]! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:'**
+  String workspaceJoinViaInviteText(Object invitedFirstName);
 
   /// No description provided for @workspaceJoinViaInviteTextConfirm.
   ///

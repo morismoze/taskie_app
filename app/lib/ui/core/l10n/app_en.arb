@@ -259,6 +259,7 @@
   "workspaceJoinViaInviteWorkspaceInfoError": "Uh-oh! We've had some trouble fetching workspace information",
   "workspaceJoinViaInviteLinkInvalid": "Uh-oh! It looks like the provided invite link is invalid. Check again or contact the workspace owner for a new one.",
   "workspaceJoinViaInviteLinkExistingUser": "Uh-oh! You already are part of this workspace and will be redirected to it",
-  "workspaceJoinViaInviteText": "You are about to join the following workspace:",
+  "workspaceJoinViaInviteTitle": "Accept Invitation",
+  "workspaceJoinViaInviteText": "Welcome, [{invitedFirstName}]! 🎉\nWe're thrilled to have you.\nYou are invited to join the following workspace:",
   "workspaceJoinViaInviteTextConfirm": "__To confirm, continue by clicking the button below__"
 }

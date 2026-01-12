@@ -1,23 +1,23 @@
-import '../../data/repositories/user/user_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../data/repositories/workspace/workspace_invite/workspace_invite_repository.dart';
 import '../../utils/command.dart';
+import 'active_workspace_change_use_case.dart';
 import 'refresh_token_use_case.dart';
 
 class JoinWorkspaceUseCase {
   JoinWorkspaceUseCase({
     required WorkspaceInviteRepository workspaceInviteRepository,
     required WorkspaceRepository workspaceRepository,
-    required UserRepository userRepository,
+    required ActiveWorkspaceChangeUseCase activeWorkspaceChangeUseCase,
     required RefreshTokenUseCase refreshTokenUseCase,
   }) : _workspaceInviteRepository = workspaceInviteRepository,
        _workspaceRepository = workspaceRepository,
-       _userRepository = userRepository,
+       _activeWorkspaceChangeUseCase = activeWorkspaceChangeUseCase,
        _refreshTokenUseCase = refreshTokenUseCase;
 
   final WorkspaceInviteRepository _workspaceInviteRepository;
   final WorkspaceRepository _workspaceRepository;
-  final UserRepository _userRepository;
+  final ActiveWorkspaceChangeUseCase _activeWorkspaceChangeUseCase;
   final RefreshTokenUseCase _refreshTokenUseCase;
 
   /// On workspace join we need to do 4 things:
@@ -53,15 +53,6 @@ class JoinWorkspaceUseCase {
         return Result.error(resultRefresh.error);
     }
 
-    final resultUser = await _userRepository.loadUser(forceFetch: true).last;
-
-    switch (resultUser) {
-      case Ok():
-        break;
-      case Error():
-        return Result.error(resultUser.error);
-    }
-
     final newWorkspace = resultJoin.value;
     final resultAddWorkspace = await _workspaceRepository.addWorkspace(
       workspace: newWorkspace,
@@ -69,9 +60,19 @@ class JoinWorkspaceUseCase {
 
     switch (resultAddWorkspace) {
       case Ok():
-        return Result.ok(newWorkspace.id);
+        break;
       case Error():
         return Result.error(resultAddWorkspace.error);
+    }
+
+    final resultWorkspaceChange = await _activeWorkspaceChangeUseCase
+        .handleWorkspaceChange(newWorkspace.id);
+
+    switch (resultWorkspaceChange) {
+      case Ok():
+        return Result.ok(newWorkspace.id);
+      case Error():
+        return Result.error(resultWorkspaceChange.error);
     }
   }
 }

@@ -906,8 +906,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! You already are part of this workspace and will be redirected to it';
 
   @override
-  String get workspaceJoinViaInviteText =>
-      'You are about to join the following workspace:';
+  String get workspaceJoinViaInviteTitle => 'Accept Invitation';
+
+  @override
+  String workspaceJoinViaInviteText(Object invitedFirstName) {
+    return 'Welcome, [$invitedFirstName]! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:';
+  }
 
   @override
   String get workspaceJoinViaInviteTextConfirm =>
