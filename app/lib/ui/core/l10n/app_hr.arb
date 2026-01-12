@@ -18,6 +18,7 @@
   "misc_errorPrompt": "Uh-oh! Nešto nije pošlo po planu pri učitavanju.",
   "misc_retry": "Pokušajmo ponovno",
   "misc_somethingWentWrong": "Uh-oh! Nešto je pošlo po zlu",
+  "bootstrapError": "Uh-oh! Došlo je do problema prilikom pokretanja. Molimo pokušajte ponovno ili ponovno pokrenite aplikaciju.",
   "signInTitleStart": "Organizirajte zadatke, ostvarite ciljeve.",
   "signInTitleEnd": "Uspješno.",
   "signInSubtitle": "Učinkovito upravljajte obavezama, potaknite angažman i proslavite svaki uspjeh.",
@@ -203,9 +204,9 @@
   "workspaceCreateJoinViaInviteLinkNote": "Pozivni link mora biti u formatu\n{inviteLinkExample}.",
   "workspaceCreateJoinViaInviteLinkSubmit": "Pridruži se radnom prostoru",
   "workspaceCreateJoinViaInviteLinkInvalid": "Uh-oh! Neispravan format pozivnog linka",
-  "workspaceCreateJoinViaInviteLinkNotFound": "Uh-oh! Uneseni pozivni link nije važeći",
-  "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "Uh-oh! Uneseni pozivni link je istekao ili je već iskorišten",
-  "workspaceCreateJoinViaInviteLinkExistingUser": "Već ste član ovog radnog prostora",
+  "workspaceCreateJoinViaInviteLinkNotFound": "Uh-oh! Uneseni pozivni token nije važeći ili radni prostor više ne postoji",
+  "workspaceCreateJoinViaInviteLinkExpiredOrUsed": "Uh-oh! Uneseni pozivni token je istekao ili je već iskorišten",
+  "workspaceCreateJoinViaInviteLinkExistingUser": "Uh-oh! Već ste član ovog radnog prostora",
   "workspaceCreateJoinViaInviteLinkError": "Uh-oh! Došlo je do problema prilikom pridruživanja radnom prostoru",
   "workspaceCreationSuccess": "Uspješno ste kreirali novi radni prostor",
   "leaderboardLoadRefreshError": "Uh-oh! Došlo je do problema prilikom osvježavanja ljestvice",
@@ -255,5 +256,10 @@
   "deleteAccountSuccess": "Uspješno ste izbrisali račun",
   "deleteAccountSoleManagerConflict": "Brisanje računa nije moguće jer ste jedini Menadžer u određenim radnim prostorima kojih ste član. Molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom ili napustite te radne prostore.",
   "workspaceAccessRevocationMessage": "Uh-oh! Izgleda da ste uklonjeni iz ovog radnog prostora. Nastavite pritiskom na gumb ispod. Bit ćete preusmjereni na prvi dostupni radni prostor.",
-  "workspaceRoleChangeMessage": "Uh-oh! Izgleda da vam je uloga u ovom radnom prostoru promijenjena. Nastavite pritiskom na gumb ispod."
+  "workspaceRoleChangeMessage": "Uh-oh! Izgleda da vam je uloga u ovom radnom prostoru promijenjena. Nastavite pritiskom na gumb ispod.",
+  "workspaceJoinViaInviteWorkspaceInfoError": "Uh-oh! Došlo je do problema prilikom učitavanja informacija radnog prostora",
+  "workspaceJoinViaInviteLinkInvalid": "Uh-oh! Čini se da je pozivni link nevažeći. Provjeri ga ili zatraži novi od vlasnika radnog prostora.",
+  "workspaceJoinViaInviteLinkExistingUser": "Uh-oh! Već ste član ovog radnog prostora te ćemo vas preusmjeriti na isti",
+  "workspaceJoinViaInviteText": "Pridružit će te se sljedećem radnom prostoru:",
+  "workspaceJoinViaInviteTextConfirm": "__Za potvrdu nastavite klikom na gumb ispod__"
 }

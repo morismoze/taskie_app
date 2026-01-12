@@ -96,6 +96,43 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
   }
 
   @override
+  Future<Result<Workspace>> fetchWorkspaceInfoByInviteToken({
+    required String inviteToken,
+  }) async {
+    final result = await _workspaceInviteApiService
+        .fetchWorkspaceInfoByInviteToken(inviteToken);
+
+    switch (result) {
+      case Ok<WorkspaceResponse>():
+        final workspace = result.value;
+        final joinedWorkspace = Workspace(
+          id: workspace.id,
+          name: workspace.name,
+          createdAt: workspace.createdAt,
+          description: workspace.description,
+          pictureUrl: workspace.pictureUrl,
+          createdBy: workspace.createdBy == null
+              ? null
+              : CreatedBy(
+                  id: workspace.createdBy!.id,
+                  firstName: workspace.createdBy!.firstName,
+                  lastName: workspace.createdBy!.lastName,
+                  profileImageUrl: workspace.createdBy!.profileImageUrl,
+                ),
+        );
+        return Result.ok(joinedWorkspace);
+      case Error<WorkspaceResponse>():
+        _loggerService.log(
+          LogLevel.warn,
+          'workspaceInviteApiService.fetchWorkspaceInfoByInviteToken failed',
+          error: result.error,
+          stackTrace: result.stackTrace,
+        );
+        return Result.error(result.error, result.stackTrace);
+    }
+  }
+
+  @override
   void purgeWorkspaceInvites() {
     _cachedWorkspaceInviteTokens.clear();
   }

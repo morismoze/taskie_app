@@ -20,7 +20,7 @@ class JoinWorkspaceUseCase {
   final UserRepository _userRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
 
-  /// On workspace join we need to do two things:
+  /// On workspace join we need to do 4 things:
   /// 1. Join the workspace,
   /// 2. Refresh the access token, since we keep role per workspace in it,
   /// 3. Re-fetch the user with updated roles (new workspace with Member role)

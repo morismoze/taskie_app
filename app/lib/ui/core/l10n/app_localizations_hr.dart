@@ -67,6 +67,10 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
 
   @override
+  String get bootstrapError =>
+      'Uh-oh! Došlo je do problema prilikom pokretanja. Molimo pokušajte ponovno ili ponovno pokrenite aplikaciju.';
+
+  @override
   String get signInTitleStart => 'Organizirajte zadatke, ostvarite ciljeve.';
 
   @override
@@ -726,15 +730,15 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get workspaceCreateJoinViaInviteLinkNotFound =>
-      'Uh-oh! Uneseni pozivni link nije važeći';
+      'Uh-oh! Uneseni pozivni token nije važeći ili radni prostor više ne postoji';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
-      'Uh-oh! Uneseni pozivni link je istekao ili je već iskorišten';
+      'Uh-oh! Uneseni pozivni token je istekao ili je već iskorišten';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExistingUser =>
-      'Već ste član ovog radnog prostora';
+      'Uh-oh! Već ste član ovog radnog prostora';
 
   @override
   String get workspaceCreateJoinViaInviteLinkError =>
@@ -896,4 +900,24 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get workspaceRoleChangeMessage =>
       'Uh-oh! Izgleda da vam je uloga u ovom radnom prostoru promijenjena. Nastavite pritiskom na gumb ispod.';
+
+  @override
+  String get workspaceJoinViaInviteWorkspaceInfoError =>
+      'Uh-oh! Došlo je do problema prilikom učitavanja informacija radnog prostora';
+
+  @override
+  String get workspaceJoinViaInviteLinkInvalid =>
+      'Uh-oh! Čini se da je pozivni link nevažeći. Provjeri ga ili zatraži novi od vlasnika radnog prostora.';
+
+  @override
+  String get workspaceJoinViaInviteLinkExistingUser =>
+      'Uh-oh! Već ste član ovog radnog prostora te ćemo vas preusmjeriti na isti';
+
+  @override
+  String get workspaceJoinViaInviteText =>
+      'Pridružit će te se sljedećem radnom prostoru:';
+
+  @override
+  String get workspaceJoinViaInviteTextConfirm =>
+      '__Za potvrdu nastavite klikom na gumb ispod__';
 }

@@ -38,4 +38,15 @@ class WorkspaceInviteApiService extends BaseApiService {
       fromJson: WorkspaceResponse.fromJson,
     );
   }
+
+  Future<Result<WorkspaceResponse>> fetchWorkspaceInfoByInviteToken(
+    String inviteToken,
+  ) async {
+    return executeApiCall(
+      apiCall: () => _apiClient.client.get(
+        ApiEndpoints.fetchWorkspaceInfoByInviteToken(inviteToken),
+      ),
+      fromJson: WorkspaceResponse.fromJson,
+    );
+  }
 }

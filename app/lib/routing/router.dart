@@ -42,6 +42,8 @@ import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dar
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
+import '../ui/workspace_join/view_models/join_workspace_screen_viewmodel.dart';
+import '../ui/workspace_join/widgets/join_workspace_screen.dart';
 import '../ui/workspace_settings/view_models/workspace_settings_screen_viewmodel.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
 import '../ui/workspace_settings_edit/view_models/workspace_settings_edit_screen_view_model.dart';
@@ -129,6 +131,32 @@ GoRouter router({
       path: '/${Routes.workspacesRelative}',
       builder: (_, _) => const SizedBox.shrink(),
       routes: [
+        GoRoute(
+          path: '${Routes.workspaceJoinRelative}/:inviteToken',
+          pageBuilder: (context, state) {
+            final inviteToken = state.pathParameters['inviteToken']!;
+
+            return CustomTransitionPage(
+              transitionDuration: const Duration(milliseconds: 250),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return SharedAxisTransition(
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: SharedAxisTransitionType.scaled,
+                      child: child,
+                    );
+                  },
+              child: JoinWorkspaceScreen(
+                viewModel: JoinWorkspaceScreenViewmodel(
+                  inviteToken: inviteToken,
+                  workspaceInviteRepository: context.read(),
+                  joinWorkspaceUseCase: context.read(),
+                ),
+              ),
+            );
+          },
+        ),
         GoRoute(
           path: Routes.workspaceCreateInitialRelative,
           pageBuilder: (context, state) {

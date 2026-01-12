@@ -237,7 +237,7 @@ export class WorkspaceService {
     if (!workspaceInvite) {
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.INVALID_PAYLOAD,
+          code: ApiErrorCode.NOT_FOUND_WORKSPACE_INVITE_TOKEN,
         },
         HttpStatus.NOT_FOUND,
       );
