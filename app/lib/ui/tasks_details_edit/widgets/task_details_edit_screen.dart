@@ -85,13 +85,21 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                         child: Column(
                           children: [
                             TaskDetailsMeta(viewModel: widget.viewModel),
-                            const SizedBox(height: 20),
+                            const SizedBox(
+                              height: Dimens.paddingVertical / 1.2,
+                            ),
                             const Separator(),
-                            const SizedBox(height: 40),
+                            const SizedBox(
+                              height: Dimens.paddingVertical * 1.6,
+                            ),
                             TaskDetailsEditForm(viewModel: widget.viewModel),
-                            const SizedBox(height: 40),
+                            const SizedBox(
+                              height: Dimens.paddingVertical * 1.6,
+                            ),
                             const Separator(),
-                            const SizedBox(height: 40),
+                            const SizedBox(
+                              height: Dimens.paddingVertical * 1.6,
+                            ),
                             TaskCloseButton(viewModel: widget.viewModel),
                           ],
                         ),

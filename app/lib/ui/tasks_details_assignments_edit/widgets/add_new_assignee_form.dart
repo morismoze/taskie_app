@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
@@ -95,7 +96,7 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
                 widget.viewModel.assignees!.length,
             validator: (assignees) => _validateAssignees(context, assignees),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: widget.viewModel.addTaskAssignee,
             builder: (builderContext, _) {

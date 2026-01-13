@@ -85,7 +85,7 @@ class _CreateWorkspaceInitialScreenState
                           image: AssetImage(Assets.createWorkspaceIllustration),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: Dimens.paddingVertical / 1.2),
                       Column(
                         children: [
                           Text(
@@ -102,7 +102,9 @@ class _CreateWorkspaceInitialScreenState
                                 // of that widget.viewModel.user is going to be captured as null.
                                 return Column(
                                   children: [
-                                    const SizedBox(height: 12),
+                                    const SizedBox(
+                                      height: Dimens.paddingVertical / 2,
+                                    ),
                                     FractionallySizedBox(
                                       widthFactor: 0.75,
                                       child: Text(
@@ -116,7 +118,10 @@ class _CreateWorkspaceInitialScreenState
                                         ).textTheme.bodyMedium,
                                       ),
                                     ),
-                                    const SizedBox(height: 60),
+
+                                    const SizedBox(
+                                      height: Dimens.paddingVertical * 2.5,
+                                    ),
                                   ],
                                 );
                               }

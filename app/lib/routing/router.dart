@@ -24,6 +24,7 @@ import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_naviga
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/navigation/back_button_handler.dart';
+import '../ui/not_found/widgets/not_found_screen.dart';
 import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
@@ -67,13 +68,14 @@ final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
 
 /// Top go_router entry point.
 ///
-/// Listens to changes in [AuthStateRepository] to redirect the user
+/// Listens to changes in [AuthStateRepository] to redirects the user
 /// to /login when the user logs out.
 ///
 /// Routes hierarchy:
 /// /login
 /// /entry
 /// /workspaces
+///   /join/:inviteToken
 ///   /create/initial
 ///   /create
 ///   /:workspaceId
@@ -81,20 +83,23 @@ final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
 ///       /StatefulShelBranch
 ///         /tasks
 ///           /create (on root navigator)
-///           /:id/edit (on root navigator)
-///           /:id/assignments/edit (on root navigator)
-///           /:id/assignments/guide (on root navigator)
+///           /:taskId/edit (on root navigator)
+///           /:taskId/assignments/edit (on root navigator)
+///           /assignments/guide (on root navigator)
 ///       /StatefulShelBranch
 ///         /leaderboard
 ///       /StatefulShelBranch
 ///         /goals
 ///           /create (on root navigator)
-///           /:id (on root navigator)
-///     /users
+///           /:goalId (on root navigator)
+///           /:goalId/edit (on root navigator)
+///           /goals/guide (on root navigator)
+///     /users (on root navigator)
 ///       /create
 ///       /guide
 ///     /settings
 /// /preferences
+/// /not-found
 GoRouter router({
   required AuthStateRepository authStateRepository,
   required WorkspaceRepository workspaceRepository,
@@ -107,6 +112,20 @@ GoRouter router({
     workspaceRepository.hasNoWorkspacesNotifier,
   ]),
   navigatorKey: rootNavigatorKey,
+  errorPageBuilder: (context, state) {
+    return CustomTransitionPage(
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SharedAxisTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.scaled,
+          child: child,
+        );
+      },
+      child: const NotFoundScreen(),
+    );
+  },
   routes: [
     GoRoute(
       path: Routes.entry,
@@ -147,13 +166,15 @@ GoRouter router({
                       child: child,
                     );
                   },
-              child: JoinWorkspaceScreen(
-                viewModel: JoinWorkspaceScreenViewmodel(
-                  inviteToken: inviteToken,
-                  workspaceInviteRepository: context.read(),
-                  userRepository: context.read(),
-                  joinWorkspaceUseCase: context.read(),
-                  activeWorkspaceChangeUseCase: context.read(),
+              child: BackButtonHandler(
+                child: JoinWorkspaceScreen(
+                  viewModel: JoinWorkspaceScreenViewmodel(
+                    inviteToken: inviteToken,
+                    workspaceInviteRepository: context.read(),
+                    userRepository: context.read(),
+                    joinWorkspaceUseCase: context.read(),
+                    activeWorkspaceChangeUseCase: context.read(),
+                  ),
                 ),
               ),
             );

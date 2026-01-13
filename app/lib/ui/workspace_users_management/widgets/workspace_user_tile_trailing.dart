@@ -5,6 +5,7 @@ import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/constants/rbac.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
@@ -116,7 +117,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: Dimens.paddingVertical / 1.2),
             DeleteWorkspaceUserButton(
               viewModel: viewModel,
               workspaceId: workspaceId,

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -93,9 +94,9 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
                     color: Theme.of(context).colorScheme.error,
                   ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: Dimens.paddingVertical / 1.2),
           ] else
-            const SizedBox(height: 20),
+            const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: widget.viewModel.updateTaskAssignments,
             builder: (builderContext, _) {

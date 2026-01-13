@@ -75,9 +75,9 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                   child: Column(
                     children: [
                       CreateWorkspaceForm(viewModel: widget.viewModel),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: Dimens.paddingVertical * 1.6),
                       const Separator(),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: Dimens.paddingVertical * 1.25),
                       JoinWorkspaceViaInviteForm(viewModel: widget.viewModel),
                     ],
                   ),

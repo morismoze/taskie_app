@@ -37,9 +37,8 @@ class _LocalizationLanguageOptionState
       widget.viewModel.setAppLocale.execute(locale);
       return;
     }
-    // Don't close on locale change because locale change will cause
-    // the entire MainApp to re-build, hence no need for closing, as it would
-    // cause unwanted behaviour.
+
+    // Close dialog
     context.pop();
   }
 

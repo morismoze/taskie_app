@@ -4,6 +4,7 @@ import '../../../config/environment/env.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../view_models/create_workspace_screen_viewmodel.dart';
@@ -78,7 +79,7 @@ class _JoinWorkspaceViaInviteFormState
                 validator: _validateInviteLink,
                 textInputAction: TextInputAction.done,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: Dimens.paddingVertical / 1.2),
               ListenableBuilder(
                 listenable: Listenable.merge([
                   widget.viewModel.joinWorkspaceViaInviteLink,

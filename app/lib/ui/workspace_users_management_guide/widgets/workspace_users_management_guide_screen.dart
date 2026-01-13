@@ -30,13 +30,13 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: Dimens.paddingVertical,
                       children: [
                         GuideSection(
                           body: context
                               .localization
                               .workspaceUsersManagementUsersGuideIntroBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -45,7 +45,6 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .localization
                               .workspaceUsersManagementUsersGuideTeamMembersBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -54,7 +53,6 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .localization
                               .workspaceUsersManagementUsersGuideVirtualProfilesBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -63,7 +61,6 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .localization
                               .workspaceUsersManagementUsersGuideRolesBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -72,7 +69,6 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
                               .localization
                               .workspaceUsersManagementUsersGuideManagerRoleBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization

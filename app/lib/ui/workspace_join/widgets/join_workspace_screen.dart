@@ -77,6 +77,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                       top: Dimens.of(context).paddingScreenVertical * 2,
                     ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ListenableBuilder(
                           listenable:
@@ -144,13 +145,17 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                             ]),
                             builder: (innerBuilderContext, _) => Column(
                               children: [
-                                const SizedBox(height: 30),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.25,
+                                ),
                                 FaIcon(
                                   FontAwesomeIcons.envelopeCircleCheck,
                                   color: AppColors.green1,
                                   size: 45,
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical / 1.2,
+                                ),
                                 Text(
                                   innerBuilderContext
                                       .localization
@@ -159,28 +164,35 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                     context,
                                   ).textTheme.headlineSmall,
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical / 2.25,
+                                ),
                                 if (widget.viewModel.user != null)
                                   FractionallySizedBox(
                                     widthFactor: 0.7,
-                                    child: Text(
-                                      innerBuilderContext.localization
-                                          .workspaceJoinViaInviteText(
-                                            widget.viewModel.user!.firstName,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
+                                    child: innerBuilderContext.localization
+                                        .workspaceJoinViaInviteText(
+                                          widget.viewModel.user!.firstName,
+                                        )
+                                        .format(
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium!,
+                                          textAlign: TextAlign.center,
+                                        ),
                                   ),
-                                const SizedBox(height: 40),
+
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.6,
+                                ),
                                 WorkspaceInfo(
                                   info: widget.viewModel.workspaceInfo!,
                                 ),
-                                const SizedBox(height: 40),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.6,
+                                ),
                                 const Separator(),
-                                const SizedBox(height: 25),
+                                const SizedBox(height: Dimens.paddingVertical),
                                 innerBuilderContext
                                     .localization
                                     .workspaceJoinViaInviteTextConfirm
@@ -189,7 +201,9 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                         context,
                                       ).textTheme.bodyMedium!,
                                     ),
-                                const SizedBox(height: 30),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.25,
+                                ),
                                 AppFilledButton(
                                   onPress: () => widget
                                       .viewModel

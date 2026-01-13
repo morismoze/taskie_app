@@ -66,7 +66,9 @@ class TaskDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           if (details.description != null) ...[
-                            const SizedBox(height: 10),
+                            const SizedBox(
+                              height: Dimens.paddingVertical / 2.25,
+                            ),
                             FractionallySizedBox(
                               widthFactor: 0.9,
                               child: Text(
@@ -77,7 +79,7 @@ class TaskDetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          const SizedBox(height: 30),
+                          const SizedBox(height: Dimens.paddingVertical * 1.25),
                           // Second section
                           LabeledData(
                             label: context.localization.taskRewardPointsLabel,
@@ -85,12 +87,14 @@ class TaskDetailsScreen extends StatelessWidget {
                               data: details.rewardPoints.toString(),
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: Dimens.paddingVertical / 1.6),
                           TaskAssignmentsDetails(
                             assignments: details.assignees,
                           ),
                           if (details.dueDate != null) ...[
-                            const SizedBox(height: 15),
+                            const SizedBox(
+                              height: Dimens.paddingVertical / 1.6,
+                            ),
                             LabeledData(
                               label: context.localization.taskDueDateLabel,
                               child: LabeledDataText(
@@ -100,7 +104,7 @@ class TaskDetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          const SizedBox(height: 30),
+                          const SizedBox(height: Dimens.paddingVertical * 1.25),
                           LabeledData(
                             label:
                                 context.localization.tasksDetailsEditCreatedAt,
@@ -110,7 +114,7 @@ class TaskDetailsScreen extends StatelessWidget {
                               ).format(details.createdAt),
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: Dimens.paddingVertical / 1.6),
                           LabeledData(
                             label:
                                 context.localization.tasksDetailsEditCreatedBy,

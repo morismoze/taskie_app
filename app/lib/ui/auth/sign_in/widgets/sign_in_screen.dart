@@ -72,7 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Image(image: AssetImage(Assets.signInIllustration)),
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: Dimens.paddingVertical * 2),
                 Expanded(
                   flex: 2,
                   child: Column(
@@ -87,7 +87,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: Dimens.paddingVertical / 2),
                       FractionallySizedBox(
                         widthFactor: 0.75,
                         child: Text(
@@ -96,7 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
-                      const SizedBox(height: 50),
+                      const SizedBox(height: Dimens.paddingVertical * 2),
                       ListenableBuilder(
                         listenable: widget.viewModel.signInWithGoogle,
                         builder: (BuildContext builderContext, _) =>

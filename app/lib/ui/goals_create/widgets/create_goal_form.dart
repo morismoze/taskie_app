@@ -5,6 +5,7 @@ import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
@@ -85,7 +86,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             textInputAction: TextInputAction.next,
             maxCharacterCount: ValidationRules.objectiveTitleMaxLength,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           AppTextFormField(
             controller: _descriptionController,
             label: context.localization.goalDescriptionLabel,
@@ -97,7 +98,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             minLines: 3,
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           ValueListenableBuilder(
             valueListenable: _selectedAssigneeNotifier,
             builder: (builderContext, selectedAssigneeValue, _) =>
@@ -130,7 +131,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
               return const SizedBox.shrink();
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           AppTextFormField(
             controller: _requiredPointsController,
             label: context.localization.goalRequiredPointsLabel,
@@ -139,7 +140,7 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
               widget.viewModel.createGoal,

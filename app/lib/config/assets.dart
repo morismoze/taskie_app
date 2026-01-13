@@ -14,4 +14,5 @@ abstract final class Assets {
   static const errorPromptIllustration =
       'assets/images/error_prompt_illustration.png';
   static const unassignedIcon = 'assets/images/unassigned.png';
+  static const notFound = 'assets/images/not_found.png';
 }

@@ -918,10 +918,17 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String workspaceJoinViaInviteText(Object invitedFirstName) {
-    return 'Dobrodošli, [$invitedFirstName]! 🎉\nOduševljeni smo što ste s nama.\nPozvani ste da se pridružite sljedećem radnom prostoru:';
+    return 'Dobrodošli, **$invitedFirstName**! 🎉\nOduševljeni smo što ste s nama.\nPozvani ste da se pridružite sljedećem radnom prostoru:';
   }
 
   @override
   String get workspaceJoinViaInviteTextConfirm =>
       '__Za potvrdu nastavite klikom na gumb ispod__';
+
+  @override
+  String get notFoundPageTitle => 'Uh-oh! Krivi smjer...';
+
+  @override
+  String get notFoundPageText =>
+      'Izgleda da ste skrenuli s puta!\nStranica koju tražite nije pronađena.';
 }

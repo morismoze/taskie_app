@@ -77,7 +77,9 @@ class GoalDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           if (details.description != null) ...[
-                            const SizedBox(height: 10),
+                            const SizedBox(
+                              height: Dimens.paddingVertical / 2.25,
+                            ),
                             FractionallySizedBox(
                               widthFactor: 0.9,
                               child: Text(
@@ -88,7 +90,8 @@ class GoalDetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          const SizedBox(height: 30),
+
+                          const SizedBox(height: Dimens.paddingVertical * 1.25),
                           // Second section
                           LabeledData(
                             label: context.localization.progressStatusLabel,
@@ -98,14 +101,14 @@ class GoalDetailsScreen extends StatelessWidget {
                               backgroundColor: statusBackgroundColor,
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: Dimens.paddingVertical / 1.6),
                           LabeledData(
                             label: context.localization.goalRequiredPointsLabel,
                             child: LabeledDataText(
                               data: details.requiredPoints.toString(),
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: Dimens.paddingVertical / 1.6),
                           LabeledData(
                             label: context.localization.goalsDetailsAssignedTo,
                             child: FractionallySizedBox(
@@ -134,7 +137,7 @@ class GoalDetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: Dimens.paddingVertical * 1.25),
                           LabeledData(
                             label:
                                 context.localization.goalsDetailsEditCreatedAt,
@@ -144,7 +147,7 @@ class GoalDetailsScreen extends StatelessWidget {
                               ).format(details.createdAt),
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: Dimens.paddingVertical / 1.6),
                           LabeledData(
                             label:
                                 context.localization.goalsDetailsEditCreatedBy,

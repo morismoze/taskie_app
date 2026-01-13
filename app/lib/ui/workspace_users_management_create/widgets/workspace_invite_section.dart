@@ -95,6 +95,10 @@ class WorkspaceInviteSection extends StatelessWidget {
                       ),
                     ),
                     WorkspaceInviteActionButton(
+                      onTap: () => viewModel.shareWorkspaceInviteLink.execute(),
+                      iconData: FontAwesomeIcons.share,
+                    ),
+                    WorkspaceInviteActionButton(
                       onTap: () async {
                         await Clipboard.setData(
                           ClipboardData(text: controller.text),
@@ -102,10 +106,6 @@ class WorkspaceInviteSection extends StatelessWidget {
                         viewModel.createWorkspaceInviteLink.execute(true);
                       },
                       iconData: FontAwesomeIcons.clipboard,
-                    ),
-                    WorkspaceInviteActionButton(
-                      onTap: () => viewModel.shareWorkspaceInviteLink.execute(),
-                      iconData: FontAwesomeIcons.share,
                     ),
                   ],
                 ),

@@ -142,7 +142,8 @@ class _WorkspaceUsersManagementScreenState
                           right: Dimens.of(context).paddingScreenHorizontal,
                         ),
                         itemCount: widget.viewModel.users!.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 10),
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(height: Dimens.paddingVertical / 2),
                         itemBuilder: (_, index) {
                           final workspaceUser = widget.viewModel.users![index];
                           final currentUser = widget.viewModel.currentUser;

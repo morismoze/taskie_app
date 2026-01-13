@@ -105,10 +105,10 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                             size: 100,
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: Dimens.paddingVertical * 1.25),
                         // Second section
                         RoleChip(role: details.role),
-                        const SizedBox(height: 5),
+                        const SizedBox(height: Dimens.paddingVertical / 4),
                         FractionallySizedBox(
                           widthFactor: 0.8,
                           child: Text(
@@ -118,14 +118,14 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         if (details.email != null) ...[
-                          const SizedBox(height: 5),
+                          const SizedBox(height: Dimens.paddingVertical / 4),
                           Text(
                             details.email!,
                             style: Theme.of(context).textTheme.titleMedium!
                                 .copyWith(color: AppColors.grey2),
                           ),
                         ],
-                        const SizedBox(height: 30),
+                        const SizedBox(height: Dimens.paddingVertical * 1.25),
                         // Third section
                         LabeledData(
                           label: context
@@ -138,7 +138,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         if (details.createdBy != null) ...[
-                          const SizedBox(height: 15),
+                          const SizedBox(height: Dimens.paddingVertical / 1.5),
                           LabeledData(
                             label: context
                                 .localization

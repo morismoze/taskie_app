@@ -23,7 +23,7 @@ class Footer extends StatelessWidget {
           endIndent: 0,
           color: AppColors.grey1,
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: Dimens.paddingVertical / 4),
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: Dimens.paddingHorizontal,

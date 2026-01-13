@@ -126,9 +126,9 @@ class _UserProfileState extends State<UserProfile> {
                 icon: FontAwesomeIcons.arrowRightFromBracket,
                 isLoading: widget.viewModel.signOut.running,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: Dimens.paddingVertical / 1.2),
               const Separator(),
-              const SizedBox(height: 20),
+              const SizedBox(height: Dimens.paddingVertical / 1.2),
               UserProfileButton(
                 onPress: _showAccountDeletionConfirmationDialog,
                 text: context.localization.deleteAccount,

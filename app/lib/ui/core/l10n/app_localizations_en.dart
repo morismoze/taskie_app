@@ -910,10 +910,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String workspaceJoinViaInviteText(Object invitedFirstName) {
-    return 'Welcome, [$invitedFirstName]! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:';
+    return 'Welcome, **$invitedFirstName**! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:';
   }
 
   @override
   String get workspaceJoinViaInviteTextConfirm =>
       '__To confirm, continue by clicking the button below__';
+
+  @override
+  String get notFoundPageTitle => 'Uh-oh! Wrong turn...';
+
+  @override
+  String get notFoundPageText =>
+      'Looks like you\'ve wandered off the beaten path!\nThe page you were looking for was not found.';
 }

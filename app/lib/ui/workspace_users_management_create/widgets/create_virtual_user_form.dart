@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../view_models/create_workspace_user_screen_viewmodel.dart';
@@ -53,7 +54,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
                 textInputAction: TextInputAction.next,
                 maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: Dimens.paddingVertical / 2.25),
               AppTextFormField(
                 controller: _lastNameController,
                 label: context.localization.workspaceUserLastNameLabel,
@@ -61,7 +62,7 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
                 textInputAction: TextInputAction.done,
                 maxCharacterCount: ValidationRules.workspaceUserNameMaxLength,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: Dimens.paddingVertical / 1.2),
               ListenableBuilder(
                 listenable: Listenable.merge([
                   widget.viewModel.createVirtualUser,

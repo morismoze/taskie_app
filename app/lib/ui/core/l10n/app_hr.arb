@@ -261,6 +261,8 @@
   "workspaceJoinViaInviteLinkInvalid": "Uh-oh! Čini se da je pozivni link nevažeći. Provjeri ga ili zatraži novi od vlasnika radnog prostora.",
   "workspaceJoinViaInviteLinkExistingUser": "Uh-oh! Već ste član ovog radnog prostora te ćemo vas preusmjeriti na isti",
   "workspaceJoinViaInviteTitle": "Prihvatite pozivnicu",
-  "workspaceJoinViaInviteText": "Dobrodošli, [{invitedFirstName}]! 🎉\nOduševljeni smo što ste s nama.\nPozvani ste da se pridružite sljedećem radnom prostoru:",
-  "workspaceJoinViaInviteTextConfirm": "__Za potvrdu nastavite klikom na gumb ispod__"
+  "workspaceJoinViaInviteText": "Dobrodošli, **{invitedFirstName}**! 🎉\nOduševljeni smo što ste s nama.\nPozvani ste da se pridružite sljedećem radnom prostoru:",
+  "workspaceJoinViaInviteTextConfirm": "__Za potvrdu nastavite klikom na gumb ispod__",
+  "notFoundPageTitle": "Uh-oh! Krivi smjer...",
+  "notFoundPageText": "Izgleda da ste skrenuli s puta!\nStranica koju tražite nije pronađena."
 }

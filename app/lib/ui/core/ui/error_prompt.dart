@@ -30,7 +30,7 @@ class ErrorPrompt extends StatelessWidget {
             widthFactor: 0.85,
             child: Image(image: AssetImage(Assets.errorPromptIllustration)),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical),
           FractionallySizedBox(
             widthFactor: 0.9,
             child: Text(
@@ -39,7 +39,7 @@ class ErrorPrompt extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical),
           AppOutlinedButton(
             onPress: onRetry,
             label: context.localization.misc_retry,

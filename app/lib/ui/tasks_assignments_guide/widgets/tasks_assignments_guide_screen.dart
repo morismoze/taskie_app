@@ -29,6 +29,7 @@ class TasksAssignmentsGuideScreen extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: Dimens.paddingVertical,
                       children: [
                         GuideSection(
                           title: context
@@ -39,7 +40,6 @@ class TasksAssignmentsGuideScreen extends StatelessWidget {
                                 ValidationRules.taskMaxAssigneesCount,
                               ),
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -48,7 +48,6 @@ class TasksAssignmentsGuideScreen extends StatelessWidget {
                               .localization
                               .tasksAssignmentsGuideAssignmentStatusesBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization

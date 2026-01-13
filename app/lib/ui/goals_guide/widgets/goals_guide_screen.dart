@@ -26,11 +26,11 @@ class GoalsGuideScreen extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: Dimens.paddingVertical,
                       children: [
                         GuideSection(
                           body: context.localization.goalsGuideBaseInfoBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -39,12 +39,10 @@ class GoalsGuideScreen extends StatelessWidget {
                               .localization
                               .goalsGuideAssignmentLimitBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context.localization.goalsGuideStatusesTitle,
                           body: context.localization.goalsGuideStatusesBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context
                               .localization
@@ -52,7 +50,6 @@ class GoalsGuideScreen extends StatelessWidget {
                           body:
                               context.localization.goalsGuideRequiredPointsBody,
                         ),
-                        const SizedBox(height: 24),
                         GuideSection(
                           title: context.localization.goalsGuideNoteTitle,
                           body: context.localization.goalsGuideNoteBody,

@@ -1625,7 +1625,7 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceJoinViaInviteText.
   ///
   /// In en, this message translates to:
-  /// **'Welcome, [{invitedFirstName}]! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:'**
+  /// **'Welcome, **{invitedFirstName}**! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:'**
   String workspaceJoinViaInviteText(Object invitedFirstName);
 
   /// No description provided for @workspaceJoinViaInviteTextConfirm.
@@ -1633,6 +1633,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'__To confirm, continue by clicking the button below__'**
   String get workspaceJoinViaInviteTextConfirm;
+
+  /// No description provided for @notFoundPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! Wrong turn...'**
+  String get notFoundPageTitle;
+
+  /// No description provided for @notFoundPageText.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks like you\'ve wandered off the beaten path!\nThe page you were looking for was not found.'**
+  String get notFoundPageText;
 }
 
 class _AppLocalizationsDelegate
