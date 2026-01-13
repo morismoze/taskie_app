@@ -136,9 +136,13 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                             EditAssignmentsForm(viewModel: widget.viewModel),
                           Column(
                             children: [
-                              const SizedBox(height: 40),
+                              const SizedBox(
+                                height: Dimens.paddingVertical * 1.6,
+                              ),
                               const Separator(),
-                              const SizedBox(height: 30),
+                              const SizedBox(
+                                height: Dimens.paddingVertical * 1.25,
+                              ),
                               Text(
                                 context
                                     .localization
@@ -147,7 +151,9 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                                 style: Theme.of(context).textTheme.titleMedium!
                                     .copyWith(fontWeight: FontWeight.bold),
                               ),
-                              const SizedBox(height: 30),
+                              const SizedBox(
+                                height: Dimens.paddingVertical * 1.25,
+                              ),
                               if (widget.viewModel.assignees!.length ==
                                   ValidationRules.taskMaxAssigneesCount) ...[
                                 // The number of assignees is already maxed out

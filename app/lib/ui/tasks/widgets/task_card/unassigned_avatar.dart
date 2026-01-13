@@ -14,6 +14,7 @@ class UnassignedAvatar extends StatelessWidget {
     final radius = size / 2;
 
     return CircleAvatar(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       radius: radius,
       foregroundImage: const AssetImage(Assets.unassignedIcon),
     );

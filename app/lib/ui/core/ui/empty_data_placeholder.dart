@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/dimens.dart';
+
 class EmptyDataPlaceholder extends StatelessWidget {
   const EmptyDataPlaceholder({
     super.key,
@@ -20,7 +22,7 @@ class EmptyDataPlaceholder extends StatelessWidget {
           widthFactor: 0.85,
           child: Image(image: AssetImage(assetImage)),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: Dimens.paddingVertical),
         FractionallySizedBox(widthFactor: 0.9, child: child),
       ],
     );

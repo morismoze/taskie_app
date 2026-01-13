@@ -11,11 +11,11 @@ class BackButtonHandler extends StatefulWidget {
   const BackButtonHandler({
     super.key,
     required this.child,
-    required this.navigationShell,
+    this.navigationShell,
   });
 
   final Widget child;
-  final StatefulNavigationShell navigationShell;
+  final StatefulNavigationShell? navigationShell;
 
   @override
   State<BackButtonHandler> createState() => _BackButtonHandlerState();
@@ -34,24 +34,26 @@ class _BackButtonHandlerState extends State<BackButtonHandler> {
           return;
         }
 
-        // 1.a) Check if we are on the Tasks tab and drawer is opened
-        if (appShellScaffoldKey.currentState != null &&
-            appShellScaffoldKey.currentState!.isDrawerOpen) {
-          context.pop();
-          return;
+        if (widget.navigationShell != null) {
+          // 1.a) Check if we are on the Tasks tab and drawer is opened
+          if (appShellScaffoldKey.currentState != null &&
+              appShellScaffoldKey.currentState!.isDrawerOpen) {
+            context.pop();
+            return;
+          }
+
+          // 1.b) Check if we are on the Tasks tab
+          final isTasksTab =
+              widget.navigationShell!.currentIndex == kTasksTabIndex;
+
+          if (!isTasksTab) {
+            // If we are not on Tasks tab, then just navigate to Tasks tab
+            widget.navigationShell!.goBranch(0);
+            return;
+          }
         }
 
-        // 1.b) Check if we are on the Tasks tab
-        final isTasksTab =
-            widget.navigationShell.currentIndex == kTasksTabIndex;
-
-        if (!isTasksTab) {
-          // If we are not on Tasks tab, then just navigate to Tasks tab
-          widget.navigationShell.goBranch(0);
-          return;
-        }
-
-        // 2. If we are on Tasks tab then implement exit app functionality
+        // 2. If we are on Tasks tab (or JoinWorkspaceScreen) then implement exit app functionality
         final now = DateTime.now();
 
         if (_lastBackPress == null ||

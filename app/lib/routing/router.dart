@@ -24,6 +24,7 @@ import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_naviga
 import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/navigation/back_button_handler.dart';
+import '../ui/not_found/widgets/not_found_screen.dart';
 import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
 import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
@@ -42,6 +43,8 @@ import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dar
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
 import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
+import '../ui/workspace_join/view_models/join_workspace_screen_viewmodel.dart';
+import '../ui/workspace_join/widgets/join_workspace_screen.dart';
 import '../ui/workspace_settings/view_models/workspace_settings_screen_viewmodel.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
 import '../ui/workspace_settings_edit/view_models/workspace_settings_edit_screen_view_model.dart';
@@ -65,13 +68,14 @@ final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
 
 /// Top go_router entry point.
 ///
-/// Listens to changes in [AuthStateRepository] to redirect the user
+/// Listens to changes in [AuthStateRepository] to redirects the user
 /// to /login when the user logs out.
 ///
 /// Routes hierarchy:
 /// /login
 /// /entry
 /// /workspaces
+///   /join/:inviteToken
 ///   /create/initial
 ///   /create
 ///   /:workspaceId
@@ -79,20 +83,23 @@ final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
 ///       /StatefulShelBranch
 ///         /tasks
 ///           /create (on root navigator)
-///           /:id/edit (on root navigator)
-///           /:id/assignments/edit (on root navigator)
-///           /:id/assignments/guide (on root navigator)
+///           /:taskId/edit (on root navigator)
+///           /:taskId/assignments/edit (on root navigator)
+///           /assignments/guide (on root navigator)
 ///       /StatefulShelBranch
 ///         /leaderboard
 ///       /StatefulShelBranch
 ///         /goals
 ///           /create (on root navigator)
-///           /:id (on root navigator)
-///     /users
+///           /:goalId (on root navigator)
+///           /:goalId/edit (on root navigator)
+///           /goals/guide (on root navigator)
+///     /users (on root navigator)
 ///       /create
 ///       /guide
 ///     /settings
 /// /preferences
+/// /not-found
 GoRouter router({
   required AuthStateRepository authStateRepository,
   required WorkspaceRepository workspaceRepository,
@@ -105,6 +112,20 @@ GoRouter router({
     workspaceRepository.hasNoWorkspacesNotifier,
   ]),
   navigatorKey: rootNavigatorKey,
+  errorPageBuilder: (context, state) {
+    return CustomTransitionPage(
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SharedAxisTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.scaled,
+          child: child,
+        );
+      },
+      child: const NotFoundScreen(),
+    );
+  },
   routes: [
     GoRoute(
       path: Routes.entry,
@@ -129,6 +150,36 @@ GoRouter router({
       path: '/${Routes.workspacesRelative}',
       builder: (_, _) => const SizedBox.shrink(),
       routes: [
+        GoRoute(
+          path: '${Routes.workspaceJoinRelative}/:inviteToken',
+          pageBuilder: (context, state) {
+            final inviteToken = state.pathParameters['inviteToken']!;
+
+            return CustomTransitionPage(
+              transitionDuration: const Duration(milliseconds: 250),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return SharedAxisTransition(
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: SharedAxisTransitionType.horizontal,
+                      child: child,
+                    );
+                  },
+              child: BackButtonHandler(
+                child: JoinWorkspaceScreen(
+                  viewModel: JoinWorkspaceScreenViewmodel(
+                    inviteToken: inviteToken,
+                    workspaceInviteRepository: context.read(),
+                    userRepository: context.read(),
+                    joinWorkspaceUseCase: context.read(),
+                    activeWorkspaceChangeUseCase: context.read(),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
         GoRoute(
           path: Routes.workspaceCreateInitialRelative,
           pageBuilder: (context, state) {
@@ -941,12 +992,19 @@ String? _redirect(BuildContext context, GoRouterState state) {
   final loggingIn = state.matchedLocation == Routes.login;
 
   if (!loggedIn) {
-    return Routes.login;
+    if (loggingIn) {
+      return null;
+    }
+
+    final savedLocation = state.matchedLocation == '/'
+        ? ''
+        : '?from=${state.matchedLocation}';
+    return '${Routes.login}$savedLocation';
   }
 
   // If the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
-    return Routes.entry;
+    return state.uri.queryParameters['from'] ?? Routes.entry;
   }
 
   // If the user is not part of any workspace, redirect the user to the initial workspace creation page

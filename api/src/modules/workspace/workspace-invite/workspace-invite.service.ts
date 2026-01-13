@@ -64,7 +64,9 @@ export class WorkspaceInviteService {
     return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
-        workspace: true,
+        workspace: {
+          createdBy: true,
+        },
       },
     });
   }

@@ -84,7 +84,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                       children: [
                         // First section
                         const WorkspaceImage(isActive: false, size: 100),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: Dimens.paddingVertical * 1.25),
                         // Second section
                         FractionallySizedBox(
                           widthFactor: 0.8,
@@ -95,7 +95,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                           ),
                         ),
                         if (details.description != null) ...[
-                          const SizedBox(height: 10),
+                          const SizedBox(height: Dimens.paddingVertical / 2.25),
                           FractionallySizedBox(
                             widthFactor: 0.9,
                             child: Text(
@@ -106,7 +106,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 30),
+                        const SizedBox(height: Dimens.paddingVertical / 1.25),
                         // Third section
                         LabeledData(
                           label:
@@ -117,7 +117,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                             ).format(details.createdAt),
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: Dimens.paddingVertical / 1.6),
                         LabeledData(
                           label:
                               context.localization.workspaceSettingsCreatedBy,

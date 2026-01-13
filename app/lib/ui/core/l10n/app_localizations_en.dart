@@ -67,6 +67,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_somethingWentWrong => 'Uh-oh! Something went wrong';
 
   @override
+  String get bootstrapError =>
+      'Uh-oh! We\'ve had some trouble while starting up. Please try again or restart the app.';
+
+  @override
   String get signInTitleStart => 'Organize Tasks, Achieve Goals.';
 
   @override
@@ -720,15 +724,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceCreateJoinViaInviteLinkNotFound =>
-      'Uh-oh! The provided link is invalid';
+      'Uh-oh! The provided invite token is invalid or the workspace does not exist anymore';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed =>
-      'Uh-oh! The provided link has expired or was already used';
+      'Uh-oh! The provided invite token has expired or was already used';
 
   @override
   String get workspaceCreateJoinViaInviteLinkExistingUser =>
-      'Uh-oh! You are already part of this workspace';
+      'Uh-oh! You already are part of this workspace';
 
   @override
   String get workspaceCreateJoinViaInviteLinkError =>
@@ -888,4 +892,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workspaceRoleChangeMessage =>
       'Uh-oh! It looks like your role has been changed for this workspace. Please continue by pressing the button below.';
+
+  @override
+  String get workspaceJoinViaInviteWorkspaceInfoError =>
+      'Uh-oh! We\'ve had some trouble fetching workspace information';
+
+  @override
+  String get workspaceJoinViaInviteLinkInvalid =>
+      'Uh-oh! It looks like the provided invite link is invalid. Check again or contact the workspace owner for a new one.';
+
+  @override
+  String get workspaceJoinViaInviteLinkExistingUser =>
+      'Uh-oh! You already are part of this workspace and will be redirected to it';
+
+  @override
+  String get workspaceJoinViaInviteTitle => 'Accept Invitation';
+
+  @override
+  String workspaceJoinViaInviteText(Object invitedFirstName) {
+    return 'Welcome, **$invitedFirstName**! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:';
+  }
+
+  @override
+  String get workspaceJoinViaInviteTextConfirm =>
+      '__To confirm, continue by clicking the button below__';
+
+  @override
+  String get notFoundPageTitle => 'Uh-oh! Wrong turn...';
+
+  @override
+  String get notFoundPageText =>
+      'Looks like you\'ve wandered off the beaten path!\nThe page you were looking for was not found.';
 }

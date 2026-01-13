@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/dimens.dart';
 import '../utils/extensions.dart';
 
 class GuideSection extends StatelessWidget {
@@ -20,7 +21,7 @@ class GuideSection extends StatelessWidget {
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: Dimens.paddingVertical / 3),
         ],
         body.format(style: Theme.of(context).textTheme.bodyLarge!),
       ],

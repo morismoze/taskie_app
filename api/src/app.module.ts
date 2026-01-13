@@ -7,7 +7,9 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { ClsModule } from 'nestjs-cls';
+import { join } from 'path';
 import getValidationOptions from './common/helper/validation-options';
 import { RequestMetadataProcessingInterceptor } from './common/interceptors/request-metadata-processing.interceptor';
 import { ResponseTransformerInterceptor } from './common/interceptors/response-transformer.intereptor';
@@ -46,6 +48,9 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
       middleware: { mount: true }, // Automatically mounts middleware for every request
     }),
     AppLoggerModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   providers: [
     {

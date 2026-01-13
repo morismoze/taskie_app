@@ -212,6 +212,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! Something went wrong'**
   String get misc_somethingWentWrong;
 
+  /// No description provided for @bootstrapError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble while starting up. Please try again or restart the app.'**
+  String get bootstrapError;
+
   /// No description provided for @signInTitleStart.
   ///
   /// In en, this message translates to:
@@ -1319,19 +1325,19 @@ abstract class AppLocalizations {
   /// No description provided for @workspaceCreateJoinViaInviteLinkNotFound.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! The provided link is invalid'**
+  /// **'Uh-oh! The provided invite token is invalid or the workspace does not exist anymore'**
   String get workspaceCreateJoinViaInviteLinkNotFound;
 
   /// No description provided for @workspaceCreateJoinViaInviteLinkExpiredOrUsed.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! The provided link has expired or was already used'**
+  /// **'Uh-oh! The provided invite token has expired or was already used'**
   String get workspaceCreateJoinViaInviteLinkExpiredOrUsed;
 
   /// No description provided for @workspaceCreateJoinViaInviteLinkExistingUser.
   ///
   /// In en, this message translates to:
-  /// **'Uh-oh! You are already part of this workspace'**
+  /// **'Uh-oh! You already are part of this workspace'**
   String get workspaceCreateJoinViaInviteLinkExistingUser;
 
   /// No description provided for @workspaceCreateJoinViaInviteLinkError.
@@ -1591,6 +1597,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uh-oh! It looks like your role has been changed for this workspace. Please continue by pressing the button below.'**
   String get workspaceRoleChangeMessage;
+
+  /// No description provided for @workspaceJoinViaInviteWorkspaceInfoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! We\'ve had some trouble fetching workspace information'**
+  String get workspaceJoinViaInviteWorkspaceInfoError;
+
+  /// No description provided for @workspaceJoinViaInviteLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! It looks like the provided invite link is invalid. Check again or contact the workspace owner for a new one.'**
+  String get workspaceJoinViaInviteLinkInvalid;
+
+  /// No description provided for @workspaceJoinViaInviteLinkExistingUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! You already are part of this workspace and will be redirected to it'**
+  String get workspaceJoinViaInviteLinkExistingUser;
+
+  /// No description provided for @workspaceJoinViaInviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Invitation'**
+  String get workspaceJoinViaInviteTitle;
+
+  /// No description provided for @workspaceJoinViaInviteText.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, **{invitedFirstName}**! 🎉\nWe\'re thrilled to have you.\nYou are invited to join the following workspace:'**
+  String workspaceJoinViaInviteText(Object invitedFirstName);
+
+  /// No description provided for @workspaceJoinViaInviteTextConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'__To confirm, continue by clicking the button below__'**
+  String get workspaceJoinViaInviteTextConfirm;
+
+  /// No description provided for @notFoundPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! Wrong turn...'**
+  String get notFoundPageTitle;
+
+  /// No description provided for @notFoundPageText.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks like you\'ve wandered off the beaten path!\nThe page you were looking for was not found.'**
+  String get notFoundPageText;
 }
 
 class _AppLocalizationsDelegate

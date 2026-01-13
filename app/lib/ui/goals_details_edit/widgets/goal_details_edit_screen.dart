@@ -13,6 +13,7 @@ import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_snackbar.dart';
 import '../../core/ui/blurred_circles_background.dart';
+import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
 import '../view_models/goal_details_edit_screen_view_model.dart';
@@ -62,7 +63,19 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              HeaderBar(title: context.localization.goalsDetailsEdit),
+              HeaderBar(
+                title: context.localization.goalsDetailsEdit,
+                actions: [
+                  AppHeaderActionButton(
+                    iconData: FontAwesomeIcons.question,
+                    onTap: () => context.push(
+                      Routes.goalsGuide(
+                        workspaceId: widget.viewModel.activeWorkspaceId,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -86,13 +99,21 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
                         child: Column(
                           children: [
                             GoalDetailsMeta(viewModel: widget.viewModel),
-                            const SizedBox(height: 20),
+                            const SizedBox(
+                              height: Dimens.paddingVertical / 1.2,
+                            ),
                             const Separator(),
-                            const SizedBox(height: 40),
+                            const SizedBox(
+                              height: Dimens.paddingVertical * 1.6,
+                            ),
                             GoalDetailsEditForm(viewModel: widget.viewModel),
-                            const SizedBox(height: 40),
+                            const SizedBox(
+                              height: Dimens.paddingVertical * 1.6,
+                            ),
                             const Separator(),
-                            const SizedBox(height: 40),
+                            const SizedBox(
+                              height: Dimens.paddingVertical * 1.6,
+                            ),
                             GoalCloseButton(viewModel: widget.viewModel),
                           ],
                         ),

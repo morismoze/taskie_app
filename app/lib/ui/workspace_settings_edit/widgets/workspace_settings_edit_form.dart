@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
@@ -50,7 +51,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             textInputAction: TextInputAction.next,
             maxCharacterCount: ValidationRules.workspaceNameMaxLength,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           AppTextFormField(
             controller: _descriptionController,
             label: context.localization.workspaceDescriptionLabel,
@@ -62,7 +63,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             required: false,
             maxCharacterCount: ValidationRules.workspaceDescriptionMaxLength,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
               widget.viewModel.editWorkspaceDetails,

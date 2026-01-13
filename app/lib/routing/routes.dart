@@ -95,4 +95,6 @@ abstract final class Routes {
 
   // Private global route for setting global settings (e.g. language).
   static const preferences = '/preferences';
+
+  static const notFound = '/not-found';
 }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_text_button.dart';
@@ -92,7 +93,7 @@ class WorkspaceTile extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: Dimens.paddingVertical / 1.2),
             // Show these two options only if the this workspace
             // is the current active one
             if (activeWorkspaceId == workspaceId) ...[

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/constants/validation_rules.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
@@ -103,7 +104,7 @@ class _WorkspaceUserDetailsEditFormState
                   )
                 : null,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           AppTextFormField(
             controller: _lastNameController,
             label: context.localization.workspaceUserLastNameLabel,
@@ -123,7 +124,7 @@ class _WorkspaceUserDetailsEditFormState
                   )
                 : null,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           ValueListenableBuilder(
             valueListenable: _selectedRoleNotifier,
             builder: (builderContext, selectedRoleValue, _) =>
@@ -146,7 +147,7 @@ class _WorkspaceUserDetailsEditFormState
                       : null,
                 ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
               widget.viewModel.editWorkspaceUserDetails,

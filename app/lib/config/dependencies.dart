@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -50,6 +51,7 @@ import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/share_workspace_invite_link_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
 import '../domain/use_cases/sign_out_use_case.dart';
+import '../routing/router.dart';
 import '../ui/core/services/rbac_service.dart';
 
 List<SingleChildWidget> get providers {
@@ -227,7 +229,7 @@ List<SingleChildWidget> get providers {
       create: (context) => JoinWorkspaceUseCase(
         workspaceInviteRepository: context.read(),
         workspaceRepository: context.read(),
-        userRepository: context.read(),
+        activeWorkspaceChangeUseCase: context.read(),
         refreshTokenUseCase: context.read(),
       ),
     ),
@@ -255,6 +257,12 @@ List<SingleChildWidget> get providers {
       create: (context) =>
           ClientInfoRepositoryImpl(clientInfoService: context.read())
               as ClientInfoRepository,
+    ),
+    Provider<GoRouter>(
+      create: (context) => router(
+        authStateRepository: context.read(),
+        workspaceRepository: context.read(),
+      ),
     ),
   ];
 }

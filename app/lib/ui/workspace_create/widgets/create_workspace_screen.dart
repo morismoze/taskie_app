@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/api_response.dart';
 import '../../../data/services/api/exceptions/general_api_exception.dart';
-import '../../../data/services/api/workspace/workspace_invite/exceptions/workspace_invite_existing_user_exception.dart';
-import '../../../data/services/api/workspace/workspace_invite/exceptions/workspace_invite_expired_or_used_exception.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -77,9 +75,9 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                   child: Column(
                     children: [
                       CreateWorkspaceForm(viewModel: widget.viewModel),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: Dimens.paddingVertical * 1.6),
                       const Separator(),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: Dimens.paddingVertical * 1.25),
                       JoinWorkspaceViaInviteForm(viewModel: widget.viewModel),
                     ],
                   ),
@@ -136,7 +134,10 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                 context.localization.workspaceCreateJoinViaInviteLinkNotFound,
           );
           break;
-        case WorkspaceInviteExpiredOrUsedException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.workspaceInviteExpired:
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
           AppSnackbar.showInfo(
             context: context,
             message: context
@@ -144,7 +145,8 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
                 .workspaceCreateJoinViaInviteLinkExpiredOrUsed,
           );
           break;
-        case WorkspaceInviteExistingUserException():
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
           AppSnackbar.showInfo(
             context: context,
             message: context

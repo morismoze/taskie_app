@@ -58,7 +58,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         case Error():
           _loggerService.log(
             LogLevel.warn,
-            'sharedPreferencesService.setActiveWorkspaceId failed',
+            'sharedPreferencesService.deleteActiveWorkspaceId failed',
             error: result.error,
             stackTrace: result.stackTrace,
           );

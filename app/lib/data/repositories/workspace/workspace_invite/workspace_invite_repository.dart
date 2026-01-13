@@ -17,5 +17,9 @@ abstract class WorkspaceInviteRepository {
   /// TODO: Will revert to this in the future.
   Future<Result<Workspace>> joinWorkspace({required String inviteToken});
 
+  Future<Result<Workspace>> fetchWorkspaceInfoByInviteToken({
+    required String inviteToken,
+  });
+
   void purgeWorkspaceInvites();
 }

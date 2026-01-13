@@ -171,7 +171,8 @@ export class WorkspaceController {
     type: WorkspaceResponse,
   })
   @ApiNotFoundResponse({
-    description: 'Provided {inviteToken} was not found',
+    description:
+      'Provided {inviteToken} was not found or the workspace was deleted',
   })
   getWorkspaceInfoByWorkspaceInviteToken(
     @Param() params: WorkspaceInviteTokenRequestPathParam,
@@ -191,7 +192,8 @@ export class WorkspaceController {
     type: WorkspaceResponse,
   })
   @ApiNotFoundResponse({
-    description: 'Provided {inviteToken} was not found',
+    description:
+      'Provided {inviteToken} was not found or the workspace was deleted',
   })
   @ApiBadRequestResponse({
     description:

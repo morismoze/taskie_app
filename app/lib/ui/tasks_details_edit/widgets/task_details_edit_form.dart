@@ -7,6 +7,7 @@ import '../../../domain/constants/validation_rules.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/app_date_picker_field/app_date_picker_form_field.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
@@ -95,7 +96,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
             textInputAction: TextInputAction.next,
             maxCharacterCount: ValidationRules.objectiveTitleMaxLength,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           AppTextFormField(
             controller: _descriptionController,
             label: context.localization.taskDescriptionLabel,
@@ -107,7 +108,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
             minLines: 3,
             maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
           AppSelectFieldSelectedOptions(
             label: context.localization.objectiveAssigneeLabel,
             selectedOptions: selectedAssignees,
@@ -126,7 +127,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
               size: 17,
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: Dimens.paddingVertical * 1.25),
           ValueListenableBuilder(
             valueListenable: _dueDateNotifier,
             builder: (builderContext, dateValue, _) => AppDatePickerFormField(
@@ -138,7 +139,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
               initialValue: dateValue,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
           ValueListenableBuilder(
             valueListenable: _rewardPointsNotifier,
             builder: (builderContext, rewardPointsValue, _) =>
@@ -151,7 +152,7 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
                   max: ObjectiveRules.rewardPointsMax.toDouble(),
                 ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: Dimens.paddingVertical * 1.25),
           ListenableBuilder(
             listenable: Listenable.merge([
               widget.viewModel.editTaskDetails,
