@@ -80,15 +80,17 @@ export class AuthService {
             profileImageUrl = socialData.profileImageUrl;
           }
 
-          user = await this.userService.update({
-            id: user.id,
-            data: {
-              email,
-              firstName,
-              lastName,
-              profileImageUrl,
-            },
-          });
+          if (email || firstName || lastName || profileImageUrl) {
+            user = await this.userService.update({
+              id: user.id,
+              data: {
+                email,
+                firstName,
+                lastName,
+                profileImageUrl,
+              },
+            });
+          }
         } else {
           // User hasn't yet "registered"
           user = await this.userService.create({

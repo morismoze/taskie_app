@@ -7,13 +7,6 @@ import '../workspace/models/response/workspace_response.dart';
 import 'models/response/create_workspace_invite_token_response.dart';
 
 class WorkspaceInviteApiService extends BaseApiService {
-  // TODO: when staging backend server is deployed, [ApiClient] needs
-  // TODO: to be replaced by [ApiDeepLinkClient] - this one points to staging
-  // TODO: server both on development and staging env(and to prod server on
-  // TODO: production). This enables Android to do actual functionalities
-  // TODO: behind opening the app behind the workspace invite URL
-  // TODO: (fetching assetLinks.json from the server).
-  // TODO: This ApiClient should be used as well for workspace join endpoint.
   WorkspaceInviteApiService({required ApiClient apiClient})
     : _apiClient = apiClient,
       super(apiClient);

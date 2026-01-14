@@ -128,7 +128,7 @@ export class TaskAssignmentService {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
   }): Promise<TaskAssignmentCore[]> {
-    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeId({
+    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeIds({
       taskId,
       assigneeIds,
     });
@@ -141,7 +141,7 @@ export class TaskAssignmentService {
     taskId: TaskAssignment['task']['id'];
     assigneeIds: Array<TaskAssignment['assignee']['id']>;
   }): Promise<TaskAssignmentWithAssignee[]> {
-    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeId({
+    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeIds({
       taskId,
       assigneeIds,
       relations: {

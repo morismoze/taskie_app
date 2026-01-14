@@ -39,7 +39,7 @@ export class CreateTaskRequest {
   })
   @IsOptional()
   @IsValidTaskDescription()
-  description: string | null;
+  description?: string | null;
 
   @ApiProperty({
     description: `Reward points must be an integer between ${TASK_REWARD_POINTS_MINIMAL} and ${TASK_REWARD_POINTS_MAXIMAL}, and a multiple of ${TASK_REWARD_POINTS_STEP}.`,

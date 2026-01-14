@@ -140,7 +140,7 @@ export class TaskAssignmentRepositoryImpl implements TaskAssignmentRepository {
     });
   }
 
-  findAllByTaskIdAndAssigneeId({
+  findAllByTaskIdAndAssigneeIds({
     taskId,
     assigneeIds,
     relations,
