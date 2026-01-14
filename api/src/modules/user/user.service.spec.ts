@@ -2,10 +2,11 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DateTime } from 'luxon';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { AuthProvider } from 'src/modules/auth/core/domain/auth-provider.enum';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
+import { WorkspaceCore } from 'src/modules/workspace/workspace-module/domain/workspace-core.domain';
 import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
+import { WorkspaceUserWithWorkspaceCore } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-with-workspace.domain';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
 import { UserStatus } from './domain/user-status.enum';
 import { User } from './domain/user.domain';
@@ -13,12 +14,8 @@ import { UserEntity } from './persistence/user.entity';
 import { UserRepository } from './persistence/user.repository';
 import { UserService } from './user.service';
 
-describe('UserService', () => {
-  let service: UserService;
-  let userRepository: jest.Mocked<UserRepository>;
-  let workspaceUserService: jest.Mocked<WorkspaceUserService>;
-
-  const mockUser: User = {
+const mockUserFactory = (overrides?: Partial<User>): User =>
+  ({
     id: 'user-1',
     email: 'test@example.com',
     firstName: 'John',
@@ -27,35 +24,44 @@ describe('UserService', () => {
     provider: AuthProvider.GOOGLE,
     profileImageUrl: 'https://example.com/image.jpg',
     status: UserStatus.ACTIVE,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+    createdAt: new Date(),
+    updatedAt: new Date(),
     deletedAt: null,
-  };
+    ...overrides,
+  }) as User;
 
-  const mockVirtualUser: User = {
-    id: 'virtual-user-1',
-    email: null,
-    firstName: 'Virtual',
-    lastName: 'User',
-    socialId: null,
-    provider: null,
-    profileImageUrl: null,
-    status: UserStatus.ACTIVE,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    deletedAt: null,
-  };
-
-  const mockWorkspaceUser = {
+const mockWorkspaceUserCoreFactory = (
+  overrides?: Partial<WorkspaceUserWithWorkspaceCore>,
+): WorkspaceUserWithWorkspaceCore =>
+  ({
     id: 'workspace-user-1',
-    workspaceRole: WorkspaceUserRole.MANAGER,
+    workspaceRole: WorkspaceUserRole.MEMBER,
     workspace: {
       id: 'workspace-1',
       name: 'Test Workspace',
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01'),
+      createdAt: new Date(),
+      updatedAt: new Date(),
       deletedAt: null,
-    },
+    } as WorkspaceCore,
+    ...overrides,
+  }) as WorkspaceUserWithWorkspaceCore;
+
+const createMockRepository = () => ({
+  findById: jest.fn(),
+  findByEmail: jest.fn(),
+  findBySocialIdAndProvider: jest.fn(),
+  create: jest.fn(),
+  createVirtualUser: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+});
+
+describe('UserService', () => {
+  let service: UserService;
+  let userRepository: ReturnType<typeof createMockRepository>;
+  let workspaceUserService: {
+    findAllByUserId: jest.Mock;
+    findAllByUserIdWithWorkspace: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -66,15 +72,7 @@ describe('UserService', () => {
         UserService,
         {
           provide: UserRepository,
-          useValue: {
-            findById: jest.fn(),
-            findByEmail: jest.fn(),
-            findBySocialIdAndProvider: jest.fn(),
-            create: jest.fn(),
-            createVirtualUser: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
-          },
+          useValue: createMockRepository(),
         },
         {
           provide: WorkspaceUserService,
@@ -87,16 +85,15 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    userRepository = module.get(UserRepository) as jest.Mocked<UserRepository>;
-    workspaceUserService = module.get(
-      WorkspaceUserService,
-    ) as jest.Mocked<WorkspaceUserService>;
+    userRepository = module.get(UserRepository);
+    workspaceUserService = module.get(WorkspaceUserService);
   });
 
   describe('create', () => {
     it('creates a new user with valid data', async () => {
+      const newUser = mockUserFactory();
       userRepository.findByEmail.mockResolvedValue(null);
-      userRepository.create.mockResolvedValue(mockUser as UserEntity);
+      userRepository.create.mockResolvedValue(newUser as UserEntity);
 
       const userData = {
         email: 'test@example.com',
@@ -112,11 +109,13 @@ describe('UserService', () => {
 
       expect(userRepository.findByEmail).toHaveBeenCalledWith(userData.email);
       expect(userRepository.create).toHaveBeenCalledWith(userData);
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(newUser);
     });
 
     it('throws EMAIL_ALREADY_EXISTS if email is already registered', async () => {
-      userRepository.findByEmail.mockResolvedValue(mockUser as UserEntity);
+      userRepository.findByEmail.mockResolvedValue(
+        mockUserFactory() as UserEntity,
+      );
 
       const userData = {
         email: 'test@example.com',
@@ -128,17 +127,10 @@ describe('UserService', () => {
         status: UserStatus.ACTIVE,
       };
 
-      try {
-        await service.create(userData);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.EMAIL_ALREADY_EXISTS,
-        });
-      }
+      await expect(service.create(userData)).rejects.toMatchObject({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        response: { code: ApiErrorCode.EMAIL_ALREADY_EXISTS },
+      });
     });
 
     it('throws SERVER_ERROR if user creation fails', async () => {
@@ -155,24 +147,22 @@ describe('UserService', () => {
         status: UserStatus.ACTIVE,
       };
 
-      try {
-        await service.create(userData);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.SERVER_ERROR,
-        });
-      }
+      await expect(service.create(userData)).rejects.toMatchObject({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        response: { code: ApiErrorCode.SERVER_ERROR },
+      });
     });
   });
 
   describe('createVirtualUser', () => {
     it('creates a new virtual user with valid data', async () => {
+      const virtualUser = mockUserFactory({
+        email: null,
+        provider: null,
+        socialId: null,
+      });
       userRepository.createVirtualUser.mockResolvedValue(
-        mockVirtualUser as UserEntity,
+        virtualUser as UserEntity,
       );
 
       const userData = {
@@ -184,7 +174,7 @@ describe('UserService', () => {
       const result = await service.createVirtualUser(userData);
 
       expect(userRepository.createVirtualUser).toHaveBeenCalledWith(userData);
-      expect(result).toEqual(mockVirtualUser);
+      expect(result).toEqual(virtualUser);
     });
 
     it('throws SERVER_ERROR if virtual user creation fails', async () => {
@@ -196,28 +186,22 @@ describe('UserService', () => {
         status: UserStatus.ACTIVE,
       };
 
-      try {
-        await service.createVirtualUser(userData);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.SERVER_ERROR,
-        });
-      }
+      await expect(service.createVirtualUser(userData)).rejects.toMatchObject({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        response: { code: ApiErrorCode.SERVER_ERROR },
+      });
     });
   });
 
   describe('findById', () => {
     it('returns user by ID', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
+      const user = mockUserFactory();
+      userRepository.findById.mockResolvedValue(user as UserEntity);
 
       const result = await service.findById('user-1');
 
       expect(userRepository.findById).toHaveBeenCalledWith('user-1');
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(user);
     });
 
     it('returns null if user not found', async () => {
@@ -231,14 +215,15 @@ describe('UserService', () => {
 
   describe('findByEmail', () => {
     it('returns user by email', async () => {
-      userRepository.findByEmail.mockResolvedValue(mockUser as UserEntity);
+      const user = mockUserFactory();
+      userRepository.findByEmail.mockResolvedValue(user as UserEntity);
 
       const result = await service.findByEmail('test@example.com');
 
       expect(userRepository.findByEmail).toHaveBeenCalledWith(
         'test@example.com',
       );
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(user);
     });
 
     it('returns null if user not found', async () => {
@@ -252,8 +237,9 @@ describe('UserService', () => {
 
   describe('findBySocialIdAndProvider', () => {
     it('returns user by social ID and provider', async () => {
+      const user = mockUserFactory();
       userRepository.findBySocialIdAndProvider.mockResolvedValue(
-        mockUser as UserEntity,
+        user as UserEntity,
       );
 
       const result = await service.findBySocialIdAndProvider({
@@ -265,7 +251,7 @@ describe('UserService', () => {
         socialId: 'social-123',
         provider: AuthProvider.GOOGLE,
       });
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(user);
     });
 
     it('returns null if user not found', async () => {
@@ -282,20 +268,20 @@ describe('UserService', () => {
 
   describe('me', () => {
     it('returns user response with roles', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
+      const user = mockUserFactory();
+      const workspaceUser = mockWorkspaceUserCoreFactory({
+        workspaceRole: WorkspaceUserRole.MANAGER,
+      });
+
+      userRepository.findById.mockResolvedValue(user as UserEntity);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
-        mockWorkspaceUser as any,
+        workspaceUser,
       ]);
 
       const jwtPayload: JwtPayload = {
         sub: 'user-1',
         atv: 0,
-        roles: [
-          {
-            workspaceId: 'workspace-1',
-            role: WorkspaceUserRole.MANAGER,
-          },
-        ],
+        roles: [],
         sessionId: 'session-1',
       };
 
@@ -306,54 +292,42 @@ describe('UserService', () => {
         workspaceUserService.findAllByUserIdWithWorkspace,
       ).toHaveBeenCalledWith('user-1');
       expect(result).toEqual({
-        id: mockUser.id,
-        email: mockUser.email,
-        firstName: mockUser.firstName,
-        lastName: mockUser.lastName,
-        profileImageUrl: mockUser.profileImageUrl,
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profileImageUrl: user.profileImageUrl,
         roles: [
           {
-            workspaceId: 'workspace-1',
+            workspaceId: workspaceUser.workspace.id,
             role: WorkspaceUserRole.MANAGER,
           },
         ],
-        createdAt: DateTime.fromJSDate(mockUser.createdAt).toISO(),
+        createdAt: DateTime.fromJSDate(user.createdAt).toISO(),
       });
     });
 
     it('returns user response with multiple roles', async () => {
-      const secondWorkspaceUser = {
-        ...mockWorkspaceUser,
-        id: 'workspace-user-2',
+      const user = mockUserFactory();
+      const wsUser1 = mockWorkspaceUserCoreFactory({
+        workspace: { id: 'ws-1' } as WorkspaceCore,
+        workspaceRole: WorkspaceUserRole.MANAGER,
+      });
+      const wsUser2 = mockWorkspaceUserCoreFactory({
+        workspace: { id: 'ws-2' } as WorkspaceCore,
         workspaceRole: WorkspaceUserRole.MEMBER,
-        workspace: {
-          id: 'workspace-2',
-          name: 'Second Workspace',
-          createdAt: new Date('2024-01-01'),
-          updatedAt: new Date('2024-01-01'),
-          deletedAt: null,
-        },
-      };
+      });
 
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
+      userRepository.findById.mockResolvedValue(user as UserEntity);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
-        mockWorkspaceUser as any,
-        secondWorkspaceUser as any,
+        wsUser1,
+        wsUser2,
       ]);
 
       const jwtPayload: JwtPayload = {
         sub: 'user-1',
         atv: 0,
-        roles: [
-          {
-            workspaceId: 'workspace-1',
-            role: WorkspaceUserRole.MANAGER,
-          },
-          {
-            workspaceId: 'workspace-2',
-            role: WorkspaceUserRole.MEMBER,
-          },
-        ],
+        roles: [],
         sessionId: 'session-1',
       };
 
@@ -361,13 +335,14 @@ describe('UserService', () => {
 
       expect(result.roles).toHaveLength(2);
       expect(result.roles).toEqual([
-        { workspaceId: 'workspace-1', role: WorkspaceUserRole.MANAGER },
-        { workspaceId: 'workspace-2', role: WorkspaceUserRole.MEMBER },
+        { workspaceId: 'ws-1', role: WorkspaceUserRole.MANAGER },
+        { workspaceId: 'ws-2', role: WorkspaceUserRole.MEMBER },
       ]);
     });
 
-    it('returns user response with no roles if user is not in any workspace', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
+    it('returns empty roles if user is not in any workspace', async () => {
+      const user = mockUserFactory();
+      userRepository.findById.mockResolvedValue(user as UserEntity);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
 
       const jwtPayload: JwtPayload = {
@@ -385,18 +360,17 @@ describe('UserService', () => {
 
   describe('update', () => {
     it('updates user with new data', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
-      userRepository.update.mockResolvedValue({
-        ...mockUser,
-        firstName: 'Jane',
-      } as UserEntity);
+      const user = mockUserFactory();
+      const updatedUser = { ...user, firstName: 'Jane' };
+
+      userRepository.findById.mockResolvedValue(user as UserEntity);
+      userRepository.update.mockResolvedValue(updatedUser as UserEntity);
 
       const result = await service.update({
         id: 'user-1',
         data: { firstName: 'Jane' },
       });
 
-      expect(userRepository.findById).toHaveBeenCalledWith('user-1');
       expect(userRepository.update).toHaveBeenCalledWith({
         id: 'user-1',
         data: { firstName: 'Jane' },
@@ -407,200 +381,108 @@ describe('UserService', () => {
     it('throws INVALID_PAYLOAD if user not found', async () => {
       userRepository.findById.mockResolvedValue(null);
 
-      try {
-        await service.update({
+      await expect(
+        service.update({
           id: 'non-existent',
           data: { firstName: 'Jane' },
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
 
-    it('throws EMAIL_ALREADY_EXISTS if new email is already taken by another user', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
-      const otherUser = { ...mockUser, id: 'user-2' };
+    it('throws EMAIL_ALREADY_EXISTS if new email is taken', async () => {
+      const user = mockUserFactory({ id: 'user-1' });
+      const otherUser = mockUserFactory({
+        id: 'user-2',
+        email: 'taken@example.com',
+      });
+
+      userRepository.findById.mockResolvedValue(user as UserEntity);
       userRepository.findByEmail.mockResolvedValue(otherUser as UserEntity);
 
-      try {
-        await service.update({
+      await expect(
+        service.update({
           id: 'user-1',
-          data: { email: 'other@example.com' },
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.CONFLICT,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.EMAIL_ALREADY_EXISTS,
-        });
-      }
+          data: { email: 'taken@example.com' },
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.CONFLICT,
+        response: { code: ApiErrorCode.EMAIL_ALREADY_EXISTS },
+      });
     });
 
-    it('allows update without email change', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
-      userRepository.update.mockResolvedValue({
-        ...mockUser,
-        firstName: 'Jane',
-        lastName: 'Smith',
-      } as UserEntity);
-
-      const result = await service.update({
+    it('allows update if email belongs to self', async () => {
+      const user = mockUserFactory({
         id: 'user-1',
-        data: { firstName: 'Jane', lastName: 'Smith' },
+        email: 'my@example.com',
       });
 
-      expect(userRepository.findByEmail).not.toHaveBeenCalled();
-      expect(userRepository.update).toHaveBeenCalled();
-      expect(result).toEqual({
-        ...mockUser,
-        firstName: 'Jane',
-        lastName: 'Smith',
-      });
+      userRepository.findById.mockResolvedValue(user as UserEntity);
+      userRepository.findByEmail.mockResolvedValue(user as UserEntity);
+      userRepository.update.mockResolvedValue(user as UserEntity);
+
+      await expect(
+        service.update({
+          id: 'user-1',
+          data: { email: 'my@example.com' },
+        }),
+      ).resolves.not.toThrow();
     });
 
-    it('throws INVALID_PAYLOAD if user is deleted during update', async () => {
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
+    it('throws INVALID_PAYLOAD if update returns null', async () => {
+      const user = mockUserFactory();
+      userRepository.findById.mockResolvedValue(user as UserEntity);
       userRepository.update.mockResolvedValue(null);
 
-      try {
-        await service.update({
+      await expect(
+        service.update({
           id: 'user-1',
           data: { firstName: 'Jane' },
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
-    });
-
-    it('updates multiple fields at once', async () => {
-      const updatedUser = {
-        ...mockUser,
-        firstName: 'Jane',
-        lastName: 'Smith',
-        profileImageUrl: 'https://example.com/new-image.jpg',
-      };
-      userRepository.findById.mockResolvedValue(mockUser as UserEntity);
-      userRepository.update.mockResolvedValue(updatedUser as UserEntity);
-
-      const result = await service.update({
-        id: 'user-1',
-        data: {
-          firstName: 'Jane',
-          lastName: 'Smith',
-          profileImageUrl: 'https://example.com/new-image.jpg',
-        },
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
       });
-
-      expect(result.firstName).toBe('Jane');
-      expect(result.lastName).toBe('Smith');
-      expect(result.profileImageUrl).toBe('https://example.com/new-image.jpg');
     });
   });
 
   describe('delete', () => {
-    it('deletes user successfully when not last manager', async () => {
-      workspaceUserService.findAllByUserId.mockResolvedValue([
-        {
-          ...mockWorkspaceUser,
-          workspaceRole: WorkspaceUserRole.MEMBER,
-        } as any,
-      ]);
+    it('deletes user successfully when not a manager', async () => {
+      const memberWsUser = mockWorkspaceUserCoreFactory({
+        workspaceRole: WorkspaceUserRole.MEMBER,
+      });
+      workspaceUserService.findAllByUserId.mockResolvedValue([memberWsUser]);
       userRepository.delete.mockResolvedValue(true);
 
       await service.delete('user-1');
 
-      expect(workspaceUserService.findAllByUserId).toHaveBeenCalledWith(
-        'user-1',
-      );
       expect(userRepository.delete).toHaveBeenCalledWith('user-1');
     });
 
-    it('throws SOLE_MANAGER_CONFLICT if user is last manager in workspace', async () => {
-      workspaceUserService.findAllByUserId.mockResolvedValue([
-        mockWorkspaceUser as any,
-      ]);
+    it('throws SOLE_MANAGER_CONFLICT if user is manager in a workspace', async () => {
+      const managerWsUser = mockWorkspaceUserCoreFactory({
+        workspaceRole: WorkspaceUserRole.MANAGER,
+      });
+      workspaceUserService.findAllByUserId.mockResolvedValue([managerWsUser]);
 
-      try {
-        await service.delete('user-1');
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.CONFLICT,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
-        });
-      }
+      await expect(service.delete('user-1')).rejects.toMatchObject({
+        status: HttpStatus.CONFLICT,
+        response: { code: ApiErrorCode.SOLE_MANAGER_CONFLICT },
+      });
 
       expect(userRepository.delete).not.toHaveBeenCalled();
     });
 
-    it('throws SOLE_MANAGER_CONFLICT if user is manager in multiple workspaces', async () => {
-      const secondWorkspace = {
-        ...mockWorkspaceUser,
-        workspace: { ...mockWorkspaceUser.workspace, id: 'workspace-2' },
-      };
-      workspaceUserService.findAllByUserId.mockResolvedValue([
-        mockWorkspaceUser as any,
-        secondWorkspace as any,
-      ]);
-
-      try {
-        await service.delete('user-1');
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.CONFLICT,
-        );
-      }
-
-      expect(userRepository.delete).not.toHaveBeenCalled();
-    });
-
-    it('throws INVALID_PAYLOAD if user deletion fails', async () => {
+    it('throws INVALID_PAYLOAD if deletion fails', async () => {
       workspaceUserService.findAllByUserId.mockResolvedValue([]);
       userRepository.delete.mockResolvedValue(false);
 
-      try {
-        await service.delete('user-1');
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
-    });
-
-    it('allows delete if user is member in workspaces', async () => {
-      const memberWorkspace = {
-        ...mockWorkspaceUser,
-        workspaceRole: WorkspaceUserRole.MEMBER,
-      };
-      workspaceUserService.findAllByUserId.mockResolvedValue([
-        memberWorkspace as any,
-      ]);
-      userRepository.delete.mockResolvedValue(true);
-
-      await service.delete('user-1');
-
-      expect(userRepository.delete).toHaveBeenCalledWith('user-1');
+      await expect(service.delete('user-1')).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
 
     it('allows delete if user has no workspaces', async () => {

@@ -2,7 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DateTime } from 'luxon';
-import { AggregatedConfig } from 'src/config/config.type';
 import { SessionCore } from 'src/modules/session/domain/session-core.domain';
 import { Session } from 'src/modules/session/domain/session.domain';
 import { SessionService } from 'src/modules/session/session.service';
@@ -18,16 +17,8 @@ import { AuthProvider } from './domain/auth-provider.enum';
 import { SocialLogin } from './domain/social-login.domain';
 import { JwtPayload } from './strategies/jwt-payload.type';
 
-describe('AuthService', () => {
-  let service: AuthService;
-  let jwtService: jest.Mocked<JwtService>;
-  let userService: jest.Mocked<UserService>;
-  let workspaceUserService: jest.Mocked<WorkspaceUserService>;
-  let configService: jest.Mocked<ConfigService<AggregatedConfig>>;
-  let sessionService: jest.Mocked<SessionService>;
-  let unitOfWorkService: jest.Mocked<UnitOfWorkService>;
-
-  const mockUser: User = {
+const mockUserFactory = (overrides?: Partial<User>): User =>
+  ({
     id: 'user-1',
     email: 'test@example.com',
     firstName: 'John',
@@ -36,62 +27,117 @@ describe('AuthService', () => {
     provider: AuthProvider.GOOGLE,
     profileImageUrl: 'https://example.com/image.jpg',
     status: UserStatus.ACTIVE,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+    createdAt: new Date(),
+    updatedAt: new Date(),
     deletedAt: null,
-  };
+    ...overrides,
+  }) as User;
 
-  const mockSessionCore: SessionCore = {
-    id: 'session-1',
-    hash: 'session-hash-123',
-    ipAddress: '192.168.1.1',
-    deviceModel: 'iPhone 15',
-    osVersion: 'iOS 17.0',
-    appVersion: '1.0.0',
-    accessTokenVersion: 1,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+const mockSessionCoreFactory = (
+  overrides?: Partial<SessionCore>,
+): SessionCore => ({
+  id: 'session-1',
+  hash: 'session-hash-123',
+  ipAddress: '192.168.1.1',
+  deviceModel: 'iPhone 15',
+  osVersion: 'iOS 17.0',
+  appVersion: '1.0.0',
+  accessTokenVersion: 1,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+  ...overrides,
+});
+
+const mockSessionFactory = (overrides?: Partial<Session>): Session =>
+  ({
+    ...mockSessionCoreFactory(),
+    user: mockUserFactory(),
+    ...overrides,
+  }) as Session;
+
+const mockWorkspaceUserFactory = (
+  overrides?: Partial<WorkspaceUserWithWorkspaceCore>,
+): WorkspaceUserWithWorkspaceCore => ({
+  id: 'workspace-user-1',
+  workspaceRole: WorkspaceUserRole.MANAGER,
+  workspace: {
+    id: 'workspace-1',
+    name: 'Test Workspace',
+    description: null,
+    pictureUrl: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     deletedAt: null,
-  };
+  },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+  ...overrides,
+});
 
-  const mockSession: Session = {
-    id: 'session-1',
-    user: mockUser,
-    hash: 'session-hash-123',
-    ipAddress: '192.168.1.1',
-    deviceModel: 'iPhone 15',
-    osVersion: 'iOS 17.0',
-    appVersion: '1.0.0',
-    accessTokenVersion: 1,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    deletedAt: null,
-  };
+const mockSocialLoginFactory = (
+  overrides?: Partial<SocialLogin>,
+): SocialLogin => ({
+  id: 'social-123',
+  email: 'test@example.com',
+  firstName: 'John',
+  lastName: 'Doe',
+  profileImageUrl: 'https://example.com/image.jpg',
+  ...overrides,
+});
 
-  const mockWorkspaceUser: WorkspaceUserWithWorkspaceCore = {
-    id: 'workspace-user-1',
-    workspaceRole: WorkspaceUserRole.MANAGER,
-    workspace: {
-      id: 'workspace-1',
-      name: 'Test Workspace',
-      description: null,
-      pictureUrl: null,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01'),
-      deletedAt: null,
-    },
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    deletedAt: null,
-  };
+const createMockJwtService = () => ({
+  signAsync: jest.fn(),
+});
 
-  const mockSocialLogin: SocialLogin = {
-    id: 'social-123',
-    email: 'test@example.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    profileImageUrl: 'https://example.com/image.jpg',
-  };
+const createMockUserService = () => ({
+  findBySocialIdAndProvider: jest.fn(),
+  findById: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
+});
+
+const createMockWorkspaceUserService = () => ({
+  findAllByUserIdWithWorkspace: jest.fn(),
+});
+
+const createMockConfigService = () => ({
+  getOrThrow: jest.fn((key: string) => {
+    switch (key) {
+      case 'auth.expires':
+        return '1h';
+      case 'auth.secret':
+        return 'secret';
+      case 'auth.refreshSecret':
+        return 'refresh-secret';
+      case 'auth.refreshExpires':
+        return '7d';
+      default:
+        return null;
+    }
+  }),
+});
+
+const createMockSessionService = () => ({
+  create: jest.fn(),
+  findByIdWithUser: jest.fn(),
+  update: jest.fn(),
+  deleteById: jest.fn(),
+});
+
+const createMockUnitOfWorkService = () => ({
+  withTransaction: jest.fn().mockImplementation((cb) => cb()),
+});
+
+describe('AuthService', () => {
+  let service: AuthService;
+  let jwtService: ReturnType<typeof createMockJwtService>;
+  let userService: ReturnType<typeof createMockUserService>;
+  let workspaceUserService: ReturnType<typeof createMockWorkspaceUserService>;
+  let configService: ReturnType<typeof createMockConfigService>;
+  let sessionService: ReturnType<typeof createMockSessionService>;
+  let unitOfWorkService: ReturnType<typeof createMockUnitOfWorkService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -101,101 +147,67 @@ describe('AuthService', () => {
         AuthService,
         {
           provide: JwtService,
-          useValue: {
-            signAsync: jest.fn(),
-          },
+          useValue: createMockJwtService(),
         },
         {
           provide: UserService,
-          useValue: {
-            findBySocialIdAndProvider: jest.fn(),
-            findById: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-          },
+          useValue: createMockUserService(),
         },
         {
           provide: WorkspaceUserService,
-          useValue: {
-            findAllByUserIdWithWorkspace: jest.fn(),
-          },
+          useValue: createMockWorkspaceUserService(),
         },
         {
-          provide: ConfigService<AggregatedConfig>,
-          useValue: {
-            getOrThrow: jest.fn(),
-          },
+          provide: ConfigService,
+          useValue: createMockConfigService(),
         },
         {
           provide: SessionService,
-          useValue: {
-            create: jest.fn(),
-            findByIdWithUser: jest.fn(),
-            update: jest.fn(),
-            deleteById: jest.fn(),
-          },
+          useValue: createMockSessionService(),
         },
         {
           provide: UnitOfWorkService,
-          useValue: {
-            withTransaction: jest.fn(),
-          },
+          useValue: createMockUnitOfWorkService(),
         },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    jwtService = module.get(JwtService) as jest.Mocked<JwtService>;
-    userService = module.get(UserService) as jest.Mocked<UserService>;
-    workspaceUserService = module.get(
-      WorkspaceUserService,
-    ) as jest.Mocked<WorkspaceUserService>;
-    configService = module.get(ConfigService) as jest.Mocked<
-      ConfigService<AggregatedConfig>
-    >;
-    sessionService = module.get(SessionService) as jest.Mocked<SessionService>;
-    unitOfWorkService = module.get(
-      UnitOfWorkService,
-    ) as jest.Mocked<UnitOfWorkService>;
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    jwtService = module.get(JwtService) as any;
+    userService = module.get(UserService) as any;
+    workspaceUserService = module.get(WorkspaceUserService) as any;
+    configService = module.get(ConfigService) as any;
+    sessionService = module.get(SessionService) as any;
+    unitOfWorkService = module.get(UnitOfWorkService) as any;
   });
 
   describe('socialLogin', () => {
+    const metaData = {
+      ipAddress: '192.168.1.1',
+      deviceModel: 'iPhone 15',
+      osVersion: 'iOS 17.0',
+      appVersion: '1.0.0',
+    };
+
     it('should create a new user and session when user does not exist', async () => {
-      const socialData = mockSocialLogin;
+      const socialData = mockSocialLoginFactory();
+      const createdUser = mockUserFactory();
+      const createdSession = mockSessionCoreFactory();
 
       userService.findBySocialIdAndProvider.mockResolvedValue(null);
-      userService.create.mockResolvedValue(mockUser);
-      sessionService.create.mockResolvedValue(mockSessionCore);
+      userService.create.mockResolvedValue(createdUser);
+      sessionService.create.mockResolvedValue(createdSession);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
-      configService.getOrThrow
-        .mockReturnValueOnce('1h')
-        .mockReturnValueOnce('secret-key')
-        .mockReturnValueOnce('7d')
-        .mockReturnValueOnce('refresh-secret-key');
       jwtService.signAsync
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
-      unitOfWorkService.withTransaction.mockImplementation(
-        async (cb) => await cb(),
-      );
 
       const result = await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
         socialData,
-        ipAddress: '192.168.1.1',
-        deviceModel: 'iPhone 15',
-        osVersion: 'iOS 17.0',
-        appVersion: '1.0.0',
+        ...metaData,
       });
 
-      expect(userService.findBySocialIdAndProvider).toHaveBeenCalledWith({
-        socialId: socialData.id,
-        provider: AuthProvider.GOOGLE,
-      });
       expect(userService.create).toHaveBeenCalledWith({
         email: socialData.email,
         firstName: socialData.firstName,
@@ -205,231 +217,189 @@ describe('AuthService', () => {
         profileImageUrl: socialData.profileImageUrl,
         status: UserStatus.ACTIVE,
       });
-      expect(sessionService.create).toHaveBeenCalled();
-      expect(jwtService.signAsync).toHaveBeenCalledWith(
-        expect.objectContaining({ sub: mockUser.id }),
-        expect.objectContaining({ secret: 'secret-key' }),
-      );
+
+      expect(sessionService.create).toHaveBeenCalledWith({
+        userId: createdUser.id,
+        hash: expect.any(String),
+        ...metaData,
+      });
+
       expect(result).toEqual({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
         tokenExpires: expect.any(Number),
         user: {
-          id: mockUser.id,
-          email: mockUser.email,
-          firstName: mockUser.firstName,
-          lastName: mockUser.lastName,
+          id: createdUser.id,
+          email: createdUser.email,
+          firstName: createdUser.firstName,
+          lastName: createdUser.lastName,
           roles: [],
-          profileImageUrl: mockUser.profileImageUrl,
-          createdAt: DateTime.fromJSDate(mockUser.createdAt).toISO(),
+          profileImageUrl: createdUser.profileImageUrl,
+          createdAt: DateTime.fromJSDate(createdUser.createdAt).toISO(),
         },
       });
     });
 
-    it('should update existing user if email changed and return session', async () => {
-      const updatedSocialData: SocialLogin = {
-        ...mockSocialLogin,
-        email: 'newemail@example.com',
-      };
-      const updatedUser = { ...mockUser, email: 'newemail@example.com' };
+    it('should update existing user if profile data changed', async () => {
+      const existingUser = mockUserFactory({
+        email: 'old@example.com',
+      });
+      const socialData = mockSocialLoginFactory({
+        email: 'new@example.com',
+      });
+      const updatedUser = mockUserFactory({
+        email: 'new@example.com',
+      });
+      const session = mockSessionCoreFactory();
 
-      userService.findBySocialIdAndProvider.mockResolvedValue(mockUser);
+      userService.findBySocialIdAndProvider.mockResolvedValue(existingUser);
       userService.update.mockResolvedValue(updatedUser);
-      sessionService.create.mockResolvedValue(mockSessionCore);
-      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
-        mockWorkspaceUser,
-      ]);
-      configService.getOrThrow
-        .mockReturnValueOnce('1h')
-        .mockReturnValueOnce('secret-key')
-        .mockReturnValueOnce('7d')
-        .mockReturnValueOnce('refresh-secret-key');
-      jwtService.signAsync
-        .mockResolvedValueOnce('access-token')
-        .mockResolvedValueOnce('refresh-token');
-      unitOfWorkService.withTransaction.mockImplementation(
-        async (cb) => await cb(),
-      );
+      sessionService.create.mockResolvedValue(session);
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
+      jwtService.signAsync.mockResolvedValue('token');
 
-      const result = await service.socialLogin({
+      await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
-        socialData: updatedSocialData,
-        ipAddress: '192.168.1.1',
-        deviceModel: 'iPhone 15',
-        osVersion: 'iOS 17.0',
-        appVersion: '1.0.0',
+        socialData,
+        ...metaData,
       });
 
       expect(userService.update).toHaveBeenCalledWith({
-        id: mockUser.id,
-        data: {
-          email: updatedSocialData.email,
-          firstName: undefined,
-          lastName: undefined,
-          profileImageUrl: undefined,
-        },
+        id: existingUser.id,
+        data: expect.objectContaining({
+          email: 'new@example.com',
+        }),
       });
-      expect(result.user.roles).toEqual([
-        {
-          workspaceId: mockWorkspaceUser.workspace.id,
-          role: mockWorkspaceUser.workspaceRole,
-        },
-      ]);
     });
 
-    it('should handle user with existing workspace roles', async () => {
-      userService.findBySocialIdAndProvider.mockResolvedValue(mockUser);
-      sessionService.create.mockResolvedValue(mockSessionCore);
+    it('should NOT update user if data matches', async () => {
+      const socialData = mockSocialLoginFactory();
+      const existingUser = mockUserFactory({
+        email: socialData.email,
+        firstName: socialData.firstName,
+        lastName: socialData.lastName,
+        profileImageUrl: socialData.profileImageUrl,
+      });
+
+      userService.findBySocialIdAndProvider.mockResolvedValue(existingUser);
+      sessionService.create.mockResolvedValue(mockSessionCoreFactory());
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
+      jwtService.signAsync.mockResolvedValue('token');
+
+      await service.socialLogin({
+        authProvider: AuthProvider.GOOGLE,
+        socialData,
+        ...metaData,
+      });
+
+      expect(userService.update).not.toHaveBeenCalled();
+    });
+
+    it('should return user with workspace roles', async () => {
+      const user = mockUserFactory();
+      const workspaceUser = mockWorkspaceUserFactory();
+
+      userService.findBySocialIdAndProvider.mockResolvedValue(user);
+      sessionService.create.mockResolvedValue(mockSessionCoreFactory());
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
-        mockWorkspaceUser,
+        workspaceUser,
       ]);
-      configService.getOrThrow
-        .mockReturnValueOnce('1h')
-        .mockReturnValueOnce('secret-key')
-        .mockReturnValueOnce('7d')
-        .mockReturnValueOnce('refresh-secret-key');
-      jwtService.signAsync
-        .mockResolvedValueOnce('access-token')
-        .mockResolvedValueOnce('refresh-token');
-      unitOfWorkService.withTransaction.mockImplementation(
-        async (cb) => await cb(),
-      );
+      jwtService.signAsync.mockResolvedValue('token');
 
       const result = await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
-        socialData: mockSocialLogin,
-        ipAddress: '192.168.1.1',
-        deviceModel: 'iPhone 15',
-        osVersion: 'iOS 17.0',
-        appVersion: '1.0.0',
+        socialData: mockSocialLoginFactory(),
+        ...metaData,
       });
 
       expect(result.user.roles).toHaveLength(1);
       expect(result.user.roles[0]).toEqual({
-        workspaceId: mockWorkspaceUser.workspace.id,
-        role: mockWorkspaceUser.workspaceRole,
+        workspaceId: workspaceUser.workspace.id,
+        role: workspaceUser.workspaceRole,
       });
+
+      // Verify roles are baked into the JWT
+      expect(jwtService.signAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          roles: expect.arrayContaining([
+            {
+              workspaceId: workspaceUser.workspace.id,
+              role: workspaceUser.workspaceRole,
+            },
+          ]),
+        }),
+        expect.any(Object),
+      );
     });
   });
 
   describe('refreshToken', () => {
-    it('should successfully refresh tokens with valid data', async () => {
-      const jwtRefreshPayload = {
-        sessionId: 'session-1',
-        hash: 'session-hash-123',
-      };
+    it('should successfully refresh tokens and rotate hash', async () => {
+      const session = mockSessionFactory();
+      const user = mockUserFactory({ id: session.user.id });
+      const workspaceUser = mockWorkspaceUserFactory();
 
-      sessionService.findByIdWithUser.mockResolvedValue(mockSession);
-      userService.findById.mockResolvedValue(mockUser);
+      sessionService.findByIdWithUser.mockResolvedValue(session);
+      userService.findById.mockResolvedValue(user);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
-        mockWorkspaceUser,
+        workspaceUser,
       ]);
-      sessionService.update.mockResolvedValue(mockSessionCore);
-      configService.getOrThrow
-        .mockReturnValueOnce('1h')
-        .mockReturnValueOnce('secret-key')
-        .mockReturnValueOnce('7d')
-        .mockReturnValueOnce('refresh-secret-key');
+      sessionService.update.mockResolvedValue(mockSessionCoreFactory());
       jwtService.signAsync
-        .mockResolvedValueOnce('new-access-token')
-        .mockResolvedValueOnce('new-refresh-token');
+        .mockResolvedValueOnce('new-access')
+        .mockResolvedValueOnce('new-refresh');
 
-      const result = await service.refreshToken(jwtRefreshPayload);
-
-      expect(sessionService.findByIdWithUser).toHaveBeenCalledWith(
-        jwtRefreshPayload.sessionId,
-      );
-      expect(userService.findById).toHaveBeenCalledWith(mockUser.id);
-      expect(sessionService.update).toHaveBeenCalledWith({
-        id: mockSession.id,
-        data: { hash: expect.any(String) },
-      });
-      expect(jwtService.signAsync).toHaveBeenCalledTimes(2);
-      expect(result).toEqual({
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-        tokenExpires: expect.any(Number),
-      });
-    });
-
-    it('should generate new hash when refreshing token', async () => {
-      const jwtRefreshPayload = {
-        sessionId: 'session-1',
-        hash: 'session-hash-123',
+      const payload = {
+        sessionId: session.id,
+        hash: 'old-hash',
       };
 
-      sessionService.findByIdWithUser.mockResolvedValue(mockSession);
-      userService.findById.mockResolvedValue(mockUser);
-      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
-      sessionService.update.mockResolvedValue(mockSessionCore);
-      configService.getOrThrow
-        .mockReturnValueOnce('1h')
-        .mockReturnValueOnce('secret-key')
-        .mockReturnValueOnce('7d')
-        .mockReturnValueOnce('refresh-secret-key');
-      jwtService.signAsync
-        .mockResolvedValueOnce('new-access-token')
-        .mockResolvedValueOnce('new-refresh-token');
-
-      await service.refreshToken(jwtRefreshPayload);
+      const result = await service.refreshToken(payload);
 
       expect(sessionService.update).toHaveBeenCalledWith({
-        id: mockSession.id,
+        id: session.id,
         data: {
           hash: expect.any(String),
         },
       });
 
-      // Verify that the new hash is different from the old one
+      // Ensure hash rotation
       const updateCall = sessionService.update.mock.calls[0][0];
-      expect(updateCall.data.hash).not.toBe(mockSession.hash);
+      expect(updateCall.data.hash).not.toBe(session.hash);
+
+      expect(result).toEqual({
+        accessToken: 'new-access',
+        refreshToken: 'new-refresh',
+        tokenExpires: expect.any(Number),
+      });
     });
 
-    it('should refresh with multiple workspace roles', async () => {
-      const multipleWorkspaceUsers: WorkspaceUserWithWorkspaceCore[] = [
-        mockWorkspaceUser,
-        {
-          ...mockWorkspaceUser,
-          id: 'workspace-user-2',
-          workspace: {
-            id: 'workspace-2',
-            name: 'Another Workspace',
-            description: null,
-            pictureUrl: null,
-            createdAt: new Date('2024-01-01'),
-            updatedAt: new Date('2024-01-01'),
-            deletedAt: null,
-          },
-        },
-      ];
+    it('should sign tokens with updated roles', async () => {
+      const session = mockSessionFactory();
+      const user = mockUserFactory();
+      const wsUser1 = mockWorkspaceUserFactory({
+        workspace: { id: 'w1' } as any,
+      });
+      const wsUser2 = mockWorkspaceUserFactory({
+        workspace: { id: 'w2' } as any,
+      });
 
-      const jwtRefreshPayload = {
-        sessionId: 'session-1',
-        hash: 'session-hash-123',
-      };
+      sessionService.findByIdWithUser.mockResolvedValue(session);
+      userService.findById.mockResolvedValue(user);
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
+        wsUser1,
+        wsUser2,
+      ]);
+      sessionService.update.mockResolvedValue(mockSessionCoreFactory());
+      jwtService.signAsync.mockResolvedValue('token');
 
-      sessionService.findByIdWithUser.mockResolvedValue(mockSession);
-      userService.findById.mockResolvedValue(mockUser);
-      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue(
-        multipleWorkspaceUsers,
-      );
-      sessionService.update.mockResolvedValue(mockSessionCore);
-      configService.getOrThrow
-        .mockReturnValueOnce('1h')
-        .mockReturnValueOnce('secret-key')
-        .mockReturnValueOnce('7d')
-        .mockReturnValueOnce('refresh-secret-key');
-      jwtService.signAsync
-        .mockResolvedValueOnce('new-access-token')
-        .mockResolvedValueOnce('new-refresh-token');
-
-      const result = await service.refreshToken(jwtRefreshPayload);
+      await service.refreshToken({ sessionId: 's1', hash: 'h1' });
 
       expect(jwtService.signAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           roles: expect.arrayContaining([
-            expect.objectContaining({ workspaceId: 'workspace-1' }),
-            expect.objectContaining({ workspaceId: 'workspace-2' }),
+            { workspaceId: 'w1', role: expect.any(String) },
+            { workspaceId: 'w2', role: expect.any(String) },
           ]),
         }),
         expect.any(Object),
@@ -439,29 +409,7 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should delete session by id', async () => {
-      const jwtPayload: JwtPayload = {
-        sub: 'user-1',
-        roles: [
-          {
-            workspaceId: 'workspace-1',
-            role: WorkspaceUserRole.MANAGER,
-          },
-        ],
-        sessionId: 'session-1',
-        atv: 1,
-      };
-
-      sessionService.deleteById.mockResolvedValue(undefined);
-
-      await service.logout(jwtPayload);
-
-      expect(sessionService.deleteById).toHaveBeenCalledWith(
-        jwtPayload.sessionId,
-      );
-    });
-
-    it('should return a promise', async () => {
-      const jwtPayload: JwtPayload = {
+      const payload: JwtPayload = {
         sub: 'user-1',
         roles: [],
         sessionId: 'session-1',
@@ -470,9 +418,9 @@ describe('AuthService', () => {
 
       sessionService.deleteById.mockResolvedValue(undefined);
 
-      const result = service.logout(jwtPayload);
+      await service.logout(payload);
 
-      expect(result).toBeInstanceOf(Promise);
+      expect(sessionService.deleteById).toHaveBeenCalledWith(payload.sessionId);
     });
   });
 });

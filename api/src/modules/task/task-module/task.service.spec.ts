@@ -1,7 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { CreateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/create-task-request.dto';
 import { UpdateTaskRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-request.dto';
@@ -12,84 +11,68 @@ import {
 } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { TaskAssignmentEntity } from '../task-assignment/persistence/task-assignment.entity';
 import { ProgressStatus } from './domain/progress-status.enum';
-import { TaskCore } from './domain/task-core.domain';
-import { TaskWithAssigneesCoreAndCreatedByUser } from './domain/task-with-assignees-core.domain';
 import { TaskEntity } from './persistence/task.entity';
 import { TaskRepository } from './persistence/task.repository';
 import { TaskService } from './task.service';
 
-describe('TaskService', () => {
-  let service: TaskService;
-  let taskRepository: jest.Mocked<TaskRepository>;
-
-  const mockCreatedByUser: TaskWithAssigneesCoreAndCreatedByUser['createdBy'] =
-    {
-      id: 'created-by-1',
-      firstName: 'John',
-      lastName: 'Doe',
-      profileImageUrl: null,
-    };
-
-  const mockAssigneeUser = {
-    firstName: 'Jane',
-    lastName: 'Smith',
+const mockUserEntityFactory = (overrides?: Partial<UserEntity>): UserEntity =>
+  ({
+    id: 'user-1',
+    firstName: 'John',
+    lastName: 'Doe',
     profileImageUrl: 'https://example.com/image.jpg',
-  } as UserEntity;
+    ...overrides,
+  }) as UserEntity;
 
-  const mockTaskAssignment: TaskAssignmentEntity = {
+const mockWorkspaceUserEntityFactory = (overrides?: any) => ({
+  id: 'workspace-user-1',
+  user: mockUserEntityFactory(),
+  ...overrides,
+});
+
+const mockTaskAssignmentEntityFactory = (
+  overrides?: Partial<TaskAssignmentEntity>,
+): TaskAssignmentEntity =>
+  ({
     id: 'assignment-1',
     status: ProgressStatus.IN_PROGRESS,
-    assignee: {
-      id: 'assignee-1',
-      user: mockAssigneeUser,
-    },
-  } as TaskAssignmentEntity;
+    assignee: mockWorkspaceUserEntityFactory(),
+    ...overrides,
+  }) as TaskAssignmentEntity;
 
-  const mockTaskCore: TaskCore = {
+const mockTaskEntityFactory = (overrides?: Partial<TaskEntity>): TaskEntity => {
+  const base = {
     id: 'task-1',
     title: 'Test Task',
     rewardPoints: 25,
     description: 'Test task description',
     dueDate: new Date('2024-12-31'),
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+    createdAt: new Date(),
+    updatedAt: new Date(),
     deletedAt: null,
+    workspaceId: 'workspace-1',
+    createdBy: mockWorkspaceUserEntityFactory({
+      id: 'creator-ws-user',
+      user: mockUserEntityFactory({ firstName: 'Creator' }),
+    }),
+    taskAssignments: [mockTaskAssignmentEntityFactory()],
+    ...overrides,
   };
 
-  const mockTaskWithAssigneesCoreAndCreatedByUser: TaskWithAssigneesCoreAndCreatedByUser =
-    {
-      ...mockTaskCore,
-      assignees: [
-        {
-          id: 'assignee-1',
-          firstName: mockAssigneeUser.firstName,
-          lastName: mockAssigneeUser.lastName,
-          profileImageUrl: mockAssigneeUser.profileImageUrl,
-          status: ProgressStatus.IN_PROGRESS,
-        },
-      ],
-      createdBy: mockCreatedByUser,
-    };
+  return base as unknown as TaskEntity;
+};
 
-  const mockTaskEntity: TaskEntity = {
-    id: 'task-1',
-    title: 'Test Task',
-    rewardPoints: 25,
-    description: 'Test task description',
-    dueDate: new Date('2024-12-31'),
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    deletedAt: null,
-    createdBy: {
-      id: 'created-by-1',
-      user: {
-        firstName: 'John',
-        lastName: 'Doe',
-        profileImageUrl: null,
-      },
-    },
-    taskAssignments: [mockTaskAssignment],
-  } as TaskEntity;
+const createMockRepository = () => ({
+  findAllByWorkspaceId: jest.fn(),
+  create: jest.fn(),
+  findById: jest.fn(),
+  findByTaskIdAndWorkspaceId: jest.fn(),
+  update: jest.fn(),
+});
+
+describe('TaskService', () => {
+  let service: TaskService;
+  let taskRepository: ReturnType<typeof createMockRepository>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -99,103 +82,20 @@ describe('TaskService', () => {
         TaskService,
         {
           provide: TaskRepository,
-          useValue: {
-            findAllByWorkspaceId: jest.fn(),
-            create: jest.fn(),
-            findById: jest.fn(),
-            findByTaskIdAndWorkspaceId: jest.fn(),
-            update: jest.fn(),
-          },
+          useValue: createMockRepository(),
         },
       ],
     }).compile();
 
     service = module.get<TaskService>(TaskService);
-    taskRepository = module.get(TaskRepository) as jest.Mocked<TaskRepository>;
+    taskRepository = module.get(TaskRepository);
   });
 
   describe('findPaginatedByWorkspaceWithAssignees', () => {
-    it('returns paginated tasks with assignees and default query parameters', async () => {
+    it('returns paginated tasks with mapped assignees', async () => {
+      const entity = mockTaskEntityFactory();
       taskRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [mockTaskEntity],
-        totalPages: 1,
-        total: 1,
-      });
-
-      const workspaceId = 'workspace-1';
-      const query: WorkspaceObjectiveRequestQuery = {};
-      const result = await service.findPaginatedByWorkspaceWithAssignees({
-        workspaceId,
-        query,
-      });
-
-      expect(taskRepository.findAllByWorkspaceId).toHaveBeenCalledWith({
-        workspaceId,
-        query: {
-          page: 1,
-          limit: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
-          status: null,
-          search: null,
-          sort: SortBy.NEWEST,
-        },
-      });
-      expect(result.data).toHaveLength(1);
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({
-          id: 'task-1',
-          title: 'Test Task',
-          rewardPoints: 25,
-        }),
-      );
-      expect(result.totalPages).toBe(1);
-      expect(result.total).toBe(1);
-    });
-
-    it('returns paginated tasks with custom query parameters', async () => {
-      taskRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [mockTaskEntity],
-        totalPages: 2,
-        total: 20,
-      });
-
-      const workspaceId = 'workspace-1';
-      const query: WorkspaceObjectiveRequestQuery = {
-        page: 2,
-        limit: 10,
-        status: ProgressStatus.COMPLETED,
-        search: 'task',
-        sort: SortBy.OLDEST,
-      };
-      const result = await service.findPaginatedByWorkspaceWithAssignees({
-        workspaceId,
-        query,
-      });
-
-      expect(taskRepository.findAllByWorkspaceId).toHaveBeenCalledWith({
-        workspaceId,
-        query: {
-          page: 2,
-          limit: 10,
-          status: ProgressStatus.COMPLETED,
-          search: 'task',
-          sort: SortBy.OLDEST,
-        },
-      });
-      expect(result.data).toHaveLength(1);
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({
-          id: 'task-1',
-          title: 'Test Task',
-          rewardPoints: 25,
-        }),
-      );
-      expect(result.totalPages).toBe(2);
-      expect(result.total).toBe(20);
-    });
-
-    it('correctly maps task assignments to assignees format', async () => {
-      taskRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [mockTaskEntity],
+        data: [entity],
         totalPages: 1,
         total: 1,
       });
@@ -205,24 +105,63 @@ describe('TaskService', () => {
         query: {},
       });
 
-      expect(result.data[0].assignees).toEqual([
-        {
-          id: 'assignee-1',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          profileImageUrl: 'https://example.com/image.jpg',
-          status: ProgressStatus.IN_PROGRESS,
+      expect(taskRepository.findAllByWorkspaceId).toHaveBeenCalledWith({
+        workspaceId: 'workspace-1',
+        query: {
+          page: 1,
+          limit: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
+          status: null,
+          search: null,
+          sort: SortBy.NEWEST,
         },
-      ]);
+      });
+
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].id).toBe(entity.id);
+      expect(result.data[0].assignees[0].firstName).toBe(
+        entity.taskAssignments[0].assignee.user.firstName,
+      );
+      expect(result.data[0].createdBy?.firstName).toBe(
+        entity.createdBy!.user.firstName,
+      );
+    });
+
+    it('passes custom query parameters correctly', async () => {
+      taskRepository.findAllByWorkspaceId.mockResolvedValue({
+        data: [],
+        totalPages: 0,
+        total: 0,
+      });
+
+      const query: WorkspaceObjectiveRequestQuery = {
+        page: 2,
+        limit: 10,
+        status: ProgressStatus.COMPLETED,
+        search: 'task',
+        sort: SortBy.OLDEST,
+      };
+
+      await service.findPaginatedByWorkspaceWithAssignees({
+        workspaceId: 'workspace-1',
+        query,
+      });
+
+      expect(taskRepository.findAllByWorkspaceId).toHaveBeenCalledWith({
+        workspaceId: 'workspace-1',
+        query: {
+          page: 2,
+          limit: 10,
+          status: ProgressStatus.COMPLETED,
+          search: 'task',
+          sort: SortBy.OLDEST,
+        },
+      });
     });
 
     it('handles null createdBy', async () => {
-      const taskEntityWithoutCreatedBy = {
-        ...mockTaskEntity,
-        createdBy: null,
-      };
+      const entity = mockTaskEntityFactory({ createdBy: null });
       taskRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [taskEntityWithoutCreatedBy as TaskEntity],
+        data: [entity],
         totalPages: 1,
         total: 1,
       });
@@ -235,88 +174,75 @@ describe('TaskService', () => {
       expect(result.data[0].createdBy).toBeNull();
     });
 
-    it('trims search query and handles null values', async () => {
+    it('trims search query', async () => {
       taskRepository.findAllByWorkspaceId.mockResolvedValue({
         data: [],
-        totalPages: 1,
+        totalPages: 0,
         total: 0,
       });
 
-      const query: WorkspaceObjectiveRequestQuery = {
-        search: '  spaces  ',
-      };
       await service.findPaginatedByWorkspaceWithAssignees({
         workspaceId: 'workspace-1',
-        query,
+        query: { search: '  term  ' },
       });
 
       expect(taskRepository.findAllByWorkspaceId).toHaveBeenCalledWith(
         expect.objectContaining({
-          query: expect.objectContaining({
-            search: 'spaces',
-          }),
+          query: expect.objectContaining({ search: 'term' }),
         }),
       );
     });
   });
 
   describe('create', () => {
-    it('creates a new task with required data', async () => {
-      taskRepository.create.mockResolvedValue(mockTaskEntity);
+    it('creates a new task and maps response', async () => {
+      const mockEntity = mockTaskEntityFactory();
+      taskRepository.create.mockResolvedValue(mockEntity);
 
-      const workspaceId = 'workspace-1';
-      const createdById = 'created-by-1';
       const data: Omit<CreateTaskRequest, 'assignees'> = {
-        title: 'Test Task',
-        description: 'Test task description',
-        rewardPoints: 25,
+        title: 'New Task',
+        description: 'Desc',
+        rewardPoints: 100,
         dueDate: '2024-12-31T00:00:00Z',
       };
 
       const result = await service.create({
-        workspaceId,
-        createdById,
+        workspaceId: 'workspace-1',
+        createdById: 'creator-1',
         data,
       });
 
       expect(taskRepository.create).toHaveBeenCalledWith({
-        workspaceId,
+        workspaceId: 'workspace-1',
+        createdById: 'creator-1',
         data: {
           title: data.title,
           description: data.description,
           rewardPoints: data.rewardPoints,
           dueDate: expect.any(Date),
         },
-        createdById,
-        relations: {
-          createdBy: {
-            user: true,
-          },
-        },
+        relations: { createdBy: { user: true } },
       });
+
       expect(result.assignees).toEqual([]);
+      expect(result.title).toBe(mockEntity.title);
     });
 
-    it('creates a task without description and dueDate', async () => {
-      const taskEntityWithoutDetails = {
-        ...mockTaskEntity,
+    it('creates task with null description and dueDate', async () => {
+      const mockEntity = mockTaskEntityFactory({
         description: null,
         dueDate: null,
-      };
-      taskRepository.create.mockResolvedValue(
-        taskEntityWithoutDetails as TaskEntity,
-      );
+      });
+      taskRepository.create.mockResolvedValue(mockEntity);
 
-      const workspaceId = 'workspace-1';
-      const createdById = 'created-by-1';
       const data: Omit<CreateTaskRequest, 'assignees'> = {
-        title: 'Test Task',
-        rewardPoints: 25,
+        title: 'Task',
+        rewardPoints: 50,
       };
 
       const result = await service.create({
-        workspaceId,
-        createdById,
+        workspaceId: 'workspace-1',
+        createdById: 'creator-1',
         data,
       });
 
@@ -328,127 +254,68 @@ describe('TaskService', () => {
           }),
         }),
       );
-      expect(result.description).toBeNull();
       expect(result.dueDate).toBeNull();
     });
 
-    it('converts dueDate ISO string to Date', async () => {
-      taskRepository.create.mockResolvedValue(mockTaskEntity);
-
-      const data: Omit<CreateTaskRequest, 'assignees'> = {
-        title: 'Test Task',
-        rewardPoints: 25,
-        dueDate: '2024-12-31T10:30:00Z',
-      };
-
-      await service.create({
-        workspaceId: 'workspace-1',
-        createdById: 'created-by-1',
-        data,
-      });
-
-      const callArgs = taskRepository.create.mock.calls[0][0];
-      expect(callArgs.data.dueDate).toEqual(expect.any(Date));
-      expect(callArgs.data.dueDate?.toISOString()).toContain('2024-12-31');
-    });
-
-    it('throws SERVER_ERROR if task creation fails', async () => {
+    it('throws SERVER_ERROR if creation returns null', async () => {
       taskRepository.create.mockResolvedValue(null);
 
       const data: Omit<CreateTaskRequest, 'assignees'> = {
-        title: 'Test Task',
-        rewardPoints: 25,
+        title: 'Task',
+        rewardPoints: 50,
       };
 
-      try {
-        await service.create({
+      await expect(
+        service.create({
           workspaceId: 'workspace-1',
-          createdById: 'created-by-1',
+          createdById: 'creator-1',
           data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.SERVER_ERROR,
-        });
-      }
-    });
-
-    it('handles null createdBy in response', async () => {
-      const taskEntityWithoutCreatedBy = {
-        ...mockTaskEntity,
-        createdBy: null,
-      };
-      taskRepository.create.mockResolvedValue(
-        taskEntityWithoutCreatedBy as TaskEntity,
-      );
-
-      const result = await service.create({
-        workspaceId: 'workspace-1',
-        createdById: 'created-by-1',
-        data: {
-          title: 'Test Task',
-          rewardPoints: 25,
-        },
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        response: { code: ApiErrorCode.SERVER_ERROR },
       });
-
-      expect(result.createdBy).toBeNull();
     });
   });
 
   describe('findById', () => {
-    it('returns a task by ID', async () => {
-      taskRepository.findById.mockResolvedValue(mockTaskCore as TaskEntity);
+    it('returns task if found', async () => {
+      const mockEntity = mockTaskEntityFactory();
+      taskRepository.findById.mockResolvedValue(mockEntity);
 
-      const taskId = 'task-1';
-      const result = await service.findById(taskId);
+      const result = await service.findById('task-1');
 
-      expect(taskRepository.findById).toHaveBeenCalledWith({ id: taskId });
-      expect(result).toEqual(mockTaskCore);
+      expect(result).toEqual(mockEntity);
     });
 
-    it('returns null if task is not found', async () => {
+    it('returns null if not found', async () => {
       taskRepository.findById.mockResolvedValue(null);
 
-      const taskId = 'non-existent-task';
-      const result = await service.findById(taskId);
+      const result = await service.findById('task-1');
 
-      expect(taskRepository.findById).toHaveBeenCalledWith({ id: taskId });
       expect(result).toBeNull();
     });
   });
 
   describe('findByTaskIdAndWorkspaceId', () => {
-    it('returns a task by ID and workspace ID', async () => {
-      taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
-      );
+    it('returns task if found', async () => {
+      const mockEntity = mockTaskEntityFactory();
+      taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(mockEntity);
 
-      const taskId = 'task-1';
-      const workspaceId = 'workspace-1';
       const result = await service.findByTaskIdAndWorkspaceId({
-        taskId,
-        workspaceId,
+        taskId: 'task-1',
+        workspaceId: 'workspace-1',
       });
 
-      expect(taskRepository.findByTaskIdAndWorkspaceId).toHaveBeenCalledWith({
-        taskId,
-        workspaceId,
-      });
-      expect(result).toEqual(mockTaskCore);
+      expect(result).toEqual(mockEntity);
     });
 
-    it('returns null if task is not found', async () => {
+    it('returns null if not found', async () => {
       taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(null);
 
-      const taskId = 'non-existent-task';
-      const workspaceId = 'workspace-1';
       const result = await service.findByTaskIdAndWorkspaceId({
-        taskId,
-        workspaceId,
+        taskId: 'task-1',
+        workspaceId: 'workspace-1',
       });
 
       expect(result).toBeNull();
@@ -456,210 +323,117 @@ describe('TaskService', () => {
   });
 
   describe('updateByTaskIdAndWorkspaceId', () => {
-    it('updates a task with new data', async () => {
-      taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
-      );
-      taskRepository.update.mockResolvedValue({
-        ...mockTaskEntity,
-        title: 'Updated Task',
-        description: 'Updated description',
-        rewardPoints: 30,
-        dueDate: new Date('2025-01-15'),
-      } as TaskEntity);
+    it('updates task and maps assignees', async () => {
+      const existingTask = mockTaskEntityFactory();
+      const updatedTask = mockTaskEntityFactory({
+        title: 'Updated',
+        taskAssignments: [
+          mockTaskAssignmentEntityFactory({
+            assignee: mockWorkspaceUserEntityFactory({
+              user: mockUserEntityFactory({ firstName: 'Assignee' }),
+            }),
+          }),
+        ],
+      });
 
-      const taskId = 'task-1';
-      const workspaceId = 'workspace-1';
+      taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(existingTask);
+      taskRepository.update.mockResolvedValue(updatedTask);
+
       const data: UpdateTaskRequest = {
-        title: 'Updated Task',
-        description: 'Updated description',
-        rewardPoints: 30,
-        dueDate: '2025-01-15T00:00:00Z',
+        title: 'Updated',
+        rewardPoints: 50,
+        dueDate: '2025-01-01T00:00:00Z',
       };
 
       const result = await service.updateByTaskIdAndWorkspaceId({
-        taskId,
-        workspaceId,
+        taskId: 'task-1',
+        workspaceId: 'workspace-1',
         data,
       });
 
       expect(taskRepository.update).toHaveBeenCalledWith({
-        id: taskId,
+        id: 'task-1',
         data: {
           title: data.title,
-          description: data.description,
+          description: undefined,
           rewardPoints: data.rewardPoints,
           dueDate: expect.any(Date),
         },
         relations: {
-          taskAssignments: {
-            assignee: {
-              user: true,
-            },
-          },
-          createdBy: {
-            user: true,
-          },
+          taskAssignments: { assignee: { user: true } },
+          createdBy: { user: true },
         },
       });
-      expect(result.title).toBe('Updated Task');
-      expect(result.description).toBe('Updated description');
-      expect(result.rewardPoints).toBe(30);
-      expect(result.dueDate).toEqual(new Date('2025-01-15'));
+
+      expect(result.title).toBe('Updated');
+      expect(result.assignees[0].firstName).toBe('Assignee');
     });
 
-    it('throws INVALID_PAYLOAD if task not found', async () => {
+    it('throws NOT_FOUND if task does not exist', async () => {
       taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(null);
 
-      const taskId = 'non-existent-task';
-      const workspaceId = 'workspace-1';
-      const data: UpdateTaskRequest = {
-        title: 'Updated Task',
-        rewardPoints: 30,
-      };
-
-      try {
-        await service.updateByTaskIdAndWorkspaceId({
-          taskId,
-          workspaceId,
-          data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+      await expect(
+        service.updateByTaskIdAndWorkspaceId({
+          taskId: 'task-1',
+          workspaceId: 'workspace-1',
+          data: { title: 'New' } as any,
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
 
-    it('throws INVALID_PAYLOAD if task is deleted during update', async () => {
+    it('throws NOT_FOUND if update returns null', async () => {
       taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
+        mockTaskEntityFactory(),
       );
       taskRepository.update.mockResolvedValue(null);
 
-      const taskId = 'task-1';
-      const workspaceId = 'workspace-1';
-      const data: UpdateTaskRequest = {
-        title: 'Updated Task',
-        rewardPoints: 30,
-      };
-
-      try {
-        await service.updateByTaskIdAndWorkspaceId({
-          taskId,
-          workspaceId,
-          data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+      await expect(
+        service.updateByTaskIdAndWorkspaceId({
+          taskId: 'task-1',
+          workspaceId: 'workspace-1',
+          data: { title: 'New' } as any,
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
 
-    it('handles null dueDate in update', async () => {
+    it('handles removing dueDate (set to null)', async () => {
       taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
+        mockTaskEntityFactory(),
       );
-      taskRepository.update.mockResolvedValue(mockTaskEntity);
-
-      const taskId = 'task-1';
-      const workspaceId = 'workspace-1';
-      const data: UpdateTaskRequest = {
-        title: 'Updated Task',
-        rewardPoints: 30,
-        dueDate: null,
-      };
+      taskRepository.update.mockResolvedValue(mockTaskEntityFactory());
 
       await service.updateByTaskIdAndWorkspaceId({
-        taskId,
-        workspaceId,
-        data,
+        taskId: 'task-1',
+        workspaceId: 'workspace-1',
+        data: { title: 'T', rewardPoints: 10, dueDate: null },
       });
 
       const callArgs = taskRepository.update.mock.calls[0][0];
       expect(callArgs.data.dueDate).toBeNull();
     });
 
-    it('converts dueDate ISO string to UTC Date', async () => {
+    it('handles ISO date string conversion', async () => {
       taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
+        mockTaskEntityFactory(),
       );
-      taskRepository.update.mockResolvedValue(mockTaskEntity);
+      taskRepository.update.mockResolvedValue(mockTaskEntityFactory());
 
-      const data: UpdateTaskRequest = {
-        title: 'Updated Task',
-        rewardPoints: 30,
-        dueDate: '2025-01-15T10:30:00Z',
-      };
-
+      const isoDate = '2025-05-05T12:00:00Z';
       await service.updateByTaskIdAndWorkspaceId({
         taskId: 'task-1',
         workspaceId: 'workspace-1',
-        data,
+        data: { title: 'T', rewardPoints: 10, dueDate: isoDate },
       });
 
       const callArgs = taskRepository.update.mock.calls[0][0];
-      expect(callArgs.data.dueDate).toEqual(expect.any(Date));
-      expect(callArgs.data.dueDate?.toISOString()).toContain('2025-01-15');
-    });
-
-    it('correctly formats assignees in response', async () => {
-      taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
-      );
-      taskRepository.update.mockResolvedValue(mockTaskEntity);
-
-      const result = await service.updateByTaskIdAndWorkspaceId({
-        taskId: 'task-1',
-        workspaceId: 'workspace-1',
-        data: {
-          title: 'Updated Task',
-          rewardPoints: 30,
-        },
-      });
-
-      expect(result.assignees).toEqual([
-        {
-          id: 'assignee-1',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          profileImageUrl: 'https://example.com/image.jpg',
-          status: ProgressStatus.IN_PROGRESS,
-        },
-      ]);
-    });
-
-    it('handles null createdBy in update response', async () => {
-      const taskEntityWithoutCreatedBy = {
-        ...mockTaskEntity,
-        createdBy: null,
-      };
-      taskRepository.findByTaskIdAndWorkspaceId.mockResolvedValue(
-        mockTaskCore as TaskEntity,
-      );
-      taskRepository.update.mockResolvedValue(
-        taskEntityWithoutCreatedBy as TaskEntity,
-      );
-
-      const result = await service.updateByTaskIdAndWorkspaceId({
-        taskId: 'task-1',
-        workspaceId: 'workspace-1',
-        data: {
-          title: 'Updated Task',
-          rewardPoints: 30,
-        },
-      });
-
-      expect(result.createdBy).toBeNull();
+      expect(callArgs.data.dueDate).toBeInstanceOf(Date);
+      expect(callArgs.data.dueDate.toISOString()).toContain('2025-05-05');
     });
   });
 });

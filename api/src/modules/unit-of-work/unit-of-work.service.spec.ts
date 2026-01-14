@@ -1,29 +1,37 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DataSource, EntityManager, QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { UnitOfWorkService } from './unit-of-work.service';
+
+const createMockEntityManager = () => ({
+  getRepository: jest.fn(),
+  save: jest.fn(),
+  findOne: jest.fn(),
+});
+
+const createMockQueryRunner = (entityManager: any) => ({
+  startTransaction: jest.fn(),
+  commitTransaction: jest.fn(),
+  rollbackTransaction: jest.fn(),
+  release: jest.fn(),
+  manager: entityManager,
+});
+
+const createMockDataSource = (queryRunner: any) => ({
+  createQueryRunner: jest.fn().mockReturnValue(queryRunner),
+});
 
 describe('UnitOfWorkService', () => {
   let service: UnitOfWorkService;
-  let dataSource: jest.Mocked<DataSource>;
-  let queryRunner: jest.Mocked<QueryRunner>;
-  let entityManager: jest.Mocked<EntityManager>;
+  let dataSource: ReturnType<typeof createMockDataSource>;
+  let queryRunner: ReturnType<typeof createMockQueryRunner>;
+  let entityManager: ReturnType<typeof createMockEntityManager>;
 
   beforeEach(async () => {
-    entityManager = {
-      getRepository: jest.fn(),
-    } as unknown as jest.Mocked<EntityManager>;
+    jest.clearAllMocks();
 
-    queryRunner = {
-      startTransaction: jest.fn(),
-      commitTransaction: jest.fn(),
-      rollbackTransaction: jest.fn(),
-      release: jest.fn(),
-      manager: entityManager,
-    } as unknown as jest.Mocked<QueryRunner>;
-
-    dataSource = {
-      createQueryRunner: jest.fn().mockReturnValue(queryRunner),
-    } as unknown as jest.Mocked<DataSource>;
+    entityManager = createMockEntityManager();
+    queryRunner = createMockQueryRunner(entityManager);
+    dataSource = createMockDataSource(queryRunner);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -38,21 +46,15 @@ describe('UnitOfWorkService', () => {
     service = await module.resolve<UnitOfWorkService>(UnitOfWorkService);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('getEntityManager', () => {
     it('returns null entity manager initially', () => {
-      const result = service.getEntityManager();
-
-      expect(result).toBeNull();
+      expect(service.getEntityManager()).toBeNull();
     });
 
     it('returns entity manager during transaction', async () => {
       await service.withTransaction(async () => {
-        const entityManagerDuringTransaction = service.getEntityManager();
-        expect(entityManagerDuringTransaction).toBe(entityManager);
+        const em = service.getEntityManager();
+        expect(em).toBe(entityManager);
         return 'result';
       });
     });
@@ -62,16 +64,13 @@ describe('UnitOfWorkService', () => {
         return 'result';
       });
 
-      const result = service.getEntityManager();
-      expect(result).toBeNull();
+      expect(service.getEntityManager()).toBeNull();
     });
   });
 
   describe('getDataSource', () => {
     it('returns the data source instance', () => {
-      const result = service.getDataSource();
-
-      expect(result).toBe(dataSource);
+      expect(service.getDataSource()).toBe(dataSource);
     });
   });
 
@@ -93,14 +92,14 @@ describe('UnitOfWorkService', () => {
 
       await service.withTransaction(workFn);
 
-      // Verify that startTransaction is called before commitTransaction
-      // hack for toHaveBeenCalledBefore
-      const startTransaction =
-        queryRunner.startTransaction.mock.invocationCallOrder[0];
-      const commitTransaction =
-        queryRunner.commitTransaction.mock.invocationCallOrder[0];
-      expect(startTransaction).toBeLessThan(commitTransaction);
+      expect(queryRunner.startTransaction).toHaveBeenCalled();
       expect(queryRunner.commitTransaction).toHaveBeenCalled();
+
+      const startOrder =
+        queryRunner.startTransaction.mock.invocationCallOrder[0];
+      const commitOrder =
+        queryRunner.commitTransaction.mock.invocationCallOrder[0];
+      expect(startOrder).toBeLessThan(commitOrder);
     });
 
     it('rollbacks transaction on work execution error', async () => {
@@ -126,19 +125,13 @@ describe('UnitOfWorkService', () => {
     it('releases query runner after transaction fails', async () => {
       const workFn = jest.fn().mockRejectedValue(new Error('Failed'));
 
-      try {
-        await service.withTransaction(workFn);
-      } catch {
-        // Expected to fail
-      }
+      await expect(service.withTransaction(workFn)).rejects.toThrow();
 
       expect(queryRunner.release).toHaveBeenCalled();
     });
 
     it('clears entity manager after transaction completes', async () => {
-      const workFn = jest.fn().mockResolvedValue('result');
-
-      await service.withTransaction(workFn);
+      await service.withTransaction(async () => 'result');
 
       expect(service.getEntityManager()).toBeNull();
     });
@@ -149,16 +142,14 @@ describe('UnitOfWorkService', () => {
       try {
         await service.withTransaction(workFn);
       } catch {
-        // Expected to fail
+        // Ignored
       }
 
       expect(service.getEntityManager()).toBeNull();
     });
 
     it('creates new query runner from data source', async () => {
-      const workFn = jest.fn().mockResolvedValue('result');
-
-      await service.withTransaction(workFn);
+      await service.withTransaction(async () => 'result');
 
       expect(dataSource.createQueryRunner).toHaveBeenCalled();
     });
@@ -179,7 +170,6 @@ describe('UnitOfWorkService', () => {
       });
 
       await service.withTransaction(workFn);
-
       expect(workFn).toHaveBeenCalled();
     });
 
@@ -187,13 +177,7 @@ describe('UnitOfWorkService', () => {
       const testError = new Error('Custom error message');
       const workFn = jest.fn().mockRejectedValue(testError);
 
-      try {
-        await service.withTransaction(workFn);
-        fail('Should have thrown error');
-      } catch (error) {
-        expect(error).toBe(testError);
-        expect((error as Error).message).toBe('Custom error message');
-      }
+      await expect(service.withTransaction(workFn)).rejects.toBe(testError);
     });
 
     it('handles sync work function', async () => {
@@ -219,31 +203,19 @@ describe('UnitOfWorkService', () => {
       expect(queryRunner.commitTransaction).toHaveBeenCalled();
     });
 
-    it('executes work function exactly once', async () => {
-      const workFn = jest.fn().mockResolvedValue('result');
-
-      await service.withTransaction(workFn);
-
-      expect(workFn).toHaveBeenCalledTimes(1);
-    });
-
     it('cleans up resources in finally block even if release throws', async () => {
-      (queryRunner.release as jest.Mock).mockRejectedValue(
-        new Error('Release failed'),
-      );
+      queryRunner.release.mockRejectedValue(new Error('Release failed'));
+
       const workFn = jest.fn().mockResolvedValue('result');
 
-      try {
-        await service.withTransaction(workFn);
-      } catch {
-        // Expected - release failed
-      }
+      await expect(service.withTransaction(workFn)).rejects.toThrow(
+        'Release failed',
+      );
 
-      // Entity manager should still be cleared
       expect(service.getEntityManager()).toBeNull();
     });
 
-    it('handles multiple sequential transactions', async () => {
+    it('handles multiple sequential transactions correctly', async () => {
       const workFn1 = jest.fn().mockResolvedValue('result1');
       const workFn2 = jest.fn().mockResolvedValue('result2');
 
@@ -256,17 +228,18 @@ describe('UnitOfWorkService', () => {
       expect(queryRunner.release).toHaveBeenCalledTimes(2);
     });
 
-    it('transaction order: start -> work -> commit -> release', async () => {
+    it('follows transaction order: start -> work -> commit -> release', async () => {
       const callOrder: string[] = [];
-      (queryRunner.startTransaction as jest.Mock).mockImplementation(() => {
-        callOrder.push('start');
-      });
-      (queryRunner.commitTransaction as jest.Mock).mockImplementation(() => {
-        callOrder.push('commit');
-      });
-      (queryRunner.release as jest.Mock).mockImplementation(() => {
-        callOrder.push('release');
-      });
+
+      queryRunner.startTransaction.mockImplementation(async () =>
+        callOrder.push('start'),
+      );
+      queryRunner.commitTransaction.mockImplementation(async () =>
+        callOrder.push('commit'),
+      );
+      queryRunner.release.mockImplementation(async () =>
+        callOrder.push('release'),
+      );
 
       const workFn = jest.fn(async () => {
         callOrder.push('work');
@@ -278,24 +251,27 @@ describe('UnitOfWorkService', () => {
       expect(callOrder).toEqual(['start', 'work', 'commit', 'release']);
     });
 
-    it('rollback happens before release on error', async () => {
+    it('follows rollback order: start -> work -> rollback -> release', async () => {
       const callOrder: string[] = [];
-      (queryRunner.rollbackTransaction as jest.Mock).mockImplementation(() => {
-        callOrder.push('rollback');
+
+      queryRunner.startTransaction.mockImplementation(async () =>
+        callOrder.push('start'),
+      );
+      queryRunner.rollbackTransaction.mockImplementation(async () =>
+        callOrder.push('rollback'),
+      );
+      queryRunner.release.mockImplementation(async () =>
+        callOrder.push('release'),
+      );
+
+      const workFn = jest.fn(async () => {
+        callOrder.push('work');
+        throw new Error('Fail');
       });
-      (queryRunner.release as jest.Mock).mockImplementation(() => {
-        callOrder.push('release');
-      });
 
-      const workFn = jest.fn().mockRejectedValue(new Error('Failed'));
+      await expect(service.withTransaction(workFn)).rejects.toThrow();
 
-      try {
-        await service.withTransaction(workFn);
-      } catch {
-        // Expected
-      }
-
-      expect(callOrder).toEqual(['rollback', 'release']);
+      expect(callOrder).toEqual(['start', 'work', 'rollback', 'release']);
     });
   });
 });

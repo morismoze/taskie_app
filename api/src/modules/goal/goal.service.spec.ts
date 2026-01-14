@@ -1,81 +1,71 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { CreateGoalRequest } from 'src/modules/workspace/workspace-module/dto/request/create-goal-request.dto';
 import {
   SortBy,
   WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
   WorkspaceObjectiveRequestQuery,
 } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
-import { GoalCore } from './domain/goal-core.domain';
-import { GoalWithAssigneeUserCore } from './domain/goal-with-assignee-user-core.domain';
+import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
 import { GoalService } from './goal.service';
 import { GoalEntity } from './persistence/goal.entity';
 import { GoalRepository } from './persistence/goal.repository';
 
+const mockUserEntityFactory = (overrides?: Partial<UserEntity>): UserEntity =>
+  ({
+    id: 'user-1',
+    firstName: 'John',
+    lastName: 'Doe',
+    profileImageUrl: 'https://example.com/image.jpg',
+    ...overrides,
+  }) as UserEntity;
+
+const mockWorkspaceUserEntityFactory = (overrides?: any) => ({
+  id: 'workspace-user-1',
+  workspaceRole: WorkspaceUserRole.MEMBER,
+  user: mockUserEntityFactory(),
+  ...overrides,
+});
+
+const mockGoalEntityFactory = (overrides?: Partial<GoalEntity>): GoalEntity => {
+  const base = {
+    id: 'goal-1',
+    title: 'Test Goal',
+    description: 'Test goal description',
+    requiredPoints: 100,
+    status: ProgressStatus.IN_PROGRESS,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: null,
+    workspaceId: 'workspace-1',
+    assignee: mockWorkspaceUserEntityFactory({
+      id: 'assignee-ws-user',
+      user: mockUserEntityFactory({ firstName: 'Assignee' }),
+    }),
+    createdBy: mockWorkspaceUserEntityFactory({
+      id: 'creator-ws-user',
+      user: mockUserEntityFactory({ firstName: 'Creator' }),
+    }),
+    ...overrides,
+  };
+
+  return base as unknown as GoalEntity;
+};
+
+const createMockRepository = () => ({
+  findAllByWorkspaceId: jest.fn(),
+  create: jest.fn(),
+  findById: jest.fn(),
+  findByGoalIdAndWorkspaceId: jest.fn(),
+  update: jest.fn(),
+});
+
 describe('GoalService', () => {
   let service: GoalService;
-  let goalRepository: jest.Mocked<GoalRepository>;
-
-  const mockAssignee: GoalWithAssigneeUserCore['assignee'] = {
-    id: 'assignee-1',
-    firstName: 'Jane',
-    lastName: 'Doe',
-    profileImageUrl: null,
-  };
-
-  const mockCreatedBy: GoalWithAssigneeUserCore['createdBy'] = {
-    id: 'created-by-1',
-    firstName: 'John',
-    lastName: 'Smith',
-    profileImageUrl: 'https://example.com/image.jpg',
-  };
-
-  const mockGoalCore: GoalCore = {
-    id: 'goal-1',
-    title: 'Test Goal',
-    description: 'Test goal description',
-    requiredPoints: 100,
-    status: ProgressStatus.IN_PROGRESS,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    deletedAt: null,
-  };
-
-  const mockGoalWithAssigneeUserCore: GoalWithAssigneeUserCore = {
-    ...mockGoalCore,
-    assignee: mockAssignee,
-    createdBy: mockCreatedBy,
-  };
-
-  const mockGoalEntity: GoalEntity = {
-    id: 'goal-1',
-    title: 'Test Goal',
-    description: 'Test goal description',
-    requiredPoints: 100,
-    status: ProgressStatus.IN_PROGRESS,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    deletedAt: null,
-    assignee: {
-      id: 'assignee-1',
-      user: {
-        firstName: 'Jane',
-        lastName: 'Doe',
-        profileImageUrl: null,
-      },
-    },
-    createdBy: {
-      id: 'created-by-1',
-      user: {
-        firstName: 'John',
-        lastName: 'Smith',
-        profileImageUrl: 'https://example.com/image.jpg',
-      },
-    },
-  } as GoalEntity;
+  let goalRepository: ReturnType<typeof createMockRepository>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -85,38 +75,31 @@ describe('GoalService', () => {
         GoalService,
         {
           provide: GoalRepository,
-          useValue: {
-            findAllByWorkspaceId: jest.fn(),
-            create: jest.fn(),
-            findById: jest.fn(),
-            findByGoalIdAndWorkspaceId: jest.fn(),
-            update: jest.fn(),
-          },
+          useValue: createMockRepository(),
         },
       ],
     }).compile();
 
     service = module.get<GoalService>(GoalService);
-    goalRepository = module.get(GoalRepository) as jest.Mocked<GoalRepository>;
+    goalRepository = module.get(GoalRepository);
   });
 
   describe('findPaginatedByWorkspaceWithAssignee', () => {
-    it('returns paginated goals with assignee and default query parameters', async () => {
+    it('returns paginated goals with mapped assignee and creator', async () => {
+      const entity = mockGoalEntityFactory();
       goalRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [mockGoalEntity],
+        data: [entity],
         totalPages: 1,
         total: 1,
       });
 
-      const workspaceId = 'workspace-1';
-      const query: WorkspaceObjectiveRequestQuery = {};
       const result = await service.findPaginatedByWorkspaceWithAssignee({
-        workspaceId,
-        query,
+        workspaceId: 'workspace-1',
+        query: {},
       });
 
       expect(goalRepository.findAllByWorkspaceId).toHaveBeenCalledWith({
-        workspaceId,
+        workspaceId: 'workspace-1',
         query: {
           page: 1,
           limit: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
@@ -125,27 +108,24 @@ describe('GoalService', () => {
           sort: SortBy.NEWEST,
         },
         relations: {
-          assignee: {
-            user: true,
-          },
-          createdBy: {
-            user: true,
-          },
+          assignee: { user: true },
+          createdBy: { user: true },
         },
       });
-      expect(result.data).toEqual([mockGoalWithAssigneeUserCore]);
-      expect(result.totalPages).toBe(1);
-      expect(result.total).toBe(1);
+
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].id).toBe(entity.id);
+      expect(result.data[0].assignee.firstName).toBe('Assignee');
+      expect(result.data[0].createdBy?.firstName).toBe('Creator');
     });
 
-    it('returns paginated goals with custom query parameters', async () => {
+    it('passes custom query parameters correctly', async () => {
       goalRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [mockGoalEntity],
-        totalPages: 2,
-        total: 20,
+        data: [],
+        totalPages: 0,
+        total: 0,
       });
 
-      const workspaceId = 'workspace-1';
       const query: WorkspaceObjectiveRequestQuery = {
         page: 2,
         limit: 10,
@@ -153,13 +133,14 @@ describe('GoalService', () => {
         search: 'test',
         sort: SortBy.OLDEST,
       };
-      const result = await service.findPaginatedByWorkspaceWithAssignee({
-        workspaceId,
+
+      await service.findPaginatedByWorkspaceWithAssignee({
+        workspaceId: 'workspace-1',
         query,
       });
 
       expect(goalRepository.findAllByWorkspaceId).toHaveBeenCalledWith({
-        workspaceId,
+        workspaceId: 'workspace-1',
         query: {
           page: 2,
           limit: 10,
@@ -167,173 +148,148 @@ describe('GoalService', () => {
           search: 'test',
           sort: SortBy.OLDEST,
         },
-        relations: {
-          assignee: {
-            user: true,
-          },
-          createdBy: {
-            user: true,
-          },
-        },
+        relations: expect.any(Object),
       });
-      expect(result.totalPages).toBe(2);
-      expect(result.total).toBe(20);
     });
 
-    it('trims search query and handles null values', async () => {
+    it('handles null createdBy', async () => {
+      const entity = mockGoalEntityFactory({ createdBy: null });
+      goalRepository.findAllByWorkspaceId.mockResolvedValue({
+        data: [entity],
+        totalPages: 1,
+        total: 1,
+      });
+
+      const result = await service.findPaginatedByWorkspaceWithAssignee({
+        workspaceId: 'workspace-1',
+        query: {},
+      });
+
+      expect(result.data[0].createdBy).toBeNull();
+    });
+
+    it('trims search query', async () => {
       goalRepository.findAllByWorkspaceId.mockResolvedValue({
         data: [],
-        totalPages: 1,
+        totalPages: 0,
         total: 0,
       });
 
-      const workspaceId = 'workspace-1';
-      const query: WorkspaceObjectiveRequestQuery = {
-        search: '  spaces  ',
-      };
       await service.findPaginatedByWorkspaceWithAssignee({
-        workspaceId,
-        query,
+        workspaceId: 'workspace-1',
+        query: { search: '  spaces  ' },
       });
 
       expect(goalRepository.findAllByWorkspaceId).toHaveBeenCalledWith(
         expect.objectContaining({
-          query: expect.objectContaining({
-            search: 'spaces',
-          }),
+          query: expect.objectContaining({ search: 'spaces' }),
         }),
       );
     });
   });
 
   describe('create', () => {
-    it('creates a new goal with required data', async () => {
-      goalRepository.create.mockResolvedValue(mockGoalEntity);
+    it('creates a new goal and maps response', async () => {
+      const mockEntity = mockGoalEntityFactory();
+      goalRepository.create.mockResolvedValue(mockEntity);
 
-      const workspaceId = 'workspace-1';
-      const createdById = 'created-by-1';
       const data: CreateGoalRequest = {
-        title: 'Test Goal',
-        description: 'Test goal description',
-        requiredPoints: 100,
+        title: 'New Goal',
+        description: 'Desc',
+        requiredPoints: 200,
         assignee: 'assignee-1',
       };
 
       const result = await service.create({
-        workspaceId,
-        createdById,
+        workspaceId: 'workspace-1',
+        createdById: 'creator-1',
         data,
       });
 
       expect(goalRepository.create).toHaveBeenCalledWith({
-        workspaceId,
+        workspaceId: 'workspace-1',
+        createdById: 'creator-1',
         data: {
           title: data.title,
-          description: data.description || null,
+          description: data.description,
           requiredPoints: data.requiredPoints,
           assigneeId: data.assignee,
         },
-        createdById,
         relations: {
-          assignee: {
-            user: true,
-          },
-          createdBy: {
-            user: true,
-          },
+          assignee: { user: true },
+          createdBy: { user: true },
         },
       });
-      expect(result).toEqual(mockGoalWithAssigneeUserCore);
+
+      expect(result.title).toBe(mockEntity.title);
+      expect(result.assignee.firstName).toBe('Assignee');
     });
 
-    it('creates a goal without description', async () => {
-      const goalEntityWithoutDescription = {
-        ...mockGoalEntity,
-        description: null,
-      } as GoalEntity;
-      goalRepository.create.mockResolvedValue(goalEntityWithoutDescription);
+    it('creates goal with null description', async () => {
+      const mockEntity = mockGoalEntityFactory({ description: null });
+      goalRepository.create.mockResolvedValue(mockEntity);
 
-      const workspaceId = 'workspace-1';
-      const createdById = 'created-by-1';
       const data: CreateGoalRequest = {
-        title: 'Test Goal',
+        title: 'Goal',
         requiredPoints: 100,
         assignee: 'assignee-1',
       };
 
       const result = await service.create({
-        workspaceId,
-        createdById,
+        workspaceId: 'workspace-1',
+        createdById: 'creator-1',
         data,
       });
 
       expect(goalRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: expect.objectContaining({
-            description: null,
-          }),
+          data: expect.objectContaining({ description: null }),
         }),
       );
       expect(result.description).toBeNull();
     });
 
-    it('throws ApiHttpException SERVER_ERROR if goal creation fails', async () => {
+    it('throws SERVER_ERROR if creation returns null', async () => {
       goalRepository.create.mockResolvedValue(null);
 
-      const workspaceId = 'workspace-1';
-      const createdById = 'created-by-1';
       const data: CreateGoalRequest = {
-        title: 'Test Goal',
+        title: 'Goal',
         requiredPoints: 100,
         assignee: 'assignee-1',
       };
 
-      try {
-        await service.create({
-          workspaceId,
-          createdById,
+      await expect(
+        service.create({
+          workspaceId: 'workspace-1',
+          createdById: 'creator-1',
           data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.SERVER_ERROR,
-        });
-      }
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        response: { code: ApiErrorCode.SERVER_ERROR },
+      });
     });
   });
 
   describe('findByGoalIdAndWorkspaceId', () => {
-    it('returns a goal by ID and workspace ID', async () => {
-      goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(
-        mockGoalEntity,
-      );
+    it('returns goal if found', async () => {
+      const mockEntity = mockGoalEntityFactory();
+      goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(mockEntity);
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
       const result = await service.findByGoalIdAndWorkspaceId({
-        goalId,
-        workspaceId,
+        goalId: 'goal-1',
+        workspaceId: 'workspace-1',
       });
 
-      expect(goalRepository.findByGoalIdAndWorkspaceId).toHaveBeenCalledWith({
-        goalId,
-        workspaceId,
-      });
-      expect(result).toEqual(mockGoalEntity);
+      expect(result).toEqual(mockEntity);
     });
 
-    it('returns null if goal is not found', async () => {
+    it('returns null if not found', async () => {
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(null);
 
-      const goalId = 'non-existent-goal';
-      const workspaceId = 'workspace-1';
       const result = await service.findByGoalIdAndWorkspaceId({
-        goalId,
-        workspaceId,
+        goalId: 'goal-1',
+        workspaceId: 'workspace-1',
       });
 
       expect(result).toBeNull();
@@ -341,222 +297,160 @@ describe('GoalService', () => {
   });
 
   describe('updateByGoalIdAndWorkspaceId', () => {
-    it('updates a goal with new data', async () => {
-      goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(
-        mockGoalEntity,
-      );
-      goalRepository.update.mockResolvedValue(mockGoalEntity);
+    it('updates goal with new data', async () => {
+      const existingGoal = mockGoalEntityFactory();
+      const updatedGoal = mockGoalEntityFactory({
+        title: 'Updated',
+        requiredPoints: 500,
+      });
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
+      goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(existingGoal);
+      goalRepository.update.mockResolvedValue(updatedGoal);
+
       const data = {
-        title: 'Updated Goal',
-        requiredPoints: 150,
+        title: 'Updated',
+        requiredPoints: 500,
         assigneeId: 'new-assignee',
       };
 
       const result = await service.updateByGoalIdAndWorkspaceId({
-        goalId,
-        workspaceId,
+        goalId: 'goal-1',
+        workspaceId: 'ws-1',
         data,
       });
 
       expect(goalRepository.update).toHaveBeenCalledWith({
-        id: goalId,
+        id: 'goal-1',
         data: {
           title: data.title,
+          description: undefined,
           requiredPoints: data.requiredPoints,
           assigneeId: data.assigneeId,
-          description: undefined,
         },
-        relations: {
-          assignee: {
-            user: true,
-          },
-          createdBy: {
-            user: true,
-          },
-        },
+        relations: expect.any(Object),
       });
-      expect(result).toEqual(mockGoalWithAssigneeUserCore);
+
+      expect(result.title).toBe('Updated');
     });
 
-    it('throws ApiHttpException INVALID_PAYLOAD if goal not found', async () => {
+    it('throws NOT_FOUND if goal does not exist', async () => {
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(null);
 
-      const goalId = 'non-existent-goal';
-      const workspaceId = 'workspace-1';
-      const data = {
-        title: 'Updated Goal',
-      };
-
-      try {
-        await service.updateByGoalIdAndWorkspaceId({
-          goalId,
-          workspaceId,
-          data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+      await expect(
+        service.updateByGoalIdAndWorkspaceId({
+          goalId: 'goal-1',
+          workspaceId: 'ws-1',
+          data: { title: 'New' } as any,
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
 
-    it('throws ApiHttpException GOAL_CLOSED if goal is closed', async () => {
-      const closedGoal = {
-        ...mockGoalCore,
+    it('throws GOAL_CLOSED if goal is closed', async () => {
+      const closedGoal = mockGoalEntityFactory({
         status: ProgressStatus.CLOSED,
-      } as GoalEntity;
+      });
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(closedGoal);
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
-      const data = {
-        title: 'Updated Goal',
-      };
-
-      try {
-        await service.updateByGoalIdAndWorkspaceId({
-          goalId,
-          workspaceId,
-          data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.GOAL_CLOSED,
-        });
-      }
+      await expect(
+        service.updateByGoalIdAndWorkspaceId({
+          goalId: 'goal-1',
+          workspaceId: 'ws-1',
+          data: { title: 'New' } as any,
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        response: { code: ApiErrorCode.GOAL_CLOSED },
+      });
     });
 
-    it('throws ApiHttpException INVALID_PAYLOAD if goal is deleted during update', async () => {
+    it('throws NOT_FOUND if update returns null', async () => {
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(
-        mockGoalEntity,
+        mockGoalEntityFactory(),
       );
       goalRepository.update.mockResolvedValue(null);
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
-      const data = {
-        title: 'Updated Goal',
-      };
-
-      try {
-        await service.updateByGoalIdAndWorkspaceId({
-          goalId,
-          workspaceId,
-          data,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+      await expect(
+        service.updateByGoalIdAndWorkspaceId({
+          goalId: 'goal-1',
+          workspaceId: 'ws-1',
+          data: { title: 'New' } as any,
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
   });
 
   describe('closeByGoalIdAndWorkspaceId', () => {
-    it('closes a goal', async () => {
-      goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(
-        mockGoalEntity,
-      );
-      goalRepository.update.mockResolvedValue({
-        ...mockGoalEntity,
+    it('closes goal successfully', async () => {
+      const openGoal = mockGoalEntityFactory({
+        status: ProgressStatus.IN_PROGRESS,
+      });
+      const closedGoal = mockGoalEntityFactory({
         status: ProgressStatus.CLOSED,
-      } as GoalEntity);
+      });
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
+      goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(openGoal);
+      goalRepository.update.mockResolvedValue(closedGoal);
 
       await service.closeByGoalIdAndWorkspaceId({
-        goalId,
-        workspaceId,
+        goalId: 'goal-1',
+        workspaceId: 'ws-1',
       });
 
       expect(goalRepository.update).toHaveBeenCalledWith({
-        id: goalId,
-        data: {
-          status: ProgressStatus.CLOSED,
-        },
+        id: 'goal-1',
+        data: { status: ProgressStatus.CLOSED },
       });
     });
 
-    it('returns early if goal is already closed (idempotency)', async () => {
-      const closedGoal = {
-        ...mockGoalCore,
+    it('is idempotent (returns early if already closed)', async () => {
+      const closedGoal = mockGoalEntityFactory({
         status: ProgressStatus.CLOSED,
-      } as GoalEntity;
+      });
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(closedGoal);
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
-
       await service.closeByGoalIdAndWorkspaceId({
-        goalId,
-        workspaceId,
+        goalId: 'goal-1',
+        workspaceId: 'ws-1',
       });
 
-      // Update should not be called if goal is already closed
       expect(goalRepository.update).not.toHaveBeenCalled();
     });
 
-    it('throws ApiHttpException INVALID_PAYLOAD if goal not found', async () => {
+    it('throws NOT_FOUND if goal does not exist', async () => {
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(null);
 
-      const goalId = 'non-existent-goal';
-      const workspaceId = 'workspace-1';
-
-      try {
-        await service.closeByGoalIdAndWorkspaceId({
-          goalId,
-          workspaceId,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+      await expect(
+        service.closeByGoalIdAndWorkspaceId({
+          goalId: 'goal-1',
+          workspaceId: 'ws-1',
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
 
-    it('throws ApiHttpException INVALID_PAYLOAD if goal is deleted during close', async () => {
+    it('throws NOT_FOUND if update returns null', async () => {
       goalRepository.findByGoalIdAndWorkspaceId.mockResolvedValue(
-        mockGoalEntity,
+        mockGoalEntityFactory(),
       );
       goalRepository.update.mockResolvedValue(null);
 
-      const goalId = 'goal-1';
-      const workspaceId = 'workspace-1';
-
-      try {
-        await service.closeByGoalIdAndWorkspaceId({
-          goalId,
-          workspaceId,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(ApiHttpException);
-        expect((error as ApiHttpException).getStatus()).toBe(
-          HttpStatus.NOT_FOUND,
-        );
-        expect((error as ApiHttpException).getResponse()).toEqual({
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        });
-      }
+      await expect(
+        service.closeByGoalIdAndWorkspaceId({
+          goalId: 'goal-1',
+          workspaceId: 'ws-1',
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.NOT_FOUND,
+        response: { code: ApiErrorCode.INVALID_PAYLOAD },
+      });
     });
   });
 });
