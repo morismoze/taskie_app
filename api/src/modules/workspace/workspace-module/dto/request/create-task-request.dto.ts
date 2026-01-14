@@ -58,7 +58,7 @@ export class CreateTaskRequest {
   })
   @IsOptional()
   @IsValidTaskDueDate()
-  dueDate: string | null;
+  dueDate?: string | null;
 
   @ApiProperty({
     description: 'Array of WorkspaceUser IDs',
