@@ -36,8 +36,10 @@ export class UnitOfWorkService {
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
-      await queryRunner.release();
+      // Before release, clear the entity manager, in case
+      // release throws an error (though unlikely)
       this.entityManager = null;
+      await queryRunner.release();
     }
   }
 }

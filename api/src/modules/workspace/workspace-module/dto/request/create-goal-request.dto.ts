@@ -23,7 +23,7 @@ export class CreateGoalRequest {
     maxLength: OBJECTIVE_NAME_MAX_CHARS,
   })
   @IsValidGoalTitle()
-  title!: string;
+  title: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -32,7 +32,7 @@ export class CreateGoalRequest {
   })
   @IsOptional()
   @IsValidGoalDescription()
-  description!: string | null;
+  description?: string | null;
 
   @ApiProperty({
     description: `Required points must be an integer between ${TASK_REWARD_POINTS_MINIMAL} and ${GOAL_REQUIRED_POINTS_MAXIMAL}, and a multiple of ${TASK_REWARD_POINTS_STEP}.`,
@@ -41,14 +41,14 @@ export class CreateGoalRequest {
     multipleOf: TASK_REWARD_POINTS_STEP,
   })
   @IsValidGoalRequiredPoints()
-  requiredPoints!: number;
+  requiredPoints: number;
 
   @ApiProperty({
     description: 'WorkspaceUser ID',
     format: 'uuid',
   })
   @IsValidGoalAssignee()
-  assignee!: string;
+  assignee: string;
 
   constructor(
     title: string,

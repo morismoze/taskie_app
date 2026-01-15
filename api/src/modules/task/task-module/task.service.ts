@@ -97,10 +97,10 @@ export class TaskService {
       workspaceId,
       data: {
         title: data.title,
-        description: data.description,
+        description: data.description ?? null,
         rewardPoints: data.rewardPoints,
         dueDate:
-          data.dueDate === null
+          data.dueDate === null || data.dueDate === undefined
             ? null
             : DateTime.fromISO(data.dueDate).toJSDate(),
       },
