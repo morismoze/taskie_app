@@ -16,7 +16,7 @@ export class CreateWorkspaceRequest {
     maxLength: WORKSPACE_NAME_MAX_CHARS,
   })
   @IsValidWorkspaceName()
-  name!: string;
+  name: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -25,7 +25,7 @@ export class CreateWorkspaceRequest {
   })
   @IsOptional()
   @IsValidWorkspaceDescription()
-  description!: string | null;
+  description?: string | null;
 
   constructor(name: string, description?: string | null) {
     this.name = name;

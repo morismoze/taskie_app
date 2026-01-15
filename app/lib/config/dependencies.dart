@@ -27,7 +27,6 @@ import '../data/repositories/workspace/workspace_task/workspace_task_repository_
 import '../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
 import '../data/repositories/workspace/workspace_user/workspace_user_repository_impl.dart';
 import '../data/services/api/api_client.dart';
-import '../data/services/api/api_deeplink_client.dart';
 import '../data/services/api/auth/auth_api_service.dart';
 import '../data/services/api/user/user_api_service.dart';
 import '../data/services/api/workspace/workspace/workspace_api_service.dart';
@@ -73,13 +72,6 @@ List<SingleChildWidget> get providers {
     ),
     Provider(
       create: (context) => ApiClient(
-        authStateRepository: context.read(),
-        clientInfoService: context.read(),
-        authEventBus: context.read(),
-      ),
-    ),
-    Provider(
-      create: (context) => ApiDeepLinkClient(
         authStateRepository: context.read(),
         clientInfoService: context.read(),
         authEventBus: context.read(),

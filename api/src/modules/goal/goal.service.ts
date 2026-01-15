@@ -103,12 +103,6 @@ export class GoalService {
     return this.toGoalWithAssigneeUserCore(newGoal);
   }
 
-  async findById(id: Goal['id']): Promise<Nullable<GoalCore>> {
-    return this.goalRepository.findById({
-      id,
-    });
-  }
-
   async findByGoalIdAndWorkspaceId({
     goalId,
     workspaceId,
