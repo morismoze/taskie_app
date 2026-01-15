@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'api_response.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true, createToJson: false)
 class ApiResponse<T> {
   ApiResponse({this.data, this.error});
 
@@ -15,14 +15,67 @@ class ApiResponse<T> {
   ) => _$ApiResponseFromJson(json, fromJsonT);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ApiError {
   ApiError({required this.code, this.context});
 
-  final String code;
+  final ApiErrorCode code;
   final String? context;
 
   factory ApiError.fromJson(Map<String, dynamic> json) =>
       _$ApiErrorFromJson(json);
-  Map<String, dynamic> toJson() => _$ApiErrorToJson(this);
+}
+
+enum ApiErrorCode {
+  @JsonValue('0')
+  serverError(0),
+
+  @JsonValue('1')
+  invalidPayload(1),
+
+  @JsonValue('2')
+  emailAlreadyExists(2),
+
+  @JsonValue('3')
+  workspaceInviteAlreadyUsed(3),
+
+  @JsonValue('4')
+  workspaceInviteExpired(4),
+
+  @JsonValue('5')
+  workspaceInviteExistingUser(5),
+
+  @JsonValue('6')
+  notFoundWorkspaceInviteToken(6),
+
+  @JsonValue('7')
+  taskClosed(7),
+
+  @JsonValue('8')
+  taskAssigneesCountMaxedOut(8),
+
+  @JsonValue('9')
+  taskAssigneesInvalid(9),
+
+  @JsonValue('10')
+  taskAssigneesAlreadyExist(10),
+
+  @JsonValue('11')
+  goalClosed(11),
+
+  @JsonValue('12')
+  taskAssignmentsCompletedStatusDueDatePassed(12),
+
+  @JsonValue('13')
+  workspaceAccessRevoked(13),
+
+  @JsonValue('14')
+  insufficientPermissions(14),
+
+  @JsonValue('15')
+  soleManagerConflict(15);
+
+  const ApiErrorCode(this.code);
+
+  final int code;
 }

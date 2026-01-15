@@ -1,17 +1,13 @@
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import { FindOptionsRelations } from 'typeorm';
 import { Goal } from '../domain/goal.domain';
 import { GoalEntity } from './goal.entity';
 
 export abstract class GoalRepository {
-  abstract create({
-    data,
-    workspaceId,
-    createdById,
-    relations,
-  }: {
+  abstract create(args: {
     data: {
       title: Goal['title'];
       description: Goal['description'];
@@ -23,46 +19,34 @@ export abstract class GoalRepository {
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
-  abstract findById({
-    id,
-    relations,
-  }: {
+  abstract findById(args: {
     id: Goal['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
-  abstract findByGoalIdAndWorkspaceId({
-    goalId,
-    workspaceId,
-    relations,
-  }: {
+  abstract findByGoalIdAndWorkspaceId(args: {
     goalId: Goal['id'];
     workspaceId: Goal['workspace']['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>>;
 
-  abstract findAllByWorkspaceId({
-    workspaceId,
-    query: { page, limit, status, search },
-    relations,
-  }: {
+  abstract findAllByWorkspaceId(args: {
     workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
       limit: number;
-      status: ProgressStatus;
+      sort: SortBy;
+      status: ProgressStatus | null;
       search: string | null;
     };
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{
     data: GoalEntity[];
+    totalPages: number;
     total: number;
   }>;
 
-  abstract update({
-    id,
-    data,
-  }: {
+  abstract update(args: {
     id: Goal['id'];
     data: Partial<
       Omit<

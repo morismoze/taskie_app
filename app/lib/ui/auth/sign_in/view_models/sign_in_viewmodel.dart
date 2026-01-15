@@ -1,5 +1,4 @@
-import 'package:logging/logging.dart';
-
+import '../../../../data/repositories/auth/auth_id_provider_repository.dart';
 import '../../../../domain/use_cases/sign_in_use_case.dart';
 import '../../../../utils/command.dart';
 
@@ -10,20 +9,17 @@ class SignInViewModel {
   }
 
   final SignInUseCase _signInUseCase;
-  final _log = Logger('SignInViewModel');
 
   late Command0 signInWithGoogle;
 
   Future<Result<void>> _signInWithGoogle() async {
-    final result = await _signInUseCase.signInWithGoogle();
+    final result = await _signInUseCase.signIn(AuthProvider.google);
 
     switch (result) {
       case Ok():
-        break;
+        return const Result.ok(null);
       case Error():
-        _log.warning('Failed to sign the user in via Google', result.error);
+        return result;
     }
-
-    return result;
   }
 }

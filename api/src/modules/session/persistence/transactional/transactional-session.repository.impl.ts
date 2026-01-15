@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { FindOptionsRelations, Repository } from 'typeorm';
@@ -6,13 +7,24 @@ import { Session } from '../../domain/session.domain';
 import { SessionEntity } from '../session.entity';
 import { TransactionalSessionRepository } from './transactional-session.repository';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TransactionalSessionRepositoryImpl
   implements TransactionalSessionRepository
 {
   constructor(
+    @InjectRepository(SessionEntity)
+    private readonly repo: Repository<SessionEntity>,
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
+
+  private get repositoryContext(): Repository<SessionEntity> {
+    const transactional =
+      this.transactionalRepository.getRepository(SessionEntity);
+
+    // If there is a transactional repo available (a transaction bound to the
+    // request is available), use it. Otherwise, use normal repo.
+    return transactional || this.repo;
+  }
 
   async create({
     data: { userId, hash, ipAddress, deviceModel, osVersion, appVersion },
@@ -28,7 +40,7 @@ export class TransactionalSessionRepositoryImpl
     };
     relations?: FindOptionsRelations<SessionEntity>;
   }): Promise<Nullable<SessionEntity>> {
-    const persistenceModel = this.transactionalSessionRepo.create({
+    const persistenceModel = this.repositoryContext.create({
       appVersion,
       osVersion,
       deviceModel,
@@ -39,10 +51,9 @@ export class TransactionalSessionRepositoryImpl
       },
     });
 
-    const savedEntity =
-      await this.transactionalSessionRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalSessionRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
       relations,
     });
@@ -50,7 +61,55 @@ export class TransactionalSessionRepositoryImpl
     return newEntity;
   }
 
-  private get transactionalSessionRepo(): Repository<SessionEntity> {
-    return this.transactionalRepository.getRepository(SessionEntity);
+  findById({
+    id,
+    relations,
+  }: {
+    id: Session['id'];
+    relations?: FindOptionsRelations<SessionEntity>;
+  }): Promise<Nullable<SessionEntity>> {
+    return this.repositoryContext.findOne({
+      where: { id },
+      relations,
+    });
+  }
+
+  async update({
+    id,
+    data,
+    relations,
+  }: {
+    id: Session['id'];
+    data: Partial<
+      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user'>
+    >;
+    relations?: FindOptionsRelations<SessionEntity>;
+  }): Promise<Nullable<SessionEntity>> {
+    const result = await this.repositoryContext.update(id, data);
+
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
+
+    const newEntity = await this.findById({
+      id,
+      relations,
+    });
+
+    return newEntity;
+  }
+
+  async incrementAccessTokenVersionByUserId(
+    id: Session['user']['id'],
+  ): Promise<void> {
+    const column: keyof SessionEntity = 'accessTokenVersion';
+
+    await this.repositoryContext.increment({ user: { id } }, column, 1);
+  }
+
+  async deleteById(id: Session['id']): Promise<boolean> {
+    const result = await this.repositoryContext.delete(id);
+    return (result.affected ?? 0) > 0;
   }
 }

@@ -1,13 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
-import { UpdateTaskAssignmentsRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignment-status-request.dto';
+import { UpdateTaskAssignmentsRequest } from 'src/modules/workspace/workspace-module/dto/request/update-task-assignment-request.dto';
 import { ProgressStatus } from '../task-module/domain/progress-status.enum';
-import { TaskService } from '../task-module/task.service';
+import { TASK_MAXIMUM_ASSIGNEES_COUNT } from '../task-module/domain/task.constants';
 import { TaskAssignmentCore } from './domain/task-assignment-core.domain';
 import { TaskAssignmentWithAssigneeUser } from './domain/task-assignment-with-assignee-user.domain';
+import { TaskAssignmentWithAssignee } from './domain/task-assignment-with-assignee.domain';
 import { TaskAssignment } from './domain/task-assignment.domain';
 import { TaskAssignmentRepository } from './persistence/task-assignment.repository';
 
@@ -16,7 +16,6 @@ export class TaskAssignmentService {
   constructor(
     private readonly taskAssignmentRepository: TaskAssignmentRepository,
     private readonly unitOfWorkService: UnitOfWorkService,
-    private readonly taskService: TaskService,
   ) {}
 
   async getAccumulatedPointsForWorkspaceUser({
@@ -26,38 +25,70 @@ export class TaskAssignmentService {
     workspaceId: string;
     workspaceUserId: string;
   }): Promise<number> {
-    const completedAssignments =
-      await this.taskAssignmentRepository.findyAllByAssigneeIdAndWorkspaceIdAndStatus(
-        {
-          workspaceUserId,
-          workspaceId,
-          status: ProgressStatus.COMPLETED,
-        },
-      );
-
-    let totalPoints = 0;
-    for (const assignment of completedAssignments) {
-      totalPoints += assignment.task.rewardPoints;
-    }
-    return totalPoints;
+    // Initial implementation was finding all Completed assignments
+    // of the given user in the given workspace. This is not good
+    // because we could read a large number of objects into RAM
+    // this way and kill the server.
+    return this.taskAssignmentRepository.sumPointsByAssignee({
+      workspaceId,
+      workspaceUserId,
+    });
   }
 
-  async create({
-    workspaceUserId,
+  async createMultiple({
+    assignments,
     taskId,
-    status,
   }: {
-    workspaceUserId: TaskAssignment['assignee']['id'];
+    assignments: Array<{
+      workspaceUserId: TaskAssignment['assignee']['id'];
+      status: TaskAssignment['status'];
+    }>;
     taskId: TaskAssignment['task']['id'];
-    status: TaskAssignment['status'];
-  }): Promise<TaskAssignmentCore> {
-    const newTaskAssignment = await this.taskAssignmentRepository.create({
-      workspaceUserId,
+  }): Promise<Array<TaskAssignmentWithAssigneeUser>> {
+    // Check if there already are 10 assignees assigned (= 10 assignments)
+    const taskAssignments = await this.findAllByTaskId(taskId);
+
+    if (taskAssignments.length === TASK_MAXIMUM_ASSIGNEES_COUNT) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNEES_COUNT_MAXED_OUT,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const workspaceUserIds = assignments.map(
+      (assignment) => assignment.workspaceUserId,
+    );
+
+    // Check if any of the provided assignee IDs already exists as assignment
+    const existingTaskAssignments = await this.findAllByTaskIdAndAssigneeIds({
       taskId,
-      status,
+      assigneeIds: workspaceUserIds,
     });
 
-    if (!newTaskAssignment) {
+    if (existingTaskAssignments.length > 0) {
+      // One or more provided assignee IDs already exist in task assignments for the given task
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.TASK_ASSIGNEES_ALREADY_EXIST,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const newTaskAssignments =
+      await this.taskAssignmentRepository.createMultiple({
+        assignments,
+        taskId,
+        relations: {
+          assignee: {
+            user: true,
+          },
+        },
+      });
+
+    if (newTaskAssignments.length !== assignments.length) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -66,21 +97,13 @@ export class TaskAssignmentService {
       );
     }
 
-    return newTaskAssignment;
+    return newTaskAssignments;
   }
 
-  async findByTaskId(
-    taskId: TaskAssignment['task']['id'],
-  ): Promise<Nullable<TaskAssignmentCore>> {
-    return await this.taskAssignmentRepository.findByTaskId({
-      id: taskId,
-    });
-  }
-
-  async findAllByTaskIdWithAssigneeUser(
+  findAllByTaskIdWithAssigneeUser(
     taskId: TaskAssignment['task']['id'],
   ): Promise<TaskAssignmentWithAssigneeUser[]> {
-    return await this.taskAssignmentRepository.findAllByTaskId({
+    return this.taskAssignmentRepository.findAllByTaskId({
       taskId,
       relations: {
         assignee: {
@@ -90,22 +113,140 @@ export class TaskAssignmentService {
     });
   }
 
-  async updateAssignessByTaskId({
+  findAllByTaskId(
+    taskId: TaskAssignment['task']['id'],
+  ): Promise<TaskAssignmentCore[]> {
+    return this.taskAssignmentRepository.findAllByTaskId({
+      taskId,
+    });
+  }
+
+  findAllByTaskIdAndAssigneeIds({
     taskId,
-    workspaceId,
+    assigneeIds,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+  }): Promise<TaskAssignmentCore[]> {
+    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeIds({
+      taskId,
+      assigneeIds,
+    });
+  }
+
+  findAllByTaskIdAndAssigneeIdsWithAssignee({
+    taskId,
+    assigneeIds,
+  }: {
+    taskId: TaskAssignment['task']['id'];
+    assigneeIds: Array<TaskAssignment['assignee']['id']>;
+  }): Promise<TaskAssignmentWithAssignee[]> {
+    return this.taskAssignmentRepository.findAllByTaskIdAndAssigneeIds({
+      taskId,
+      assigneeIds,
+      relations: {
+        assignee: true,
+      },
+    });
+  }
+
+  async updateAssignmentsByTaskId({
+    taskId,
     data,
   }: {
     taskId: TaskAssignment['task']['id'];
     workspaceId: TaskAssignment['task']['workspace']['id'];
     data: UpdateTaskAssignmentsRequest['assignments'];
   }): Promise<TaskAssignmentWithAssigneeUser[]> {
-    // 1. Check that the given task exists in the given workspace
-    const task = await this.taskService.findByTaskIdAndWorkspaceId({
-      taskId,
-      workspaceId,
+    await this.unitOfWorkService.withTransaction(async () => {
+      // We need to check if provided assignee IDs exist as this specific
+      // task assignments. Possible case is another Manager removed one or
+      // more of these workspace users. Also, we do this in the transaction
+      // for race condition edge cases.
+      const providedAssigneeIds = data.map((item) => item.assigneeId);
+      const existingTaskAssignments =
+        await this.findAllByTaskIdAndAssigneeIdsWithAssignee({
+          taskId,
+          assigneeIds: providedAssigneeIds,
+        });
+
+      if (existingTaskAssignments.length !== providedAssigneeIds.length) {
+        // One or more provided assignee IDs doesn't exist in task assignments for the given task
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.TASK_ASSIGNEES_INVALID,
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
+      for (const assignment of data) {
+        const existingAssignment = existingTaskAssignments.find(
+          (existingAssignment) =>
+            existingAssignment.assignee.id === assignment.assigneeId,
+        );
+        const isNewStatus =
+          existingAssignment && assignment.status !== existingAssignment.status;
+
+        if (existingAssignment && isNewStatus) {
+          const updatedTaskAssignment =
+            await this.taskAssignmentRepository.update({
+              id: existingAssignment.id,
+              data: { status: assignment.status },
+            });
+
+          if (!updatedTaskAssignment) {
+            // Another Manager deleted this assignment
+            // in the meantime.
+            // Not possible as there is no way for the
+            // user to delete assignments.
+            throw new ApiHttpException(
+              {
+                code: ApiErrorCode.INVALID_PAYLOAD,
+              },
+              HttpStatus.NOT_FOUND,
+            );
+          }
+        }
+      }
     });
 
-    if (!task) {
+    return this.findAllByTaskIdWithAssigneeUser(taskId);
+  }
+
+  /**
+   * This is idempotent solution because it uses Typeorm's
+   * delete funtion, which doesn't check if the record actually
+   * exists. This is actually a good solution for the case
+   * when a Manager2 tries to remove a assignee which was already
+   * removed by Manager1 (Manager2 had stale tasks response). In
+   * that case, 204 status will be sent to Manager2 (even though
+   * there was no actual deletion) and frontend will then manually
+   * remove that assignee from the tasks cache.
+   */
+  async deleteByTaskIdAndAssigneeId({
+    assigneeId,
+    taskId,
+  }: {
+    assigneeId: TaskAssignment['assignee']['id'];
+    taskId: TaskAssignment['task']['id'];
+  }): Promise<void> {
+    await this.taskAssignmentRepository.deleteByTaskIdAndAssigneeIds({
+      taskId,
+      assigneeIds: [assigneeId],
+    });
+  }
+
+  // Idempotent solution
+  async closeAssignmentsByTaskId(taskId: string): Promise<void> {
+    // Initial implementation was finding all assignments by taskId
+    // in the given workspace and then doing update query for each
+    // assignment. This is not optimal. Better solution is to do
+    // one larger query update by taskId.
+    const assignmentsCount =
+      await this.taskAssignmentRepository.countByTaskId(taskId);
+
+    if (assignmentsCount === 0) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.INVALID_PAYLOAD,
@@ -114,70 +255,28 @@ export class TaskAssignmentService {
       );
     }
 
-    // 2. Get task assignments
-    const taskAssignments = await this.findAllByTaskIdWithAssigneeUser(taskId);
-
-    if (taskAssignments.length === 0) {
-      // If there are no assignments, return empty array
-      return [];
-    }
-
-    const existingAssigneeMap = new Map(
-      taskAssignments.map((taskAssignment) => [
-        taskAssignment.assignee.id,
-        taskAssignment,
-      ]),
-    );
-    const updatedAssigneeMap = new Map(
-      data.map((item) => [item.assigneeId, item]),
-    );
-
-    const assigneeIdsToUpdate = Array.from(existingAssigneeMap.keys()).filter(
-      (id) => updatedAssigneeMap.has(id),
-    );
-    const assigneeIdsToRemove = Array.from(existingAssigneeMap.keys()).filter(
-      (existingAssigneeId) => !updatedAssigneeMap.has(existingAssigneeId),
-    );
-    const assigneeIdsToAdd = Array.from(updatedAssigneeMap.keys()).filter(
-      (updatedAssigneeId) => !existingAssigneeMap.has(updatedAssigneeId),
-    );
-
     await this.unitOfWorkService.withTransaction(async () => {
-      // 1. Delete task assignments if some assignees were removed from the task
-      if (assigneeIdsToRemove.length > 0) {
-        await this.taskAssignmentRepository.deleteByTaskIdAndAssigneeIds({
+      const updatedTaskAssignments =
+        await this.taskAssignmentRepository.updateAllByTaskId({
           taskId,
-          assigneeIds: assigneeIdsToRemove,
+          data: { status: ProgressStatus.CLOSED },
         });
-      }
 
-      // 2. Create new task assignments if there are new assignees
-      for (const assigneeId of assigneeIdsToAdd) {
-        await this.create({
-          workspaceUserId: assigneeId,
-          taskId,
-          status: ProgressStatus.IN_PROGRESS,
-        });
-      }
-
-      // 3. Update existing task assignments statuses if needed
-      for (const assigneeId of assigneeIdsToUpdate) {
-        const existingAssignment = existingAssigneeMap.get(assigneeId);
-        const newStatus = updatedAssigneeMap.get(assigneeId)!.status;
-
-        if (
-          existingAssignment &&
-          newStatus &&
-          existingAssignment.status !== newStatus
-        ) {
-          await this.taskAssignmentRepository.update({
-            id: existingAssignment.id,
-            data: { status: newStatus },
-          });
-        }
+      if (
+        !updatedTaskAssignments ||
+        updatedTaskAssignments.length != assignmentsCount
+      ) {
+        // Another Manager deleted this assignment
+        // in the meantime.
+        // Not possible as there is no way for the
+        // user to delete assignments.
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.INVALID_PAYLOAD,
+          },
+          HttpStatus.NOT_FOUND,
+        );
       }
     });
-
-    return this.findAllByTaskIdWithAssigneeUser(taskId);
   }
 }

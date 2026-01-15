@@ -7,6 +7,15 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { RequestWithUser } from './domain/request-with-user.domain';
@@ -15,8 +24,11 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { JwtRefreshPayload } from './strategies/jwt-refresh-payload.type';
 
+@ApiTags('Auth')
+@ApiBearerAuth()
 @Controller({
   path: 'auth',
+  version: '1',
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -24,7 +36,19 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
   @HttpCode(HttpStatus.OK)
-  refresh(
+  @ApiOperation({
+    summary: 'Refresh access token (use refresh token in the Bearer header)',
+  })
+  @ApiOkResponse({
+    type: TokenRefreshResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid refresh token',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal error while updating the session',
+  })
+  refreshToken(
     @Req() request: Request & { user: JwtRefreshPayload },
   ): Promise<TokenRefreshResponse> {
     return this.authService.refreshToken(request.user);
@@ -33,6 +57,13 @@ export class AuthController {
   @Delete('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Logout the user',
+  })
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({
+    description: 'Invalid access token',
+  })
   public async logout(@Req() request: RequestWithUser): Promise<void> {
     return this.authService.logout(request.user);
   }

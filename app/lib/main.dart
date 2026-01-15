@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'config/dependencies.dart';
+import 'data/services/local/database_service.dart';
+import 'data/services/local/logger_service.dart';
+import 'ui/localization_listener/view_models/locale_initializer_view_model.dart';
+import 'ui/localization_listener/widgets/locale_initializer.dart';
 
 /// Development config entry point.
 /// Launch with `derry run:development`
@@ -13,12 +16,21 @@ void main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    print(
-      '[${record.loggerName}] - ${record.level.name} - ${record.time} - ${record.message} - ${record.stackTrace}',
-    );
-  });
+  await DatabaseService.init();
 
-  runApp(MultiProvider(providers: providers, child: const MainApp()));
+  LoggerService.init();
+
+  runApp(
+    MultiProvider(
+      providers: providers,
+      child: Builder(
+        builder: (context) => LocaleInitializer(
+          viewModel: LocaleInitializerViewModel(
+            preferencesRepository: context.read(),
+          ),
+          child: const MainApp(),
+        ),
+      ),
+    ),
+  );
 }

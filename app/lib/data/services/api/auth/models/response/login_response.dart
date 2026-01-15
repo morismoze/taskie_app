@@ -4,7 +4,7 @@ import '../../../user/models/response/user_response.dart';
 
 part 'login_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class LoginResponse {
   LoginResponse({
     required this.accessToken,

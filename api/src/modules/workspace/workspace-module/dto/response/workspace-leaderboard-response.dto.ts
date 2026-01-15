@@ -1,10 +1,21 @@
-export interface LeaderboardUserResponse {
-  id: string; // WorkspaceUser ID
-  firstName: string;
-  lastName: string;
-  profileImageUrl: string | null;
-  accumulatedPoints: number;
-  completedTasks: number;
-}
+import { ApiProperty } from '@nestjs/swagger';
 
-export type WorkspaceLeaderboardResponse = LeaderboardUserResponse[];
+export class WorkspaceLeaderboardResponse {
+  @ApiProperty({ description: 'WorkspaceUser ID', format: 'uuid' })
+  id!: string;
+
+  @ApiProperty()
+  firstName!: string;
+
+  @ApiProperty()
+  lastName!: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  profileImageUrl!: string | null;
+
+  @ApiProperty()
+  accumulatedPoints!: number;
+
+  @ApiProperty()
+  completedTasks!: number;
+}

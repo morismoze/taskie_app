@@ -16,28 +16,31 @@ ApiResponse<T> _$ApiResponseFromJson<T>(
       : ApiError.fromJson(json['error'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$ApiResponseToJson<T>(
-  ApiResponse<T> instance,
-  Object? Function(T value) toJsonT,
-) => <String, dynamic>{
-  'data': _$nullableGenericToJson(instance.data, toJsonT),
-  'error': instance.error,
-};
-
 T? _$nullableGenericFromJson<T>(
   Object? input,
   T Function(Object? json) fromJson,
 ) => input == null ? null : fromJson(input);
 
-Object? _$nullableGenericToJson<T>(
-  T? input,
-  Object? Function(T value) toJson,
-) => input == null ? null : toJson(input);
+ApiError _$ApiErrorFromJson(Map<String, dynamic> json) => ApiError(
+  code: $enumDecode(_$ApiErrorCodeEnumMap, json['code']),
+  context: json['context'] as String?,
+);
 
-ApiError _$ApiErrorFromJson(Map<String, dynamic> json) =>
-    ApiError(code: json['code'] as String, context: json['context'] as String?);
-
-Map<String, dynamic> _$ApiErrorToJson(ApiError instance) => <String, dynamic>{
-  'code': instance.code,
-  'context': instance.context,
+const _$ApiErrorCodeEnumMap = {
+  ApiErrorCode.serverError: '0',
+  ApiErrorCode.invalidPayload: '1',
+  ApiErrorCode.emailAlreadyExists: '2',
+  ApiErrorCode.workspaceInviteAlreadyUsed: '3',
+  ApiErrorCode.workspaceInviteExpired: '4',
+  ApiErrorCode.workspaceInviteExistingUser: '5',
+  ApiErrorCode.notFoundWorkspaceInviteToken: '6',
+  ApiErrorCode.taskClosed: '7',
+  ApiErrorCode.taskAssigneesCountMaxedOut: '8',
+  ApiErrorCode.taskAssigneesInvalid: '9',
+  ApiErrorCode.taskAssigneesAlreadyExist: '10',
+  ApiErrorCode.goalClosed: '11',
+  ApiErrorCode.taskAssignmentsCompletedStatusDueDatePassed: '12',
+  ApiErrorCode.workspaceAccessRevoked: '13',
+  ApiErrorCode.insufficientPermissions: '14',
+  ApiErrorCode.soleManagerConflict: '15',
 };

@@ -8,59 +8,98 @@ class AppFilledButton extends StatelessWidget {
     super.key,
     required this.onPress,
     required this.label,
-    this.isLoading = false,
+    this.loading = false,
+    this.disabled = false,
+    this.shrinkWrap = false,
     this.backgroundColor,
     this.leadingIcon,
+    this.trailingIcon,
+    this.fontSize,
   });
 
   final void Function() onPress;
   final String label;
-  final bool isLoading;
+  final bool loading;
+  final bool disabled;
+  final bool shrinkWrap;
   final Color? backgroundColor;
   final IconData? leadingIcon;
+  final IconData? trailingIcon;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveFontSize =
+        fontSize ?? Theme.of(context).textTheme.titleSmall!.fontSize;
+    final effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.primary;
+
     return FilledButton(
-      onPressed: onPress,
-      style: Theme.of(context).filledButtonTheme.style!.copyWith(
-        backgroundColor: backgroundColor != null
-            ? WidgetStateProperty.all(backgroundColor)
-            : Theme.of(context).filledButtonTheme.style!.backgroundColor,
+      onPressed: loading || disabled ? null : onPress,
+      style: ButtonStyle(
+        padding: shrinkWrap
+            ? const WidgetStateProperty<EdgeInsetsGeometry>.fromMap({
+                WidgetState.any: EdgeInsets.symmetric(horizontal: 10),
+              })
+            : null, // Default styles
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return Color.lerp(effectiveBackgroundColor, Colors.white, 0.85)!;
+          }
+          return effectiveBackgroundColor;
+        }),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           Visibility(
-            visible: !isLoading,
+            visible: !loading,
             maintainState: true,
             maintainSize: true,
             maintainAnimation: true,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
               children: [
-                if (leadingIcon != null)
+                if (leadingIcon != null) ...[
                   FaIcon(
                     leadingIcon,
                     color: Theme.of(context).colorScheme.onPrimary,
+                    size: effectiveFontSize,
                   ),
-                const SizedBox(width: 8),
+                  const SizedBox(width: 8),
+                ],
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: shrinkWrap ? 2 : 12),
                   child: Text(
                     label,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
+                      fontSize: effectiveFontSize,
                     ),
                   ),
                 ),
+                if (trailingIcon != null) ...[
+                  const SizedBox(width: 8),
+                  FaIcon(
+                    trailingIcon,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: effectiveFontSize,
+                  ),
+                ],
               ],
             ),
           ),
           Visibility(
-            visible: isLoading,
-            child: const ActivityIndicator(radius: 11),
+            visible: loading,
+            child: ActivityIndicator(
+              radius: 11,
+              color: effectiveBackgroundColor,
+            ),
           ),
         ],
       ),

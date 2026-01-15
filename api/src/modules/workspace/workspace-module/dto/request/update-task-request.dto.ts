@@ -1,37 +1,62 @@
-import { IsOptional } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, NotEquals, ValidateIf } from 'class-validator';
 import {
   IsValidTaskDescription,
   IsValidTaskDueDate,
   IsValidTaskRewardPoints,
   IsValidTaskTitle,
 } from 'src/common/decorators/request-validation-decorators';
+import {
+  OBJECTIVE_DESCRIPTION_MAX_CHARS,
+  OBJECTIVE_NAME_MAX_CHARS,
+  OBJECTIVE_NAME_MIN_CHARS,
+} from 'src/common/helper/constants';
+import {
+  TASK_REWARD_POINTS_MAXIMAL,
+  TASK_REWARD_POINTS_MINIMAL,
+  TASK_REWARD_POINTS_STEP,
+} from 'src/modules/task/task-module/domain/task.constants';
 
 export class UpdateTaskRequest {
-  @IsOptional()
+  @ApiPropertyOptional({
+    minLength: OBJECTIVE_NAME_MIN_CHARS,
+    maxLength: OBJECTIVE_NAME_MAX_CHARS,
+  })
   @IsValidTaskTitle()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   title?: string;
 
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'Setting it to null, removes description',
+    maxLength: OBJECTIVE_DESCRIPTION_MAX_CHARS,
+  })
   @IsOptional()
   @IsValidTaskDescription()
+  // Can be set to null - resets it
   description?: string | null;
 
-  @IsOptional()
+  @ApiPropertyOptional({
+    description: `Reward points must be an integer between ${TASK_REWARD_POINTS_MINIMAL} and ${TASK_REWARD_POINTS_MAXIMAL}, and a multiple of ${TASK_REWARD_POINTS_STEP}.`,
+    minimum: TASK_REWARD_POINTS_MINIMAL,
+    maximum: TASK_REWARD_POINTS_MAXIMAL,
+    multipleOf: TASK_REWARD_POINTS_STEP,
+  })
   @IsValidTaskRewardPoints()
+  @NotEquals(null)
+  @ValidateIf((_, value) => value !== undefined)
   rewardPoints?: number;
 
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    format: 'date-time',
+    description: 'Due date in ISO 8601 (UTC). Must not be in the past.',
+  })
   @IsOptional()
   @IsValidTaskDueDate()
-  dueDate?: string;
-
-  constructor(
-    title: string,
-    rewardPoints: number,
-    description: string,
-    dueDate: string,
-  ) {
-    this.title = title;
-    this.rewardPoints = rewardPoints;
-    this.description = description;
-    this.dueDate = dueDate;
-  }
+  // Can be set to null - resets it
+  dueDate?: string | null;
 }

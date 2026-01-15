@@ -3,6 +3,7 @@ import { randomStringGenerator } from '@nestjs/common/utils/random-string-genera
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
+import { DateTime } from 'luxon';
 import * as ms from 'ms';
 import { AggregatedConfig } from 'src/config/config.type';
 import { Session } from 'src/modules/session/domain/session.domain';
@@ -10,6 +11,7 @@ import { SessionService } from 'src/modules/session/session.service';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { User } from 'src/modules/user/domain/user.domain';
+import { RolePerWorkspace } from 'src/modules/user/dto/user-response.dto';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
 import { AuthProvider } from './domain/auth-provider.enum';
@@ -53,7 +55,7 @@ export class AuthService {
         });
 
         if (user) {
-          // User has already "registered" via a social auth provider so
+          // User has already "registered" via the social auth provider so
           // we check if there are any properties retrieved by the auth service
           // that have changed.
           let email: SocialLogin['email'] | undefined = undefined;
@@ -78,15 +80,17 @@ export class AuthService {
             profileImageUrl = socialData.profileImageUrl;
           }
 
-          user = await this.userService.update({
-            id: user.id,
-            data: {
-              email,
-              firstName,
-              lastName,
-              profileImageUrl,
-            },
-          });
+          if (email || firstName || lastName || profileImageUrl) {
+            user = await this.userService.update({
+              id: user.id,
+              data: {
+                email,
+                firstName,
+                lastName,
+                profileImageUrl,
+              },
+            });
+          }
         } else {
           // User hasn't yet "registered"
           user = await this.userService.create({
@@ -131,17 +135,26 @@ export class AuthService {
             role: workspaceUser.workspaceRole,
           })),
           sessionId: session.id,
+          atv: session.accessTokenVersion,
         },
         session.hash,
       );
+
+    const rolesPerWorkspaces: RolePerWorkspace[] = (
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id)
+    ).map((wu) => ({
+      workspaceId: wu.workspace.id,
+      role: wu.workspaceRole,
+    }));
 
     const userDto: LoginResponse['user'] = {
       email: user.email,
       firstName: user.firstName,
       id: user.id,
       lastName: user.lastName,
+      roles: rolesPerWorkspaces,
       profileImageUrl: user.profileImageUrl,
-      createdAt: user.createdAt,
+      createdAt: DateTime.fromJSDate(user.createdAt).toISO()!,
     };
 
     return {
@@ -184,6 +197,7 @@ export class AuthService {
             role: workspaceUser.workspaceRole,
           })),
           sessionId: session.id,
+          atv: session.accessTokenVersion,
         },
         newHash,
       );
@@ -195,7 +209,7 @@ export class AuthService {
     };
   }
 
-  async logout(data: JwtPayload) {
+  logout(data: JwtPayload): Promise<void> {
     return this.sessionService.deleteById(data.sessionId);
   }
 
@@ -212,6 +226,7 @@ export class AuthService {
           sub: data.sub,
           roles: data.roles,
           sessionId: data.sessionId,
+          atv: data.atv,
         },
         {
           secret: this.configService.getOrThrow('auth.secret', { infer: true }),

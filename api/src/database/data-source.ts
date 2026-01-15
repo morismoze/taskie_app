@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 // TypeORM config used outside of NestJS context, e.g. in migration CLI scripts
+// meaning this can be used as standalone data source config.
 
 export const AppDataSource = new DataSource({
   type: process.env.DATABASE_TYPE,

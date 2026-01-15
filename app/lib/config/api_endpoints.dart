@@ -1,14 +1,100 @@
+import '../data/repositories/auth/auth_id_provider_repository.dart';
+import '../data/services/api/workspace/workspace/models/request/workspace_id_path_param.dart';
+import '../data/services/api/workspace/workspace_goal/models/request/workspace_goal_id_path_param.dart';
+import '../data/services/api/workspace/workspace_task/models/request/workspace_task_id_path_param.dart';
+import '../data/services/api/workspace/workspace_task/models/request/workspace_user_id_path_param.dart';
+
 abstract final class ApiEndpoints {
-  static const _prefix = '/api';
+  static const _prefix = '/api/v1';
+
   // Auth
-  static const loginGoogle = '$_prefix/auth/google';
+  static String socialLogin(AuthProvider p) {
+    switch (p) {
+      case AuthProvider.google:
+        return '$_prefix/auth/google';
+    }
+  }
+
   static const logout = '$_prefix/auth/logout';
-  static const refreshToken = '/$_prefix/auth/refresh';
+  static const refreshToken = '$_prefix/auth/refresh';
+
+  // Workspace invites
+  static String createWorkspaceInviteToken(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/invites';
+  static String joinWorkspace(String inviteToken) =>
+      '$_prefix/workspaces/invites/$inviteToken/join';
+  static String fetchWorkspaceInfoByInviteToken(String inviteToken) =>
+      '$_prefix/workspaces/invites/$inviteToken';
+
+  // Tasks
+  static String getTasks(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/tasks';
+  static String createTask(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/tasks';
+  static String updateTaskDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId';
+  static String addTaskAssignee(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String removeTaskAssignee(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String updateTaskAssignments(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/assignments';
+  static String closeTask(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceTaskIdPathParam taskId,
+  ) => '$_prefix/workspaces/$workspaceId/tasks/$taskId/close';
+  static String getLeaderboard(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/leaderboard';
+
+  // Goals
+  static String getGoals(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/goals';
+  static String createGoal(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/goals';
+  static String updateGoalDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceGoalIdPathParam goalId,
+  ) => '$_prefix/workspaces/$workspaceId/goals/$goalId';
+  static String closeGoal(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceGoalIdPathParam goalId,
+  ) => '$_prefix/workspaces/$workspaceId/goals/$goalId/close';
 
   // Users
-  static const getCurrentUser = '/$_prefix/users/me';
+  static const getCurrentUser = '$_prefix/users/me';
+  static const deleteAccount = '$_prefix/users/me';
 
   // Workspaces
-  static const getWorkspaces = '/$_prefix/workspaces/me';
-  static const createWorkspace = '/$_prefix/workspaces';
+  static const getWorkspaces = '$_prefix/workspaces/me';
+  static const getWorkspacesSoleOwnership =
+      '$_prefix/workspaces/me/sole-ownership';
+  static const createWorkspace = '$_prefix/workspaces';
+  static String updateWorkspaceDetails(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId';
+  static String leaveWorkspace(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/users/me';
+  static String getWorkspaceUsers(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/users';
+  static String createVirtualUser(WorkspaceIdPathParam workspaceId) =>
+      '$_prefix/workspaces/$workspaceId/users/virtual';
+  static String deleteWorkspaceUser(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
+  static String updateWorkspaceUserDetails(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId';
+  static String getWorkspaceUserAccumulatedPoints(
+    WorkspaceIdPathParam workspaceId,
+    WorkspaceUserIdPathParam workspaceUserId,
+  ) => '$_prefix/workspaces/$workspaceId/users/$workspaceUserId/points';
 }

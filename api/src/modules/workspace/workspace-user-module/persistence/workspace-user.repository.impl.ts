@@ -8,7 +8,10 @@ import { WorkspaceUserCore } from '../domain/workspace-user-core.domain';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
 import { WorkspaceUserEntity } from './workspace-user.entity';
-import { WorkspaceUserRepository } from './workspace-user.repository';
+import {
+  WorkspaceUserAccumulatedPoints,
+  WorkspaceUserRepository,
+} from './workspace-user.repository';
 
 @Injectable()
 export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
@@ -18,20 +21,31 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
-  async findById({
+  private get repositoryContext(): Repository<WorkspaceUserEntity> {
+    const transactional =
+      this.transactionalRepository.getRepository(WorkspaceUserEntity);
+
+    // If there is a transactional repo available (a transaction bound to the
+    // request is available), use it. Otherwise, use normal repo.
+    return transactional || this.repo;
+  }
+
+  async findByIdAndWorkspaceId({
     id,
+    workspaceId,
     relations,
   }: {
     id: WorkspaceUser['id'];
+    workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
-    return await this.repo.findOne({
-      where: { id },
+    return await this.repositoryContext.findOne({
+      where: { id, workspace: { id: workspaceId } },
       relations,
     });
   }
 
-  async findByUserIdAndWorkspaceId({
+  findByUserIdAndWorkspaceId({
     userId,
     workspaceId,
     relations,
@@ -40,8 +54,23 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     workspaceId: WorkspaceUser['workspace']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
-    return await this.repo.findOne({
+    return this.repositoryContext.findOne({
       where: { user: { id: userId }, workspace: { id: workspaceId } },
+      relations,
+    });
+  }
+
+  async findByIdsAndWorkspaceId({
+    ids,
+    workspaceId,
+    relations,
+  }: {
+    ids: Array<WorkspaceUser['user']['id']>;
+    workspaceId: WorkspaceUser['workspace']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<Array<WorkspaceUserEntity>> {
+    return this.repositoryContext.find({
+      where: { id: In(ids), workspace: { id: workspaceId } },
       relations,
     });
   }
@@ -53,7 +82,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     userId: WorkspaceUser['user']['id'];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]> {
-    return await this.repo.find({
+    return this.repositoryContext.find({
       where: {
         user: {
           id: userId,
@@ -63,7 +92,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
-  async findAllByIds({
+  findAllByIds({
     workspaceId,
     ids,
     relations,
@@ -72,7 +101,7 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     ids: WorkspaceUser['id'][];
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]> {
-    return this.repo.find({
+    return this.repositoryContext.find({
       where: {
         id: In(ids),
         workspace: { id: workspaceId },
@@ -81,8 +110,34 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
+  findAllByWorkspaceId({
+    workspaceId,
+    relations,
+  }: {
+    workspaceId: WorkspaceUser['workspace']['id'];
+    relations?: FindOptionsRelations<WorkspaceUserEntity>;
+  }): Promise<WorkspaceUserEntity[]> {
+    return this.repositoryContext.find({
+      where: {
+        workspace: { id: workspaceId },
+      },
+      relations,
+    });
+  }
+
+  async countManagersInWorkspace(
+    workspaceId: WorkspaceUser['workspace']['id'],
+  ): Promise<number> {
+    return this.repositoryContext.count({
+      where: {
+        workspace: { id: workspaceId },
+        workspaceRole: WorkspaceUserRole.MANAGER,
+      },
+    });
+  }
+
   async create({
-    data: { workspaceId, createdById, userId, workspaceRole, status },
+    data: { workspaceId, createdById, userId, workspaceRole },
     relations,
   }: {
     data: {
@@ -90,22 +145,19 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
       createdById: WorkspaceUser['id'] | null;
       userId: WorkspaceUser['user']['id'];
       workspaceRole: WorkspaceUser['workspaceRole'];
-      status: WorkspaceUser['status'];
     };
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.repositoryContext.create({
       workspace: { id: workspaceId },
       user: { id: userId },
       workspaceRole,
-      status,
       createdBy: createdById ? { id: createdById } : null,
     });
 
-    const savedEntity =
-      await this.transactionalWorkspaceUserRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalWorkspaceUserRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
       relations,
     });
@@ -122,9 +174,14 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     data: Partial<WorkspaceUserCore>;
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>> {
-    await this.transactionalWorkspaceUserRepo.update(id, data);
+    const result = await this.repositoryContext.update(id, data);
 
-    const updatedEntity = await this.transactionalWorkspaceUserRepo.findOne({
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
+
+    const updatedEntity = await this.repositoryContext.findOne({
       where: { id },
       relations,
     });
@@ -138,59 +195,56 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
   }: {
     workspaceId: WorkspaceUser['workspace']['id'];
     workspaceUserId: WorkspaceUser['user']['id'];
-  }): Promise<void> {
-    await this.repo.delete({
+  }): Promise<boolean> {
+    const result = await this.repositoryContext.delete({
       id: workspaceUserId,
       workspace: { id: workspaceId },
     });
+    return (result.affected ?? 0) > 0;
   }
 
   async getWorkspaceLeaderboard(
     workspaceId: WorkspaceUser['workspace']['id'],
-  ): Promise<
-    {
-      id: string;
-      firstName: string;
-      lastName: string;
-      profileImageUrl: string | null;
-      accumulatedPoints: number;
-      completedTasks: number;
-    }[]
-  > {
-    return (
-      this.repo
-        .createQueryBuilder('wu')
-        .leftJoin('wu.user', 'u')
-        // Leaderboard takes only completed tasks into context
-        .leftJoin('wu.taskAssignments', 'ta', 'ta.status = :completedStatus', {
-          completedStatus: ProgressStatus.COMPLETED,
-        })
-        .leftJoin('ta.task', 't')
-        .select([
-          'wu.id AS "id"',
-          'u.firstName AS "firstName"',
-          'u.lastName AS "lastName"',
-          'u.profileImageUrl AS "profileImageUrl"',
-          'COALESCE(SUM(t.rewardPoints), 0) AS "accumulatedPoints"',
-          'COUNT(ta.id) AS "completedTasks"',
-        ])
-        .where('wu.workspace.id = :workspaceId', { workspaceId })
-        .andWhere('wu.workspaceRole = :memberRole', {
-          memberRole: WorkspaceUserRole.MEMBER,
-        })
-        .groupBy('wu.id, u.firstName, u.lastName, u.profileImageUrl')
-        // Leaderboard start with the best score
-        .orderBy('"accumulatedPoints"', 'DESC')
-        .addOrderBy('"completedTasks"', 'DESC')
-        .addOrderBy('u.firstName', 'ASC')
-        .addOrderBy('u.lastName', 'ASC')
-        // This returns raw data as defined in the SQL query itself. Function getMany on the other hand
-        // returns data and tries to build the array of entity type records (WorkspaceUser[] in this case)
-        .getRawMany()
-    );
-  }
+  ): Promise<Array<WorkspaceUserAccumulatedPoints>> {
+    const rawResults = await this.repositoryContext
+      .createQueryBuilder('wu')
+      .leftJoin('wu.user', 'u')
+      // Leaderboard takes only completed tasks into context
+      .leftJoin('wu.taskAssignments', 'ta', 'ta.status = :completedStatus', {
+        completedStatus: ProgressStatus.COMPLETED,
+      })
+      .leftJoin('ta.task', 't')
+      .select([
+        'wu.id AS "id"',
+        'u.firstName AS "firstName"',
+        'u.lastName AS "lastName"',
+        'u.profileImageUrl AS "profileImageUrl"',
+        'COALESCE(SUM(t.rewardPoints), 0) AS "accumulatedPoints"',
+        'COUNT(ta.id) AS "completedTasks"',
+      ])
+      .where('wu.workspace.id = :workspaceId', { workspaceId })
+      .andWhere('wu.workspaceRole = :memberRole', {
+        memberRole: WorkspaceUserRole.MEMBER,
+      })
+      .groupBy('wu.id, u.firstName, u.lastName, u.profileImageUrl')
+      // Leaderboard starts with the best score
+      .orderBy('"accumulatedPoints"', 'DESC')
+      .addOrderBy('"completedTasks"', 'DESC')
+      .addOrderBy('u.firstName', 'ASC')
+      .addOrderBy('u.lastName', 'ASC')
+      // This returns raw data as defined in the SQL query itself. Function getMany on the other hand
+      // returns data and tries to build the array of entity type records (WorkspaceUser[] in this case)
+      .getRawMany();
 
-  private get transactionalWorkspaceUserRepo(): Repository<WorkspaceUserEntity> {
-    return this.transactionalRepository.getRepository(WorkspaceUserEntity);
+    return rawResults.map((row) => ({
+      id: row.id,
+      firstName: row.firstName,
+      lastName: row.lastName,
+      profileImageUrl: row.profileImageUrl,
+      // Postgres vraća bigint/sum kao string da ne izgubi preciznost,
+      // ali za bodove je JS number (max 9 quadrilijuna) sasvim dovoljan.
+      accumulatedPoints: parseInt(row.accumulatedPoints, 10),
+      completedTasks: parseInt(row.completedTasks, 10),
+    }));
   }
 }

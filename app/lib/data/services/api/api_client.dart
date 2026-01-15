@@ -3,20 +3,52 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../config/environment/env.dart';
 import '../../repositories/auth/auth_state_repository.dart';
-import '../local/secure_storage_service.dart';
+import '../local/auth_event_bus.dart';
+import '../local/client_info_service.dart';
+import 'interceptors/forbidden_interceptor.dart';
 import 'interceptors/request_headers_interceptor.dart';
 import 'interceptors/unauthorized_interceptor.dart';
 
 class ApiClient {
   ApiClient({
     required AuthStateRepository authStateRepository,
-    required SecureStorageService secureStorageService,
+    required ClientInfoService clientInfoService,
+    required AuthEventBus authEventBus,
   }) : _authStateRepository = authStateRepository,
-       _secureStorageService = secureStorageService,
-       _client = _instantiateApiClient(),
-       _rawClient = _instantiateApiClient() {
+       _clientInfoService = clientInfoService,
+       _authEventBus = authEventBus,
+       _client = Dio(
+         BaseOptions(
+           baseUrl: Env.backendUrl,
+           headers: {'Content-Type': 'application/json'},
+         ),
+       ),
+       _refreshClient = Dio(
+         BaseOptions(
+           baseUrl: Env.backendUrl,
+           headers: {'Content-Type': 'application/json'},
+         ),
+       ) {
+    _refreshClient.interceptors.addAll([
+      RequestHeadersInterceptor(
+        authStateRepository: _authStateRepository,
+        clientInfoService: _clientInfoService,
+        authHeaderTokenType: AuthHeaderTokenType.refresh,
+      ),
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        enabled: Env.env != Environment.production,
+      ),
+    ]);
+
     _client.interceptors.addAll([
-      RequestHeadersInterceptor(secureStorageService: _secureStorageService),
+      RequestHeadersInterceptor(
+        authStateRepository: _authStateRepository,
+        clientInfoService: _clientInfoService,
+        authHeaderTokenType: AuthHeaderTokenType.access,
+      ),
       PrettyDioLogger(
         requestHeader: true,
         requestBody: true,
@@ -24,27 +56,21 @@ class ApiClient {
         enabled: Env.env != Environment.production,
       ),
       UnauthorizedInterceptor(
-        mainClient: _client,
-        rawClient: _rawClient,
-        secureStorageService: _secureStorageService,
+        client: _client,
+        refreshClient: _refreshClient,
         authStateRepository: _authStateRepository,
+        authEventBus: _authEventBus,
       ),
+      ForbiddenInterceptor(authEventBus: _authEventBus),
     ]);
   }
 
   final Dio _client;
-  final Dio _rawClient;
-  final SecureStorageService _secureStorageService;
+  final Dio _refreshClient;
   final AuthStateRepository _authStateRepository;
+  final ClientInfoService _clientInfoService;
+  final AuthEventBus _authEventBus;
 
   Dio get client => _client;
-
-  static Dio _instantiateApiClient() {
-    return Dio(
-      BaseOptions(
-        baseUrl: Env.backendUrl,
-        headers: {'Content-Type': 'application/json'},
-      ),
-    );
-  }
+  Dio get refreshClient => _refreshClient;
 }

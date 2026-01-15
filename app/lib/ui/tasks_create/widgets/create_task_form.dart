@@ -1,0 +1,243 @@
+import 'package:flutter/material.dart';
+
+import '../../../domain/constants/objective_rules.dart';
+import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/workspace_user.dart';
+import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
+import '../../core/ui/app_avatar.dart';
+import '../../core/ui/app_date_picker_field/app_date_picker_form_field.dart';
+import '../../core/ui/app_filled_button.dart';
+import '../../core/ui/app_select_field/app_select_field.dart';
+import '../../core/ui/app_select_field/app_select_form_field.dart';
+import '../../core/ui/app_slider_field/app_slider_form_field.dart';
+import '../../core/ui/app_text_field/app_text_form_field.dart';
+import '../../core/ui/separator.dart';
+import '../../core/utils/extensions.dart';
+import '../../core/utils/user.dart';
+import '../view_models/create_task_screen_viewmodel.dart';
+
+class CreateTaskForm extends StatefulWidget {
+  const CreateTaskForm({super.key, required this.viewModel});
+
+  final CreateTaskScreenViewmodel viewModel;
+
+  @override
+  State<CreateTaskForm> createState() => _CreateTaskFormState();
+}
+
+class _CreateTaskFormState extends State<CreateTaskForm> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final ValueNotifier<List<AppSelectFieldOption<WorkspaceUser>>>
+  _selectedAssigneesNotifier = ValueNotifier([]);
+  // No need for ValueNotifier as it is initialized and can't be set
+  // to a null value or something similar as we use the Slider widget.
+  int _rewardPoints = ObjectiveRules.rewardPointsMin;
+  // No need for ValueNotifier as it is not required and
+  // AppDatePickerFormField handles the state internally.
+  DateTime? _dueDate;
+
+  void _onAssigneesSelected(
+    List<AppSelectFieldOption<WorkspaceUser>> selectedOptions,
+  ) {
+    _selectedAssigneesNotifier.value = selectedOptions;
+  }
+
+  void _onAssigneesCleared() {
+    _selectedAssigneesNotifier.value = [];
+  }
+
+  void _onRewardPointsChanged(double points) {
+    setState(() {
+      _rewardPoints = points.toInt();
+    });
+  }
+
+  void _onDueDateSelected(DateTime date) {
+    setState(() {
+      _dueDate = date;
+    });
+  }
+
+  void _onDueDateCleared() {
+    setState(() {
+      _dueDate = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _selectedAssigneesNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final options = widget.viewModel.workspaceMembers.map((user) {
+      final fullName = UserUtils.constructFullName(
+        firstName: user.firstName,
+        lastName: user.lastName,
+      );
+      return AppSelectFieldOption<WorkspaceUser>(
+        label: fullName,
+        value: user,
+        leading: AppAvatar(
+          hashString: user.id,
+          firstName: user.firstName,
+          imageUrl: user.profileImageUrl,
+        ),
+      );
+    }).toList();
+
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUnfocus,
+      child: Column(
+        children: [
+          AppTextFormField(
+            controller: _titleController,
+            label: context.localization.taskTitleLabel,
+            validator: _validateTitle,
+            textInputAction: TextInputAction.next,
+            maxCharacterCount: ValidationRules.objectiveTitleMaxLength,
+          ),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
+          AppTextFormField(
+            controller: _descriptionController,
+            label: context.localization.taskDescriptionLabel,
+            validator: _validateDescription,
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.next,
+            required: false,
+            minLines: 3,
+            maxCharacterCount: ValidationRules.objectiveDescriptionMaxLength,
+          ),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
+          ValueListenableBuilder(
+            valueListenable: _selectedAssigneesNotifier,
+            builder: (builderContext, selectedAssigneesValue, _) =>
+                AppSelectFormField(
+                  options: options,
+                  value: selectedAssigneesValue,
+                  onChanged: _onAssigneesSelected,
+                  onCleared: _onAssigneesCleared,
+                  label: builderContext.localization.objectiveAssigneeLabel,
+                  multiple: true,
+                  max: ValidationRules.taskMaxAssigneesCount,
+                  validator: (assignees) =>
+                      _validateAssignees(builderContext, assignees),
+                ),
+          ),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
+          AppDatePickerFormField(
+            onSelected: _onDueDateSelected,
+            onCleared: _onDueDateCleared,
+            label: context.localization.taskDueDateLabel,
+            required: false,
+            minimumDate: DateTime.now(),
+          ),
+          const SizedBox(height: Dimens.paddingVertical / 2.25),
+          const Separator(),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
+          AppSliderFormField(
+            label: context.localization.taskRewardPointsLabel,
+            value: _rewardPoints.toDouble(),
+            onChanged: _onRewardPointsChanged,
+            step: ObjectiveRules.rewardPointsStep,
+            min: ObjectiveRules.rewardPointsMin.toDouble(),
+            max: ObjectiveRules.rewardPointsMax.toDouble(),
+          ),
+          const SizedBox(height: Dimens.paddingVertical / 1.2),
+          ListenableBuilder(
+            listenable: Listenable.merge([
+              widget.viewModel.createTask,
+              _titleController,
+              _selectedAssigneesNotifier,
+            ]),
+            builder: (builderContext, _) {
+              // Submit is enabled once title and selected assignees are not empty.
+              // No need to check rewardPoints as it is initialized and can't be set
+              // to a null value or something similar as we use the Slider widget.
+              final enabledSubmit =
+                  _titleController.text.isNotEmpty &&
+                  _selectedAssigneesNotifier.value.isNotEmpty;
+
+              return AppFilledButton(
+                onPress: _onSubmit,
+                label: builderContext.localization.taskCreateNew,
+                loading: widget.viewModel.createTask.running,
+                disabled: !enabledSubmit,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onSubmit() {
+    if (_formKey.currentState!.validate()) {
+      final title = _titleController.text.trim();
+      final trimmedDescription = _descriptionController.text.trim();
+      final description = trimmedDescription.nullIfEmpty;
+      final assigneesIds = _selectedAssigneesNotifier.value
+          .map((assignee) => assignee.value.id)
+          .toList();
+
+      widget.viewModel.createTask.execute((
+        title,
+        description,
+        assigneesIds,
+        _rewardPoints,
+        _dueDate,
+      ));
+    }
+  }
+
+  String? _validateTitle(String? value) {
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue when trimmedValue.isEmpty:
+        return context.localization.misc_requiredField;
+      case final String trimmedValue
+          when trimmedValue.length < ValidationRules.objectiveTitleMinLength:
+        return context.localization.objectiveTitleMinLength;
+      case final String trimmedValue
+          when trimmedValue.length > ValidationRules.objectiveTitleMaxLength:
+        return context.localization.objectiveTitleMaxLength;
+      default:
+        return null;
+    }
+  }
+
+  String? _validateDescription(String? value) {
+    final trimmedValue = value?.trim();
+    switch (trimmedValue) {
+      case final String trimmedValue
+          when trimmedValue.length >
+              ValidationRules.objectiveDescriptionMaxLength:
+        return context.localization.objectiveDescriptionMaxLength;
+      default:
+        return null;
+    }
+  }
+
+  String? _validateAssignees(
+    BuildContext context,
+    List<AppSelectFieldOption>? assignees,
+  ) {
+    switch (assignees) {
+      case final List<AppSelectFieldOption>? value when value == null:
+      case final List<AppSelectFieldOption> value
+          when value.length < ValidationRules.objectiveMinAssigneesCount:
+        return context.localization.taskAssigneesMinLength;
+      default:
+        return null;
+    }
+  }
+}

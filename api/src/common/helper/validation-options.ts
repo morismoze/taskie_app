@@ -1,6 +1,5 @@
 import {
   HttpStatus,
-  Logger,
   ValidationError,
   ValidationPipeOptions,
 } from '@nestjs/common';
@@ -8,22 +7,24 @@ import { ConfigService } from '@nestjs/config';
 import { Environment } from 'src/config/app.config';
 import { AggregatedConfig } from 'src/config/config.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
+import { AppLogger } from 'src/modules/logger/app-logger';
 
 const getValidationOptions = (
   configService: ConfigService<AggregatedConfig>,
+  logger: AppLogger,
 ): ValidationPipeOptions => ({
   enableDebugMessages:
     configService.getOrThrow('app.nodeEnv', { infer: true }) !==
-    Environment.PRODUCTION
+    Environment.DEVELOPMENT
       ? true
       : false,
   transform: true,
+  // Strip validated (returned) object of any properties that do not use any validation decorators
   whitelist: true,
   errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {
-    const logger = new Logger('ValidationPipe');
-    logger.error(errors.toString());
+    logger.error({ message: errors.toString(), context: 'ValidationPipe' });
 
     return new ApiHttpException(
       {

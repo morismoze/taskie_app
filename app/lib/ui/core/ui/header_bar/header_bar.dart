@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../../theme/dimens.dart';
+import 'app_header_action_button.dart';
+
+class HeaderBar extends StatelessWidget {
+  const HeaderBar({super.key, required this.title, this.actions});
+
+  final String title;
+  final List<Widget>? actions;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: true,
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: Dimens.of(context).paddingScreenHorizontal,
+          right: Dimens.of(context).paddingScreenHorizontal,
+          top: Dimens.of(context).paddingScreenVertical,
+          bottom: Dimens.of(context).paddingScreenVertical / 2,
+        ),
+        child: Row(
+          children: [
+            const AppHeaderActionButton(iconData: FontAwesomeIcons.arrowLeft),
+            const SizedBox(width: 30),
+            Text(title, style: Theme.of(context).textTheme.titleLarge),
+            // Used to push actions to the right
+            const Spacer(),
+            if (actions != null) Row(spacing: 8, children: actions!),
+          ],
+        ),
+      ),
+    );
+  }
+}

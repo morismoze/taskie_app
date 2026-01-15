@@ -1,10 +1,18 @@
+import 'package:flutter/material.dart';
+
 import '../../../domain/models/user.dart';
 import '../../../utils/command.dart';
 
-abstract class UserRepository {
+abstract class UserRepository extends ChangeNotifier {
+  User? get user;
+
   /// Set current user
-  Result<void> setUser(User user);
+  void setUser(User user);
 
   /// Get current user
-  Future<Result<User>> getUser();
+  Stream<Result<User>> loadUser({bool forceFetch = false});
+
+  Future<Result<void>> deleteAccount();
+
+  void purgeUserCache();
 }

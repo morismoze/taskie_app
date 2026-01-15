@@ -4,6 +4,7 @@ import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domai
 
 export type JwtPayload = {
   sub: User['id'];
+  atv: Session['accessTokenVersion'];
   roles: {
     workspaceId: WorkspaceUser['workspace']['id'];
     role: WorkspaceUser['workspaceRole'];

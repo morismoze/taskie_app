@@ -9,10 +9,10 @@ import { SocialLoginRequest } from '../core/dto/social-login-request.dto';
 export class AuthGoogleService {
   private google: OAuth2Client;
 
-  constructor(private configService: ConfigService<AggregatedConfig>) {
+  constructor(private readonly configService: ConfigService<AggregatedConfig>) {
     this.google = new OAuth2Client(
-      configService.get('google.auth.clientId', { infer: true }),
-      configService.get('google.auth.clientSecret', { infer: true }),
+      configService.getOrThrow('google.auth.clientId', { infer: true }),
+      configService.getOrThrow('google.auth.clientSecret', { infer: true }),
     );
   }
 
@@ -26,13 +26,7 @@ export class AuthGoogleService {
 
     const payload = ticket.getPayload();
 
-    if (
-      !payload ||
-      !payload.email ||
-      !payload.given_name ||
-      !payload.family_name ||
-      !payload.picture
-    ) {
+    if (!payload || !payload.email || !payload.given_name || !payload.picture) {
       throw new UnauthorizedException();
     }
 
@@ -40,7 +34,8 @@ export class AuthGoogleService {
       id: payload.sub,
       email: payload.email!,
       firstName: payload.given_name,
-      lastName: payload.family_name,
+      // It seems that family_name (last name) is optional on Google
+      lastName: payload.family_name || '',
       profileImageUrl: payload.picture,
     };
   }

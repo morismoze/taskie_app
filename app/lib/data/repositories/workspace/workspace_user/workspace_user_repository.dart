@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+
+import '../../../../domain/models/workspace_user.dart';
+import '../../../../utils/command.dart';
+import '../../../services/api/user/models/response/user_response.dart';
+
+abstract class WorkspaceUserRepository extends ChangeNotifier {
+  List<WorkspaceUser>? get users;
+
+  Stream<Result<List<WorkspaceUser>>> loadWorkspaceUsers({
+    required String workspaceId,
+    bool forceFetch,
+  });
+
+  Future<Result<WorkspaceUser>> createVirtualMember({
+    required String workspaceId,
+    required String firstName,
+    required String lastName,
+  });
+
+  Result<WorkspaceUser> loadWorkspaceUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+  });
+
+  Future<Result<void>> deleteWorkspaceUser({
+    required String workspaceId,
+    required String workspaceUserId,
+  });
+
+  Future<Result<void>> updateWorkspaceUserDetails({
+    required String workspaceId,
+    required String workspaceUserId,
+    String? firstName,
+    String? lastName,
+    WorkspaceRole? role,
+  });
+
+  Future<Result<int>> getWorkspaceUserAccumulatedPoints({
+    required String workspaceId,
+    required String workspaceUserId,
+  });
+
+  Future<void> purgeWorkspaceUsersCache();
+}

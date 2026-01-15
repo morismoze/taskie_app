@@ -1,13 +1,18 @@
-export type LoginResponse = {
-  accessToken: string;
-  refreshToken: string;
-  tokenExpires: number;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string | null;
-    profileImageUrl: string | null;
-    createdAt: string;
-  };
-};
+import { ApiProperty } from '@nestjs/swagger';
+import { UserResponse } from 'src/modules/user/dto/user-response.dto';
+
+export class LoginResponse {
+  @ApiProperty()
+  accessToken!: string;
+
+  @ApiProperty()
+  refreshToken!: string;
+
+  @ApiProperty()
+  tokenExpires!: number;
+
+  @ApiProperty({
+    type: () => UserResponse,
+  })
+  user!: UserResponse;
+}

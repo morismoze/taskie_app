@@ -1,12 +1,18 @@
 import { ProgressStatus } from './progress-status.enum';
 import { TaskCore } from './task-core.domain';
 
-export interface TaskWithAssigneesCore extends TaskCore {
+export interface TaskWithAssigneesCoreAndCreatedByUser extends TaskCore {
   assignees: {
-    id: string; // user ID
+    id: string; // workspace user ID
     firstName: string;
     lastName: string;
     profileImageUrl: string | null;
     status: ProgressStatus; // task progress status for that specific user
   }[];
+  createdBy: {
+    id: string; // workspace user ID
+    firstName: string;
+    lastName: string;
+    profileImageUrl: string | null;
+  } | null;
 }

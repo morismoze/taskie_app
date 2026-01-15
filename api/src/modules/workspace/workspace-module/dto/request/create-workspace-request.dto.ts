@@ -1,24 +1,34 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-  MaxLength,
-} from 'class-validator';
+  IsValidWorkspaceDescription,
+  IsValidWorkspaceName,
+} from 'src/common/decorators/request-validation-decorators';
+import {
+  WORKSPACE_DESCRIPTION_MAX_CHARS,
+  WORKSPACE_NAME_MAX_CHARS,
+  WORKSPACE_NAME_MIN_CHARS,
+} from 'src/common/helper/constants';
 
 export class CreateWorkspaceRequest {
-  @IsNotEmpty()
-  @IsString()
-  @Length(3, 50)
+  @ApiProperty({
+    minLength: WORKSPACE_NAME_MIN_CHARS,
+    maxLength: WORKSPACE_NAME_MAX_CHARS,
+  })
+  @IsValidWorkspaceName()
   name: string;
 
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    maxLength: WORKSPACE_DESCRIPTION_MAX_CHARS,
+  })
   @IsOptional()
-  @IsString()
-  @MaxLength(250)
-  description: string | null;
+  @IsValidWorkspaceDescription()
+  description?: string | null;
 
-  constructor(name: string, description?: string) {
+  constructor(name: string, description?: string | null) {
     this.name = name;
-    this.description = description !== undefined ? description : null;
+    this.description = description ?? null;
   }
 }

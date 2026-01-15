@@ -15,6 +15,15 @@ export class UserRepositoryImpl implements UserRepository {
     private readonly transactionalRepository: TransactionalRepository,
   ) {}
 
+  private get repositoryContext(): Repository<UserEntity> {
+    const transactional =
+      this.transactionalRepository.getRepository(UserEntity);
+
+    // If there is a transactional repo available (a transaction bound to the
+    // request is available), use it. Otherwise, use normal repo.
+    return transactional || this.repo;
+  }
+
   async create(data: {
     email: NonNullable<User['email']>;
     firstName: User['firstName'];
@@ -24,7 +33,7 @@ export class UserRepositoryImpl implements UserRepository {
     profileImageUrl: User['profileImageUrl'];
     status: User['status'];
   }): Promise<Nullable<UserEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.repositoryContext.create({
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
@@ -34,9 +43,9 @@ export class UserRepositoryImpl implements UserRepository {
       status: data.status,
     });
 
-    const savedEntity = await this.transactionalUserRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalUserRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
     });
 
@@ -46,43 +55,43 @@ export class UserRepositoryImpl implements UserRepository {
   async createVirtualUser(
     data: Pick<User, 'firstName' | 'lastName' | 'status'>,
   ): Promise<Nullable<UserEntity>> {
-    const persistenceModel = this.repo.create({
+    const persistenceModel = this.repositoryContext.create({
       firstName: data.firstName,
       lastName: data.lastName,
       status: data.status,
     });
 
-    const savedEntity = await this.transactionalUserRepo.save(persistenceModel);
+    const savedEntity = await this.repositoryContext.save(persistenceModel);
 
-    const newEntity = await this.transactionalUserRepo.findOne({
+    const newEntity = await this.repositoryContext.findOne({
       where: { id: savedEntity.id },
     });
 
     return newEntity;
   }
 
-  async findById(id: User['id']): Promise<Nullable<UserEntity>> {
-    return await this.repo.findOne({
+  findById(id: User['id']): Promise<Nullable<UserEntity>> {
+    return this.repositoryContext.findOne({
       where: { id },
     });
   }
 
-  async findByEmail(
+  findByEmail(
     email: NonNullable<User['email']>,
   ): Promise<Nullable<UserEntity>> {
-    return await this.repo.findOne({
+    return this.repositoryContext.findOne({
       where: { email },
     });
   }
 
-  async findBySocialIdAndProvider({
+  findBySocialIdAndProvider({
     socialId,
     provider,
   }: {
     socialId: NonNullable<User['socialId']>;
     provider: NonNullable<User['provider']>;
   }): Promise<Nullable<UserEntity>> {
-    return await this.repo.findOne({
+    return this.repositoryContext.findOne({
       where: {
         socialId,
         provider,
@@ -97,20 +106,22 @@ export class UserRepositoryImpl implements UserRepository {
     id: User['id'];
     data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
   }): Promise<Nullable<UserEntity>> {
-    await this.transactionalUserRepo.update(id, data);
+    const result = await this.repositoryContext.update(id, data);
 
-    const updatedEntity = await this.transactionalUserRepo.findOne({
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
+
+    const updatedEntity = await this.repositoryContext.findOne({
       where: { id },
     });
 
     return updatedEntity;
   }
 
-  async delete(id: User['id']): Promise<void> {
-    await this.repo.delete(id);
-  }
-
-  private get transactionalUserRepo(): Repository<UserEntity> {
-    return this.transactionalRepository.getRepository(UserEntity);
+  async delete(id: User['id']): Promise<boolean> {
+    const result = await this.repositoryContext.delete(id);
+    return (result.affected ?? 0) > 0;
   }
 }

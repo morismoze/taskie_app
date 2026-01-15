@@ -15,7 +15,7 @@ export abstract class RootBaseEntity extends BaseEntity {
     default: () => 'CURRENT_TIMESTAMP',
     name: 'created_at',
   })
-  createdAt!: string;
+  createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamptz',
@@ -24,7 +24,7 @@ export abstract class RootBaseEntity extends BaseEntity {
     name: 'updated_at',
   })
   // It gets set automatically when save() method is invoked
-  updatedAt!: string;
+  updatedAt!: Date;
 
   @DeleteDateColumn({
     type: 'timestamptz',
@@ -33,5 +33,5 @@ export abstract class RootBaseEntity extends BaseEntity {
   })
   // Column decorated with DeleteDateColumn is automatically updated when
   // Typeorm's softDelete repository function is invoked
-  deletedAt!: string | null;
+  deletedAt!: Date | null;
 }

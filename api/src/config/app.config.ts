@@ -1,11 +1,10 @@
 import { registerAs } from '@nestjs/config';
-import { AppConfig } from './app-config.type';
-import validateConfig from '../common/helper/validate-config';
 import { IsEnum, IsInt, IsNotEmpty, IsString, Max, Min } from 'class-validator';
+import validateConfig from '../common/helper/validate-config';
+import { AppConfig } from './app-config.type';
 
 export enum Environment {
   DEVELOPMENT = 'development',
-  STAGING = 'staging',
   PRODUCTION = 'production',
 }
 
@@ -32,6 +31,7 @@ class AppEnvironmentVariablesValidator {
     NODE_ENV: Environment,
     APP_NAME: string,
     APP_PORT: number,
+    APP_SERVER_CNAME_URL: string,
     API_PREFIX: string,
   ) {
     this.NODE_ENV = NODE_ENV;

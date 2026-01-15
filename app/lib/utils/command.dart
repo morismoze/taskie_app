@@ -21,7 +21,7 @@ abstract class Command<T> extends ChangeNotifier {
 
   bool _running = false;
 
-  /// True when the action is running.
+  /// True when the action is running
   bool get running => _running;
 
   Result<T>? _result;
@@ -33,7 +33,7 @@ abstract class Command<T> extends ChangeNotifier {
   bool get completed => _result is Ok;
 
   /// Get last action result
-  Result? get result => _result;
+  Result<T>? get result => _result;
 
   /// Clear last action result
   void clearResult() {
@@ -47,7 +47,7 @@ abstract class Command<T> extends ChangeNotifier {
     // e.g. avoid multiple taps on button
     if (_running) return;
 
-    // Notify listeners.
+    // Notify listeners
     _running = true;
     _result = null;
     notifyListeners();
@@ -94,7 +94,8 @@ sealed class Result<T> {
   const factory Result.ok(T value) = Ok._;
 
   /// Creates an error [Result], completed with the specified [error].
-  const factory Result.error(Exception error) = Error._;
+  const factory Result.error(Exception error, [StackTrace? stackTrace]) =
+      Error._;
 }
 
 final class Ok<T> extends Result<T> {
@@ -107,10 +108,30 @@ final class Ok<T> extends Result<T> {
 }
 
 final class Error<T> extends Result<T> {
-  const Error._(this.error);
+  const Error._(this.error, [this.stackTrace]);
 
   final Exception error;
+  final StackTrace? stackTrace;
 
   @override
   String toString() => 'Result<$T>.error($error)';
+}
+
+Future<Result<T>> firstOkOrLastError<T>(Stream<Result<T>> stream) async {
+  Result<T>? last;
+
+  await for (final r in stream) {
+    last = r;
+    if (r is Ok<T>) {
+      return r;
+    }
+  }
+
+  // Stream ended without Ok
+
+  if (last is Error<T>) {
+    return last;
+  }
+
+  return Result.error(Exception('Stream emitted no values'));
 }

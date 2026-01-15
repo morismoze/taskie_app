@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:logging/logging.dart';
 
 import '../../../../config/environment/env.dart';
 import '../../../../utils/command.dart';
@@ -11,16 +8,29 @@ import 'exceptions/google_sign_in_unknown_exception.dart';
 
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: Platform.isIOS ? Env.googleAuthClientId : null,
-    serverClientId: Platform.isAndroid ? Env.googleAuthClientId : null,
+    clientId: Env.googleAuthClientId,
+    serverClientId: Env.googleAuthClientId,
     scopes: const ['email', 'profile'],
   );
-  final _log = Logger("GoogleAuthService");
 
   /// Returns ID token
   Future<Result<String>> authenticate() async {
     try {
-      final googleUser = await _googleSignIn.signIn();
+      var googleUser = await _googleSignIn.signInSilently();
+
+      // Check if a Google session is still active
+      if (googleUser != null) {
+        final googleAuth = await googleUser.authentication;
+
+        if (googleAuth.idToken == null) {
+          // Invalid ID token on silent sign-in
+        } else {
+          return Result.ok(googleAuth.idToken!);
+        }
+      }
+
+      // Fallback: no active/usable session → prompt user interactively.
+      googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         return const Result.error(GoogleSignInCancelledException());
@@ -29,21 +39,29 @@ class GoogleAuthService {
       final googleAuth = await googleUser.authentication;
 
       if (googleAuth.idToken == null) {
-        _log.severe("Invalid ID token", googleAuth);
         return Result.error(
           Exception(const GoogleSignInInvalidIdTokenException()),
         );
       }
 
-      // After the user was successfully authenticated, we want to disconnect him out
-      // which removes the user from the user information cache. This disables auto login
-      // on _googleSignIn.signIn(), and prompts the account choice window wvery time.
-      await GoogleSignIn().disconnect();
+      // This should be done when user manually signs out
+      // await _googleSignIn.disconnect();
 
       return Result.ok(googleAuth.idToken!);
-    } on Exception catch (e) {
-      _log.severe("Failed Google sign-in or sign-out", e);
-      return Result.error(Exception(const GoogleSignInUnknownException()));
+    } on Exception catch (e, stackTrace) {
+      return Result.error(
+        Exception(const GoogleSignInUnknownException()),
+        stackTrace,
+      );
+    }
+  }
+
+  Future<Result<void>> disconnect() async {
+    try {
+      await _googleSignIn.disconnect();
+      return const Result.ok(null);
+    } on Exception catch (e, stackTrace) {
+      return Result.error(e, stackTrace);
     }
   }
 }

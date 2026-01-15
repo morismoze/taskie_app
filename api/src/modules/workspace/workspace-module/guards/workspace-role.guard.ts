@@ -1,10 +1,12 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ApiErrorCode } from 'src/exception/api-error-code.enum';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from 'src/modules/auth/core/strategies/jwt-payload.type';
 import { WorkspaceUserRole } from '../../workspace-user-module/domain/workspace-user-role.enum';
 
@@ -25,12 +27,26 @@ export class WorkspaceRoleGuard implements CanActivate {
 
     const workspaceId = request.params[workspaceIdParam];
 
-    const hasRole = user.roles.some(
-      (r) => r.workspaceId === workspaceId && r.role === role,
+    const userWorkspaceRole = user.roles.find(
+      (r) => r.workspaceId === workspaceId,
     );
 
-    if (!hasRole) {
-      throw new ForbiddenException();
+    if (!userWorkspaceRole) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.WORKSPACE_ACCESS_REVOKED,
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (userWorkspaceRole.role !== role) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INSUFFICIENT_PERMISSIONS,
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     return true;

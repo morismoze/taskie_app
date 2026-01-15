@@ -1,5 +1,4 @@
-import 'package:logging/logging.dart';
-
+import '../../data/repositories/auth/auth_id_provider_repository.dart';
 import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
 import '../../data/repositories/user/user_repository.dart';
@@ -19,29 +18,26 @@ class SignInUseCase {
   final AuthStateRepository _authStateRepository;
   final UserRepository _userRepository;
 
-  final _log = Logger('SignInUseCase');
+  /// On Sign in we need to do three things:
+  /// 1. trigger sign in from [AuthRepository],
+  /// 2. set authenticated state in [AuthStateRepository] and
+  /// 3. set user state in [UserRepository]
+  Future<Result<void>> signIn(AuthProvider provider) async {
+    final resultSignIn = await _authRepository.signIn(provider);
 
-  /// On Google sign in we need to do three things: 1. trigger Google sign in request from [AuthRepository],
-  /// 2. set authenticated state in [AuthStateRepository] and 3. set user state in [UserRepository]
-  Future<Result<void>> signInWithGoogle() async {
-    final signInWithGoogleResult = await _authRepository.signInWithGoogle();
-
-    switch (signInWithGoogleResult) {
+    switch (resultSignIn) {
       case Ok<Auth>():
-        _authStateRepository.setAuthenticated(
-          SetAuthStateArgumentsTrue(
-            accessToken: signInWithGoogleResult.value.accessToken,
-            refreshToken: signInWithGoogleResult.value.refreshToken,
-          ),
-        );
-        _userRepository.setUser(signInWithGoogleResult.value.user);
+        // Not fatal if tokens save to the secure storage fails. Worst
+        // case token refresh will trigger.
+        _authStateRepository.setTokens((
+          resultSignIn.value.accessToken,
+          resultSignIn.value.refreshToken,
+        ));
+        _authStateRepository.setAuthenticated(true);
+        _userRepository.setUser(resultSignIn.value.user);
         return const Result.ok(null);
       case Error<Auth>():
-        _log.warning(
-          'Error signing in with Google',
-          signInWithGoogleResult.error,
-        );
-        return Result.error(signInWithGoogleResult.error);
+        return Result.error(resultSignIn.error);
     }
   }
 }

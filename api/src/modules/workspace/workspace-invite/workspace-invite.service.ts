@@ -1,27 +1,25 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { WORKSPACE_INVITE_LINK_LENGTH } from 'src/common/helper/constants';
+import { DateTime } from 'luxon';
+import { WORKSPACE_INVITE_TOKEN_LENGTH } from 'src/common/helper/constants';
 import { generateUniqueToken } from 'src/common/helper/util';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-user-role.enum';
-import { WorkspaceUserStatus } from '../workspace-user-module/domain/workspace-user-status.enum';
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
 import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
 import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore } from './domain/workspace-invite-with-workspace-core-and-user-core.domain';
-import { WorkspaceInviteWithWorkspaceCore } from './domain/workspace-invite-with-workspace-core.domain';
+import { WorkspaceInviteWithWorkspaceWithCreatedByUser } from './domain/workspace-invite-with-workspace-with-created-by-user.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
 import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
-import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteService {
   constructor(
-    private readonly workspaceInviteRepository: WorkspaceInviteRepository,
-    private readonly transactionalWorkspaceInviteRepository: TransactionalWorkspaceInviteRepository,
+    private readonly workspaceInviteRepository: TransactionalWorkspaceInviteRepository,
     private readonly workspaceUserService: WorkspaceUserService,
     private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
@@ -29,42 +27,21 @@ export class WorkspaceInviteService {
   /**
    * Invite links will last up to 1 day and be one-time only
    */
-
-  async createInviteLink({
+  async createInviteToken({
     workspaceId,
-    createdById,
+    createdByWorkspaceUserId,
   }: {
     workspaceId: WorkspaceInvite['workspace']['id'];
-    createdById: WorkspaceUser['id'];
+    createdByWorkspaceUserId: WorkspaceUser['id'];
   }): Promise<WorkspaceInviteCore> {
-    // Check if workspace user by user ID exists
-    const createdByWorkspaceUser =
-      await this.workspaceUserService.findByUserIdAndWorkspaceId({
-        userId: createdById,
-        workspaceId,
-      });
-
-    if (!createdByWorkspaceUser) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.INVALID_PAYLOAD,
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    const token = generateUniqueToken(WORKSPACE_INVITE_LINK_LENGTH);
-    const now = new Date();
-    const twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
-    const expiresAt = new Date(
-      now.getTime() + twentyFourHoursInMillis,
-    ).toISOString();
-
+    const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
+    const now = DateTime.now().toUTC();
+    const expiresAt = now.plus({ hours: 24 }).toISO();
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
         token,
         workspaceId,
-        createdById: createdByWorkspaceUser.id,
+        createdById: createdByWorkspaceUserId,
         expiresAt,
       },
     });
@@ -81,23 +58,25 @@ export class WorkspaceInviteService {
     return newInvite;
   }
 
-  async findByTokenWithWorkspace(
+  findByTokenWithWorkspace(
     token: WorkspaceInvite['token'],
-  ): Promise<Nullable<WorkspaceInviteWithWorkspaceCore>> {
-    return await this.workspaceInviteRepository.findByToken({
+  ): Promise<Nullable<WorkspaceInviteWithWorkspaceWithCreatedByUser>> {
+    return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
-        workspace: true,
+        workspace: {
+          createdBy: true,
+        },
       },
     });
   }
 
-  async findByTokenWithWorkspaceAndUser(
+  findByTokenWithWorkspaceAndUser(
     token: WorkspaceInvite['token'],
   ): Promise<
     Nullable<WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore>
   > {
-    return await this.workspaceInviteRepository.findByToken({
+    return this.workspaceInviteRepository.findByToken({
       token,
       relations: {
         workspace: true,
@@ -113,24 +92,37 @@ export class WorkspaceInviteService {
   }: {
     token: WorkspaceInvite['token'];
     usedById: User['id'];
-  }): Promise<WorkspaceInviteWithWorkspaceCore> {
+  }): Promise<WorkspaceInviteWithWorkspaceWithCreatedByUser> {
     const workspaceInvite = await this.findByTokenWithWorkspaceAndUser(token);
 
     // Check if the invite exists
     if (!workspaceInvite) {
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.INVALID_PAYLOAD,
+          code: ApiErrorCode.NOT_FOUND_WORKSPACE_INVITE_TOKEN,
         },
         HttpStatus.NOT_FOUND,
       );
     }
 
-    // Check if that workspace invite was already used or expired
-    if (
-      workspaceInvite.usedBy !== null ||
-      workspaceInvite.expiresAt < new Date().toISOString()
-    ) {
+    // Check if user is already part of the workspace
+    const existingWorkspaceUser =
+      await this.workspaceUserService.findByUserIdAndWorkspaceId({
+        userId: usedById,
+        workspaceId: workspaceInvite.workspace.id,
+      });
+
+    if (existingWorkspaceUser !== null) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.WORKSPACE_INVITE_EXISTING_USER,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Check if that workspace invite was already used
+    if (workspaceInvite.usedBy !== null) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.WORKSPACE_INVITE_ALREADY_USED,
@@ -139,6 +131,23 @@ export class WorkspaceInviteService {
       );
     }
 
+    // Check if that workspace invite has expired
+    const expiresAt = DateTime.fromJSDate(workspaceInvite.expiresAt).toISO()!;
+    const now = DateTime.now().toUTC().toISO();
+
+    if (expiresAt < now) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.WORKSPACE_INVITE_EXPIRED,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // WorkspaceUserService is injected into this class only because of the
+    // code below. There is no easy/not messy way to move this WorkspaceUserService
+    // code to the WorkspaceService method, so we will leave it like this
+    // for the sake of easier code understanding.
     const { updatedInvite } = await this.unitOfWorkService.withTransaction(
       async () => {
         // Create a new workspace user
@@ -149,25 +158,23 @@ export class WorkspaceInviteService {
             ? workspaceInvite.createdBy.id
             : null,
           workspaceRole: WorkspaceUserRole.MEMBER,
-          status: WorkspaceUserStatus.ACTIVE,
         });
 
         // Mark the invite as used
-        const updatedInvite =
-          await this.transactionalWorkspaceInviteRepository.markUsedBy({
-            id: workspaceInvite.id,
-            usedById: newWorkspaceUser.id,
-            relations: {
-              workspace: true,
-            },
-          });
+        const updatedInvite = await this.workspaceInviteRepository.markUsedBy({
+          id: workspaceInvite.id,
+          usedById: newWorkspaceUser.id,
+          relations: {
+            workspace: true,
+          },
+        });
 
         if (!updatedInvite) {
           throw new ApiHttpException(
             {
-              code: ApiErrorCode.SERVER_ERROR,
+              code: ApiErrorCode.INVALID_PAYLOAD,
             },
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.NOT_FOUND,
           );
         }
 

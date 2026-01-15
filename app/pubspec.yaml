@@ -18,8 +18,6 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   dio: ^5.8.0+1
   pretty_dio_logger: ^1.4.0
-  flutter_animate: ^4.5.2
-  package_info_plus: ^8.3.0
   share_plus: ^11.0.0
   logging: ^1.3.0
   intl: any
@@ -28,6 +26,14 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   device_preview: ^1.2.0
   cached_network_image: ^3.4.1
+  shared_preferences: ^2.5.3
+  collection: ^1.19.1
+  animations: ^2.0.11
+  number_paginator: ^1.1.1
+  device_info_plus: ^12.3.0
+  package_info_plus: ^9.0.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -51,9 +57,7 @@ flutter:
 
 scripts:
   build_runner:development: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.development"
-  build_runner:staging: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.staging"
   build_runner:production: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.production"
   generate_localization: flutter gen-l10n
   run:development: flutter run --target lib/main.dart
-  run:staging: flutter run --target lib/main_staging.dart
   run:production: flutter run --target lib/main_production.dart

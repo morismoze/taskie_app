@@ -1,15 +1,17 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
-import { AggregatedConfig } from 'src/config/config.type';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { OrNever } from 'src/common/types/or-never.type';
+import { AggregatedConfig } from 'src/config/config.type';
 import { JwtRefreshPayload } from './jwt-refresh-payload.type';
+
+export const jwtRefrestStrategyName = 'jwt-refresh';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh',
+  jwtRefrestStrategyName,
 ) {
   // Calling parent constructor will:
   // 1. Automatically verifies signature
@@ -24,7 +26,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false, // To be explicit
-      secretOrKey: configService.get('auth.refreshSecret', { infer: true }),
+      secretOrKey: configService.get('auth.refreshSecret', { infer: true })!,
     });
   }
 

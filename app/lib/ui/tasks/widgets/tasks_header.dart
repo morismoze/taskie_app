@@ -1,45 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../routing/routes.dart';
+import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_avatar.dart';
-import '../../core/util/color.dart';
-import '../view_models/tasks_viewmodel.dart';
+import '../../core/ui/header_bar/app_header_action_button.dart';
+import '../../core/utils/user.dart';
+import '../view_models/tasks_screen_viewmodel.dart';
+import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {
   const TasksHeader({super.key, required this.viewModel});
 
-  final TasksViewModel viewModel;
+  final TasksScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    // Dart can infer a local variable is not null after if-statement assertion
-    final user = viewModel.user;
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: Dimens.of(context).paddingScreenHorizontal,
+          vertical: Dimens.of(context).paddingScreenVertical / 2,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: viewModel.userNotifier,
+              builder: (builderContext, userValue, _) {
+                if (userValue != null) {
+                  final fullName = UserUtils.constructFullName(
+                    firstName: userValue.firstName,
+                    lastName: userValue.lastName,
+                  );
 
-    if (user == null) {
-      return const SizedBox();
-    }
-
-    final firstNameFirstLetter = user.firstName[0];
-    final fullName = '${user.firstName} ${user.lastName}';
-
-    return Padding(
-      padding: EdgeInsets.only(
-        left: Dimens.of(context).paddingScreenHorizontal,
-        right: Dimens.of(context).paddingScreenHorizontal,
-        top: Dimens.of(context).paddingScreenVertical,
-        bottom: Dimens.paddingVertical,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          AppAvatar(
-            text: firstNameFirstLetter,
-            backgroundColor: ColorGenerator.generateColorFromString(fullName),
-            imageUrl: user.profileImageUrl,
-          ),
-          const Text('Add task'),
-        ],
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        builderContext.localization.tasksHello,
+                        style: Theme.of(
+                          builderContext,
+                        ).textTheme.labelLarge!.copyWith(fontSize: 14),
+                      ),
+                      Text(
+                        fullName,
+                        style: Theme.of(builderContext).textTheme.titleLarge!
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            const Spacer(),
+            const WorkspaceSwitcher(),
+            const SizedBox(width: 8),
+            AppHeaderActionButton(
+              iconData: FontAwesomeIcons.question,
+              onTap: () => context.push(
+                Routes.tasksGuide(workspaceId: viewModel.activeWorkspaceId),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
+import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
 import {
   FindManyOptions,
@@ -57,20 +58,20 @@ export class GoalRepositoryImpl implements GoalRepository {
     return newEntity;
   }
 
-  async findById({
+  findById({
     id,
     relations,
   }: {
     id: Goal['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    return await this.repo.findOne({
+    return this.repo.findOne({
       where: { id },
       relations,
     });
   }
 
-  async findByGoalIdAndWorkspaceId({
+  findByGoalIdAndWorkspaceId({
     goalId,
     workspaceId,
     relations,
@@ -79,7 +80,7 @@ export class GoalRepositoryImpl implements GoalRepository {
     workspaceId: Goal['workspace']['id'];
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    return await this.repo.findOne({
+    return this.repo.findOne({
       where: { id: goalId, workspace: { id: workspaceId } },
       relations,
     });
@@ -87,35 +88,65 @@ export class GoalRepositoryImpl implements GoalRepository {
 
   async findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search },
+    query: { page, limit, sort, status, search },
     relations,
   }: {
     workspaceId: Goal['workspace']['id'];
     query: {
       page: number;
       limit: number;
-      status: ProgressStatus;
+      sort: SortBy;
+      status: ProgressStatus | null;
       search: string | null;
     };
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{
     data: GoalEntity[];
+    totalPages: number;
     total: number;
   }> {
     const offset = (page - 1) * limit;
 
     const findOptions: FindManyOptions<GoalEntity> = {
-      where: { workspace: { id: workspaceId }, status },
+      where: { workspace: { id: workspaceId } },
       skip: offset,
       take: limit,
       relations,
     };
 
-    if (search) {
+    if (status) {
       findOptions.where = {
         ...findOptions.where,
-        title: ILike(`%${search}%`),
+        status,
       };
+    }
+
+    if (search) {
+      // Escape special characters used in SQL LIKE/ILIKE
+      // 1. Escape backslash first
+      // 2. Escape percent sign
+      // 3. Escape underscore
+      // E.g. ILIKE '%%%' - this would return all the goals
+      // which, if there are many goals, would fill up RAM
+      // and possibly fail the server.
+      const sanitizedSearch = search
+        .replace(/\\/g, '\\\\')
+        .replace(/%/g, '\\%')
+        .replace(/_/g, '\\_');
+
+      findOptions.where = {
+        ...findOptions.where,
+        title: ILike(`%${sanitizedSearch}%`),
+      };
+    }
+
+    switch (sort) {
+      case SortBy.NEWEST:
+        findOptions.order = { createdAt: 'DESC' };
+        break;
+      case SortBy.OLDEST:
+        findOptions.order = { createdAt: 'ASC' };
+        break;
     }
 
     const [goalEntities, totalCount] =
@@ -123,6 +154,7 @@ export class GoalRepositoryImpl implements GoalRepository {
 
     return {
       data: goalEntities,
+      totalPages: Math.ceil(totalCount / limit),
       total: totalCount,
     };
   }
@@ -141,7 +173,21 @@ export class GoalRepositoryImpl implements GoalRepository {
     >;
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<Nullable<GoalEntity>> {
-    await this.repo.update(id, data);
+    const { assigneeId, ...restData } = data;
+    const updateData: any = { ...restData };
+
+    if (data.assigneeId) {
+      updateData.assignee = {
+        id: assigneeId,
+      };
+    }
+
+    const result = await this.repo.update(id, updateData);
+
+    // Early return - provided ID does not exist
+    if (result.affected === 0) {
+      return null;
+    }
 
     const newEntity = await this.findById({ id, relations });
 

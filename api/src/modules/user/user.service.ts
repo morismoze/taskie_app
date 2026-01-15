@@ -1,15 +1,21 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
-import { ApiHttpException } from 'src/exception/ApiHttpException.type';
+import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
+import { WorkspaceUserRole } from '../workspace/workspace-user-module/domain/workspace-user-role.enum';
+import { WorkspaceUserService } from '../workspace/workspace-user-module/workspace-user.service';
 import { User } from './domain/user.domain';
-import { UserResponse } from './dto/user-response.dto';
+import { RolePerWorkspace, UserResponse } from './dto/user-response.dto';
 import { UserRepository } from './persistence/user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly workspaceUserService: WorkspaceUserService,
+  ) {}
 
   /**
    * This method creates a new user who "registered" via auth provider
@@ -54,9 +60,9 @@ export class UserService {
   async createVirtualUser(
     data: Pick<User, 'firstName' | 'lastName' | 'status'>,
   ): Promise<User> {
-    const newVirtalUser = await this.userRepository.createVirtualUser(data);
+    const newVirtualUser = await this.userRepository.createVirtualUser(data);
 
-    if (!newVirtalUser) {
+    if (!newVirtualUser) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SERVER_ERROR,
@@ -65,36 +71,42 @@ export class UserService {
       );
     }
 
-    return newVirtalUser;
+    return newVirtualUser;
   }
 
   async me(data: JwtPayload): Promise<UserResponse> {
     // Using assertion because user should be always found based on how JWT works (custom secret)
     const user = (await this.findById(data.sub)) as User;
 
+    const rolesPerWorkspaces: RolePerWorkspace[] = (
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(user.id)
+    ).map((wu) => ({
+      workspaceId: wu.workspace.id,
+      role: wu.workspaceRole,
+    }));
+
     const userDto: UserResponse = {
       email: user.email,
       firstName: user.firstName,
       id: user.id,
       lastName: user.lastName,
+      roles: rolesPerWorkspaces,
       profileImageUrl: user.profileImageUrl,
-      createdAt: user.createdAt,
+      createdAt: DateTime.fromJSDate(user.createdAt).toISO()!,
     };
 
     return userDto;
   }
 
-  async findById(id: User['id']): Promise<Nullable<User>> {
+  findById(id: User['id']): Promise<Nullable<User>> {
     return this.userRepository.findById(id);
   }
 
-  async findByEmail(
-    email: NonNullable<User['email']>,
-  ): Promise<Nullable<User>> {
+  findByEmail(email: NonNullable<User['email']>): Promise<Nullable<User>> {
     return this.userRepository.findByEmail(email);
   }
 
-  async findBySocialIdAndProvider({
+  findBySocialIdAndProvider({
     socialId,
     provider,
   }: {
@@ -145,18 +157,57 @@ export class UserService {
     });
 
     if (!updatedUser) {
+      // Somebody deleted themselves in the meantime
       throw new ApiHttpException(
         {
-          code: ApiErrorCode.SERVER_ERROR,
+          code: ApiErrorCode.INVALID_PAYLOAD,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
 
     return updatedUser;
   }
 
+  /**
+   * This should cascadely delete workspace_user,
+   * goal, task_assignment and session entities
+   * and set NULL to specific entities' properties.
+   */
   async delete(userId: User['id']): Promise<void> {
-    await this.userRepository.delete(userId);
+    // We firstly need to check if user is the last Manager
+    // in any workspace. Because if he was, deleting
+    // it immediately would leave that/those workspace/s
+    // in a state where it can't be admistrated anymore.
+    const workspaceUsers =
+      await this.workspaceUserService.findAllByUserId(userId);
+    const workspaceUsersLastManager = workspaceUsers.filter(
+      (wu) => wu.workspaceRole === WorkspaceUserRole.MANAGER,
+    );
+
+    // If there are some workspaces user is part of and is Manager in them
+    // we block the deletion, and send those workspaces in the response
+    // and prompt the user to delete them before deleting the account.
+    if (workspaceUsersLastManager.length > 0) {
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const result = await this.userRepository.delete(userId);
+
+    if (!result) {
+      // Should never happen because we read userId from JWT
+      // and if JWT is invalid, it will fail on the JWT guard
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.INVALID_PAYLOAD,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }

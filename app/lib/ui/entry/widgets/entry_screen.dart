@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../config/assets.dart';
 import '../../../routing/routes.dart';
+import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
+import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_filled_button.dart';
+import '../../core/ui/app_icon.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/entry_viewmodel.dart';
+import '../view_models/entry_screen_viewmodel.dart';
 
 class EntryScreen extends StatefulWidget {
   const EntryScreen({super.key, required this.viewModel});
 
-  final EntryViewModel viewModel;
+  final EntryScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _EntryScreenState();
@@ -26,26 +28,24 @@ class _EntryScreenState extends State<EntryScreen> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
       ),
     );
-    widget.viewModel.load.addListener(_onLoadWorkspacesResult);
-    widget.viewModel.addListener(_onViewModelChanged);
+    widget.viewModel.setupInitial.addListener(_onInitialLoad);
   }
 
   @override
   void didUpdateWidget(covariant EntryScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.load.addListener(_onLoadWorkspacesResult);
-    oldWidget.viewModel.load.removeListener(_onLoadWorkspacesResult);
-    oldWidget.viewModel.removeListener(_onViewModelChanged);
-    widget.viewModel.addListener(_onViewModelChanged);
+    widget.viewModel.setupInitial.addListener(_onInitialLoad);
+    oldWidget.viewModel.setupInitial.removeListener(_onInitialLoad);
   }
 
   @override
   void dispose() {
-    widget.viewModel.load.removeListener(_onLoadWorkspacesResult);
-    widget.viewModel.removeListener(_onViewModelChanged);
+    widget.viewModel.setupInitial.removeListener(_onInitialLoad);
     super.dispose();
   }
 
@@ -54,50 +54,70 @@ class _EntryScreenState extends State<EntryScreen> {
     return Scaffold(
       body: SizedBox.expand(
         child: BlurredCirclesBackground(
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  child: Image(image: AssetImage(Assets.appIcon)),
+          child: Stack(
+            children: [
+              const Center(child: AppIcon()),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.of(context).paddingScreenHorizontal,
+                      vertical: Dimens.paddingVertical * 2,
+                    ),
+                    child: ListenableBuilder(
+                      listenable: widget.viewModel.setupInitial,
+                      builder: (builderContext, _) {
+                        if (widget.viewModel.setupInitial.error) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: Dimens.paddingVertical,
+                            children: [
+                              FractionallySizedBox(
+                                widthFactor: 0.9,
+                                child: Text(
+                                  builderContext
+                                      .localization
+                                      .errorOnInitialLoad,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(
+                                    builderContext,
+                                  ).textTheme.bodyMedium,
+                                ),
+                              ),
+                              AppFilledButton(
+                                onPress: () =>
+                                    widget.viewModel.setupInitial.execute(),
+                                label: builderContext.localization.misc_retry,
+                              ),
+                            ],
+                          );
+                        }
+
+                        return ActivityIndicator(
+                          radius: 16,
+                          color: Theme.of(builderContext).colorScheme.primary,
+                        );
+                      },
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 18),
-                ActivityIndicator(
-                  radius: 16,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  void _onLoadWorkspacesResult() {
-    if (widget.viewModel.load.completed) {
-      widget.viewModel.load.clearResult();
-    }
-
-    if (widget.viewModel.load.error) {
-      // If there was an error while loading up workspaces, we show a error
-      // snackbar and redirect user to the login page
-      widget.viewModel.load.clearResult();
-      AppSnackbar.showError(
-        context: context,
-        message: context.localization.errorWhileLoadingWorkspaces,
-      );
-      context.go(Routes.login);
-    }
-  }
-
-  void _onViewModelChanged() {
-    if (widget.viewModel.userHasNoWorkspaces) {
-      context.go(Routes.createWorkspace);
-    } else {
-      context.go(Routes.tasks);
+  void _onInitialLoad() {
+    if (widget.viewModel.setupInitial.completed) {
+      final activeWorkspaceId =
+          (widget.viewModel.setupInitial.result as Ok<String?>).value;
+      widget.viewModel.setupInitial.clearResult();
+      if (activeWorkspaceId != null) {
+        context.go(Routes.tasks(workspaceId: activeWorkspaceId));
+      }
     }
   }
 }

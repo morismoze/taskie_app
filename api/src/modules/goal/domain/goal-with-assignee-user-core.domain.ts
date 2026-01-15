@@ -7,4 +7,10 @@ export interface GoalWithAssigneeUserCore extends GoalCore {
     lastName: string;
     profileImageUrl: string | null;
   };
+  createdBy: {
+    id: string; // workspace user ID
+    firstName: string;
+    lastName: string;
+    profileImageUrl: string | null;
+  } | null;
 }
