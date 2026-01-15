@@ -142,6 +142,16 @@ jobs:
               --network host \
               ghcr.io/${{ github.repository }}:$TAG
 
+            # Sync static files (public folder) to Nginx directory
+            # Create new folder on the server
+            # We do this because the container's public folder is not 
+            # used for serving static files directly - Nginx serves them.
+            mkdir -p /var/www/taskieapp/public
+            rm -rf /var/www/taskieapp/public/*
+
+            # Copy files from container to the server folder
+            docker cp $CONTAINER_NAME:/app/dist/public/. /var/www/taskieapp/public/
+
             # Run DB migrations
 
             # 1. Wait for NestJS app to start (adjust sleep time if needed)
