@@ -76,7 +76,7 @@ export class WorkspaceService {
         // 1. create a new empty workspace
         const newWorkspace = await this.workspaceRepository.create({
           data: {
-            description: data.description,
+            description: data.description ?? null,
             name: data.name,
             pictureUrl: null,
           },
@@ -854,10 +854,11 @@ export class WorkspaceService {
 
     if (payload.assigneeId) {
       // We need to check if provided assignee ID exists as a workspace user
-      const workspaceUser = this.workspaceUserService.findByIdAndWorkspaceId({
-        workspaceId,
-        id: payload.assigneeId,
-      });
+      const workspaceUser =
+        await this.workspaceUserService.findByIdAndWorkspaceId({
+          workspaceId,
+          id: payload.assigneeId,
+        });
 
       if (!workspaceUser) {
         throw new ApiHttpException(

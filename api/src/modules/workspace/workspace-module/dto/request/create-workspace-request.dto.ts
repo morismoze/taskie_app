@@ -25,7 +25,7 @@ export class CreateWorkspaceRequest {
   })
   @IsOptional()
   @IsValidWorkspaceDescription()
-  description: string | null;
+  description?: string | null;
 
   constructor(name: string, description?: string | null) {
     this.name = name;

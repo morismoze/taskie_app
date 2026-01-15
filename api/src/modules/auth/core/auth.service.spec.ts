@@ -190,6 +190,7 @@ describe('AuthService', () => {
     };
 
     it('should create a new user and session when user does not exist', async () => {
+      // ARRANGE
       const socialData = mockSocialLoginFactory();
       const createdUser = mockUserFactory();
       const createdSession = mockSessionCoreFactory();
@@ -202,12 +203,14 @@ describe('AuthService', () => {
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
 
+      // ACT
       const result = await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
         socialData,
         ...metaData,
       });
 
+      // ASSERT
       expect(userService.create).toHaveBeenCalledWith({
         email: socialData.email,
         firstName: socialData.firstName,
@@ -217,13 +220,11 @@ describe('AuthService', () => {
         profileImageUrl: socialData.profileImageUrl,
         status: UserStatus.ACTIVE,
       });
-
       expect(sessionService.create).toHaveBeenCalledWith({
         userId: createdUser.id,
         hash: expect.any(String),
         ...metaData,
       });
-
       expect(result).toEqual({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
@@ -251,7 +252,6 @@ describe('AuthService', () => {
         email: 'new@example.com',
       });
       const session = mockSessionCoreFactory();
-
       userService.findBySocialIdAndProvider.mockResolvedValue(existingUser);
       userService.update.mockResolvedValue(updatedUser);
       sessionService.create.mockResolvedValue(session);
@@ -280,7 +280,6 @@ describe('AuthService', () => {
         lastName: socialData.lastName,
         profileImageUrl: socialData.profileImageUrl,
       });
-
       userService.findBySocialIdAndProvider.mockResolvedValue(existingUser);
       sessionService.create.mockResolvedValue(mockSessionCoreFactory());
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
@@ -298,7 +297,6 @@ describe('AuthService', () => {
     it('should return user with workspace roles', async () => {
       const user = mockUserFactory();
       const workspaceUser = mockWorkspaceUserFactory();
-
       userService.findBySocialIdAndProvider.mockResolvedValue(user);
       sessionService.create.mockResolvedValue(mockSessionCoreFactory());
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
@@ -317,7 +315,6 @@ describe('AuthService', () => {
         workspaceId: workspaceUser.workspace.id,
         role: workspaceUser.workspaceRole,
       });
-
       // Verify roles are baked into the JWT
       expect(jwtService.signAsync).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -338,7 +335,6 @@ describe('AuthService', () => {
       const session = mockSessionFactory();
       const user = mockUserFactory({ id: session.user.id });
       const workspaceUser = mockWorkspaceUserFactory();
-
       sessionService.findByIdWithUser.mockResolvedValue(session);
       userService.findById.mockResolvedValue(user);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
@@ -362,11 +358,9 @@ describe('AuthService', () => {
           hash: expect.any(String),
         },
       });
-
       // Ensure hash rotation
       const updateCall = sessionService.update.mock.calls[0][0];
       expect(updateCall.data.hash).not.toBe(session.hash);
-
       expect(result).toEqual({
         accessToken: 'new-access',
         refreshToken: 'new-refresh',
@@ -383,7 +377,6 @@ describe('AuthService', () => {
       const wsUser2 = mockWorkspaceUserFactory({
         workspace: { id: 'w2' } as any,
       });
-
       sessionService.findByIdWithUser.mockResolvedValue(session);
       userService.findById.mockResolvedValue(user);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
@@ -415,7 +408,6 @@ describe('AuthService', () => {
         sessionId: 'session-1',
         atv: 1,
       };
-
       sessionService.deleteById.mockResolvedValue(undefined);
 
       await service.logout(payload);
