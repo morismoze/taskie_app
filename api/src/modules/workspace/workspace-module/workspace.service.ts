@@ -610,7 +610,7 @@ export class WorkspaceService {
         data,
       });
 
-      let response: WorkspaceTaskResponse = {
+      const response: WorkspaceTaskResponse = {
         ...newTask,
         dueDate:
           newTask.dueDate === null

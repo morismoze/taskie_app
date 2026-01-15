@@ -56,7 +56,6 @@ const createMockRepository = () => ({
 describe('TaskAssignmentService', () => {
   let service: TaskAssignmentService;
   let taskAssignmentRepository: ReturnType<typeof createMockRepository>;
-  let unitOfWorkService: jest.Mocked<UnitOfWorkService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -79,9 +78,6 @@ describe('TaskAssignmentService', () => {
 
     service = module.get<TaskAssignmentService>(TaskAssignmentService);
     taskAssignmentRepository = module.get(TaskAssignmentRepository);
-    unitOfWorkService = module.get(
-      UnitOfWorkService,
-    ) as jest.Mocked<UnitOfWorkService>;
   });
 
   describe('getAccumulatedPointsForWorkspaceUser', () => {
