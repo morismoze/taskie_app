@@ -45,4 +45,6 @@ EXPOSE 8000
 USER node
 
 # Start the application
-CMD ["npm", "run", "start:prod"]
+# Using "npm", "run", "start:prod" is also valid, but
+# is less efficient because it spawns an extra shell process.
+CMD ["node", "dist/main.js"]
