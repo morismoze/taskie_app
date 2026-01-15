@@ -15,7 +15,7 @@ export class ConsoleAppLogger implements AppLogger {
     private readonly configService: ConfigService<AggregatedConfig>,
   ) {
     const env = this.configService.getOrThrow('app.nodeEnv', { infer: true });
-    this.off = [Environment.PRODUCTION, Environment.STAGING].includes(env);
+    this.off = env === Environment.PRODUCTION;
   }
 
   log(message: any, context?: string) {

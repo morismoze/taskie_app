@@ -1,0 +1,148 @@
+name: Deploy App
+
+on:
+  # Manual trigger with Environment selection
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Select Target Environment (currently only "production" is available)'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          # staging will be added in the future if needed
+      confirm_deploy:
+        description: 'Type "yes" to confirm deployment'
+        required: true
+        default: 'no'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Needed for GHCR push - gives write access to Container Registry (GHCR)
+      packages: write
+
+    steps:
+      # 1. Safety & Branch Checks
+      - name: Safety Check - Deployment Confirmation
+        if: inputs.confirm_deploy != 'yes'
+        run: |
+          echo "❌ You must type 'yes' to confirm deployment."
+          exit 1
+
+      - name: Safety Check - Production Branch Restriction
+        # If target is Production, we MUST be on the 'main' branch
+        if: inputs.target_env == 'production' && github.ref != 'refs/heads/main'
+        run: |
+          echo "❌ Production deployment is only allowed from the 'main' branch."
+          echo "Current branch: ${{ github.ref }}"
+          exit 1
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Login to Registry (GHCR - Github Container Registry)
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }} # The GitHub user which triggered the workflow
+          # GitHub automatically creates this secret on every run to allow actions to interact with the repo
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Dynamic Metadata (Tagging) - prepare names (tags) this image will be pushed with.
+      # This step also generetes OCI (Open Container Initiative) labels (metadata) for the image
+      # and these include things like: repo, actor, commit, time, etc.
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # If Staging -> use tag 'staging'
+            # type=raw,value=staging,enable=${{ inputs.target_env == 'staging' }}
+            # If Production -> use tag 'latest' + commit SHA
+            type=raw,value=latest,enable=${{ inputs.target_env == 'production' }}
+            type=sha,format=long,enable=${{ inputs.target_env == 'production' }}
+            # For example, for production:
+            # ghcr.io/actor/taskie-api:latest (for practicality)
+            # ghcr.io/actor/taskie-api:sha-5f2a1b3... (for uniqueness, history, security
+            # especially for the case of rollbacks - latest will always be only the newest,
+            # and for rollback we need sha tags of the previous deployments)
+
+      # 4. Build & Push (Dockerfile)
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Look at current directory to find Dockerfile
+          push: true # Without this the image is built but not pushed to the registry
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 5. SSH Deploy (Dynamic Logic)
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          # Dynamic selection of secrets based on input
+          # Note: Currently we only have PROD secrets
+          host: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_HOST || secrets.STAGING_SSH_HOST }}
+          username: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_USER || secrets.STAGING_SSH_USER }}
+          key: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
+          port: 22
+          script: |
+            # Determine variables based on selected environment
+            if [ "${{ inputs.target_env }}" == "production" ]; then
+              TAG="latest"
+              ENV_CONTENT="${{ secrets.ENV_PRODUCTION }}"
+              CONTAINER_NAME="taskie-api"
+              echo "🚀 Deploying to PRODUCTION..."
+            else
+              TAG="staging"
+              ENV_CONTENT="${{ secrets.ENV_STAGING }}"
+              CONTAINER_NAME="taskie-api-staging"
+              echo "🚧 Deploying to STAGING..."
+            fi
+
+            # Login to GHCR on server (using GITHUB_TOKEN because we defined read writes above)
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Create/Update .env file
+            echo "$ENV_CONTENT" > .env
+
+            # Pull the specific tag (staging or latest)
+            docker pull ghcr.io/${{ github.repository }}:$TAG
+
+            # Stop and remove old container
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+
+            # Start new container
+            # Using --network host for simplicity (DB on localhost)
+            docker run -d \
+              --name $CONTAINER_NAME \
+              --restart always \
+              --env-file .env \
+              --network host \
+              ghcr.io/${{ github.repository }}:$TAG
+
+            # Run DB migrations
+
+            # 1. Wait for NestJS app to start (adjust sleep time if needed)
+            echo "⏳ Waiting for application to start..."
+            sleep 10
+
+            # 2. Do the migrations inside the running container
+            echo "🔄 Running Database Migrations..."
+            docker exec $CONTAINER_NAME npm run db:migration:run
+
+            # Cleanup - cleans up dangling images to save space
+            docker image prune -f
