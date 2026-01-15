@@ -6,6 +6,7 @@
 
 # envs
 /api/.env
+/api/.env.production
 
 # Logs
 /api/logs
@@ -88,5 +89,4 @@
 
 # Env
 /app/.env.development
-/app/.env.staging
 /app/.env.production

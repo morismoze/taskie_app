@@ -57,9 +57,7 @@ flutter:
 
 scripts:
   build_runner:development: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.development"
-  build_runner:staging: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.staging"
   build_runner:production: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.production"
   generate_localization: flutter gen-l10n
   run:development: flutter run --target lib/main.dart
-  run:staging: flutter run --target lib/main_staging.dart
   run:production: flutter run --target lib/main_production.dart
