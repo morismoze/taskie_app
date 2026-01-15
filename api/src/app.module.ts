@@ -50,6 +50,7 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     AppLoggerModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
+      exclude: ['/api/(.*)'],
     }),
   ],
   providers: [
