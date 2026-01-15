@@ -89,7 +89,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: . # Look at current directory to find Dockerfile
+          context: /api
           push: true # Without this the image is built but not pushed to the registry
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
