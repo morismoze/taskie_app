@@ -1,4 +1,4 @@
-name: Deploy App
+name: API Deploy
 
 on:
   # Manual trigger with Environment selection
@@ -7,7 +7,7 @@ on:
       target_env:
         description: 'Select Target Environment (currently only "production" is available)'
         required: true
-        default: 'production'
+        default: "production"
         type: choice
         options:
           - production
@@ -15,7 +15,7 @@ on:
       confirm_deploy:
         description: 'Type "yes" to confirm deployment'
         required: true
-        default: 'no'
+        default: "no"
 
 env:
   REGISTRY: ghcr.io

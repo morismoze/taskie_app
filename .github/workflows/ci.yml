@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: API CI Pipeline
 
 on:
   # On every pull request
