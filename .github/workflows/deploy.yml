@@ -59,6 +59,9 @@ jobs:
 
       # 3. Set up Buildx (Docker advanced builder), basically docker build knows how to
       # pull cache (cache-from), but it needs Buildx pack it and send back to Github.
+      # cache-to defines when docker build is done, store those layers to the 'cloud'
+      # - Githubs box - for future runs to use. Github runners don't have memory between runs,
+      # so this is the only way to cache docker layers between workflow runs.
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
