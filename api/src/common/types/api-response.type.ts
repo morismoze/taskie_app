@@ -22,7 +22,7 @@ export class ApiErrorResponse {
 
 export class ApiSuccessResponse<D> {
   @ApiProperty()
-  data!: unknown;
+  data!: D;
 
   @ApiProperty({ nullable: true, example: null })
   error!: null;

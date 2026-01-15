@@ -178,7 +178,7 @@ export class GoalRepositoryImpl implements GoalRepository {
 
     if (data.assigneeId) {
       updateData.assignee = {
-        id: data.assigneeId,
+        id: assigneeId,
       };
     }
 

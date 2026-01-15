@@ -11,7 +11,6 @@ jest.mock('google-auth-library');
 
 describe('AuthGoogleService', () => {
   let service: AuthGoogleService;
-  let configService: jest.Mocked<ConfigService<AggregatedConfig>>;
   let mockOAuthClientInstance: any;
 
   const mockTokenPayload: Partial<TokenPayload> = {
@@ -54,9 +53,6 @@ describe('AuthGoogleService', () => {
     }).compile();
 
     service = module.get<AuthGoogleService>(AuthGoogleService);
-    configService = module.get(ConfigService) as jest.Mocked<
-      ConfigService<AggregatedConfig>
-    >;
   });
 
   describe('socialLogin', () => {

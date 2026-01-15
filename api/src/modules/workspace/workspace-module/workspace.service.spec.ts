@@ -173,7 +173,6 @@ describe('WorkspaceService', () => {
     typeof createMockWorkspaceInviteService
   >;
   let sessionService: ReturnType<typeof createMockSessionService>;
-  let unitOfWorkService: ReturnType<typeof createMockUnitOfWorkService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -229,7 +228,6 @@ describe('WorkspaceService', () => {
     taskAssignmentService = module.get(TaskAssignmentService);
     workspaceInviteService = module.get(WorkspaceInviteService);
     sessionService = module.get(SessionService);
-    unitOfWorkService = module.get(UnitOfWorkService);
   });
 
   // --- TVOJI POPRAVLJENI TESTOVI ---

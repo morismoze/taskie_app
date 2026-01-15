@@ -135,9 +135,7 @@ describe('AuthService', () => {
   let jwtService: ReturnType<typeof createMockJwtService>;
   let userService: ReturnType<typeof createMockUserService>;
   let workspaceUserService: ReturnType<typeof createMockWorkspaceUserService>;
-  let configService: ReturnType<typeof createMockConfigService>;
   let sessionService: ReturnType<typeof createMockSessionService>;
-  let unitOfWorkService: ReturnType<typeof createMockUnitOfWorkService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -176,9 +174,7 @@ describe('AuthService', () => {
     jwtService = module.get(JwtService) as any;
     userService = module.get(UserService) as any;
     workspaceUserService = module.get(WorkspaceUserService) as any;
-    configService = module.get(ConfigService) as any;
     sessionService = module.get(SessionService) as any;
-    unitOfWorkService = module.get(UnitOfWorkService) as any;
   });
 
   describe('socialLogin', () => {
