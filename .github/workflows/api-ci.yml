@@ -4,46 +4,16 @@ on:
   # On every pull request
   pull_request:
     types: [opened, synchronize, reopened, edited]
+    paths:
+      - "api/**"
   # On push to main (this should generally happen via PRs develop to main)
   push:
     branches: [main]
+    paths:
+      - "api/**"
 
 jobs:
-  # JOB 1: Check PR title (Conventional Commits)
-  # Since we use squash merging, checking commit messages is not effective (commitlint)
-  check-pr-title:
-    name: Validate PR Title
-    runs-on: ubuntu-latest
-    # Vrti se samo na PR-ovima, ne na pushu u main
-    if: github.event_name == 'pull_request'
-    steps:
-      # PR to develop - check commit message
-      - name: Verify Conventional Commits
-        if: github.base_ref != 'main'
-        uses: amannn/action-semantic-pull-request@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          # Allows types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
-          validateSingleCommit: false
-
-      # PR to main - strict title check ("Develop to main")
-      - name: Verify Release Title
-        if: github.base_ref == 'main'
-        run: |
-          TITLE="${{ github.event.pull_request.title }}"
-          EXPECTED="Develop to main"
-
-          if [ "$TITLE" != "$EXPECTED" ]; then
-            echo "❌ ERROR: Merging to 'main' requires strict title."
-            echo "Expected: '$EXPECTED'"
-            echo "Received: '$TITLE'"
-            exit 1
-          else
-            echo "✅ Title is valid for release."
-          fi
-
-  # JOB 2: Check code quality
+  # JOB 1: Check code quality
   quality-check:
     name: Lint, Test & Build
     runs-on: ubuntu-latest
