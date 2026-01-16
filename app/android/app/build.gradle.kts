@@ -1,3 +1,12 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -29,13 +38,57 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    signingConfigs {
+        create("production") {
+            val alias = keystoreProperties["keyAlias"] as String?
+            val keyPass = keystoreProperties["keyPassword"] as String?
+            val storePass = keystoreProperties["storePassword"] as String?
+            val sFile = keystoreProperties["storeFile"] as String?
+
+            if (alias != null && keyPass != null && storePass != null && sFile != null) {
+                keyAlias = alias
+                keyPassword = keyPass
+                storePassword = storePass
+                storeFile = file(sFile)
+            } else {
+                // If the properties are not set, use debug signing config as a fallback
+                initWith(getByName("debug"))
+            }
         }
     }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("production")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    flavorDimensions += "default"
+    productFlavors {
+        create("development") {
+            dimension = "default"
+            applicationIdSuffix = ".dev"
+            // App name on the mobile device will be "Taskie Dev"
+            resValue("string", "app_name", "Taskie Dev")
+        }
+
+        create("production") {
+            dimension = "default"
+            // App name on the mobile device will be "Taskie"
+            resValue("string", "app_name", "Taskie")
+            signingConfig = signingConfigs.getByName("production")
+        }
+    }
+}
+
+dependencies {
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
 
 flutter {

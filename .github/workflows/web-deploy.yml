@@ -1,0 +1,63 @@
+name: Web Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Branch Check
+      - name: Safety Check - Branch Restriction
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "❌ Production deployment is only allowed from the 'main' branch."
+          echo "Current branch: ${{ github.ref }}"
+          exit 1
+
+      # 2. Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 3. SSH Deploy Web Files to VPS
+      - name: Deploy Web files to Server via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: 22
+          source: "web/*"
+          target: "/tmp/taskie_web_temp"
+          strip_components: 1 # Removes 'web/' prefix so we don't get something like /tmp/taskie_web_temp/web/index.html
+
+      # 4. Move files to final location and set permissions
+      - name: Move files and Set Permissions via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: 22
+          script: |
+            echo "🚀 Starting deployment logic..."
+
+            # 1. Create directory if it doesn't exist
+            sudo mkdir -p /var/www/taskieapp/public
+
+            # 2. CLEANUP: Remove old files to prevent "ghost" files
+            sudo rm -rf /var/www/taskieapp/public/*
+
+            # 3. Copy new files from temp to public directory
+            sudo cp -r /tmp/taskie_web_temp/. /var/www/taskieapp/public/
+
+            # 4. Set permissions (CRITICAL for Nginx because Nginx acts on the server under
+            # www-data user, and these files are ownsed by the SSH user we used to copy them
+            # so we need to change ownership to www-data)
+            sudo chown -R www-data:www-data /var/www/taskieapp/public
+            sudo chmod -R 755 /var/www/taskieapp/public
+
+            # 5. Cleanup temp directory
+            rm -rf /tmp/taskie_web_temp
+
+            echo "✅ Deployment successful!"
