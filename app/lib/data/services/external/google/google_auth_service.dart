@@ -15,6 +15,7 @@ class GoogleAuthService {
 
   /// Returns ID token
   Future<Result<String>> authenticate() async {
+    print('yoyoyoy ${Env.googleAuthClientId}');
     try {
       var googleUser = await _googleSignIn.signInSilently();
 
@@ -44,11 +45,9 @@ class GoogleAuthService {
         );
       }
 
-      // This should be done when user manually signs out
-      // await _googleSignIn.disconnect();
-
       return Result.ok(googleAuth.idToken!);
     } on Exception catch (e, stackTrace) {
+      print('alooha $e');
       return Result.error(
         Exception(const GoogleSignInUnknownException()),
         stackTrace,
