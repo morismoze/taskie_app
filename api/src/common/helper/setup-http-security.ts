@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import { Environment } from 'src/config/app.config';
 import { AggregatedConfig } from 'src/config/config.type';
 
-export const setupRequestSecurity = (
+export const setupHttpSecurity = (
   app: NestExpressApplication,
   configService: ConfigService<AggregatedConfig>,
 ) => {

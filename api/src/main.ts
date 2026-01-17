@@ -5,8 +5,8 @@ import 'dotenv/config';
 import { AppModule } from './app.module';
 import setupApiDocs from './common/helper/setup-api-docs';
 import { setupApiMeta } from './common/helper/setup-api-meta';
+import { setupHttpSecurity } from './common/helper/setup-http-security';
 import { setupLogger } from './common/helper/setup-logger';
-import { setupRequestSecurity } from './common/helper/setup-request-security';
 import { AggregatedConfig } from './config/config.type';
 
 async function bootstrap() {
@@ -17,7 +17,7 @@ async function bootstrap() {
 
   const logger = setupLogger(app);
 
-  setupRequestSecurity(app, configService);
+  setupHttpSecurity(app, configService);
 
   setupApiMeta(app, configService);
 
