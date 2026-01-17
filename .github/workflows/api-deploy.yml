@@ -151,16 +151,6 @@ jobs:
               --network host \
               $IMAGE_URL
 
-            # Run DB migrations
-
-            # 1. Wait for NestJS app to start (adjust sleep time if needed)
-            echo "⏳ Waiting for application to start..."
-            sleep 10
-
-            # 2. Do the migrations inside the running container
-            echo "🔄 Running Database Migrations..."
-            docker exec $CONTAINER_NAME npm run db:migration:run
-
             # Cleanup - cleans up dangling images to save space
             docker image prune -f
 
