@@ -76,13 +76,13 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             # If Staging -> use tag 'staging'
-            # type=raw,value=staging,enable=${{ inputs.target_env == 'staging' }}
+            type=raw,value=staging,enable=${{ inputs.target_env == 'staging' }}
             # If Production -> use tag 'latest' + commit SHA
             type=raw,value=latest,enable=${{ inputs.target_env == 'production' }}
             type=sha,format=long,enable=${{ inputs.target_env == 'production' }}
             # For example, for production:
-            # ghcr.io/actor/taskie-api:latest (for practicality)
-            # ghcr.io/actor/taskie-api:sha-5f2a1b3... (for uniqueness, history, security
+            # ghcr.io/actor/taskie_api:latest (for practicality)
+            # ghcr.io/actor/taskie_api:sha-5f2a1b3... (for uniqueness, history, security
             # especially for the case of rollbacks - latest will always be only the newest,
             # and for rollback we need sha tags of the previous deployments)
 
@@ -108,6 +108,9 @@ jobs:
           key: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
+            REPO_NAME="${{ github.repository }}"
+            # Convert to lowercase for GHCR (it is case sensitive)
+            IMAGE_REPO=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
 
             # Determine variables based on selected environment
             if [ "${{ inputs.target_env }}" == "production" ]; then
@@ -122,6 +125,8 @@ jobs:
               echo "🚧 Deploying to STAGING..."
             fi
 
+            IMAGE_URL="ghcr.io/$IMAGE_REPO:$TAG"
+
             # Login to GHCR on server (using GITHUB_TOKEN because we defined read writes above)
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
@@ -129,20 +134,22 @@ jobs:
             echo "$ENV_CONTENT" > .env
 
             # Pull the specific tag (staging or latest)
-            docker pull ghcr.io/${{ github.repository }}:$TAG
+            docker pull $IMAGE_URL
 
             # Stop and remove old container
+            echo "🛑 Stopping current container..."
             docker stop $CONTAINER_NAME || true
             docker rm $CONTAINER_NAME || true
 
             # Start new container
             # Using --network host for simplicity (DB on localhost)
+            echo "🚀 Starting new container..."
             docker run -d \
               --name $CONTAINER_NAME \
               --restart always \
               --env-file .env \
               --network host \
-              ghcr.io/${{ github.repository }}:$TAG
+              $IMAGE_URL
 
             # Run DB migrations
 
