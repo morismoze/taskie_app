@@ -1,5 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import { AggregatedConfig } from 'src/config/config.type';
 
 // We have ResponseTransformerInterceptor which wraps every response data
 // with ApiResponse generic. Currently all the endpoints define only the
@@ -44,7 +46,11 @@ const wrapResponseWithApiResponseWrapper = (document: OpenAPIObject) => {
   });
 };
 
-const setupApiDocs = (app: NestExpressApplication, apiPrefix: string) => {
+const setupApiDocs = (
+  app: NestExpressApplication,
+  configService: ConfigService<AggregatedConfig>,
+) => {
+  const apiPrefix = configService.getOrThrow('app.apiPrefix', { infer: true });
   const options = new DocumentBuilder()
     .setTitle('Taskie API')
     .setDescription('API docs')

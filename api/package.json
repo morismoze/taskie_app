@@ -43,6 +43,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "google-auth-library": "^9.15.1",
+    "helmet": "^8.1.0",
     "luxon": "^3.7.1",
     "nestjs-cls": "^6.1.0",
     "passport": "^0.7.0",
