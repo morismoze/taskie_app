@@ -290,6 +290,7 @@ GoRouter router({
                         workspaceId: workspaceId,
                         workspaceRepository: notifierContext.read(),
                         userRepository: context.read(),
+                        clientInfoRepository: context.read(),
                         refreshTokenUseCase: notifierContext.read(),
                         activeWorkspaceChangeUseCase: notifierContext.read(),
                       ),

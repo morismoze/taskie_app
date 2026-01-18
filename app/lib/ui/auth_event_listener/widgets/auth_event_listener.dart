@@ -122,12 +122,9 @@ class _AuthEventListenerState extends State<AuthEventListener> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleWorkspaceRoleChange,
-          onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.handleWorkspaceRoleChange.execute(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.misc_ok,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => widget.viewModel.handleWorkspaceRoleChange.execute(),
+          submitButtonText: context.localization.misc_ok,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );
@@ -155,12 +152,9 @@ class _AuthEventListenerState extends State<AuthEventListener> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleRemovalFromWorkspace,
-          onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.handleRemovalFromWorkspace.execute(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.misc_ok,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => widget.viewModel.handleRemovalFromWorkspace.execute(),
+          submitButtonText: context.localization.misc_ok,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );

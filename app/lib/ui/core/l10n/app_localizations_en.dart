@@ -67,6 +67,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get misc_somethingWentWrong => 'Uh-oh! Something went wrong';
 
   @override
+  String get misc_privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get misc_termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get misc_contactSupport => 'Contact Support';
+
+  @override
   String get bootstrapError =>
       'Uh-oh! We\'ve had some trouble while starting up. Please try again or restart the app.';
 
@@ -384,6 +393,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appDrawerCreateNewWorkspace => 'Create new workspace';
+
+  @override
+  String get appDrawerAbout => 'About';
+
+  @override
+  String get appDrawerAboutSourceLicenses => 'Source licenses';
+
+  @override
+  String get appDrawerAboutVisitWebsite => 'Visit out Website';
 
   @override
   String get preferencesLabel => 'Preferences';

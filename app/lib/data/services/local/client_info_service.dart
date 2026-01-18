@@ -8,9 +8,11 @@ class ClientInfoService {
 
   final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
+  late final String _appName;
+  late final String _appVersion;
+  late final String _buildNumber;
   late final String? _deviceModel;
   late final String? _osVersion;
-  late final String _appVersion;
 
   bool _initialized = false;
 
@@ -22,8 +24,10 @@ class ClientInfoService {
     }
 
     final pkg = await PackageInfo.fromPlatform();
-    _appVersion = pkg.version;
 
+    _appName = pkg.appName;
+    _appVersion = pkg.version;
+    _buildNumber = pkg.buildNumber;
     if (Platform.isAndroid) {
       final a = await _deviceInfo.androidInfo;
       _deviceModel = a.model;
@@ -40,6 +44,21 @@ class ClientInfoService {
     _initialized = true;
   }
 
+  String get appName {
+    _ensureInit();
+    return _appName;
+  }
+
+  String get appVersion {
+    _ensureInit();
+    return _appVersion;
+  }
+
+  String get buildNumber {
+    _ensureInit();
+    return _buildNumber;
+  }
+
   String? get deviceModel {
     _ensureInit();
     return _deviceModel;
@@ -48,11 +67,6 @@ class ClientInfoService {
   String? get osVersion {
     _ensureInit();
     return _osVersion;
-  }
-
-  String get appVersion {
-    _ensureInit();
-    return _appVersion;
   }
 
   void _ensureInit() {

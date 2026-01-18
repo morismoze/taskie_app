@@ -67,6 +67,15 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
 
   @override
+  String get misc_privacyPolicy => 'Pravila privatnosti';
+
+  @override
+  String get misc_termsAndConditions => 'Uvjeti korištenja';
+
+  @override
+  String get misc_contactSupport => 'Kontaktirajte podršku';
+
+  @override
   String get bootstrapError =>
       'Uh-oh! Došlo je do problema prilikom pokretanja. Molimo pokušajte ponovno ili ponovno pokrenite aplikaciju.';
 
@@ -385,6 +394,15 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerCreateNewWorkspace => 'Kreiraj novi radni prostor';
+
+  @override
+  String get appDrawerAbout => 'O aplikaciji';
+
+  @override
+  String get appDrawerAboutSourceLicenses => 'Licence otvorenog koda';
+
+  @override
+  String get appDrawerAboutVisitWebsite => 'Posjetite našu web stranicu';
 
   @override
   String get preferencesLabel => 'Preference';

@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../../data/repositories/client_info/client_info_repository.dart';
 import '../../../../data/repositories/user/user_repository.dart';
 import '../../../../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../../../../domain/models/client_info.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../domain/use_cases/active_workspace_change_use_case.dart';
 import '../../../../domain/use_cases/refresh_token_use_case.dart';
@@ -36,12 +38,14 @@ class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({
     required String workspaceId,
     required WorkspaceRepository workspaceRepository,
+    required UserRepository userRepository,
+    required ClientInfoRepository clientInfoRepository,
     required RefreshTokenUseCase refreshTokenUseCase,
     required ActiveWorkspaceChangeUseCase activeWorkspaceChangeUseCase,
-    required UserRepository userRepository,
   }) : _activeWorkspaceId = workspaceId,
        _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
+       _clientInfoRepository = clientInfoRepository,
        _refreshTokenUseCase = refreshTokenUseCase,
        _activeWorkspaceChangeUseCase = activeWorkspaceChangeUseCase {
     _workspaceRepository.addListener(_onWorkspacesChanged);
@@ -53,6 +57,7 @@ class AppDrawerViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
+  final ClientInfoRepository _clientInfoRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final ActiveWorkspaceChangeUseCase _activeWorkspaceChangeUseCase;
 
@@ -94,6 +99,8 @@ class AppDrawerViewModel extends ChangeNotifier {
   String? _inviteLink;
 
   String? get inviteLink => _inviteLink;
+
+  ClientInfo get clientInfo => _clientInfoRepository.clientInfo;
 
   void _onWorkspacesChanged() {
     notifyListeners();

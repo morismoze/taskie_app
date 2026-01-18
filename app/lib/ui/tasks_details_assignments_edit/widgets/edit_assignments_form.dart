@@ -141,13 +141,12 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.removeTaskAssignee,
-          onSubmit: (BuildContext builderContext) =>
+          onSubmit: () =>
               widget.viewModel.removeTaskAssignee.execute(assigneeId),
-          onCancel: (BuildContext builderContext) => builderContext.pop(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.tasksRemoveTaskAssignmentModalCta,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onCancel: () => context.pop(),
+          submitButtonText:
+              context.localization.tasksRemoveTaskAssignmentModalCta,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );

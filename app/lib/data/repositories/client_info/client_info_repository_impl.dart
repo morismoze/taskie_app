@@ -10,7 +10,9 @@ class ClientInfoRepositoryImpl implements ClientInfoRepository {
 
   @override
   ClientInfo get clientInfo => ClientInfo(
+    appName: _clientInfoService.appName,
     appVersion: _clientInfoService.appVersion,
+    buildNumber: _clientInfoService.buildNumber,
     deviceModel: _clientInfoService.deviceModel,
     osVersion: _clientInfoService.osVersion,
   );

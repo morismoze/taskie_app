@@ -212,6 +212,24 @@ abstract class AppLocalizations {
   /// **'Uh-oh! Something went wrong'**
   String get misc_somethingWentWrong;
 
+  /// No description provided for @misc_privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get misc_privacyPolicy;
+
+  /// No description provided for @misc_termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get misc_termsAndConditions;
+
+  /// No description provided for @misc_contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get misc_contactSupport;
+
   /// No description provided for @bootstrapError.
   ///
   /// In en, this message translates to:
@@ -751,6 +769,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create new workspace'**
   String get appDrawerCreateNewWorkspace;
+
+  /// No description provided for @appDrawerAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get appDrawerAbout;
+
+  /// No description provided for @appDrawerAboutSourceLicenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Source licenses'**
+  String get appDrawerAboutSourceLicenses;
+
+  /// No description provided for @appDrawerAboutVisitWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit out Website'**
+  String get appDrawerAboutVisitWebsite;
 
   /// No description provided for @preferencesLabel.
   ///

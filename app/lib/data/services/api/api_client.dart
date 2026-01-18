@@ -19,13 +19,13 @@ class ApiClient {
        _authEventBus = authEventBus,
        _client = Dio(
          BaseOptions(
-           baseUrl: Env.backendUrl,
+           baseUrl: Env.backendBaseUrl,
            headers: {'Content-Type': 'application/json'},
          ),
        ),
        _refreshClient = Dio(
          BaseOptions(
-           baseUrl: Env.backendUrl,
+           baseUrl: Env.backendBaseUrl,
            headers: {'Content-Type': 'application/json'},
          ),
        ) {

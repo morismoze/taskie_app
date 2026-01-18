@@ -24,7 +24,7 @@ class ApiDeepLinkClient {
        ),
        _refreshClient = Dio(
          BaseOptions(
-           baseUrl: Env.backendUrl,
+           baseUrl: Env.backendBaseUrl,
            headers: {'Content-Type': 'application/json'},
          ),
        ) {

@@ -13,9 +13,9 @@ on:
           - production
           # staging will be added in the future if needed
       confirm_deploy:
-        description: 'Type "yes" to confirm deployment'
+        description: 'Type "deployment" to confirm'
         required: true
-        default: "no"
+        default: ""
 
 env:
   REGISTRY: ghcr.io

@@ -77,7 +77,7 @@ class _AppDrawerState extends State<AppDrawer> {
               ),
               const SizedBox(height: Dimens.paddingVertical / 1.25),
               WorkspacesList(viewModel: widget.viewModel),
-              const Footer(),
+              Footer(viewModel: widget.viewModel),
             ],
           ),
         ),

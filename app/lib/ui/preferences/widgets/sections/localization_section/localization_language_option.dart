@@ -86,9 +86,8 @@ class _LocalizationLanguageOptionState
           ),
           actions: ActionButtonBar.withCommand(
             command: widget.viewModel.setAppLocale,
-            onSubmit: (BuildContext builderContext) =>
-                _onSubmit(dialogSelectedLocale),
-            onCancel: (BuildContext builderContext) => builderContext.pop(),
+            onSubmit: () => _onSubmit(dialogSelectedLocale),
+            onCancel: () => context.pop(),
           ),
         );
       },

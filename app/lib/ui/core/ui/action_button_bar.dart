@@ -21,28 +21,28 @@ class ActionButtonBar extends StatelessWidget {
     this.submitButtonColor,
   });
 
-  final void Function(BuildContext) onSubmit;
-  final void Function(BuildContext)? onCancel;
+  final VoidCallback onSubmit;
+  final VoidCallback? onCancel;
   final Command? command;
   // These three below are functions because we need the builder's context
   // for text (localisation) and for the color (Theme style)
-  final String Function(BuildContext builderContext)? submitButtonText;
-  final String Function(BuildContext builderContext)? cancelButtonText;
-  final Color Function(BuildContext builderContext)? submitButtonColor;
+  final String? submitButtonText;
+  final String? cancelButtonText;
+  final Color? submitButtonColor;
 
   /// Simple non-Command buttons
   factory ActionButtonBar({
     Key? key,
     required VoidCallback onSubmit,
-    required VoidCallback onCancel,
-    String Function(BuildContext builderContext)? submitButtonText,
-    String Function(BuildContext builderContext)? cancelButtonText,
-    Color Function(BuildContext builderContext)? submitButtonColor,
+    VoidCallback? onCancel,
+    String? submitButtonText,
+    String? cancelButtonText,
+    Color? submitButtonColor,
   }) {
     return ActionButtonBar._(
       key: key,
-      onSubmit: (_) => onSubmit(),
-      onCancel: (_) => onCancel(),
+      onSubmit: onSubmit,
+      onCancel: onCancel,
       submitButtonText: submitButtonText,
       cancelButtonText: cancelButtonText,
       submitButtonColor: submitButtonColor,
@@ -53,11 +53,11 @@ class ActionButtonBar extends StatelessWidget {
   factory ActionButtonBar.withCommand({
     Key? key,
     required Command command,
-    required void Function(BuildContext builderContext) onSubmit,
-    void Function(BuildContext builderContext)? onCancel,
-    String Function(BuildContext builderContext)? submitButtonText,
-    String Function(BuildContext builderContext)? cancelButtonText,
-    Color Function(BuildContext builderContext)? submitButtonColor,
+    required VoidCallback onSubmit,
+    VoidCallback? onCancel,
+    String? submitButtonText,
+    String? cancelButtonText,
+    Color? submitButtonColor,
   }) {
     return ActionButtonBar._(
       key: key,
@@ -96,8 +96,8 @@ class ActionButtonBar extends StatelessWidget {
   Widget _buildButtons({
     required BuildContext context,
     bool isLoading = false,
-    String Function(BuildContext builderContext)? submitButtonText,
-    String Function(BuildContext builderContext)? cancelButtonText,
+    String? submitButtonText,
+    String? cancelButtonText,
   }) {
     return Row(
       spacing: Dimens.paddingHorizontal,
@@ -106,10 +106,8 @@ class ActionButtonBar extends StatelessWidget {
           Expanded(
             flex: 2,
             child: AppOutlinedButton(
-              onPress: () => onCancel!(context),
-              label: cancelButtonText != null
-                  ? cancelButtonText(context)
-                  : context.localization.misc_cancel,
+              onPress: onCancel!,
+              label: cancelButtonText ?? context.localization.misc_cancel,
               color: Theme.of(context).colorScheme.secondary,
               disabled: isLoading,
             ),
@@ -117,14 +115,10 @@ class ActionButtonBar extends StatelessWidget {
         Expanded(
           flex: 4,
           child: AppFilledButton(
-            onPress: () => onSubmit(context),
+            onPress: onSubmit,
             loading: isLoading,
-            label: submitButtonText != null
-                ? submitButtonText(context)
-                : context.localization.misc_submit,
-            backgroundColor: submitButtonColor != null
-                ? submitButtonColor!(context)
-                : null,
+            label: submitButtonText ?? context.localization.misc_submit,
+            backgroundColor: submitButtonColor,
           ),
         ),
       ],

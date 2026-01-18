@@ -199,13 +199,10 @@ class _UserProfileState extends State<UserProfile> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.deleteAccount,
-          onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.deleteAccount.execute(),
-          onCancel: (BuildContext builderContext) => builderContext.pop(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.deleteAccountConfirmButton,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => widget.viewModel.deleteAccount.execute(),
+          onCancel: () => context.pop(),
+          submitButtonText: context.localization.deleteAccountConfirmButton,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );
