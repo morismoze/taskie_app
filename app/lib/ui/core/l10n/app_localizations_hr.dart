@@ -93,6 +93,18 @@ class AppLocalizationsHr extends AppLocalizations {
   String get signInGetStarted => 'Započnimo';
 
   @override
+  String get signInLegislation1 => 'Prijavom prihvaćate naše';
+
+  @override
+  String get signInLegislation2 => 'Uvjete korištenja';
+
+  @override
+  String get signInLegislation3 => 'i';
+
+  @override
+  String get signInLegislation4 => 'Pravila privatnosti';
+
+  @override
   String get signInTitleProviders => 'Metoda prijave';
 
   @override

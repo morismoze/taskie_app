@@ -126,7 +126,7 @@ class _GoalssScreenState extends State<GoalsScreen> {
                                     child: layoutBuilderContext
                                         .localization
                                         .goalsNoGoals
-                                        .format(
+                                        .toStyledText(
                                           style: Theme.of(
                                             layoutBuilderContext,
                                           ).textTheme.bodyMedium!,

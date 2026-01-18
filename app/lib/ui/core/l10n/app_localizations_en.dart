@@ -93,6 +93,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInGetStarted => 'Let\'s get started';
 
   @override
+  String get signInLegislation1 => 'By signing in, you agree to our';
+
+  @override
+  String get signInLegislation2 => 'Terms and Conditions';
+
+  @override
+  String get signInLegislation3 => 'and';
+
+  @override
+  String get signInLegislation4 => 'Privacy Policy';
+
+  @override
   String get signInTitleProviders => 'Sign in method';
 
   @override

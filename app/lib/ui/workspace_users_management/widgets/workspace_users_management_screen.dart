@@ -152,13 +152,8 @@ class _WorkspaceUsersManagementScreenState
 
                           return WorkspaceUserTile(
                             viewModel: widget.viewModel,
-                            id: workspaceUser.id,
-                            firstName: workspaceUser.firstName,
-                            lastName: workspaceUser.lastName,
-                            role: workspaceUser.role,
+                            workspaceUser: workspaceUser,
                             isCurrentUser: isCurrentUser,
-                            email: workspaceUser.email,
-                            profileImageUrl: workspaceUser.profileImageUrl,
                           );
                         },
                       ),

@@ -73,10 +73,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
           ...widget.viewModel.assignees!.map((assignee) {
             if (_assigneesStatuses[assignee.id] != null) {
               return TaskAssignmentFormField(
-                assigneeId: assignee.id,
-                firstName: assignee.firstName,
-                lastName: assignee.lastName,
-                profileImageUrl: assignee.profileImageUrl,
+                assignee: assignee,
                 status: _assigneesStatuses[assignee.id]!,
                 dueDate: widget.viewModel.dueDate,
                 onStatusChanged: _onStatusChanged,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../domain/constants/rbac.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -17,7 +18,6 @@ import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
-import '../../core/utils/user.dart';
 import '../view_models/workspace_user_details_screen_view_model.dart';
 
 class WorkspaceUserDetailsScreen extends StatelessWidget {
@@ -88,11 +88,6 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                       );
                     }
 
-                    final fullName = UserUtils.constructFullName(
-                      firstName: details.firstName,
-                      lastName: details.lastName,
-                    );
-
                     return Column(
                       children: [
                         // First section
@@ -112,7 +107,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                         FractionallySizedBox(
                           widthFactor: 0.8,
                           child: Text(
-                            fullName,
+                            details.fullName,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),

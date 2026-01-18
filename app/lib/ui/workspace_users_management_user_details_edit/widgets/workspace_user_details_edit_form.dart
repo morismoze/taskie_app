@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -10,7 +11,6 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/info_icon_with_tooltip.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
 import '../view_models/workspace_user_details_edit_screen_view_model.dart';
 
 class WorkspaceUserDetailsEditForm extends StatefulWidget {
@@ -76,9 +76,7 @@ class _WorkspaceUserDetailsEditFormState
       ),
     ]).toList();
     // Virtual users don't have emails, and real users must have emails.
-    final isVirtualUser = UserUtils.checkIsVirtualUser(
-      email: widget.viewModel.details!.email,
-    );
+    final isVirtualUser = widget.viewModel.details!.isVirtual;
 
     return Form(
       key: _formKey,

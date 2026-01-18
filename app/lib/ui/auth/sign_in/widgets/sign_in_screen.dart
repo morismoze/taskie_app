@@ -13,6 +13,7 @@ import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_snackbar.dart';
 import '../../../core/ui/blurred_circles_background.dart';
 import '../view_models/sign_in_viewmodel.dart';
+import 'legal_agreement_disclaimer.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.viewModel});
@@ -56,60 +57,71 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: BlurredCirclesBackground(
         child: SafeArea(
-          child: Padding(
-            padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
-              top: Dimens.of(context).paddingScreenVertical,
-              bottom: Dimens.of(context).paddingScreenVertical * 2,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Expanded(
-                  flex: 3,
-                  child: FractionallySizedBox(
-                    widthFactor: 0.85,
-                    child: Image(image: AssetImage(Assets.signInIllustration)),
-                  ),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight:
+                      constraints.maxHeight, // Minimalna visina = visina ekrana
                 ),
-                const SizedBox(height: Dimens.paddingVertical * 2),
-                Expanded(
-                  flex: 2,
+                child: Padding(
+                  padding: Dimens.of(context).edgeInsetsScreenHorizontal
+                      .copyWith(
+                        top: Dimens.of(context).paddingScreenVertical,
+                        bottom: Dimens.of(context).paddingScreenVertical * 2,
+                      ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        context.localization.signInTitleStart,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      Text(
-                        context.localization.signInTitleEnd,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: Dimens.paddingVertical / 2),
-                      FractionallySizedBox(
-                        widthFactor: 0.75,
-                        child: Text(
-                          context.localization.signInSubtitle,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium,
+                      const SizedBox(height: Dimens.paddingVertical),
+                      const FractionallySizedBox(
+                        widthFactor: 0.85,
+                        child: Image(
+                          image: AssetImage(Assets.signInIllustration),
                         ),
                       ),
                       const SizedBox(height: Dimens.paddingVertical * 2),
-                      ListenableBuilder(
-                        listenable: widget.viewModel.signInWithGoogle,
-                        builder: (BuildContext builderContext, _) =>
-                            AppFilledButton(
-                              onPress: () => _onSignInStart(builderContext),
-                              label:
-                                  builderContext.localization.signInGetStarted,
+                      Column(
+                        children: [
+                          Text(
+                            context.localization.signInTitleStart,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          Text(
+                            context.localization.signInTitleEnd,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: Dimens.paddingVertical / 2),
+                          FractionallySizedBox(
+                            widthFactor: 0.75,
+                            child: Text(
+                              context.localization.signInSubtitle,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
+                          ),
+                          const SizedBox(height: Dimens.paddingVertical * 2),
+                          ListenableBuilder(
+                            listenable: widget.viewModel.signInWithGoogle,
+                            builder: (BuildContext builderContext, _) =>
+                                AppFilledButton(
+                                  onPress: () => _onSignInStart(builderContext),
+                                  label: builderContext
+                                      .localization
+                                      .signInGetStarted,
+                                ),
+                          ),
+                          const SizedBox(height: Dimens.paddingVertical / 2),
+                          const LegalAgreementDisclaimer(),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),

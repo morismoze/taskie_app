@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../config/environment/env.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_dialog.dart';
@@ -11,6 +10,7 @@ import '../../../core/ui/app_icon.dart';
 import '../../../core/ui/app_outlined_button.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/separator.dart';
+import '../../../core/utils/app_urls.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 
 class AboutButton extends StatelessWidget {
@@ -50,17 +50,14 @@ class AboutButton extends StatelessWidget {
           ),
           const Separator(),
           AppTextButton(
-            onPress: () =>
-                launchUrl(Uri.parse('${Env.websiteBaseUrl}/privacy-policy')),
+            onPress: () => launchUrl(AppUrls.privacyPolicy),
             label: context.localization.misc_privacyPolicy,
             underline: true,
             minimumSize: Size.zero,
             shrinkWrap: true,
           ),
           AppTextButton(
-            onPress: () => launchUrl(
-              Uri.parse('${Env.websiteBaseUrl}/terms-and-conditions'),
-            ),
+            onPress: () => launchUrl(AppUrls.termsAndConditions),
             label: context.localization.misc_termsAndConditions,
             underline: true,
             minimumSize: Size.zero,
@@ -75,14 +72,14 @@ class AboutButton extends StatelessWidget {
           ),
           const Separator(),
           AppTextButton(
-            onPress: () => launchUrl(Uri.parse('mailto:support@taskieapp.xyz')),
+            onPress: () => launchUrl(AppUrls.supportEmailLaunchUri),
             label: context.localization.misc_contactSupport,
             underline: true,
             minimumSize: Size.zero,
             shrinkWrap: true,
           ),
           AppTextButton(
-            onPress: () => launchUrl(Uri.parse(Env.websiteBaseUrl)),
+            onPress: () => launchUrl(AppUrls.website),
             label: context.localization.appDrawerAboutVisitWebsite,
             underline: true,
             minimumSize: Size.zero,

@@ -2,15 +2,17 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+typedef SupportedLanguage = ({Locale locale, String name});
+
 abstract final class IntlUtils {
-  static SupportedLanguage defaultSupportedLanguage = const SupportedLanguage(
-    Locale('en', 'US'),
-    'English (US)',
+  static SupportedLanguage defaultSupportedLanguage = (
+    locale: const Locale('en', 'US'),
+    name: 'English (US)',
   );
 
   static List<SupportedLanguage> supportedLanguages = [
     defaultSupportedLanguage,
-    const SupportedLanguage(Locale('hr', 'HR'), 'Hrvatski (HR)'),
+    const (locale: Locale('hr', 'HR'), name: 'Hrvatski (HR)'),
   ];
 
   static SupportedLanguage getSupportedLanguageFromLanguageCode(
@@ -36,7 +38,7 @@ abstract final class IntlUtils {
     // Fallback - check only by language code
     final languageOnlyMatch = supportedLanguages.firstWhere(
       (e) => e.locale.languageCode == locale.languageCode,
-      orElse: () => SupportedLanguage(locale, locale.toString()),
+      orElse: () => (locale: locale, name: locale.toString()),
     );
 
     return languageOnlyMatch.name;
@@ -48,11 +50,4 @@ abstract final class IntlUtils {
   ) => DateFormat.yMd(
     Localizations.localeOf(context).toString(),
   ).format(dateTime.toLocal());
-}
-
-class SupportedLanguage {
-  final Locale locale;
-  final String name;
-
-  const SupportedLanguage(this.locale, this.name);
 }

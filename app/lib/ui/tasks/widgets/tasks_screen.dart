@@ -125,7 +125,7 @@ class _TasksScreenState extends State<TasksScreen> {
                                     assetImage:
                                         Assets.emptyObjectivesIllustration,
                                     child: context.localization.tasksNoTasks
-                                        .format(
+                                        .toStyledText(
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodyMedium!,

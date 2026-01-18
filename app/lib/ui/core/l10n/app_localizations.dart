@@ -260,6 +260,30 @@ abstract class AppLocalizations {
   /// **'Let\'s get started'**
   String get signInGetStarted;
 
+  /// No description provided for @signInLegislation1.
+  ///
+  /// In en, this message translates to:
+  /// **'By signing in, you agree to our'**
+  String get signInLegislation1;
+
+  /// No description provided for @signInLegislation2.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get signInLegislation2;
+
+  /// No description provided for @signInLegislation3.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get signInLegislation3;
+
+  /// No description provided for @signInLegislation4.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get signInLegislation4;
+
   /// No description provided for @signInTitleProviders.
   ///
   /// In en, this message translates to:

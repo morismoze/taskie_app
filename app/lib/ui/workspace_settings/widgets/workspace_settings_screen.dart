@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../domain/constants/rbac.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -16,7 +17,6 @@ import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
-import '../../core/utils/user.dart';
 import '../../navigation/app_drawer/widgets/workspace_image.dart';
 import '../view_models/workspace_settings_screen_viewmodel.dart';
 
@@ -72,10 +72,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                     }
 
                     final createdByFullName = details.createdBy != null
-                        ? UserUtils.constructFullName(
-                            firstName: details.createdBy!.firstName,
-                            lastName: details.createdBy!.lastName,
-                          )
+                        ? details.createdBy!.fullName
                         : context
                               .localization
                               .workspaceSettingsOwnerDeletedAccount;

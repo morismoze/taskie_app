@@ -23,7 +23,7 @@ class GuideSection extends StatelessWidget {
           ),
           const SizedBox(height: Dimens.paddingVertical / 3),
         ],
-        body.format(style: Theme.of(context).textTheme.bodyLarge!),
+        body.toStyledText(style: Theme.of(context).textTheme.bodyLarge!),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -15,7 +16,6 @@ import '../../core/ui/app_select_field/app_select_field_selected_options.dart';
 import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
 import '../view_models/task_details_edit_screen_view_model.dart';
 
 class TaskDetailsEditForm extends StatefulWidget {
@@ -74,15 +74,14 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedAssignees = widget.viewModel.details!.assignees.map((
-      assignee,
-    ) {
-      final fullName = UserUtils.constructFullName(
-        firstName: assignee.firstName,
-        lastName: assignee.lastName,
-      );
-      return AppSelectFieldOption(label: fullName, value: assignee.id);
-    }).toList();
+    final selectedAssignees = widget.viewModel.details!.assignees
+        .map(
+          (assignee) => AppSelectFieldOption(
+            label: assignee.fullName,
+            value: assignee.id,
+          ),
+        )
+        .toList();
 
     return Form(
       key: _formKey,

@@ -38,10 +38,11 @@ class WorkspaceLeaveButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.error,
         size: 30,
       ),
-      content: context.localization.appDrawerLeaveWorkspaceModalMessage.format(
-        style: Theme.of(context).textTheme.bodyMedium!,
-        textAlign: TextAlign.center,
-      ),
+      content: context.localization.appDrawerLeaveWorkspaceModalMessage
+          .toStyledText(
+            style: Theme.of(context).textTheme.bodyMedium!,
+            textAlign: TextAlign.center,
+          ),
       actions: [
         ActionButtonBar.withCommand(
           command: viewModel.leaveWorkspace,

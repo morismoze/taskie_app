@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
@@ -10,7 +11,6 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
-import '../../core/utils/user.dart';
 import '../view_models/task_details_screen_view_model.dart';
 import 'task_assignments_details.dart';
 
@@ -46,10 +46,7 @@ class TaskDetailsScreen extends StatelessWidget {
                       }
 
                       final createdByFullName = details.createdBy != null
-                          ? UserUtils.constructFullName(
-                              firstName: details.createdBy!.firstName,
-                              lastName: details.createdBy!.lastName,
-                            )
+                          ? details.createdBy!.fullName
                           : context
                                 .localization
                                 .workspaceSettingsOwnerDeletedAccount;

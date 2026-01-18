@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
@@ -11,8 +12,7 @@ import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/objective_status_chip.dart';
-import '../../core/utils/color.dart';
-import '../../core/utils/user.dart';
+import '../../core/utils/extensions.dart';
 import '../view_models/goal_details_screen_view_model.dart';
 
 class GoalDetailsScreen extends StatelessWidget {
@@ -47,23 +47,11 @@ class GoalDetailsScreen extends StatelessWidget {
                       }
 
                       final createdByFullName = details.createdBy != null
-                          ? UserUtils.constructFullName(
-                              firstName: details.createdBy!.firstName,
-                              lastName: details.createdBy!.lastName,
-                            )
+                          ? details.createdBy!.fullName
                           : context
                                 .localization
                                 .workspaceSettingsOwnerDeletedAccount;
-                      final assigneeFullName = UserUtils.constructFullName(
-                        firstName: details.assignee.firstName,
-                        lastName: details.assignee.lastName,
-                      );
-                      final (
-                        statusTextColor,
-                        statusBackgroundColor,
-                      ) = ColorsUtils.getProgressStatusColors(
-                        viewModel.details!.status,
-                      );
+                      final statusColors = viewModel.details!.status.colors;
 
                       return Column(
                         children: [
@@ -97,8 +85,8 @@ class GoalDetailsScreen extends StatelessWidget {
                             label: context.localization.progressStatusLabel,
                             child: ObjectiveStatusChip(
                               status: details.status,
-                              textColor: statusTextColor,
-                              backgroundColor: statusBackgroundColor,
+                              textColor: statusColors.textColor,
+                              backgroundColor: statusColors.backgroundColor,
                             ),
                           ),
                           const SizedBox(height: Dimens.paddingVertical / 1.6),
@@ -124,7 +112,7 @@ class GoalDetailsScreen extends StatelessWidget {
                                   ),
                                   Flexible(
                                     child: Text(
-                                      assigneeFullName,
+                                      details.assignee.fullName,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!

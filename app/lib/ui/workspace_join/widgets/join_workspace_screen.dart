@@ -174,7 +174,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                         .workspaceJoinViaInviteText(
                                           widget.viewModel.user!.firstName,
                                         )
-                                        .format(
+                                        .toStyledText(
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodyMedium!,
@@ -196,7 +196,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                 innerBuilderContext
                                     .localization
                                     .workspaceJoinViaInviteTextConfirm
-                                    .format(
+                                    .toStyledText(
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodyMedium!,

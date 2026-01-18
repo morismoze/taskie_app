@@ -29,15 +29,7 @@ class LeaderboardList extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
-            child: LeaderboardUserTile(
-              placement: index + 1,
-              userId: user.id,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              profileImageUrl: user.profileImageUrl,
-              accumulatedPoints: user.accumulatedPoints,
-              completedTasks: user.completedTasks,
-            ),
+            child: LeaderboardUserTile(placement: index + 1, user: user),
           );
         }, childCount: items.length),
       ),

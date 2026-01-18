@@ -15,7 +15,7 @@ import '../../../core/ui/card_container.dart';
 import '../../../core/ui/new_objective_badge.dart';
 import '../../../core/ui/objective_status_chip.dart';
 import '../../../core/ui/rbac.dart';
-import '../../../core/utils/color.dart';
+import '../../../core/utils/extensions.dart';
 import '../../view_models/goals_screen_viewmodel.dart';
 import 'progress.dart';
 import 'title.dart';
@@ -51,9 +51,7 @@ class GoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(
-      status,
-    );
+    final (:textColor, :backgroundColor) = status.colors;
 
     return InkWell(
       onTap: () => _onTap(
