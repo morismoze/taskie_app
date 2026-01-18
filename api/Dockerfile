@@ -58,4 +58,4 @@ USER node
 # from the api-deploy workflow SSH bash script.
 # Using 'exec' before 'node dist/main.js' replaces the shell with the node process,
 # ensuring proper signal handling (e.g., for graceful shutdowns).
-CMD ["sh", "-c", "npm run migration:prod && exec node dist/main.js"]
+CMD ["sh", "-c", "npm run db:migration:run:prod && exec node dist/main.js"]
