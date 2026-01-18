@@ -7,7 +7,10 @@ import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
 import { WorkspaceUserRole } from '../workspace/workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserService } from '../workspace/workspace-user-module/workspace-user.service';
 import { User } from './domain/user.domain';
-import { RolePerWorkspace, UserResponse } from './dto/user-response.dto';
+import {
+  RolePerWorkspace,
+  UserResponse,
+} from './dto/response/user-response.dto';
 import { UserRepository } from './persistence/user.repository';
 
 @Injectable()

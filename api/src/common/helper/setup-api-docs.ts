@@ -1,5 +1,12 @@
+import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import { AggregatedConfig } from 'src/config/config.type';
+// Using require to import package.json because using import keyword
+// requires additional configuration in tsconfig.json (resolveJsonModule: true)
+// and this messes up dist folder structure.
+/* eslint-disable @typescript-eslint/no-var-requires */
+const packageJson = require('../../../package.json');
 
 // We have ResponseTransformerInterceptor which wraps every response data
 // with ApiResponse generic. Currently all the endpoints define only the
@@ -44,11 +51,15 @@ const wrapResponseWithApiResponseWrapper = (document: OpenAPIObject) => {
   });
 };
 
-const setupApiDocs = (app: NestExpressApplication, apiPrefix: string) => {
+const setupApiDocs = (
+  app: NestExpressApplication,
+  configService: ConfigService<AggregatedConfig>,
+) => {
+  const apiPrefix = configService.getOrThrow('app.apiPrefix', { infer: true });
   const options = new DocumentBuilder()
     .setTitle('Taskie API')
     .setDescription('API docs')
-    .setVersion('1.0')
+    .setVersion(packageJson.version)
     .addBearerAuth()
     .addGlobalParameters(
       {

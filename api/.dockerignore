@@ -1,0 +1,19 @@
+# dockerignore file to specify files and directories to ignore in Docker build
+node_modules
+dist
+build
+.git
+.gitignore
+.env
+.env.*
+!*.example
+Dockerfile
+.dockerignore
+docker-compose.yml
+npm-debug.log
+yarn-error.log
+coverage
+test
+.vscode
+.idea
+*.md

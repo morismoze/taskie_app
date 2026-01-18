@@ -11,7 +11,7 @@ import { SessionService } from 'src/modules/session/session.service';
 import { UnitOfWorkService } from 'src/modules/unit-of-work/unit-of-work.service';
 import { UserStatus } from 'src/modules/user/domain/user-status.enum';
 import { User } from 'src/modules/user/domain/user.domain';
-import { RolePerWorkspace } from 'src/modules/user/dto/user-response.dto';
+import { RolePerWorkspace } from 'src/modules/user/dto/response/user-response.dto';
 import { UserService } from 'src/modules/user/user.service';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
 import { AuthProvider } from './domain/auth-provider.enum';

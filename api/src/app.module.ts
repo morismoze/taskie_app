@@ -23,6 +23,7 @@ import googleConfig from './modules/auth/auth-google/config/google.config';
 import { AuthModule } from './modules/auth/core/auth.module';
 import authConfig from './modules/auth/core/config/auth.config';
 import { DatabaseModule } from './modules/database/database.module';
+import { HealthModule } from './modules/health/health.module';
 import { AppLogger } from './modules/logger/app-logger';
 import { AppLoggerModule } from './modules/logger/logger.module';
 import { UserModule } from './modules/user/user.module';
@@ -46,6 +47,7 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
       middleware: { mount: true }, // Automatically mounts middleware for every request
     }),
     AppLoggerModule,
+    HealthModule,
   ],
   providers: [
     {
