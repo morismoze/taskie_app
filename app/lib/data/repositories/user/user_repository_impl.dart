@@ -108,8 +108,8 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  void purgeUserCache() {
+  Future<void> purgeUserCache() async {
     _cachedUser = null;
-    _databaseService.clearUser();
+    await _databaseService.clearUser();
   }
 }

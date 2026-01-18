@@ -12,6 +12,7 @@ import '../../core/ui/app_icon.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../view_models/entry_screen_viewmodel.dart';
 
+/// This is business logic init
 class EntryScreen extends StatefulWidget {
   const EntryScreen({super.key, required this.viewModel});
 
@@ -115,8 +116,48 @@ class _EntryScreenState extends State<EntryScreen> {
       final activeWorkspaceId =
           (widget.viewModel.setupInitial.result as Ok<String?>).value;
       widget.viewModel.setupInitial.clearResult();
-      if (activeWorkspaceId != null) {
-        context.go(Routes.tasks(workspaceId: activeWorkspaceId));
+
+      // Check if 'from' query param is not empty and valid
+      // and if it is navigate to that route
+      final nextRoute = GoRouterState.of(context).uri.queryParameters['next'];
+
+      if (nextRoute != null) {
+        final decodedRoute = Uri.decodeComponent(nextRoute);
+
+        // Check if user has access to this route, specifically
+        // to the workspaceId from that route, if it exists as
+        // path param
+
+        final regExp = RegExp('/${Routes.workspacesRelative}/([^/]+)');
+        final match = regExp.firstMatch(decodedRoute);
+        final decodedWorkspaceIdPathParam = match?.group(1);
+        // If there is no workspaceId path param then just let the user on that route
+        if (decodedWorkspaceIdPathParam == null) {
+          context.go(decodedRoute);
+          return;
+        }
+
+        if (widget.viewModel.checkRouteWorkspaceId(
+          decodedWorkspaceIdPathParam,
+        )) {
+          context.go(decodedRoute);
+        } else {
+          if (activeWorkspaceId != null) {
+            context.go(Routes.tasks(workspaceId: activeWorkspaceId));
+          } else {
+            // activeWorkspaceId is null only if user's workspaces list is empty
+            // and in that case hasNoWorkspaces WorkspaceRepository flag will
+            // kick in GoRouter's redirect function
+          }
+        }
+      } else {
+        if (activeWorkspaceId != null) {
+          context.go(Routes.tasks(workspaceId: activeWorkspaceId));
+        } else {
+          // activeWorkspaceId is null only if user's workspaces list is empty
+          // and in that case hasNoWorkspaces WorkspaceRepository flag will
+          // kick in GoRouter's redirect function
+        }
       }
     }
   }

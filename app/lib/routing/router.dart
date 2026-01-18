@@ -997,15 +997,21 @@ String? _redirect(BuildContext context, GoRouterState state) {
       return null;
     }
 
-    final savedLocation = state.matchedLocation == '/'
+    final fromParam = state.matchedLocation == '/'
         ? ''
         : '?from=${state.matchedLocation}';
-    return '${Routes.login}$savedLocation';
+    return '${Routes.login}$fromParam';
   }
 
   // If the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
-    return state.uri.queryParameters['from'] ?? Routes.entry;
+    final from = state.uri.queryParameters['from'];
+
+    if (from != null && from.isNotEmpty) {
+      return '${Routes.entry}?next=$from';
+    }
+
+    return Routes.entry;
   }
 
   // If the user is not part of any workspace, redirect the user to the initial workspace creation page

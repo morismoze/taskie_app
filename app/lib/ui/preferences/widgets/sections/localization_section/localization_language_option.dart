@@ -10,35 +10,16 @@ import '../../../../core/utils/intl.dart';
 import '../../../view_models/preferences_screen_viewmodel.dart';
 import '../../preferences_section_option.dart';
 
-class LocalizationLanguageOption extends StatefulWidget {
+class LocalizationLanguageOption extends StatelessWidget {
   const LocalizationLanguageOption({super.key, required this.viewModel});
 
   final PreferencesScreenViewModel viewModel;
 
-  @override
-  State<LocalizationLanguageOption> createState() =>
-      _LocalizationLanguageOptionState();
-}
-
-class _LocalizationLanguageOptionState
-    extends State<LocalizationLanguageOption> {
-  late Locale _initialLocale;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _initialLocale = widget.viewModel.appLocale;
-    });
-  }
-
-  void _onSubmit(Locale locale) {
-    if (locale != widget.viewModel.appLocale) {
-      widget.viewModel.setAppLocale.execute(locale);
-      return;
+  void _onSubmit(BuildContext context, Locale newLocale) {
+    if (newLocale != viewModel.appLocale) {
+      viewModel.setAppLocale.execute(newLocale);
     }
 
-    // Close dialog
     context.pop();
   }
 
@@ -47,9 +28,11 @@ class _LocalizationLanguageOptionState
     return PreferencesSectionOption(
       leadingIconData: FontAwesomeIcons.globe,
       title: context.localization.preferencesLocalizationLanguage,
-      subtitle: IntlUtils.getDisplayName(widget.viewModel.appLocale),
+      subtitle: IntlUtils.getDisplayName(viewModel.appLocale),
       onTap: () {
-        var dialogSelectedLocale = _initialLocale;
+        // Local state for StatefulBuilder (acts as a field in a State class)
+        var dialogSelectedLocale = viewModel.appLocale;
+
         AppDialog.show(
           context: context,
           title: Text(
@@ -58,18 +41,11 @@ class _LocalizationLanguageOptionState
           ),
           content: StatefulBuilder(
             builder: (BuildContext builderContext, StateSetter setState) {
-              void onDialogLanguageSelected(Locale? locale) {
-                // This just makes StatefulBuilder re-execute builder method again
-                setState(() {
-                  dialogSelectedLocale = locale!;
-                });
-              }
-
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: IntlUtils.supportedLanguages.map((language) {
-                  return AppRadioListTile(
+                  return AppRadioListTile<Locale>(
                     value: language.locale,
                     title: Text(
                       language.name,
@@ -78,15 +54,21 @@ class _LocalizationLanguageOptionState
                       ).textTheme.bodyMedium!.copyWith(fontSize: 16),
                     ),
                     groupValue: dialogSelectedLocale,
-                    onChanged: onDialogLanguageSelected,
+                    onChanged: (Locale? locale) {
+                      if (locale != null) {
+                        setState(() {
+                          dialogSelectedLocale = locale;
+                        });
+                      }
+                    },
                   );
                 }).toList(),
               );
             },
           ),
           actions: ActionButtonBar.withCommand(
-            command: widget.viewModel.setAppLocale,
-            onSubmit: () => _onSubmit(dialogSelectedLocale),
+            command: viewModel.setAppLocale,
+            onSubmit: () => _onSubmit(context, dialogSelectedLocale),
             onCancel: () => context.pop(),
           ),
         );

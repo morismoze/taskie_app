@@ -46,26 +46,28 @@ class _JoinWorkspaceViaInviteFormState
             context,
           ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
         ),
-        Text.rich(
-          TextSpan(
-            text: '${context.localization.misc_note}: ',
-            style: Theme.of(context).textTheme.labelMedium!.copyWith(
-              fontSize: 13,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold,
-            ),
-            children: [
-              TextSpan(
-                text: context.localization.workspaceCreateJoinViaInviteLinkNote(
-                  inviteLinkExample,
-                ),
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.normal,
-                ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text.rich(
+            TextSpan(
+              text: '${context.localization.misc_note}: ',
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold,
               ),
-            ],
+              children: [
+                TextSpan(
+                  text: context.localization
+                      .workspaceCreateJoinViaInviteLinkNote(inviteLinkExample),
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Form(

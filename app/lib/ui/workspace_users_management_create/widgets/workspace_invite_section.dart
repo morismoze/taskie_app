@@ -84,7 +84,7 @@ class WorkspaceInviteSection extends StatelessWidget {
                   // `baseline` "centers" the Row children by
                   // the plane they are "sitting" on.
                   crossAxisAlignment: CrossAxisAlignment.baseline,
-                  // This is neeeded when `baseline`alignment is used
+                  // This is neeeded when `baseline` alignment is used
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Expanded(

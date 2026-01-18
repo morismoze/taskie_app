@@ -14,15 +14,25 @@ class ClientInfoService {
   late final String? _deviceModel;
   late final String? _osVersion;
 
-  bool _initialized = false;
+  // On first app start ever, flutter intl could change the language
+  // by checking system language (e.g. Updating configuration, locales updated
+  // from [en] to [hr_HR]). This could trigger init function once again so
+  // we introduce checking if the current initFuture was alrady triggered.
+  // Checking a simple bool flag is not enough because bool is set only
+  // when the whole init logic is finished, and in that time interval
+  // another call to init function could have been made.
+  Future<void>? _initFuture;
 
   /// We init client info once on app startup because these
   /// read operations are a bit expensive.
   Future<void> init() async {
-    if (_initialized) {
-      return;
-    }
+    _initFuture ??= initLogic();
+    return _initFuture!;
+  }
 
+  /// We init client info once on app startup because these
+  /// read operations are a bit expensive.
+  Future<void> initLogic() async {
     final pkg = await PackageInfo.fromPlatform();
 
     _appName = pkg.appName;
@@ -40,8 +50,6 @@ class ClientInfoService {
       _deviceModel = null;
       _osVersion = Platform.operatingSystemVersion;
     }
-
-    _initialized = true;
   }
 
   String get appName {
@@ -70,7 +78,7 @@ class ClientInfoService {
   }
 
   void _ensureInit() {
-    if (!_initialized) {
+    if (_initFuture == null) {
       throw StateError('ClientInfoService not initialized.');
     }
   }
