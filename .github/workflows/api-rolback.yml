@@ -1,0 +1,102 @@
+name: API Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Select Target Environment"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          # - staging
+      image_tag:
+        description: 'Docker Tag to rollback to (e.g., sha-5f2a1b3... or specific version). DO NOT use "latest".'
+        required: true
+        type: string
+      confirm_rollback:
+        description: 'Type "rollback" to confirm'
+        required: true
+        default: ""
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Safety Checks
+      - name: Safety Check - Confirmation
+        if: inputs.confirm_rollback != 'rollback'
+        run: |
+          echo "❌ You must type 'rollback' to confirm."
+          exit 1
+
+      - name: Safety Check - Tag Validation
+        if: inputs.image_tag == 'latest'
+        run: |
+          echo "❌ You cannot rollback to 'latest'. Please provide a specific SHA tag (e.g., sha-e3b1c...)."
+          exit 1
+
+      # 2. SSH Rollback
+      - name: Rollback on Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_HOST || secrets.STAGING_SSH_HOST }}
+          username: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_USER || secrets.STAGING_SSH_USER }}
+          key: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
+          port: 22
+          script: |
+            # Define Variables
+            TARGET_TAG="${{ inputs.image_tag }}"
+            REPO_NAME="${{ github.repository }}"
+            # Convert to lowercase just in case, as GHCR is case sensitive
+            IMAGE_REPO=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
+            IMAGE_URL="ghcr.io/$IMAGE_REPO:$TARGET_TAG"
+
+            if [ "${{ inputs.target_env }}" == "production" ]; then
+              CONTAINER_NAME="taskie-api"
+              ENV_CONTENT="${{ secrets.ENV_PRODUCTION }}"
+              echo "🔙 Rolling back PRODUCTION to tag: $TARGET_TAG"
+            else
+              CONTAINER_NAME="taskie-api-staging"
+              ENV_CONTENT="${{ secrets.ENV_STAGING }}"
+              echo "🔙 Rolling back STAGING to tag: $TARGET_TAG"
+            fi
+
+            # 1. Login to Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # 2. Validate Image Exists BEFORE stopping current app
+            echo "🔍 Verifying image exists: $IMAGE_URL"
+            if ! docker pull $IMAGE_URL; then
+                echo "❌ Error: Image tag '$TARGET_TAG' not found in registry!"
+                echo "Aborting rollback to prevent downtime."
+                exit 1
+            fi
+
+            # 3. Create .env (Just to be sure environment matches expectation)
+            echo "$ENV_CONTENT" > .env
+
+            # 4. Stop and Remove Current Container
+            echo "🛑 Stopping current container..."
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+
+            # 5. Run Previous Version
+            echo "🚀 Starting rollback version..."
+            docker run -d \
+              --name $CONTAINER_NAME \
+              --restart always \
+              --env-file .env \
+              --network host \
+              $IMAGE_URL
+
+            # 6. Database Handling Warning
+            echo "⚠️  WARNING: Database schema was NOT rolled back."
+            echo "If the new version ran migrations that are incompatible with this old code,"
+            echo "you must manually revert migrations using 'npm run db:migration:revert' inside the container."
+
+            # Cleanup
+            docker image prune -f
+
+            echo "✅ Rollback successful! App is running on version $TARGET_TAG"

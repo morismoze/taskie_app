@@ -12,7 +12,11 @@ export const AppDataSource = new DataSource({
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   dropSchema: false,
+  // .js files are needed for production (compiled) code
+  // and when migrations are run in the Dockerfile
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
+  // .js files are needed for production (compiled) code
+  // and when migrations are run in the Dockerfile
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   poolSize: Number(process.env.DATABASE_POOL_SIZE),
 } as DataSourceOptions);

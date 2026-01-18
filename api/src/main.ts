@@ -1,42 +1,27 @@
-import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import 'dotenv/config';
 import { AppModule } from './app.module';
-import setupApiDocs from './common/helper/api-docs';
-import { Environment } from './config/app.config';
+import setupApiDocs from './common/helper/setup-api-docs';
+import { setupApiMeta } from './common/helper/setup-api-meta';
+import { setupHttpSecurity } from './common/helper/setup-http-security';
+import { setupLogger } from './common/helper/setup-logger';
 import { AggregatedConfig } from './config/config.type';
-import { AppLogger } from './modules/logger/app-logger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    bufferLogs: true, // Flushes logs to our custom logger
+    bufferLogs: true, // Buffer logs until a logger is set up
   });
-
-  const logger = app.get(AppLogger);
-  app.useLogger(logger); // Nest framework logs go through our custom logger
-  app.flushLogs();
-
   const configService = app.get(ConfigService<AggregatedConfig>);
-  const isDevelopment =
-    configService.getOrThrow('app.nodeEnv', { infer: true }) ===
-    Environment.DEVELOPMENT;
 
-  const apiPrefix = configService.getOrThrow('app.apiPrefix', { infer: true });
-  app.setGlobalPrefix(apiPrefix, {
-    exclude: ['/'],
-  });
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
+  const logger = setupLogger(app);
 
-  setupApiDocs(app, apiPrefix);
+  setupHttpSecurity(app, configService);
 
-  if (!isDevelopment) {
-    // This tells Express/Nest to respect the X-Forwarded-For header — otherwise request.ip will return the proxy’s IP
-    app.set('trust proxy', true);
-  }
+  setupApiMeta(app, configService);
+
+  setupApiDocs(app, configService);
 
   app.enableShutdownHooks();
 

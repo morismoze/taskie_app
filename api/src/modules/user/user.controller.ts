@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { RequestWithUser } from '../auth/core/domain/request-with-user.domain';
 import { JwtAuthGuard } from '../auth/core/guards/jwt-auth.guard';
-import { UserResponse } from './dto/user-response.dto';
+import { UserResponse } from './dto/response/user-response.dto';
 import { UserService } from './user.service';
 
 @ApiTags('Users')
