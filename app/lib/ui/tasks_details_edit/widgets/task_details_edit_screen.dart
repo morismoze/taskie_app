@@ -146,7 +146,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
             actions: AppFilledButton(
               label: context.localization.misc_goToHomepage,
               onPress: () {
-                context.pop(); // Close dialog
+                Navigator.of(context).pop(); // Close dialog
                 context.go(
                   Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
                 );
@@ -170,8 +170,8 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
         context: context,
         message: context.localization.tasksDetailsCloseSuccess,
       );
-      context.pop(); // Close dialog
-      context.pop(); // Navigate back to tasks page
+      Navigator.of(context).pop(); // Close dialog
+      context.pop(); // Go back to Tasks page
     }
 
     if (widget.viewModel.closeTask.error) {

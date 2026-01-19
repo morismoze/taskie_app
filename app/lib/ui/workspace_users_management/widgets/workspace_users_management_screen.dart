@@ -194,8 +194,8 @@ class _WorkspaceUsersManagementScreenState
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserSuccess,
       );
-      context.pop(); // Close dialog
-      context.pop(); // Close bottom sheet
+      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context).pop(); // Close bottom sheet
     }
 
     if (widget.viewModel.deleteWorkspaceUser.error) {
@@ -204,8 +204,8 @@ class _WorkspaceUsersManagementScreenState
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserError,
       );
-      context.pop(); // Close dialog
-      context.pop(); // Close bottom sheet
+      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context).pop(); // Close bottom sheet
     }
   }
 }

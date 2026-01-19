@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/ui/action_button_bar.dart';
@@ -20,7 +19,11 @@ class LocalizationLanguageOption extends StatelessWidget {
       viewModel.setAppLocale.execute(newLocale);
     }
 
-    context.pop();
+    Navigator.of(context).pop(); // Close dialog
+  }
+
+  void _onCancel(BuildContext context) {
+    Navigator.of(context).pop(); // Close dialog
   }
 
   @override
@@ -69,7 +72,7 @@ class LocalizationLanguageOption extends StatelessWidget {
           actions: ActionButtonBar.withCommand(
             command: viewModel.setAppLocale,
             onSubmit: () => _onSubmit(context, dialogSelectedLocale),
-            onCancel: () => context.pop(),
+            onCancel: () => _onCancel(context),
           ),
         );
       },

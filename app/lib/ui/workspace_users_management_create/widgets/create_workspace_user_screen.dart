@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../utils/command.dart';
@@ -149,14 +148,14 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
   void _onVirtualUserCreateResult() {
     if (widget.viewModel.createVirtualUser.completed) {
-      widget.viewModel.createVirtualUser.clearResult();
+      // Don't clear the result, as we also listen to it
+      // in the form widget, where we clear the form on success
       AppSnackbar.showSuccess(
         context: context,
         message: context
             .localization
             .workspaceUsersManagementCreateVirtualUserSuccess,
       );
-      context.pop();
     }
 
     if (widget.viewModel.createVirtualUser.error) {

@@ -17,6 +17,24 @@ class Workspace {
   final String? pictureUrl;
   final CreatedBy? createdBy;
 
+  Workspace copyWith({
+    String? id,
+    String? name,
+    DateTime? createdAt,
+    String? description,
+    String? pictureUrl,
+    CreatedBy? createdBy,
+  }) {
+    return Workspace(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      description: description ?? this.description,
+      pictureUrl: pictureUrl ?? this.pictureUrl,
+      createdBy: createdBy ?? this.createdBy,
+    );
+  }
+
   Map<String, dynamic> toMap() => {
     'id': id,
     'name': name,

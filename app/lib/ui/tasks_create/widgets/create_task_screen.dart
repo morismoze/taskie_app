@@ -156,7 +156,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
         context: context,
         message: context.localization.createNewTaskSuccess,
       );
-      context.pop();
+      context.pop(); // Go back to previous page
     }
 
     if (widget.viewModel.createTask.error) {

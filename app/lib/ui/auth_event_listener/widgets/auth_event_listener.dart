@@ -181,7 +181,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         return;
       }
       // Close dialog
-      rootNavigatorContext.pop();
+      Navigator.of(rootNavigatorContext).pop();
       rootNavigatorContext.go(Routes.tasks(workspaceId: activeWorkspaceId));
     }
 
@@ -218,7 +218,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
       }
 
       // Close dialog
-      rootNavigatorContext.pop();
+      Navigator.of(rootNavigatorContext).pop();
       // User could have been on a screen which is allowed only
       // to a higher role, so we navigate back to homepage
       rootNavigatorContext.go(Routes.tasks(workspaceId: workspaceId));

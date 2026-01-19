@@ -151,7 +151,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
         context: context,
         message: context.localization.createNewGoalSuccess,
       );
-      context.pop();
+      context.pop(); // Go back to previous page
     }
 
     if (widget.viewModel.createGoal.error) {

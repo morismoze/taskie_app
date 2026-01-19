@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
@@ -131,7 +130,6 @@ class _WorkspaceUserDetailsEditScreenState
         message:
             context.localization.workspaceUsersManagementUserDetailsEditSuccess,
       );
-      context.pop(); // Navigate back to details page
     }
 
     if (widget.viewModel.editWorkspaceUserDetails.error) {

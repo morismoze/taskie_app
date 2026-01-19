@@ -28,6 +28,30 @@ class WorkspaceUser implements BaseUser {
   final String? profileImageUrl;
   final CreatedBy? createdBy;
 
+  WorkspaceUser copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    WorkspaceRole? role,
+    String? userId,
+    DateTime? createdAt,
+    String? email,
+    String? profileImageUrl,
+    CreatedBy? createdBy,
+  }) {
+    return WorkspaceUser(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      role: role ?? this.role,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      email: email ?? this.email,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      createdBy: createdBy ?? this.createdBy,
+    );
+  }
+
   Map<String, dynamic> toMap() => {
     'id': id,
     'firstName': firstName,

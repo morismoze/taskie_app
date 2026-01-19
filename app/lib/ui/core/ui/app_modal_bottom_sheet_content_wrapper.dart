@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
@@ -30,7 +29,7 @@ class AppModalBottomSheetContentWrapper extends StatelessWidget {
 
   void _onClosePress(BuildContext context) {
     onCloseButtonPress?.call();
-    context.pop();
+    Navigator.of(context).pop(); // Close bottom sheet
   }
 
   @override

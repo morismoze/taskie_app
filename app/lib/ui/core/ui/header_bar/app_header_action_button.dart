@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../theme/colors.dart';
 
 class AppHeaderActionButton extends StatelessWidget {
-  const AppHeaderActionButton({super.key, required this.iconData, this.onTap});
+  const AppHeaderActionButton({
+    super.key,
+    required this.iconData,
+    required this.onTap,
+  });
 
   final IconData iconData;
-  final GestureTapCallback? onTap;
+  final GestureTapCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +25,7 @@ class AppHeaderActionButton extends StatelessWidget {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
-          onTap: () {
-            if (onTap != null) {
-              onTap!();
-            } else {
-              context.pop();
-            }
-          },
+          onTap: onTap,
           child: Center(
             child: FaIcon(
               iconData,

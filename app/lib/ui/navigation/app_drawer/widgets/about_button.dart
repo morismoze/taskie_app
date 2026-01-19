@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
@@ -86,7 +85,7 @@ class AboutButton extends StatelessWidget {
             shrinkWrap: true,
           ),
           AppOutlinedButton(
-            onPress: () => context.pop(),
+            onPress: () => Navigator.of(context).pop(), // Close dialog,
             label: context.localization.misc_cancel,
             color: Theme.of(context).colorScheme.secondary,
           ),

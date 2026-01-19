@@ -56,6 +56,8 @@ class WorkspaceSettingsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        _details = _details!.copyWith(name: name, description: description);
+        notifyListeners();
         return const Result.ok(null);
       case Error():
         return result;

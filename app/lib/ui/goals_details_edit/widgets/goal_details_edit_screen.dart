@@ -160,7 +160,7 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
             actions: AppFilledButton(
               label: context.localization.misc_goToGoalsPage,
               onPress: () {
-                context.pop(); // Close dialog
+                Navigator.of(context).pop(); // Close dialog
                 context.go(
                   Routes.goals(workspaceId: widget.viewModel.activeWorkspaceId),
                 );
@@ -184,7 +184,7 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
         context: context,
         message: context.localization.goalsDetailsCloseSuccess,
       );
-      context.pop(); // Close dialog
+      Navigator.of(context).pop(); // Close dialog
       context.pop(); // Navigate back to goals page
     }
 

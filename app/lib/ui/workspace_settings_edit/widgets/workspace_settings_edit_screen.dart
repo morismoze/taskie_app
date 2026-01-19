@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
@@ -96,7 +95,6 @@ class _WorkspaceSettingsEditScreenState
         context: context,
         message: context.localization.workspaceSettingsEditSuccess,
       );
-      context.pop(); // Navigate back to settings page
     }
 
     if (widget.viewModel.editWorkspaceDetails.error) {

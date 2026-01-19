@@ -22,9 +22,27 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   final TextEditingController _lastNameController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+  }
+
+  @override
+  void didUpdateWidget(covariant CreateVirtualUserForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.createVirtualUser.removeListener(
+      _onVirtualUserCreateResult,
+    );
+    widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+  }
+
+  @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    widget.viewModel.createVirtualUser.removeListener(
+      _onVirtualUserCreateResult,
+    );
     super.dispose();
   }
 
@@ -92,6 +110,9 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
@@ -128,6 +149,15 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
         return context.localization.workspaceUserLastNameMaxLength;
       default:
         return null;
+    }
+  }
+
+  void _onVirtualUserCreateResult() {
+    if (widget.viewModel.createVirtualUser.completed) {
+      widget.viewModel.createVirtualUser.clearResult();
+      // Clear form
+      _firstNameController.clear();
+      _lastNameController.clear();
     }
   }
 }

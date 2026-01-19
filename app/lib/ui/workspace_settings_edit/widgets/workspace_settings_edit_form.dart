@@ -66,6 +66,7 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
           const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
+              widget.viewModel,
               widget.viewModel.editWorkspaceDetails,
               _nameController,
               _descriptionController,

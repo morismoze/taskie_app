@@ -92,7 +92,7 @@ class _AppDrawerState extends State<AppDrawer> {
       final newActiveWorkspaceId =
           (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
       widget.viewModel.changeActiveWorkspace.clearResult();
-      context.pop();
+      Navigator.of(context).pop(); // Close drawer
       context.go(Routes.tasks(workspaceId: newActiveWorkspaceId));
     }
 
@@ -120,12 +120,12 @@ class _AppDrawerState extends State<AppDrawer> {
         case LeaveWorkspaceResultNoAction():
           break;
         case LeaveWorkspaceResultCloseOverlays():
-          context.pop(); // Close dialog
-          context.pop(); // Close bottom sheet
+          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context).pop(); // Close bottom sheet
           break;
         case LeaveWorkspaceResultNavigateTo(workspaceId: final workspaceId):
-          context.pop(); // Close dialog
-          context.pop(); // Close bottom sheet
+          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context).pop(); // Close bottom sheet
           context.go(Routes.tasks(workspaceId: workspaceId));
       }
     }
@@ -140,14 +140,14 @@ class _AppDrawerState extends State<AppDrawer> {
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
           break;
         default:
           AppSnackbar.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
       }
     }
   }

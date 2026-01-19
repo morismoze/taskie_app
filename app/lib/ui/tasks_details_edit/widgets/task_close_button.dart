@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
@@ -41,7 +40,7 @@ class TaskCloseButton extends StatelessWidget {
         ActionButtonBar.withCommand(
           command: viewModel.closeTask,
           onSubmit: () => viewModel.closeTask.execute(),
-          onCancel: () => context.pop(),
+          onCancel: () => Navigator.of(context).pop(), // Close dialog,
           submitButtonText: context.localization.tasksDetailsCloseTask,
           submitButtonColor: Theme.of(context).colorScheme.error,
         ),

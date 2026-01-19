@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -140,7 +139,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
           command: widget.viewModel.removeTaskAssignee,
           onSubmit: () =>
               widget.viewModel.removeTaskAssignee.execute(assigneeId),
-          onCancel: () => context.pop(),
+          onCancel: () => Navigator.of(context).pop(), // Close dialog,
           submitButtonText:
               context.localization.tasksRemoveTaskAssignmentModalCta,
           submitButtonColor: Theme.of(context).colorScheme.error,

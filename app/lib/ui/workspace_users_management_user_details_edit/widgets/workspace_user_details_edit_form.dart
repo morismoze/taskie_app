@@ -41,10 +41,14 @@ class _WorkspaceUserDetailsEditFormState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _selectedRoleNotifier.value = AppSelectFieldOption(
-      label: widget.viewModel.details!.role.l10n(context),
-      value: widget.viewModel.details!.role,
-    );
+
+    // Do this only on init
+    if (_selectedRoleNotifier.value == null) {
+      _selectedRoleNotifier.value = AppSelectFieldOption(
+        label: widget.viewModel.details!.role.l10n(context),
+        value: widget.viewModel.details!.role,
+      );
+    }
   }
 
   @override
@@ -148,6 +152,7 @@ class _WorkspaceUserDetailsEditFormState
           const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
+              widget.viewModel,
               widget.viewModel.editWorkspaceUserDetails,
               _firstNameController,
               _lastNameController,
@@ -179,6 +184,9 @@ class _WorkspaceUserDetailsEditFormState
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
