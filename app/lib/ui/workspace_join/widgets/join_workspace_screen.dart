@@ -11,7 +11,7 @@ import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/separator.dart';
@@ -246,7 +246,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
       switch (errorResult.error) {
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.notFoundWorkspaceInviteToken:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message:
                 context.localization.workspaceCreateJoinViaInviteLinkNotFound,
@@ -256,7 +256,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExpired:
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message: context
                 .localization
@@ -265,7 +265,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           break;
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message:
                 context.localization.workspaceJoinViaInviteLinkExistingUser,
@@ -275,7 +275,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.workspaceCreateJoinViaInviteLinkError,
           );

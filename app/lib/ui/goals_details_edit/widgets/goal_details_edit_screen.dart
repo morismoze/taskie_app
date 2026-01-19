@@ -11,7 +11,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
@@ -130,7 +130,7 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
   void _onGoalDetailsEditResult() {
     if (widget.viewModel.editGoalDetails.completed) {
       widget.viewModel.editGoalDetails.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.goalsDetailsEditSuccess,
       );
@@ -167,7 +167,7 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.goalsDetailsEditError,
           );
@@ -178,17 +178,20 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
   void _onGoalCloseResult() {
     if (widget.viewModel.closeGoal.completed) {
       widget.viewModel.closeGoal.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.goalsDetailsCloseSuccess,
       );
       Navigator.of(context).pop(); // Close dialog
       context.pop(); // Navigate back to goals page
+      Navigator.of(
+        context,
+      ).pop(); // Close goal card bottom sheet because goal is closed
     }
 
     if (widget.viewModel.closeGoal.error) {
       widget.viewModel.closeGoal.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.goalsCloseGoalError,
       );

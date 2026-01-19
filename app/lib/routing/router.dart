@@ -142,7 +142,7 @@ GoRouter router({
       path: Routes.login,
       builder: (context, state) {
         return SignInScreen(
-          viewModel: SignInViewModel(signInUseCase: context.read()),
+          viewModel: SignInScreenViewModel(signInUseCase: context.read()),
         );
       },
     ),

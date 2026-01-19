@@ -261,7 +261,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksAddTaskAssignmentSuccess =>
-      'Uspješno ste dodjelili zadatak odabranome članu';
+      'Uspješno ste dodijelili zadatak odabranim članovima';
 
   @override
   String get tasksAddTaskAssignmentError =>

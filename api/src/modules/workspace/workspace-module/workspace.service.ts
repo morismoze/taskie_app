@@ -1168,9 +1168,9 @@ export class WorkspaceService {
 
     const currentUserIsManager =
       workspaceUser.workspaceRole === WorkspaceUserRole.MANAGER;
-    const currentUserIsLastManager = noOfManagers === 1;
+    const currentUserIsLastManager = currentUserIsManager && noOfManagers === 1;
 
-    if (currentUserIsLastManager && currentUserIsManager) {
+    if (currentUserIsLastManager) {
       // This user is the last Manager so we delete the entire workspace which
       // cascadely deletes all task assignments, workspace users, etc.
       await this.workspaceRepository.deleteById(workspaceId);

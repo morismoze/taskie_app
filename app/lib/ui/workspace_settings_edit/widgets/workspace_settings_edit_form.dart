@@ -93,6 +93,9 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final trimmedName = _nameController.text.trim();
       final name = trimmedName.isNotEmpty ? trimmedName : null;

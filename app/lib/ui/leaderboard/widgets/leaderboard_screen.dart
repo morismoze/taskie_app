@@ -6,7 +6,7 @@ import '../../../config/assets.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/error_prompt.dart';
@@ -152,7 +152,7 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
       // On the first load and error we display the ErrorPrompt widget.
       if (widget.viewModel.leaderboard != null) {
         widget.viewModel.loadLeaderboard.clearResult();
-        AppSnackbar.showError(
+        AppToast.showError(
           context: context,
           message: context.localization.leaderboardLoadRefreshError,
         );

@@ -11,7 +11,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
@@ -119,7 +119,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   void _onTaskDetailsEditResult() {
     if (widget.viewModel.editTaskDetails.completed) {
       widget.viewModel.editTaskDetails.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksDetailsEditSuccess,
       );
@@ -156,7 +156,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksDetailsEditError,
           );
@@ -167,17 +167,20 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   void _onTaskCloseResult() {
     if (widget.viewModel.closeTask.completed) {
       widget.viewModel.closeTask.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksDetailsCloseSuccess,
       );
       Navigator.of(context).pop(); // Close dialog
       context.pop(); // Go back to Tasks page
+      Navigator.of(
+        context,
+      ).pop(); // Close task card bottom sheet because task is closed
     }
 
     if (widget.viewModel.closeTask.error) {
       widget.viewModel.closeTask.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.tasksCloseTaskError,
       );

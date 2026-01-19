@@ -183,6 +183,9 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
       final trimmedDescription = _descriptionController.text.trim();

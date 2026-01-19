@@ -4,7 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
@@ -151,7 +151,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
     if (widget.viewModel.createVirtualUser.completed) {
       // Don't clear the result, as we also listen to it
       // in the form widget, where we clear the form on success
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context
             .localization
@@ -161,7 +161,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
     if (widget.viewModel.createVirtualUser.error) {
       widget.viewModel.createVirtualUser.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message:
             context.localization.workspaceUsersManagementCreateVirtualUserError,

@@ -260,7 +260,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksAddTaskAssignmentSuccess =>
-      'Successfully added new task assignee';
+      'Successfully added new task assignees';
 
   @override
   String get tasksAddTaskAssignmentError =>

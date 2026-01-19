@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 
 import 'data/repositories/preferences/preferences_repository.dart';
 import 'ui/app_startup/widgets/app_startup.dart';
@@ -24,9 +25,12 @@ class MainApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
       routerConfig: goRouter,
-      builder: (context, child) => AppStartup(
-        viewModel: context.read(),
-        child: AuthEventListener(viewModel: context.read(), child: child!),
+      builder: (context, child) => ToastificationConfigProvider(
+        config: const ToastificationConfig(alignment: Alignment.topCenter),
+        child: AppStartup(
+          viewModel: context.read(),
+          child: AuthEventListener(viewModel: context.read(), child: child!),
+        ),
       ),
     );
   }

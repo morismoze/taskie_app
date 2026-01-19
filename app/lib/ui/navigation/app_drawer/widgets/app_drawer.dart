@@ -6,7 +6,7 @@ import '../../../../routing/routes.dart';
 import '../../../../utils/command.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
-import '../../../core/ui/app_snackbar.dart';
+import '../../../core/ui/app_toast.dart';
 import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/app_drawer_viewmodel.dart';
 import 'footer.dart';
@@ -98,7 +98,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
     if (widget.viewModel.changeActiveWorkspace.error) {
       widget.viewModel.changeActiveWorkspace.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.appDrawerChangeActiveWorkspaceError,
       );
@@ -111,7 +111,7 @@ class _AppDrawerState extends State<AppDrawer> {
           (widget.viewModel.leaveWorkspace.result as Ok<LeaveWorkspaceResult>)
               .value;
       widget.viewModel.leaveWorkspace.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.appDrawerLeaveWorkspaceSuccess,
       );
@@ -136,14 +136,14 @@ class _AppDrawerState extends State<AppDrawer> {
 
       switch (errorResult.error) {
         case RefreshTokenFailedException():
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
           Navigator.of(context).pop(); // Close dialog
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );

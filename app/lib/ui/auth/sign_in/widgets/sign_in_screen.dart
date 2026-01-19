@@ -10,7 +10,7 @@ import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_filled_button.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
-import '../../../core/ui/app_snackbar.dart';
+import '../../../core/ui/app_toast.dart';
 import '../../../core/ui/blurred_circles_background.dart';
 import '../view_models/sign_in_viewmodel.dart';
 import 'legal_agreement_disclaimer.dart';
@@ -18,7 +18,7 @@ import 'legal_agreement_disclaimer.dart';
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.viewModel});
 
-  final SignInViewModel viewModel;
+  final SignInScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _SignInScreenState();
@@ -141,13 +141,13 @@ class _SignInScreenState extends State<SignInScreen> {
 
       switch (errorResult.error) {
         case GoogleSignInCancelledException():
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message: context.localization.signInGoogleCanceled,
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.signInGoogleError,
           );

@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAddTaskAssignmentSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Successfully added new task assignee'**
+  /// **'Successfully added new task assignees'**
   String get tasksAddTaskAssignmentSuccess;
 
   /// No description provided for @tasksAddTaskAssignmentError.

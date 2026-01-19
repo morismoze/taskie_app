@@ -12,7 +12,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
@@ -210,7 +210,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   void _onAddTaskAssigneeResult() {
     if (widget.viewModel.addTaskAssignee.completed) {
       widget.viewModel.addTaskAssignee.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksAddTaskAssignmentSuccess,
       );
@@ -231,7 +231,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           _showAssigneesWereAmendedErrorDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksAddTaskAssignmentError,
           );
@@ -242,7 +242,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   void _onRemoveTaskAssigneeResult() {
     if (widget.viewModel.removeTaskAssignee.completed) {
       widget.viewModel.removeTaskAssignee.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksRemoveTaskAssignmentSuccess,
       );
@@ -259,7 +259,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           _showClosedTaskErrorDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksRemoveTaskAssignmentError,
           );
@@ -270,7 +270,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   void _onUpdateTaskAssignmentsResult() {
     if (widget.viewModel.updateTaskAssignments.completed) {
       widget.viewModel.updateTaskAssignments.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksUpdateTaskAssignmentsSuccess,
       );
@@ -302,7 +302,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           _showCompletedStatusDueDatePassedErrorDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksUpdateTaskAssignmentsUpdateError,
           );

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/l10n/l10n_extensions.dart';
-import '../core/ui/app_snackbar.dart';
+import '../core/ui/app_toast.dart';
 import 'app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import 'app_shell_scaffold.dart';
 
@@ -61,7 +61,7 @@ class _BackButtonHandlerState extends State<BackButtonHandler> {
           _lastBackPress = now;
 
           if (mounted) {
-            AppSnackbar.showInfo(
+            AppToast.showInfo(
               context: context,
               message: context.localization.tasksPressAgainToExit,
               duration: _exitAppPromptDuration,

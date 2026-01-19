@@ -75,7 +75,7 @@
   "tasksCloseTaskError": "Uh-oh! We've had some trouble closing the task",
   "tasksUpdateTaskAssignmentsSuccess": "Successfully updated task assignments",
   "tasksUpdateTaskAssignmentsUpdateError": "Uh-oh! We've had some trouble updating task assignments",
-  "tasksAddTaskAssignmentSuccess": "Successfully added new task assignee",
+  "tasksAddTaskAssignmentSuccess": "Successfully added new task assignees",
   "tasksAddTaskAssignmentError": "Uh-oh! We've had some trouble adding new task assigee",
   "tasksClosedTaskError": "Uh-oh! It looks like this task has been closed. Updating its details and assignments is no longer possible. Please go to the Homepage and refresh your feed.",
   "tasksAmendedAssigneesError": "Uh-oh! This task's assignments have been updated in the meantime. Please go to the Homepage, refresh your feed and return to this task assignments.",

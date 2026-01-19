@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/workspace_user_details_edit_screen_view_model.dart';
@@ -123,7 +123,7 @@ class _WorkspaceUserDetailsEditScreenState
   void _onWorkspaceUserDetailsEditResult() {
     if (widget.viewModel.editWorkspaceUserDetails.completed) {
       widget.viewModel.editWorkspaceUserDetails.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message:
             context.localization.workspaceUsersManagementUserDetailsEditSuccess,
@@ -132,7 +132,7 @@ class _WorkspaceUserDetailsEditScreenState
 
     if (widget.viewModel.editWorkspaceUserDetails.error) {
       widget.viewModel.editWorkspaceUserDetails.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message:
             context.localization.workspaceUsersManagementUserDetailsEditError,

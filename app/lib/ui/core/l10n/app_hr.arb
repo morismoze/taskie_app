@@ -77,7 +77,7 @@
   "tasksCloseTaskError": "Uh-oh! Došlo je do problema prilikom zatvaranja zadatka",
   "tasksUpdateTaskAssignmentsSuccess": "Uspješno ste ažurirali dodjele zadatka",
   "tasksUpdateTaskAssignmentsUpdateError": "Uh-oh! Došlo je do problema prilikom ažuriranja dodjela zadatka",
-  "tasksAddTaskAssignmentSuccess": "Uspješno ste dodjelili zadatak odabranome članu",
+  "tasksAddTaskAssignmentSuccess": "Uspješno ste dodijelili zadatak odabranim članovima",
   "tasksAddTaskAssignmentError": "Uh-oh! Došlo je do problema prilikom dodjeljivanja zadatka članu",
   "tasksClosedTaskError": "Uh-oh! Izgleda da je ovaj zadatak zatvoren. Ažuriranje njegovih detalja i dodjela više nije moguće. Molimo, idite na Početnu stranicu i osvježite svoj popis zadataka.",
   "tasksAmendedAssigneesError": "Uh-oh! U međuvremenu je došlo do izmjena na dodjelama ovog zadatka. Molimo, idite na Početnu stranicu, osvježite popis te se vratite na dodjele ovog zadatka.",

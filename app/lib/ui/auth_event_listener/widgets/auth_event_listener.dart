@@ -12,7 +12,7 @@ import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../view_models/auth_event_listener_viewmodel.dart';
 
 class AuthEventListener extends StatefulWidget {
@@ -187,7 +187,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
     if (widget.viewModel.handleWorkspaceRoleChange.error) {
       widget.viewModel.handleWorkspaceRoleChange.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );
@@ -226,7 +226,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
     if (widget.viewModel.handleRemovalFromWorkspace.error) {
       widget.viewModel.handleRemovalFromWorkspace.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );
@@ -242,7 +242,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
     if (widget.viewModel.signOut.error) {
       widget.viewModel.signOut.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );

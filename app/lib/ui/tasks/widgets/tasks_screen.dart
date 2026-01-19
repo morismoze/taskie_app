@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/objectives_list_view.dart';
@@ -131,7 +131,7 @@ class _TasksScreenState extends State<TasksScreen> {
       // On the first load and error we display the ErrorPrompt widget.
       if (widget.viewModel.tasks != null) {
         widget.viewModel.loadTasks.clearResult();
-        AppSnackbar.showError(
+        AppToast.showError(
           context: context,
           message: context.localization.tasksLoadRefreshError,
         );

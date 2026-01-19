@@ -8,7 +8,7 @@ import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
@@ -171,7 +171,7 @@ class _WorkspaceUsersManagementScreenState
       // On the first load and error we display the ErrorPrompt widget.
       if (widget.viewModel.users != null) {
         widget.viewModel.loadWorkspaceMembers.clearResult();
-        AppSnackbar.showError(
+        AppToast.showError(
           context: context,
           message: context.localization.workspaceUsersManagementLoadUsersError,
         );
@@ -182,7 +182,7 @@ class _WorkspaceUsersManagementScreenState
   void _onWorkspaceUserDeleteResult() {
     if (widget.viewModel.deleteWorkspaceUser.completed) {
       widget.viewModel.deleteWorkspaceUser.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserSuccess,
       );
@@ -192,7 +192,7 @@ class _WorkspaceUsersManagementScreenState
 
     if (widget.viewModel.deleteWorkspaceUser.error) {
       widget.viewModel.deleteWorkspaceUser.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserError,
       );

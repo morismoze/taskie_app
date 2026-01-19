@@ -14,7 +14,7 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/role_chip.dart';
 import '../../core/ui/separator.dart';
 import '../../core/utils/extensions.dart';
@@ -142,7 +142,7 @@ class _UserProfileState extends State<UserProfile> {
 
     if (widget.viewModel.signOut.error) {
       widget.viewModel.signOut.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.signOutError,
       );
@@ -151,7 +151,7 @@ class _UserProfileState extends State<UserProfile> {
 
   void _onAccountDeleteResult() {
     if (widget.viewModel.deleteAccount.completed) {
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.deleteAccountSuccess,
       );
@@ -168,7 +168,7 @@ class _UserProfileState extends State<UserProfile> {
           _showSoleManagerConflictDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksAddTaskAssignmentError,
           );
