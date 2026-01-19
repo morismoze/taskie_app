@@ -68,6 +68,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
               HeaderBar(title: context.localization.workspaceCreate),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     vertical: Dimens.of(context).paddingScreenVertical,
                     horizontal: Dimens.of(context).paddingScreenHorizontal,

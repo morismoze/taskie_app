@@ -48,6 +48,10 @@ class TasksScreenViewModel extends ChangeNotifier {
 
   ObjectiveFilter get activeFilter => _workspaceTaskRepository.activeFilter;
 
+  bool _isForceFetching = false;
+
+  bool get isForceFetching => _isForceFetching;
+
   Paginable<WorkspaceTask>? get tasks {
     final tasks = _workspaceTaskRepository.tasks;
 
@@ -89,13 +93,15 @@ class TasksScreenViewModel extends ChangeNotifier {
     (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
     final (filter, forceFetch) = details;
+    _isForceFetching = forceFetch ?? false;
     final result = await _workspaceTaskRepository
         .loadTasks(
           workspaceId: _activeWorkspaceId,
           filter: filter,
-          forceFetch: forceFetch ?? false,
+          forceFetch: _isForceFetching,
         )
         .last;
+    _isForceFetching = false;
 
     switch (result) {
       case Ok():

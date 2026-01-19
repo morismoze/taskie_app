@@ -79,6 +79,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                       }
 
                       return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),

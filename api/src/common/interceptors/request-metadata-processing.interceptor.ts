@@ -24,12 +24,21 @@ export class RequestMetadataProcessingInterceptor implements NestInterceptor {
       deviceModel: (headers['x-device-model'] as string) || null,
       osVersion: (headers['x-os-version'] as string) || null,
       appVersion: (headers['x-app-version'] as string) || null,
+      buildNumber: headers['x-build-number']
+        ? Number(headers['x-build-number'])
+        : null,
     };
 
     request.metadata = metadata;
 
+    const clientDetails = [
+      `Device: ${metadata.deviceModel ?? 'N/A'}`,
+      `OS: ${metadata.osVersion ?? 'N/A'}`,
+      `App version: v${metadata.appVersion ?? 'N/A'}`,
+      `Build: ${metadata.buildNumber ?? 'N/A'}`,
+    ].join(' | ');
     this.logger.log(
-      `[${method}] ${url} - IP: ${ip} - User-Agent: ${userAgent}`,
+      `[${method}] ${url} -> IP: ${ip} | ${clientDetails} | UA: ${userAgent}`,
       RequestMetadataProcessingInterceptor.name,
     );
 

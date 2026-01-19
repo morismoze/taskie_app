@@ -73,9 +73,17 @@ List<SingleChildWidget> get providers {
               as AuthStateRepository,
     ),
     Provider(
+      create: (context) =>
+          ClientInfoRepositoryImpl(
+                clientInfoService: context.read(),
+                loggerService: context.read(),
+              )
+              as ClientInfoRepository,
+    ),
+    Provider(
       create: (context) => ApiClient(
         authStateRepository: context.read(),
-        clientInfoService: context.read(),
+        clientInfoRepository: context.read(),
         authEventBus: context.read(),
       ),
     ),
@@ -247,11 +255,6 @@ List<SingleChildWidget> get providers {
         purgeDataCacheUseCase: context.read(),
         loggerService: context.read(),
       ),
-    ),
-    Provider(
-      create: (context) =>
-          ClientInfoRepositoryImpl(clientInfoService: context.read())
-              as ClientInfoRepository,
     ),
     Provider<GoRouter>(
       create: (context) => router(

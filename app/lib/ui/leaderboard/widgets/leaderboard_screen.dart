@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -48,8 +49,6 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     final headerHeight = MediaQuery.of(context).size.height * 0.15;
-    final refreshIndicatorEdgeOffset =
-        headerHeight + MediaQuery.of(context).viewPadding.top;
 
     return Scaffold(
       body: BlurredCirclesBackground(
@@ -59,86 +58,82 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
             widget.viewModel,
           ]),
           builder: (builderContext, child) {
-            return RefreshIndicator(
-              displacement: 30,
-              edgeOffset: refreshIndicatorEdgeOffset,
-              onRefresh: () async {
-                widget.viewModel.loadLeaderboard.execute(true);
-              },
-              child: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    automaticallyImplyLeading: false, // No back arrow
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    expandedHeight: headerHeight,
-                    floating: false,
-                    flexibleSpace: const FlexibleSpaceBar(
-                      collapseMode: CollapseMode.parallax,
-                      centerTitle: true,
-                      title: LeaderboardHeaderContent(),
-                    ),
-                    systemOverlayStyle: const SystemUiOverlayStyle(
-                      statusBarColor: Colors.transparent,
-                      statusBarIconBrightness: Brightness.dark,
-                      statusBarBrightness: Brightness.light,
-                      systemNavigationBarIconBrightness: Brightness.dark,
-                    ),
-                  ),
-                  // Display error prompt only on initial load. In other cases, old list
-                  // will still be shown, but we will show error snackbar.
-                  if (widget.viewModel.loadLeaderboard.error &&
-                      widget.viewModel.leaderboard == null)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: Dimens.paddingVertical,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: kAppBottomNavigationBarHeight,
-                          ),
-                          child: ErrorPrompt(
-                            onRetry: () =>
-                                widget.viewModel.loadLeaderboard.execute(true),
-                          ),
-                        ),
-                      ),
-                    )
-                  else if (widget.viewModel.leaderboard == null)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: Dimens.paddingVertical,
-                        ),
-                        child: ActivityIndicator(
-                          radius: 16,
-                          color: Theme.of(builderContext).colorScheme.primary,
-                        ),
-                      ),
-                    )
-                  else if (widget.viewModel.leaderboard!.isEmpty)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: Dimens.of(context).paddingScreenHorizontal,
-                          right: Dimens.of(context).paddingScreenHorizontal,
-                          top: Dimens.paddingVertical * 2,
-                        ),
-                        child: EmptyDataPlaceholder(
-                          assetImage: Assets.emptyLeaderboardIllustration,
-                          child: Text(
-                            context.localization.leaderboardEmpty,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    )
-                  else
-                    LeaderboardList(items: widget.viewModel.leaderboard!),
-                ],
+            return CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
               ),
+              slivers: [
+                SliverAppBar(
+                  automaticallyImplyLeading: false, // No back arrow
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  expandedHeight: headerHeight,
+                  floating: false,
+                  flexibleSpace: const FlexibleSpaceBar(
+                    collapseMode: CollapseMode.parallax,
+                    centerTitle: true,
+                    title: LeaderboardHeaderContent(),
+                  ),
+                  systemOverlayStyle: const SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.dark,
+                    statusBarBrightness: Brightness.light,
+                    systemNavigationBarIconBrightness: Brightness.dark,
+                  ),
+                ),
+                CupertinoSliverRefreshControl(
+                  onRefresh: () async =>
+                      await widget.viewModel.loadLeaderboard.execute(true),
+                  refreshTriggerPullDistance: 150,
+                ),
+                // Display error prompt only on initial load. In other cases, old list
+                // will still be shown, but we will show error snackbar.
+                if (widget.viewModel.loadLeaderboard.error &&
+                    widget.viewModel.leaderboard == null)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: Dimens.paddingVertical,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: kAppBottomNavigationBarHeight,
+                        ),
+                        child: ErrorPrompt(
+                          onRetry: () =>
+                              widget.viewModel.loadLeaderboard.execute(true),
+                        ),
+                      ),
+                    ),
+                  )
+                else if (widget.viewModel.leaderboard == null)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: Dimens.paddingVertical),
+                      child: ActivityIndicator(radius: 16),
+                    ),
+                  )
+                else if (widget.viewModel.leaderboard!.isEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: Dimens.of(context).paddingScreenHorizontal,
+                        right: Dimens.of(context).paddingScreenHorizontal,
+                        top: Dimens.paddingVertical * 2,
+                      ),
+                      child: EmptyDataPlaceholder(
+                        assetImage: Assets.emptyLeaderboardIllustration,
+                        child: Text(
+                          context.localization.leaderboardEmpty,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  LeaderboardList(items: widget.viewModel.leaderboard!),
+              ],
             );
           },
         ),

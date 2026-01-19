@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../theme/colors.dart';
+import '../theme/dimens.dart';
 
 class AppSnackbar {
   AppSnackbar._();
@@ -90,7 +91,9 @@ class AppSnackbar {
       ),
       elevation: 0,
       content: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.symmetric(
+          vertical: Dimens.paddingVertical / 12,
+        ),
         child: Row(
           children: [
             Icon(iconData, color: color),

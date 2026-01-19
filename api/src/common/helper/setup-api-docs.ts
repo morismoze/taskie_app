@@ -67,6 +67,7 @@ const setupApiDocs = (
         required: false,
         name: 'x-device-model',
         schema: {
+          type: 'string',
           example: 'SM-S911B',
         },
       },
@@ -74,17 +75,19 @@ const setupApiDocs = (
         in: 'header',
         required: false,
         name: 'x-os-version',
-        schema: {
-          example: '14',
-        },
+        schema: { type: 'string', example: '14' },
       },
       {
         in: 'header',
         required: false,
         name: 'x-app-version',
-        schema: {
-          example: '1.0.0',
-        },
+        schema: { type: 'string', example: '1.0.0' },
+      },
+      {
+        in: 'header',
+        required: false,
+        name: 'x-build-number',
+        schema: { type: 'string', example: '12' },
       },
     )
     .build();

@@ -64,6 +64,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight,
@@ -87,12 +88,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                 .viewModel
                                 .fetchWorkspaceInfoByInviteToken
                                 .running) {
-                              return ActivityIndicator(
-                                radius: 16,
-                                color: Theme.of(
-                                  builderContext,
-                                ).colorScheme.primary,
-                              );
+                              return const ActivityIndicator(radius: 16);
                             }
 
                             if (widget

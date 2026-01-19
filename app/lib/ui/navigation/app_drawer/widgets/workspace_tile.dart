@@ -47,7 +47,10 @@ class WorkspaceTile extends StatelessWidget {
         onTap: () =>
             _onWorkspaceOptionsTap(context, viewModel.activeWorkspaceId, id),
         child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          padding: EdgeInsets.symmetric(
+            horizontal: Dimens.paddingHorizontal / 2,
+            vertical: Dimens.paddingVertical / 12,
+          ),
           child: FaIcon(
             FontAwesomeIcons.ellipsisVertical,
             color: AppColors.grey2,

@@ -29,6 +29,9 @@ class PreferencesScreen extends StatelessWidget {
             HeaderBar(title: context.localization.preferencesLabel),
             Expanded(
               child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: ClampingScrollPhysics(),
+                ),
                 padding: const EdgeInsets.symmetric(
                   vertical: Dimens.paddingVertical,
                 ),

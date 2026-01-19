@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../l10n/l10n_extensions.dart';
 import '../theme/colors.dart';
+import '../theme/dimens.dart';
 
 // Used on a a objective which was just created. New objectives
 // are always shown at the top of the current objective list
@@ -14,7 +15,10 @@ class NewObjectiveBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Badge(
       backgroundColor: AppColors.purple1Light,
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+      padding: const EdgeInsets.symmetric(
+        vertical: Dimens.paddingVertical / 12,
+        horizontal: Dimens.paddingHorizontal / 2.5,
+      ),
       label: Row(
         spacing: 4,
         children: [

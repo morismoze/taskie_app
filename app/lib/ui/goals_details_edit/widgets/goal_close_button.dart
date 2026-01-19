@@ -23,6 +23,13 @@ class GoalCloseButton extends StatelessWidget {
   }
 
   void _confirmGoalClose(BuildContext context) {
+    // Try to unfocus a field on the details edit form if any field was focused.
+    // Try to unfocus last focused field from the details edit form
+    // FocusScope does not work as it tried find up in the widget
+    // tree, but GoalCloseButton and GoalDetailsEditForm are on the
+    // same level.
+    FocusManager.instance.primaryFocus?.unfocus();
+
     AppDialog.showAlert(
       context: context,
       canPop: !viewModel.closeGoal.running,

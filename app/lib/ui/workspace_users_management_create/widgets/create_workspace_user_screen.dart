@@ -85,6 +85,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     vertical: Dimens.of(context).paddingScreenVertical,
                     horizontal: Dimens.of(context).paddingScreenHorizontal,

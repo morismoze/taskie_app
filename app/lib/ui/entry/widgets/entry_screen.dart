@@ -95,10 +95,7 @@ class _EntryScreenState extends State<EntryScreen> {
                           );
                         }
 
-                        return ActivityIndicator(
-                          radius: 16,
-                          color: Theme.of(builderContext).colorScheme.primary,
-                        );
+                        return const ActivityIndicator(radius: 16);
                       },
                     ),
                   ),

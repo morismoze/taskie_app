@@ -66,10 +66,7 @@ class _UserProfileState extends State<UserProfile> {
         final details = widget.viewModel.details;
 
         if (details == null) {
-          return ActivityIndicator(
-            radius: 16,
-            color: Theme.of(builderContext).colorScheme.primary,
-          );
+          return const ActivityIndicator(radius: 16);
         }
 
         return Padding(

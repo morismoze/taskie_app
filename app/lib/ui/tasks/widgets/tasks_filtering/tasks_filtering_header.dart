@@ -21,15 +21,13 @@ class TasksFilteringHeader extends StatelessWidget {
         ListenableBuilder(
           listenable: viewModel.loadTasks,
           builder: (_, child) {
-            if (viewModel.loadTasks.running) {
+            // Show loader in cases it's not force fetch
+            if (viewModel.loadTasks.running && !viewModel.isForceFetching) {
               return child!;
             }
             return const SizedBox.shrink();
           },
-          child: ActivityIndicator(
-            radius: 12,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          child: const ActivityIndicator(radius: 12),
         ),
       ],
     );

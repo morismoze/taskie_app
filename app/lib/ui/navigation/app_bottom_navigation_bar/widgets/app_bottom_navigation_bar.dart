@@ -7,6 +7,7 @@ import '../../../../domain/models/user.dart';
 import '../../../../routing/routes.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_avatar.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../user_profile/widgets/user_profile.dart';
@@ -43,7 +44,10 @@ class AppBottomNavigationBar extends StatelessWidget {
       ),
       child: BottomAppBar(
         height: kAppBottomNavigationBarHeight,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        padding: const EdgeInsets.symmetric(
+          vertical: Dimens.paddingVertical / 3,
+          horizontal: Dimens.paddingHorizontal * 1.25,
+        ),
         shape: canCreateObjective ? const CircularNotchedRectangle() : null,
         color: AppColors.purple1Light,
         child: Row(

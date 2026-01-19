@@ -37,6 +37,10 @@ class GoalsScreenViewmodel extends ChangeNotifier {
 
   ObjectiveFilter get activeFilter => _workspaceGoalRepository.activeFilter;
 
+  bool _isForceFetching = false;
+
+  bool get isForceFetching => _isForceFetching;
+
   Paginable<WorkspaceGoal>? get goals {
     final goals = _workspaceGoalRepository.goals;
 
@@ -85,6 +89,7 @@ class GoalsScreenViewmodel extends ChangeNotifier {
     (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
     final (filter, forceFetch) = details;
+    _isForceFetching = forceFetch ?? false;
     final result = await _workspaceGoalRepository
         .loadGoals(
           workspaceId: _activeWorkspaceId,
@@ -92,6 +97,7 @@ class GoalsScreenViewmodel extends ChangeNotifier {
           forceFetch: forceFetch ?? false,
         )
         .last;
+    _isForceFetching = false;
 
     switch (result) {
       case Ok():

@@ -55,6 +55,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                 ],
               ),
               SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 padding: EdgeInsets.symmetric(
                   vertical: Dimens.of(context).paddingScreenVertical,
                   horizontal: Dimens.of(context).paddingScreenHorizontal,
@@ -65,10 +66,7 @@ class WorkspaceSettingsScreen extends StatelessWidget {
                     final details = viewModel.details;
 
                     if (details == null) {
-                      return ActivityIndicator(
-                        radius: 11,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 11);
                     }
 
                     final createdByFullName = details.createdBy != null

@@ -3,8 +3,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../config/environment/env.dart';
 import '../../repositories/auth/auth_state_repository.dart';
+import '../../repositories/client_info/client_info_repository.dart';
 import '../local/auth_event_bus.dart';
-import '../local/client_info_service.dart';
 import 'interceptors/forbidden_interceptor.dart';
 import 'interceptors/request_headers_interceptor.dart';
 import 'interceptors/unauthorized_interceptor.dart';
@@ -12,10 +12,10 @@ import 'interceptors/unauthorized_interceptor.dart';
 class ApiClient {
   ApiClient({
     required AuthStateRepository authStateRepository,
-    required ClientInfoService clientInfoService,
+    required ClientInfoRepository clientInfoRepository,
     required AuthEventBus authEventBus,
   }) : _authStateRepository = authStateRepository,
-       _clientInfoService = clientInfoService,
+       _clientInfoRepository = clientInfoRepository,
        _authEventBus = authEventBus,
        _client = Dio(
          BaseOptions(
@@ -32,7 +32,7 @@ class ApiClient {
     _refreshClient.interceptors.addAll([
       RequestHeadersInterceptor(
         authStateRepository: _authStateRepository,
-        clientInfoService: _clientInfoService,
+        clientInfoRepository: _clientInfoRepository,
         authHeaderTokenType: AuthHeaderTokenType.refresh,
       ),
       PrettyDioLogger(
@@ -46,7 +46,7 @@ class ApiClient {
     _client.interceptors.addAll([
       RequestHeadersInterceptor(
         authStateRepository: _authStateRepository,
-        clientInfoService: _clientInfoService,
+        clientInfoRepository: _clientInfoRepository,
         authHeaderTokenType: AuthHeaderTokenType.access,
       ),
       PrettyDioLogger(
@@ -68,7 +68,7 @@ class ApiClient {
   final Dio _client;
   final Dio _refreshClient;
   final AuthStateRepository _authStateRepository;
-  final ClientInfoService _clientInfoService;
+  final ClientInfoRepository _clientInfoRepository;
   final AuthEventBus _authEventBus;
 
   Dio get client => _client;

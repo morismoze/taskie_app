@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n_extensions.dart';
 import '../../theme/colors.dart';
+import '../../theme/dimens.dart';
 
 class AppSliderField extends StatelessWidget {
   const AppSliderField({
@@ -76,7 +77,9 @@ class AppSliderField extends StatelessWidget {
           max: max,
           min: min,
           label: value.toInt().toString(),
-          padding: const EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(
+            vertical: Dimens.paddingVertical / 1.6,
+          ),
           inactiveColor: AppColors.purple1Light,
         ),
       ],

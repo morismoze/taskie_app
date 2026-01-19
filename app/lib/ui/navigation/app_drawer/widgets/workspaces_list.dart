@@ -20,6 +20,9 @@ class WorkspacesList extends StatelessWidget {
           listenable: viewModel,
           builder: (_, _) {
             return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: ClampingScrollPhysics(),
+              ),
               padding: EdgeInsets.zero,
               itemCount: viewModel.workspaces.length,
               separatorBuilder: (_, _) =>

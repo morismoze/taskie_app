@@ -77,7 +77,7 @@ class AppModalBottomSheetContentWrapper extends StatelessWidget {
                         // Title always centered
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: Dimens.paddingVertical * 1.5,
+                            horizontal: Dimens.paddingHorizontal * 2.25,
                           ),
                           child: Align(
                             alignment: Alignment.center,

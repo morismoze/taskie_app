@@ -70,10 +70,7 @@ class WorkspaceInviteSection extends StatelessWidget {
 
             if (viewModel.createWorkspaceInviteLink.running ||
                 controller.text.isEmpty) {
-              return ActivityIndicator(
-                radius: 11,
-                color: Theme.of(context).colorScheme.primary,
-              );
+              return const ActivityIndicator(radius: 11);
             }
 
             return Column(

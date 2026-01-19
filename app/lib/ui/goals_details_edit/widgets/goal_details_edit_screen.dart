@@ -86,13 +86,11 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
                     builder: (builderContext, child) {
                       if (widget.viewModel.details == null ||
                           widget.viewModel.workspaceMembers.isEmpty) {
-                        return ActivityIndicator(
-                          radius: 16,
-                          color: Theme.of(builderContext).colorScheme.primary,
-                        );
+                        return const ActivityIndicator(radius: 16);
                       }
 
                       return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),

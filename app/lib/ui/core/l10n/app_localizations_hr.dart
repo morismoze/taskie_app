@@ -391,7 +391,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalMessage =>
-      'Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunost izbrisati nakon što ga napustite.**';
+      'Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunosti izbrisati nakon što ga napustite.**';
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Napusti';

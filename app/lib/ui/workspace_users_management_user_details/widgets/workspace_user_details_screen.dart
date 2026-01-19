@@ -72,6 +72,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                 ],
               ),
               SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 padding: EdgeInsets.symmetric(
                   vertical: Dimens.of(context).paddingScreenVertical,
                   horizontal: Dimens.of(context).paddingScreenHorizontal,
@@ -82,10 +83,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                     final details = viewModel.details;
 
                     if (details == null) {
-                      return ActivityIndicator(
-                        radius: 11,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 11);
                     }
 
                     return Column(

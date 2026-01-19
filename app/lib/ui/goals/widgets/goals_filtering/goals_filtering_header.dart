@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../core/ui/activity_indicator.dart';
 import '../../view_models/goals_screen_viewmodel.dart';
@@ -21,15 +21,13 @@ class GoalsFilteringHeader extends StatelessWidget {
         ListenableBuilder(
           listenable: viewModel.loadGoals,
           builder: (_, child) {
-            if (viewModel.loadGoals.running) {
+            // Show loader in cases it's not force fetch
+            if (viewModel.loadGoals.running && !viewModel.isForceFetching) {
               return child!;
             }
             return const SizedBox.shrink();
           },
-          child: ActivityIndicator(
-            radius: 12,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          child: const ActivityIndicator(radius: 12),
         ),
       ],
     );

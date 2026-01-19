@@ -67,13 +67,11 @@ class _WorkspaceUserDetailsEditScreenState
                   listenable: widget.viewModel,
                   builder: (builderContext, child) {
                     if (widget.viewModel.details == null) {
-                      return ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 16);
                     }
 
                     return SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
                         vertical: Dimens.of(context).paddingScreenVertical,
                       ),

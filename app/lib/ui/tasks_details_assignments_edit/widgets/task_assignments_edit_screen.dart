@@ -120,70 +120,81 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                         );
                       }
 
-                      return ListView(
+                      return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),
-                        children: [
-                          if (widget.viewModel.assignees!.isEmpty)
-                            Text(
-                              context.localization.tasksAssignmentsEmpty,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleSmall!
-                                  .copyWith(fontStyle: FontStyle.italic),
-                            )
-                          else
-                            EditAssignmentsForm(viewModel: widget.viewModel),
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: Dimens.paddingVertical * 1.6,
-                              ),
-                              const Separator(),
-                              const SizedBox(
-                                height: Dimens.paddingVertical * 1.25,
-                              ),
+                        child: Column(
+                          children: [
+                            if (widget.viewModel.assignees!.isEmpty)
                               Text(
-                                context
-                                    .localization
-                                    .tasksAssignmentsEditAddNewAssignee,
+                                context.localization.tasksAssignmentsEmpty,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleMedium!
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: Dimens.paddingVertical * 1.25,
-                              ),
-                              if (widget.viewModel.assignees!.length ==
-                                  ValidationRules.taskMaxAssigneesCount) ...[
-                                // The number of assignees is already maxed out
+                                style: Theme.of(context).textTheme.titleSmall!
+                                    .copyWith(fontStyle: FontStyle.italic),
+                              )
+                            else
+                              EditAssignmentsForm(viewModel: widget.viewModel),
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.6,
+                                ),
+                                const Separator(),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.25,
+                                ),
                                 Text(
                                   context
                                       .localization
-                                      .tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees,
+                                      .tasksAssignmentsEditAddNewAssignee,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall!
-                                      .copyWith(fontStyle: FontStyle.italic),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontWeight: FontWeight.bold),
                                 ),
-                              ] else if (widget
-                                  .viewModel
-                                  .workspaceMembersNotAssigned
-                                  .isEmpty) ...[
-                                // The number of assignees is already maxed out
-                                Text(
-                                  context
-                                      .localization
-                                      .tasksAssignmentsEditAddNewAssigneeEmptyAssignees,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall!
-                                      .copyWith(fontStyle: FontStyle.italic),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.25,
                                 ),
-                              ] else ...[
-                                AddNewAssigneeForm(viewModel: widget.viewModel),
+                                if (widget.viewModel.assignees!.length ==
+                                    ValidationRules.taskMaxAssigneesCount) ...[
+                                  // The number of assignees is already maxed out
+                                  Text(
+                                    context
+                                        .localization
+                                        .tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(fontStyle: FontStyle.italic),
+                                  ),
+                                ] else if (widget
+                                    .viewModel
+                                    .workspaceMembersNotAssigned
+                                    .isEmpty) ...[
+                                  // The number of assignees is already maxed out
+                                  Text(
+                                    context
+                                        .localization
+                                        .tasksAssignmentsEditAddNewAssigneeEmptyAssignees,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(fontStyle: FontStyle.italic),
+                                  ),
+                                ] else ...[
+                                  AddNewAssigneeForm(
+                                    viewModel: widget.viewModel,
+                                  ),
+                                ],
                               ],
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),

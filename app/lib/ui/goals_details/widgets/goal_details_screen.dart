@@ -30,6 +30,7 @@ class GoalDetailsScreen extends StatelessWidget {
               HeaderBar(title: context.localization.goalsDetails),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     vertical: Dimens.of(context).paddingScreenVertical,
                     horizontal: Dimens.of(context).paddingScreenHorizontal,
@@ -40,10 +41,7 @@ class GoalDetailsScreen extends StatelessWidget {
                       final details = viewModel.details;
 
                       if (details == null) {
-                        return ActivityIndicator(
-                          radius: 16,
-                          color: Theme.of(builderContext).colorScheme.primary,
-                        );
+                        return const ActivityIndicator(radius: 16);
                       }
 
                       final createdByFullName = details.createdBy != null

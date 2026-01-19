@@ -111,7 +111,7 @@
   "appDrawerManageUsers": "Članovi radnog prostora",
   "appDrawerNotActiveWorkspace": "Ukoliko želite vidjeti ostale opcije, učinite ovaj radni prostor aktivnim klikom na ikonu radnog prostora u gornjoj listi.",
   "appDrawerLeaveWorkspace": "Napusti radni prostor",
-  "appDrawerLeaveWorkspaceModalMessage": "Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunost izbrisati nakon što ga napustite.**",
+  "appDrawerLeaveWorkspaceModalMessage": "Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunosti izbrisati nakon što ga napustite.**",
   "appDrawerLeaveWorkspaceModalCta": "Napusti",
   "appDrawerLeaveWorkspaceSuccess": "Uspješno ste napustili radni prostor",
   "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",

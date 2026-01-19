@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/colors.dart';
+import '../../theme/dimens.dart';
 import '../app_field_button.dart';
 import 'app_select_field.dart';
 
@@ -74,7 +75,10 @@ class _AppSelectFieldSelectedOption extends StatelessWidget {
                 : Theme.of(context).disabledColor,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(
+              vertical: Dimens.paddingVertical / 6,
+              horizontal: Dimens.paddingHorizontal / 2,
+            ),
             child: Text(
               label,
               overflow: TextOverflow.ellipsis,

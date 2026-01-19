@@ -83,10 +83,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                   listenable: widget.viewModel.loadWorkspaceMembers,
                   builder: (builderContext, child) {
                     if (widget.viewModel.loadWorkspaceMembers.running) {
-                      return ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 16);
                     }
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
@@ -128,6 +125,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                       }
 
                       return SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),

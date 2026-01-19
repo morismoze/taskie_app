@@ -50,7 +50,10 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                   // meaning there will whitespace of 10 width because SizedBox.shrink() is still a widget
                   margin: const EdgeInsets.only(left: 10),
                   child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.paddingHorizontal / 4,
+                      vertical: Dimens.paddingVertical / 12,
+                    ),
                     child: FaIcon(
                       FontAwesomeIcons.ellipsisVertical,
                       color: AppColors.grey2,
