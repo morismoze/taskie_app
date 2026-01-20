@@ -73,11 +73,9 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
             ]),
             builder: (builderContext, _) {
               final isDirty =
-                  _nameController.text != widget.viewModel.details!.name &&
-                      _nameController.text.isNotEmpty ||
-                  _descriptionController.text !=
-                          widget.viewModel.details!.description &&
-                      _descriptionController.text.isNotEmpty;
+                  _nameController.text != widget.viewModel.details!.name ||
+                  _descriptionController.text.nullIfEmpty !=
+                      widget.viewModel.details!.description;
 
               return AppFilledButton(
                 onPress: _onSubmit,

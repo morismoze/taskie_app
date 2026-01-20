@@ -63,8 +63,6 @@ import 'routes.dart';
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
-final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
-    GlobalKey<StatefulNavigationShellState>(debugLabel: 'workspaceIdshell');
 
 /// Top go_router entry point.
 ///
@@ -257,7 +255,6 @@ GoRouter router({
           builder: (_, _) => const SizedBox.shrink(),
           routes: [
             StatefulShellRoute(
-              key: _mainStatefulShellNavigatorKey,
               navigatorContainerBuilder: (context, navigationShell, children) {
                 // IndexedStack is basically a stack which has all the StatefulShellBranch
                 // and their subroutes in it, and on top of the stack will be a route defined
@@ -323,7 +320,6 @@ GoRouter router({
                             state.pathParameters['workspaceId']!;
 
                         return NoTransitionPage(
-                          key: ValueKey('tasks_page_$workspaceId'),
                           child: TasksScreen(
                             viewModel: TasksScreenViewModel(
                               workspaceId: workspaceId,
@@ -548,8 +544,8 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+
                         return NoTransitionPage(
-                          key: ValueKey('goals_page_$workspaceId'),
                           child: GoalsScreen(
                             viewModel: GoalsScreenViewmodel(
                               workspaceId: workspaceId,
@@ -733,7 +729,6 @@ GoRouter router({
                             state.pathParameters['workspaceId']!;
 
                         return NoTransitionPage(
-                          key: ValueKey('leaderboard_page_$workspaceId'),
                           child: LeaderboardScreen(
                             viewModel: LeaderboardScreenViewModel(
                               workspaceId: workspaceId,

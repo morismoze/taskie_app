@@ -161,11 +161,9 @@ class _WorkspaceUserDetailsEditFormState
             builder: (builderContext, _) {
               final isDirty = isVirtualUser
                   ? _firstNameController.text !=
-                                widget.viewModel.details!.firstName &&
-                            _firstNameController.text.isNotEmpty ||
+                            widget.viewModel.details!.firstName ||
                         _lastNameController.text !=
-                                widget.viewModel.details!.lastName &&
-                            _lastNameController.text.isNotEmpty
+                            widget.viewModel.details!.lastName
                   : _selectedRoleNotifier.value != null &&
                         _selectedRoleNotifier.value!.value !=
                             widget.viewModel.details!.role;
