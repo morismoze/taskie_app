@@ -16,7 +16,7 @@ import 'goals_list.dart';
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   @override
   State<StatefulWidget> createState() => _GoalssScreenState();
@@ -66,8 +66,7 @@ class _GoalssScreenState extends State<GoalsScreen> {
                 ]),
                 builder: (builderContext, _) {
                   // Show loader only on initial load (goals are null)
-                  if (widget.viewModel.loadGoals.running &&
-                      widget.viewModel.goals == null) {
+                  if (widget.viewModel.goals == null) {
                     return const ActivityIndicator(radius: 16);
                   }
 

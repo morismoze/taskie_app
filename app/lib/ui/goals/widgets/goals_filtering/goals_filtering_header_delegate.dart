@@ -9,7 +9,7 @@ class GoalsFilteringHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.height,
   });
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
   final double height;
 
   @override

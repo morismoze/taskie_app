@@ -8,8 +8,8 @@ import '../../../domain/models/paginable.dart';
 import '../../../domain/models/workspace_goal.dart';
 import '../../../utils/command.dart';
 
-class GoalsScreenViewmodel extends ChangeNotifier {
-  GoalsScreenViewmodel({
+class GoalsScreenViewModel extends ChangeNotifier {
+  GoalsScreenViewModel({
     required String workspaceId,
     required UserRepository userRepository,
     required WorkspaceGoalRepository workspaceGoalRepository,
@@ -81,7 +81,7 @@ class GoalsScreenViewmodel extends ChangeNotifier {
   }
 
   void _onGoalsChanged() {
-    // Forward the change notification from repository to the viewmodel
+    // Forward the change notification from repository to the view
     notifyListeners();
   }
 

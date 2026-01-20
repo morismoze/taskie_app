@@ -42,7 +42,6 @@ class AppShellScaffold extends StatelessWidget {
       floatingActionButton: AppFloatingActionButton(
         viewModel: AppFloatingActionButtonViewModel(workspaceId: workspaceId),
       ),
-
       body: navigationShell,
     );
   }

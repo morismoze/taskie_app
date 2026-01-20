@@ -58,13 +58,13 @@ class AppBottomNavigationBar extends StatelessWidget {
               icon: FontAwesomeIcons.house,
               label: context.localization.bottomNavigationBarTasksLabel,
               isActive: currentIndex == kTasksTabIndex,
-              onPressed: () => _navigateToBranch(kTasksTabIndex),
+              onPressed: () => _navigateToBranch(kTasksTabIndex, context),
             ),
             _TabItem(
               icon: FontAwesomeIcons.solidFlag,
               label: context.localization.goalsLabel,
               isActive: currentIndex == _kGoalsTabIndex,
-              onPressed: () => _navigateToBranch(_kGoalsTabIndex),
+              onPressed: () => _navigateToBranch(_kGoalsTabIndex, context),
             ),
             if (canCreateObjective)
               const SizedBox(width: kAppFloatingActionButtonSize),
@@ -72,7 +72,8 @@ class AppBottomNavigationBar extends StatelessWidget {
               icon: FontAwesomeIcons.trophy,
               label: context.localization.leaderboardLabel,
               isActive: currentIndex == _kLeaderboardTabIndex,
-              onPressed: () => _navigateToBranch(_kLeaderboardTabIndex),
+              onPressed: () =>
+                  _navigateToBranch(_kLeaderboardTabIndex, context),
             ),
             _AvatarTabItem(
               onPressed: () => _openUserProfile(context),
@@ -84,10 +85,34 @@ class AppBottomNavigationBar extends StatelessWidget {
     );
   }
 
-  void _navigateToBranch(int index) {
+  void _navigateToBranch(int index, BuildContext context) {
     if (viewModel.needsReset(index)) {
       // Workspace was changed - we need to reset the state of the branch
-      navigationShell.goBranch(index, initialLocation: true);
+
+      // Tasks tab does not need a resetKey because it is the default entry point.
+      // When the workspaceId changes, the parent route rebuilds, destroying the
+      // entire StatefulShellRoute. The new Shell automatically builds the Tasks
+      // screen from scratch as its initial active route.
+      //
+      // For other tabs (Goals, Leaderboard), we pass 'resetKey' (via extra) to
+      // ensure that when we switch to them using context.go, GoRouter treats
+      // them as completely new page instances (via unique ValueKey in routes),
+      // bypassing any potential internal caching or soft-switching mechanisms.
+      final resetKey = DateTime.now().millisecondsSinceEpoch;
+      switch (index) {
+        case kTasksTabIndex:
+          context.go(Routes.tasks(workspaceId: viewModel.activeWorkspaceId));
+        case _kGoalsTabIndex:
+          context.go(
+            Routes.goals(workspaceId: viewModel.activeWorkspaceId),
+            extra: resetKey,
+          );
+        case _kLeaderboardTabIndex:
+          context.go(
+            Routes.leaderboard(workspaceId: viewModel.activeWorkspaceId),
+            extra: resetKey,
+          );
+      }
       viewModel.markVisited(index);
     } else {
       // Workspace was not changed - keep the branch's state

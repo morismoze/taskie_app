@@ -105,6 +105,7 @@
   "tasksAssignmentsGuideMultipleAssigneesBody": "A task can be assigned to multiple members for two reasons:\n\n__Individual work__ - when you want multiple members to work on the same task independently, without needing to create duplicate tasks for each one. Each member works individually and receives the same reward points.\n\n__Team work__ - when multiple members work together on the same task as a team. Each member also receives the same reward points upon completion.\n\nIn both cases, each assigned member receives the same number of reward points set for the task.",
   "appDrawerTitle": "Workspaces",
   "appDrawerChangeActiveWorkspaceError": "Uh-oh! We've had some trouble changing workspace",
+  "appDrawerChangeActiveWorkspaceSuccess": "Successfully changed active workspace",
   "appDrawerWorkspaceOptions": "Workspace options",
   "appDrawerEditWorkspace": "Workspace settings",
   "appDrawerManageUsers": "Workspace users",

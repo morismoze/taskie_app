@@ -10,7 +10,7 @@ import 'goal_card/card.dart';
 class GoalsList extends StatelessWidget {
   const GoalsList({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

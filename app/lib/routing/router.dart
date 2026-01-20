@@ -544,10 +544,12 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        final resetKey = state.extra;
 
                         return NoTransitionPage(
+                          key: ValueKey('goals_${workspaceId}_$resetKey'),
                           child: GoalsScreen(
-                            viewModel: GoalsScreenViewmodel(
+                            viewModel: GoalsScreenViewModel(
                               workspaceId: workspaceId,
                               userRepository: context.read(),
                               workspaceGoalRepository: context.read(),
@@ -727,8 +729,10 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        final resetKey = state.extra;
 
                         return NoTransitionPage(
+                          key: ValueKey('leaderboard_${workspaceId}_$resetKey'),
                           child: LeaderboardScreen(
                             viewModel: LeaderboardScreenViewModel(
                               workspaceId: workspaceId,

@@ -11,7 +11,7 @@ import '../../view_models/goals_screen_viewmodel.dart';
 class FilterByStatusButton extends StatelessWidget {
   const FilterByStatusButton({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   void onSubmit(AppSelectFieldOption selectedOption) {
     ObjectiveFilter? updatedFilter;

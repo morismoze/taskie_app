@@ -66,8 +66,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 ]),
                 builder: (builderContext, _) {
                   // Show loader only on initial load (tasks are null)
-                  if (widget.viewModel.loadTasks.running &&
-                      widget.viewModel.tasks == null) {
+                  if (widget.viewModel.tasks == null) {
                     return const ActivityIndicator(radius: 16);
                   }
 

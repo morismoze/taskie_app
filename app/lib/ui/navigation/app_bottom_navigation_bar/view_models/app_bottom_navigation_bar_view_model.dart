@@ -36,21 +36,38 @@ class AppBottomNavigationBarViewModel extends ChangeNotifier {
   // different workspaceId. Now this works for tasks screen, because using context.go
   // resets the state for that route branch, but state is not reset for leaderboard
   // and goals. This means that when we previously just used navigationShell.goBranch
-  // this would used old state for those two branches, which is incorrect behaviour.
-  // With this map we track if there was a change on the current active workspace
-  // and if there was one, then we again use navigationShell.goBranch, but this time
-  // with initialLocation set to true - this resets the state for that branch.
+  // this would used old state for those two branches, which is incorrect behaviour,
+  // because those screens and their VMs wouldn't get re-instantiated and thus not
+  // fetch data for new active workspace ID. Please also check logic in
+  // AppBottomNavigationBar's _navigateToBranch method implementation.
+  // Logic:
+  // 1. If a tab hasn't been visited yet for this workspace (needsReset = true),
+  //    we use `context.go`. This performs a "Hard Navigation", ensuring the Router
+  //    correctly matches the URL and initializes the route stack for that branch.
+  // 2. If a tab has already been visited (needsReset = false), we use
+  //    `navigationShell.goBranch`. This performs a "Soft Switch", preserving
+  //    the state (scroll position, text inputs, etc.) of that branch.
   final Map<int, String?> _lastWsForBranch = {};
 
-  bool needsReset(int branchIndex) =>
-      _lastWsForBranch[branchIndex] != _activeWorkspaceId;
+  String? _lastActiveWorkspaceId;
+
+  bool needsReset(int branchIndex) {
+    if (_lastActiveWorkspaceId != _activeWorkspaceId) {
+      // Clear the map after workspace ID has been changed
+      _lastWsForBranch.clear();
+      _lastActiveWorkspaceId = _activeWorkspaceId;
+    }
+
+    return _lastWsForBranch[branchIndex] != _activeWorkspaceId;
+  }
 
   void markVisited(int branchIndex) {
     _lastWsForBranch[branchIndex] = _activeWorkspaceId;
+    _lastActiveWorkspaceId = _activeWorkspaceId;
   }
 
   void _onUserChanged() {
-    // Forward the change notification from repository to the viewmodel
+    // Forward the change notification from repository to the view
     notifyListeners();
   }
 

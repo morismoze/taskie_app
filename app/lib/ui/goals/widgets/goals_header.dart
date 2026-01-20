@@ -11,7 +11,7 @@ import '../view_models/goals_screen_viewmodel.dart';
 class GoalsHeader extends StatelessWidget {
   const GoalsHeader({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

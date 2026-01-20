@@ -373,6 +373,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble changing workspace';
 
   @override
+  String get appDrawerChangeActiveWorkspaceSuccess =>
+      'Successfully changed active workspace';
+
+  @override
   String get appDrawerWorkspaceOptions => 'Workspace options';
 
   @override

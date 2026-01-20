@@ -734,6 +734,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble changing workspace'**
   String get appDrawerChangeActiveWorkspaceError;
 
+  /// No description provided for @appDrawerChangeActiveWorkspaceSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully changed active workspace'**
+  String get appDrawerChangeActiveWorkspaceSuccess;
+
   /// No description provided for @appDrawerWorkspaceOptions.
   ///
   /// In en, this message translates to:

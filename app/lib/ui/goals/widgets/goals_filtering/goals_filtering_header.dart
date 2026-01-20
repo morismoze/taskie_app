@@ -8,7 +8,7 @@ import 'sort_by_time_button.dart';
 class GoalsFilteringHeader extends StatelessWidget {
   const GoalsFilteringHeader({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,7 @@ import '../../view_models/goals_screen_viewmodel.dart';
 class SortByTimeButton extends StatelessWidget {
   const SortByTimeButton({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   void onSubmit(AppSelectFieldOption selectedOption) {
     final selectedSort = selectedOption.value as SortBy;

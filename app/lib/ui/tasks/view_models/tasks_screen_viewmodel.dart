@@ -81,7 +81,7 @@ class TasksScreenViewModel extends ChangeNotifier {
   }
 
   void _onTasksChanged() {
-    // Forward the change notification from repository to the viewmodel
+    // Forward the change notification from repository to the view
     notifyListeners();
   }
 

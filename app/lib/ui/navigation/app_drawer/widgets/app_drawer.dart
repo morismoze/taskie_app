@@ -92,7 +92,10 @@ class _AppDrawerState extends State<AppDrawer> {
       final newActiveWorkspaceId =
           (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
       widget.viewModel.changeActiveWorkspace.clearResult();
-      Navigator.of(context).pop(); // Close drawer
+      AppToast.showSuccess(
+        context: context,
+        message: context.localization.appDrawerChangeActiveWorkspaceSuccess,
+      );
       context.go(Routes.tasks(workspaceId: newActiveWorkspaceId));
     }
 

@@ -46,7 +46,7 @@ class GoalCard extends StatelessWidget {
   /// It is used to add visual elements to the card to distinguish newly
   /// created goals from existing ones in the list
   final bool isNew;
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
   final bool isGoalClosed;
 
   @override
