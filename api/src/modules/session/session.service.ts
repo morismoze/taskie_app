@@ -28,6 +28,7 @@ export class SessionService {
     deviceModel: Session['deviceModel'];
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
+    buildNumber: Session['buildNumber'];
   }): Promise<SessionCore> {
     const newSession = await this.sessionRepository.create({
       data,

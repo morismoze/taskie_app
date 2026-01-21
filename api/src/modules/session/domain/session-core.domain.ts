@@ -6,5 +6,6 @@ export interface SessionCore extends RootDomain {
   deviceModel: string | null;
   osVersion: string | null;
   appVersion: string | null;
+  buildNumber: string | null;
   accessTokenVersion: number;
 }

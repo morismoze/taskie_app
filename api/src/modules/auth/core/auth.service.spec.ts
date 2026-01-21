@@ -42,6 +42,7 @@ const mockSessionCoreFactory = (
   deviceModel: 'iPhone 15',
   osVersion: 'iOS 17.0',
   appVersion: '1.0.0',
+  buildNumber: '1',
   accessTokenVersion: 1,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -183,6 +184,7 @@ describe('AuthService', () => {
       deviceModel: 'iPhone 15',
       osVersion: 'iOS 17.0',
       appVersion: '1.0.0',
+      buildNumber: '1',
     };
 
     it('should create a new user and session when user does not exist', async () => {

@@ -28,17 +28,36 @@ export class UnknownExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
     const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-    const message = exception.message;
+
+    const isError = exception instanceof Error;
+    const message = isError
+      ? exception.message
+      : 'Unknown internal server error';
+    const stack = isError ? exception.stack : undefined;
+    // If not an Error, then serialize it
+    const rawError = isError ? undefined : JSON.stringify(exception);
+
+    this.logger.error(
+      {
+        msg: `Internal Server Error: ${message}`,
+        req: {
+          method: request.method,
+          url: request.originalUrl || request.url,
+          ip: request.ip,
+          userAgent: request.headers['user-agent'],
+        },
+        statusCode,
+        rawError,
+      },
+      stack,
+      UnknownExceptionsFilter.name,
+    );
 
     const responseBody: ApiResponse<null> = {
       error: { code: ApiErrorCode.SERVER_ERROR },
       data: null,
     };
 
-    this.logger.error(
-      `[${request.method}] ${httpAdapter.getRequestUrl(request)} - ${statusCode} - ${message}`,
-      exception.stack,
-    );
     httpAdapter.reply(response, responseBody, statusCode);
   }
 }

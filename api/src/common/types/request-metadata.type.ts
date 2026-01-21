@@ -2,5 +2,5 @@ export interface RequestMetadata {
   deviceModel: string | null;
   osVersion: string | null;
   appVersion: string | null;
-  buildNumber: number | null;
+  buildNumber: string | null;
 }

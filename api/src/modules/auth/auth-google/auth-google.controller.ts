@@ -56,6 +56,7 @@ export class AuthGoogleController {
       deviceModel: request.metadata.deviceModel,
       osVersion: request.metadata.osVersion,
       appVersion: request.metadata.appVersion,
+      buildNumber: request.metadata.buildNumber,
     });
   }
 }

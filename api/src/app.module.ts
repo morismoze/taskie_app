@@ -25,6 +25,7 @@ import authConfig from './modules/auth/core/config/auth.config';
 import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { AppLogger } from './modules/logger/app-logger';
+import grafanaConfig from './modules/logger/config/grafana.config';
 import { AppLoggerModule } from './modules/logger/logger.module';
 import { UserModule } from './modules/user/user.module';
 import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.module';
@@ -33,21 +34,31 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, authConfig, googleConfig],
-      envFilePath: ['.env'],
+      load: [
+        appConfig,
+        databaseConfig,
+        authConfig,
+        googleConfig,
+        grafanaConfig,
+      ],
+      envFilePath: [
+        // `.env.${process.env.NODE_ENV}`, // First try to search the process ENV
+        '.env', // Fallback to default .env
+      ],
     }),
-    DatabaseModule,
-    AuthModule,
-    AuthGoogleModule,
-    UserModule,
-    WorkspaceModule,
-    ScheduleModule.forRoot(),
+    // CLS needs to initalize before any other middleware tries to do actions on the request object
     ClsModule.forRoot({
       global: true,
       middleware: { mount: true }, // Automatically mounts middleware for every request
     }),
     AppLoggerModule,
+    DatabaseModule,
+    AuthModule,
+    AuthGoogleModule,
+    UserModule,
+    WorkspaceModule,
     HealthModule,
+    ScheduleModule.forRoot(),
   ],
   providers: [
     {

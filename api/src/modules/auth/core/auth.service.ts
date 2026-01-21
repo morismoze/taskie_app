@@ -39,6 +39,7 @@ export class AuthService {
     deviceModel,
     osVersion,
     appVersion,
+    buildNumber,
   }: {
     authProvider: AuthProvider;
     socialData: SocialLogin;
@@ -46,6 +47,7 @@ export class AuthService {
     deviceModel: Session['deviceModel'];
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
+    buildNumber: Session['buildNumber'];
   }): Promise<LoginResponse> {
     const { user, session } = await this.unitOfWorkService.withTransaction(
       async () => {
@@ -116,6 +118,7 @@ export class AuthService {
           deviceModel,
           osVersion,
           appVersion,
+          buildNumber,
         });
 
         return { user, session };

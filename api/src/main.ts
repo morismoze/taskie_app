@@ -11,7 +11,7 @@ import { AggregatedConfig } from './config/config.type';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    bufferLogs: true, // Buffer logs until a logger is set up
+    bufferLogs: true, // Buffer logs until AppLogger is instantiated and set up
   });
   const configService = app.get(ConfigService<AggregatedConfig>);
 
