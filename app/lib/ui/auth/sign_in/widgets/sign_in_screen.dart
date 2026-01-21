@@ -12,7 +12,7 @@ import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_toast.dart';
 import '../../../core/ui/blurred_circles_background.dart';
-import '../view_models/sign_in_viewmodel.dart';
+import '../view_models/sign_in_view_model.dart';
 import 'legal_agreement_disclaimer.dart';
 
 class SignInScreen extends StatefulWidget {

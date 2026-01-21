@@ -10,7 +10,7 @@ import '../../../core/ui/app_outlined_button.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/separator.dart';
 import '../../../core/utils/app_urls.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 
 class AboutButton extends StatelessWidget {
   const AboutButton({super.key, required this.viewModel});

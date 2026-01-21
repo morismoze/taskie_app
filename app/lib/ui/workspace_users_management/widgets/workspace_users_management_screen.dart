@@ -14,7 +14,7 @@ import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/rbac.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 import 'users_list.dart';
 
 class WorkspaceUsersManagementScreen extends StatefulWidget {

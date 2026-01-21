@@ -7,7 +7,7 @@ import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
-import '../view_models/tasks_screen_viewmodel.dart';
+import '../view_models/tasks_screen_view_model.dart';
 import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {

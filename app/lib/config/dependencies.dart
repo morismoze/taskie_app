@@ -52,7 +52,7 @@ import '../domain/use_cases/sign_in_use_case.dart';
 import '../domain/use_cases/sign_out_use_case.dart';
 import '../routing/router.dart';
 import '../ui/app_startup/view_models/app_startup_view_model.dart';
-import '../ui/auth_event_listener/view_models/auth_event_listener_viewmodel.dart';
+import '../ui/auth_event_listener/view_models/auth_event_listener_view_model.dart';
 import '../ui/core/services/rbac_service.dart';
 
 List<SingleChildWidget> get providers {

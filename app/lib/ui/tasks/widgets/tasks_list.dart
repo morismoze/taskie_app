@@ -4,7 +4,7 @@ import '../../../data/services/api/workspace/progress_status.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/empty_filtered_objectives.dart';
-import '../view_models/tasks_screen_viewmodel.dart';
+import '../view_models/tasks_screen_view_model.dart';
 import 'task_card/card.dart';
 
 class TasksList extends StatelessWidget {

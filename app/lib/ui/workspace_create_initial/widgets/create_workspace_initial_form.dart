@@ -6,7 +6,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
-import '../view_models/create_workspace_initial_screen_viewmodel.dart';
+import '../view_models/create_workspace_initial_screen_view_model.dart';
 
 class CreateWorkspaceInitialForm extends StatefulWidget {
   const CreateWorkspaceInitialForm({super.key, required this.viewModel});

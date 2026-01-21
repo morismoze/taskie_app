@@ -6,7 +6,7 @@ import '../../../core/ui/action_button_bar.dart';
 import '../../../core/ui/app_dialog.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/utils/extensions.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 
 class WorkspaceLeaveButton extends StatelessWidget {
   const WorkspaceLeaveButton({

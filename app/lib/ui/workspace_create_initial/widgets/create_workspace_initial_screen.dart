@@ -9,7 +9,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/create_workspace_initial_screen_viewmodel.dart';
+import '../view_models/create_workspace_initial_screen_view_model.dart';
 import 'create_workspace_initial_form.dart';
 import 'user_profile_button.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/empty_filtered_objectives.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 import 'workspace_user_tile.dart';
 
 class UsersList extends StatelessWidget {

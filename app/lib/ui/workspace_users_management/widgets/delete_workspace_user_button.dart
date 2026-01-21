@@ -5,7 +5,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_text_button.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 
 class DeleteWorkspaceUserButton extends StatelessWidget {
   const DeleteWorkspaceUserButton({

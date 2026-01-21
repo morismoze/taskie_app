@@ -8,7 +8,7 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/objectives_list_view.dart';
 import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
-import '../view_models/tasks_screen_viewmodel.dart';
+import '../view_models/tasks_screen_view_model.dart';
 import 'tasks_filtering/tasks_filtering_header_delegate.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';

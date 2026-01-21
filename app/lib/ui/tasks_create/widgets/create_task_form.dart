@@ -15,7 +15,7 @@ import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/separator.dart';
 import '../../core/utils/extensions.dart';
-import '../view_models/create_task_screen_viewmodel.dart';
+import '../view_models/create_task_screen_view_model.dart';
 
 class CreateTaskForm extends StatefulWidget {
   const CreateTaskForm({super.key, required this.viewModel});

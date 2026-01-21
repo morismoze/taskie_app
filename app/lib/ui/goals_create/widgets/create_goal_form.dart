@@ -14,7 +14,7 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
 import '../../goals_workspace_member_accumulated_points/widgets/workspace_member_accumulated_points.dart';
-import '../view_models/create_goal_screen_viewmodel.dart';
+import '../view_models/create_goal_screen_view_model.dart';
 
 class CreateGoalForm extends StatefulWidget {
   const CreateGoalForm({super.key, required this.viewModel});

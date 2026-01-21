@@ -6,7 +6,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_text_button.dart';
 import '../../core/ui/app_text_field/app_text_field.dart';
-import '../view_models/create_workspace_user_screen_viewmodel.dart';
+import '../view_models/create_workspace_user_screen_view_model.dart';
 import 'workspace_invite_action_button.dart';
 
 class WorkspaceInviteSection extends StatelessWidget {

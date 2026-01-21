@@ -16,7 +16,7 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/separator.dart';
 import '../../core/utils/extensions.dart';
-import '../view_models/join_workspace_screen_viewmodel.dart';
+import '../view_models/join_workspace_screen_view_model.dart';
 import 'workspace_info.dart';
 
 class JoinWorkspaceScreen extends StatefulWidget {

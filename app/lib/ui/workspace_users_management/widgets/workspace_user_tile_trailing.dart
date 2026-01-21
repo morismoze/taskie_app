@@ -12,7 +12,7 @@ import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 import 'delete_workspace_user_button.dart';
 
 class WorkspaceUserTileTrailing extends StatelessWidget {

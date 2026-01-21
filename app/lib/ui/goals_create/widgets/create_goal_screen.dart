@@ -13,7 +13,7 @@ import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/create_goal_screen_viewmodel.dart';
+import '../view_models/create_goal_screen_view_model.dart';
 import 'create_goal_form.dart';
 
 class CreateGoalScreen extends StatefulWidget {

@@ -8,7 +8,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_toast.dart';
 import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 import 'footer.dart';
 import 'workspaces_list.dart';
 

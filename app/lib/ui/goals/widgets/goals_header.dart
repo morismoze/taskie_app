@@ -6,7 +6,7 @@ import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
-import '../view_models/goals_screen_viewmodel.dart';
+import '../view_models/goals_screen_view_model.dart';
 
 class GoalsHeader extends StatelessWidget {
   const GoalsHeader({super.key, required this.viewModel});

@@ -18,7 +18,7 @@ import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
 import '../../navigation/app_drawer/widgets/workspace_image.dart';
-import '../view_models/workspace_settings_screen_viewmodel.dart';
+import '../view_models/workspace_settings_screen_view_model.dart';
 
 class WorkspaceSettingsScreen extends StatelessWidget {
   const WorkspaceSettingsScreen({super.key, required this.viewModel});

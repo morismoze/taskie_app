@@ -13,7 +13,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_toast.dart';
-import '../view_models/auth_event_listener_viewmodel.dart';
+import '../view_models/auth_event_listener_view_model.dart';
 
 class AuthEventListener extends StatefulWidget {
   const AuthEventListener({

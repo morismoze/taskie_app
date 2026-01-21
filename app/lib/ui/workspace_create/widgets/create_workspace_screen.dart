@@ -11,7 +11,7 @@ import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
-import '../view_models/create_workspace_screen_viewmodel.dart';
+import '../view_models/create_workspace_screen_view_model.dart';
 import 'create_workspace_form.dart';
 import 'join_workspace_via_invite_form.dart';
 

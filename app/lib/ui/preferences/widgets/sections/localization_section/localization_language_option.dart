@@ -6,7 +6,7 @@ import '../../../../core/ui/action_button_bar.dart';
 import '../../../../core/ui/app_dialog.dart';
 import '../../../../core/ui/app_radio_list_tile.dart';
 import '../../../../core/utils/intl.dart';
-import '../../../view_models/preferences_screen_viewmodel.dart';
+import '../../../view_models/preferences_screen_view_model.dart';
 import '../../preferences_section_option.dart';
 
 class LocalizationLanguageOption extends StatelessWidget {

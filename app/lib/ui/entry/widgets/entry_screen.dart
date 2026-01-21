@@ -10,7 +10,7 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_icon.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/entry_screen_viewmodel.dart';
+import '../view_models/entry_screen_view_model.dart';
 
 /// This is business logic init
 class EntryScreen extends StatefulWidget {

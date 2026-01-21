@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/dimens.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 import 'workspace_tile.dart';
 
 class WorkspacesList extends StatelessWidget {

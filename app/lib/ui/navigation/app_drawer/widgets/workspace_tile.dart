@@ -9,7 +9,7 @@ import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_text_button.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 import 'workspace_image.dart';
 import 'workspace_leave_button.dart';
 

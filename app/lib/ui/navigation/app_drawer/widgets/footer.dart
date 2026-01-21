@@ -7,7 +7,7 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_text_button.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 import 'about_button.dart';
 
 class Footer extends StatelessWidget {

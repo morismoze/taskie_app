@@ -6,7 +6,7 @@ import '../../../domain/models/workspace_user.dart';
 import '../../../routing/routes.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/card_container.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 import 'workspace_user_tile_trailing.dart';
 
 class WorkspaceUserTile extends StatelessWidget {

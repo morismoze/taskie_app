@@ -8,7 +8,7 @@ import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
-import '../view_models/create_workspace_user_screen_viewmodel.dart';
+import '../view_models/create_workspace_user_screen_view_model.dart';
 import 'create_virtual_user_form.dart';
 import 'workspace_invite_section.dart';
 
