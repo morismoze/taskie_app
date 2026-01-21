@@ -184,14 +184,14 @@ export class UserService {
     // in a state where it can't be admistrated anymore.
     const workspaceUsers =
       await this.workspaceUserService.findAllByUserId(userId);
-    const workspaceUsersLastManager = workspaceUsers.filter(
+    const workspaceUsersManager = workspaceUsers.filter(
       (wu) => wu.workspaceRole === WorkspaceUserRole.MANAGER,
     );
 
     // If there are some workspaces user is part of and is Manager in them
     // we block the deletion, and send those workspaces in the response
     // and prompt the user to delete them before deleting the account.
-    if (workspaceUsersLastManager.length > 0) {
+    if (workspaceUsersManager.length > 0) {
       throw new ApiHttpException(
         {
           code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
