@@ -1,5 +1,7 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
+import { CLS_CONTEXT_USER_ID_KEY } from 'src/common/helper/constants';
+import { UserClsContext } from 'src/common/interceptors/user-context.interceptor';
 import { AppLogger } from './app-logger';
 
 @Injectable()
@@ -21,7 +23,7 @@ export class ConsoleAppLogger implements AppLogger {
   }
 
   private formatMessage(message: any): string {
-    const userId = this.cls.get('userId');
+    const userId = this.cls.get<UserClsContext>(CLS_CONTEXT_USER_ID_KEY);
     const prefix = userId ? `[USER_ID: ${userId}] ` : '';
 
     // If message is an object, stringify it, or return plain message

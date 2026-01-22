@@ -1,17 +1,19 @@
 import {
   ClassSerializerInterceptor,
+  MiddlewareConsumer,
   Module,
+  NestModule,
   ValidationPipe,
 } from '@nestjs/common';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ClsModule } from 'nestjs-cls';
+import { ClsMiddleware, ClsModule } from 'nestjs-cls';
 import getValidationOptions from './common/helper/validation-options';
-import { RequestMetadataProcessingInterceptor } from './common/interceptors/request-metadata-processing.interceptor';
 import { ResponseTransformerInterceptor } from './common/interceptors/response-transformer.intereptor';
 import { UserContextInterceptor } from './common/interceptors/user-context.interceptor';
+import { AppMetadataContextMiddleware } from './common/middlewares/app-metadata-context.middleware';
 import appConfig from './config/app.config';
 import { AggregatedConfig } from './config/config.type';
 import databaseConfig from './database/config/database.config';
@@ -49,7 +51,11 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     // CLS needs to initalize before any other middleware tries to do actions on the request object
     ClsModule.forRoot({
       global: true,
-      middleware: { mount: true }, // Automatically mounts middleware for every request
+      // We initialize the CLS middleware below where we define other middlewares.
+      // In our case it's only the AppMetadataContextMiddleware and it requires
+      // CLS middleware, so we need to explicitly define the order of initalizing
+      // middlewares (first the CLS middleware, then the AppMetadataContextMiddleware).
+      middleware: { mount: false },
     }),
     AppLoggerModule,
     DatabaseModule,
@@ -79,10 +85,6 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: RequestMetadataProcessingInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
     {
@@ -104,4 +106,8 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ClsMiddleware, AppMetadataContextMiddleware).forRoutes('*');
+  }
+}

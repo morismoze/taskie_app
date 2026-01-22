@@ -27,7 +27,7 @@ import { PinoAppLogger } from './pino-app-logger.adapter';
                   target: 'pino-loki',
                   options: {
                     batching: true, // Send logs in groups (better perf)
-                    interval: 5,
+                    interval: 5, // Every 5 seconds send a package
                     host: configService.getOrThrow('grafana.logs.loki.host', {
                       infer: true,
                     }),
@@ -56,7 +56,7 @@ import { PinoAppLogger } from './pino-app-logger.adapter';
                     ignore: 'pid,hostname',
                   },
                 },
-            autoLogging: false,
+            autoLogging: false, // Stop logging every HTTP request
           },
         };
       },

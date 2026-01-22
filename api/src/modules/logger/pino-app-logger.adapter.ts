@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { PinoLogger } from 'nestjs-pino';
+import {
+  CLS_CONTEXT_APP_METADATA_KEY,
+  CLS_CONTEXT_USER_ID_KEY,
+} from 'src/common/helper/constants';
+import { UserClsContext } from 'src/common/interceptors/user-context.interceptor';
+import { AppMetadataClsContext } from 'src/common/middlewares/app-metadata-context.middleware';
 import { AppLogger } from './app-logger';
 
 @Injectable()
@@ -26,13 +32,17 @@ export class PinoAppLogger implements AppLogger {
 
     const trace =
       stackTrace || (message instanceof Error ? message.stack : undefined);
-    const userId = this.cls.get('userId');
+    const userId = this.cls.get<UserClsContext>(CLS_CONTEXT_USER_ID_KEY);
+    const appMetadata = this.cls.get<AppMetadataClsContext>(
+      CLS_CONTEXT_APP_METADATA_KEY,
+    );
 
     // Connect the data
     const logObject = {
       ...(typeof message === 'object' ? message : { msg: message }),
       trace,
       userId,
+      appMetadata,
       context,
     };
 
@@ -47,12 +57,17 @@ export class PinoAppLogger implements AppLogger {
     message: any,
     context?: string,
   ) {
-    const userId = this.cls.get('userId');
+    const userId = this.cls.get<UserClsContext>(CLS_CONTEXT_USER_ID_KEY);
+    const appMetadata = this.cls.get<AppMetadataClsContext>(
+      CLS_CONTEXT_APP_METADATA_KEY,
+    );
+
+    const logObject = { userId, appMetadata, context };
 
     if (typeof message === 'string') {
-      this.logger[level]({ userId, context }, message);
+      this.logger[level](logObject, message);
     } else {
-      this.logger[level]({ ...message, userId, context });
+      this.logger[level]({ ...message, ...logObject });
     }
   }
 }

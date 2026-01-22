@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { OrNever } from 'src/common/types/or-never.type';
 import { AggregatedConfig } from 'src/config/config.type';
+import { AppLogger } from 'src/modules/logger/app-logger';
 import { SessionService } from 'src/modules/session/session.service';
 import { JwtPayload } from './jwt-payload.type';
 
@@ -20,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, jwtStrategyName) {
     // ModuleRef.
     private readonly moduleRef: ModuleRef,
     configService: ConfigService<AggregatedConfig>,
+    private readonly logger: AppLogger,
   ) {
     // Calling parent constructor:
     // 1. Automatically verifies signature
@@ -73,7 +75,24 @@ export class JwtStrategy extends PassportStrategy(Strategy, jwtStrategyName) {
     });
     const session = await sessionService.findById(payload.sessionId);
 
-    if (!session || session.accessTokenVersion != payload.atv) {
+    if (!session) {
+      throw new UnauthorizedException();
+    }
+
+    if (session.accessTokenVersion !== payload.atv) {
+      this.logger.warn(
+        {
+          msg: 'Forced Token Invalidation (ATV Mismatch)',
+          description:
+            'User access token revoked due to role/permission change or logout.',
+          userId: payload.sub,
+          sessionId: payload.sessionId,
+          tokenVersion: payload.atv,
+          dbVersion: session.accessTokenVersion,
+        },
+        JwtStrategy.name,
+      );
+
       throw new UnauthorizedException();
     }
 

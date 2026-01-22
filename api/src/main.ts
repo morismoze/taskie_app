@@ -27,7 +27,7 @@ async function bootstrap() {
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
   logger.log(
-    `This application is runnning on: ${await app.getUrl()}`,
+    `This application is runnning on: ${await app.getUrl()} [env: ${process.env.NODE_ENV}]`,
     'Bootstrap',
   );
 }

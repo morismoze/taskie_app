@@ -53,10 +53,6 @@ export class AuthGoogleController {
       authProvider: AuthProvider.GOOGLE,
       socialData,
       ipAddress: request.ip as string,
-      deviceModel: request.metadata.deviceModel,
-      osVersion: request.metadata.osVersion,
-      appVersion: request.metadata.appVersion,
-      buildNumber: request.metadata.buildNumber,
     });
   }
 }
