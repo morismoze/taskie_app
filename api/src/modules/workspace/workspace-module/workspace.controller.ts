@@ -15,6 +15,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
@@ -386,6 +387,10 @@ export class WorkspaceController {
   })
   @ApiNotFoundResponse({
     description: 'Provided {workspaceId} was not found',
+  })
+  @ApiConflictResponse({
+    description:
+      'Cannot delete account. User is the sole manager of one or more workspaces containing other non-virtual members.',
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal error',

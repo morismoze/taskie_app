@@ -101,7 +101,7 @@ export class SessionService {
     return this.sessionRepository.incrementAccessTokenVersionByUserId(id);
   }
 
-  async deleteById(id: Session['id']): Promise<void> {
-    await this.sessionRepository.deleteById(id);
+  async delete(id: Session['id']): Promise<void> {
+    await this.sessionRepository.delete(id);
   }
 }

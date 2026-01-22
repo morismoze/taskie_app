@@ -112,7 +112,7 @@ export class WorkspaceRepositoryImpl implements WorkspaceRepository {
     });
   }
 
-  async deleteById(id: Workspace['id']): Promise<boolean> {
+  async delete(id: Workspace['id']): Promise<boolean> {
     const result = await this.repositoryContext.delete(id);
     return (result.affected ?? 0) > 0;
   }

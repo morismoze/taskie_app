@@ -108,7 +108,7 @@ export class TransactionalSessionRepositoryImpl
     await this.repositoryContext.increment({ user: { id } }, column, 1);
   }
 
-  async deleteById(id: Session['id']): Promise<boolean> {
+  async delete(id: Session['id']): Promise<boolean> {
     const result = await this.repositoryContext.delete(id);
     return (result.affected ?? 0) > 0;
   }

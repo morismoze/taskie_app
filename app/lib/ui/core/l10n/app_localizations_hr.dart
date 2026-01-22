@@ -409,6 +409,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora';
 
   @override
+  String get appDrawerLeaveWorkspaceErrorSoleManagerConflict =>
+      'Uh-oh! Nije moguće napustiti ovaj radni prostor jer ste u njemu jedini Menadžer. Morate imenovati drugog člana Menadžerom.';
+
+  @override
   String get appDrawerCreateNewWorkspace => 'Kreiraj novi radni prostor';
 
   @override
@@ -915,7 +919,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get deleteAccountText =>
-      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U suprotnom slučaju, molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
+      '**Važne napomene:**\n\n1. **Ograničenje za Menadžere:** Ako ste jedini Menadžer radnog prostora koji ima druge ne-virtualne članove, **morate** imenovati novog Menadžera prije brisanja. U suprotnom, ova radnja će biti blokirana.\n\n2. **Brisanje radnih prostora:** Svi radni prostori u kojima ste jedini Menadžer (i nemaju drugih ne-virtualnih članova) bit će **trajno izbrisani** zajedno s vašim računom.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
 
   @override
   String get deleteAccountConfirmButton => 'Da, razumijem';
@@ -925,7 +929,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get deleteAccountSoleManagerConflict =>
-      'Brisanje računa nije moguće jer ste jedini Menadžer u određenim radnim prostorima kojih ste član. Molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom ili napustite te radne prostore.';
+      'Uh-oh! Brisanje računa nije moguće jer ste jedini Menadžer u radnim prostorima koji imaju druge ne-virtualne članove. Morate imenovati drugog člana Menadžerom u tim radnim prostorima.';
 
   @override
   String get workspaceAccessRevocationMessage =>

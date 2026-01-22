@@ -211,7 +211,7 @@ export class AuthService {
   }
 
   logout(data: JwtPayload): Promise<void> {
-    return this.sessionService.deleteById(data.sessionId);
+    return this.sessionService.delete(data.sessionId);
   }
 
   private async getTokensData(data: JwtPayload, hash: Session['hash']) {

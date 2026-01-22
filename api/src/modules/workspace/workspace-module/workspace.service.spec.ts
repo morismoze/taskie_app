@@ -100,7 +100,7 @@ const createMockRepository = () => ({
   update: jest.fn(),
   findById: jest.fn(),
   findAllByUserId: jest.fn(),
-  deleteById: jest.fn(),
+  delete: jest.fn(),
 });
 
 const createMockUserService = () => ({
@@ -121,6 +121,7 @@ const createMockWorkspaceUserService = () => ({
   getLeaderboardData: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+  countByWorkspace: jest.fn(),
 });
 
 const createMockTaskService = () => ({
@@ -499,39 +500,89 @@ describe('WorkspaceService', () => {
   });
 
   describe('leaveWorkspace', () => {
-    it('deletes workspace if user is the last manager', async () => {
+    it('allows MEMBER to leave freely', async () => {
       const wsUser = mockWorkspaceUserFactory({
-        workspaceRole: WorkspaceUserRole.MANAGER,
+        workspaceRole: WorkspaceUserRole.MEMBER,
       });
       workspaceUserService.findByUserIdAndWorkspaceId.mockResolvedValue(wsUser);
-      workspaceUserService.countManagers.mockResolvedValue(1);
 
       await service.leaveWorkspace({
         workspaceId: 'ws-1',
         userId: 'user-1',
       });
 
-      expect(workspaceRepository.deleteById).toHaveBeenCalledWith('ws-1');
-      expect(workspaceUserService.delete).not.toHaveBeenCalled();
+      expect(workspaceUserService.countByWorkspace).not.toHaveBeenCalled();
+      expect(workspaceUserService.delete).toHaveBeenCalledWith(wsUser.id);
     });
 
-    it('deletes only workspace user if other managers exist', async () => {
+    it('allows MANAGER to leave if OTHER MANAGERS exist', async () => {
       const wsUser = mockWorkspaceUserFactory({
         workspaceRole: WorkspaceUserRole.MANAGER,
       });
       workspaceUserService.findByUserIdAndWorkspaceId.mockResolvedValue(wsUser);
-      workspaceUserService.countManagers.mockResolvedValue(2);
+      // Mock: There IS another manager
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(1);
 
       await service.leaveWorkspace({
         workspaceId: 'ws-1',
         userId: 'user-1',
       });
 
-      expect(workspaceUserService.delete).toHaveBeenCalledWith({
-        workspaceId: 'ws-1',
-        workspaceUserId: wsUser.id,
+      expect(workspaceUserService.countByWorkspace).toHaveBeenCalledWith(
+        'ws-1',
+        expect.objectContaining({ role: WorkspaceUserRole.MANAGER }),
+      );
+      // Calls workspaceUser delete (just leaving)
+      expect(workspaceUserService.delete).toHaveBeenCalledWith(wsUser.id);
+      // Does NOT delete workspace
+      expect(workspaceRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('throws SOLE_MANAGER_CONFLICT if user is SOLE MANAGER and REAL USERS exist', async () => {
+      const wsUser = mockWorkspaceUserFactory({
+        workspaceRole: WorkspaceUserRole.MANAGER,
       });
-      expect(workspaceRepository.deleteById).not.toHaveBeenCalled();
+      workspaceUserService.findByUserIdAndWorkspaceId.mockResolvedValue(wsUser);
+
+      // Mock 1: No other managers
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(0);
+      // Mock 2: Yes other real users
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(1);
+
+      await expect(
+        service.leaveWorkspace({
+          workspaceId: 'ws-1',
+          userId: 'user-1',
+        }),
+      ).rejects.toMatchObject({
+        status: HttpStatus.CONFLICT,
+        response: { code: ApiErrorCode.SOLE_MANAGER_CONFLICT },
+      });
+
+      expect(workspaceUserService.delete).not.toHaveBeenCalled();
+      expect(workspaceRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('deletes WORKSPACE if user is SOLE MANAGER and NO REAL USERS exist', async () => {
+      const wsUser = mockWorkspaceUserFactory({
+        workspaceRole: WorkspaceUserRole.MANAGER,
+      });
+      workspaceUserService.findByUserIdAndWorkspaceId.mockResolvedValue(wsUser);
+
+      // Mock 1: No other managers
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(0);
+      // Mock 2: No other real users
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(0);
+
+      await service.leaveWorkspace({
+        workspaceId: 'ws-1',
+        userId: 'user-1',
+      });
+
+      // Should NOT call workspaceUser delete (cascade handles it)
+      expect(workspaceUserService.delete).not.toHaveBeenCalled();
+      // SHOULD delete the workspace itself
+      expect(workspaceRepository.delete).toHaveBeenCalledWith('ws-1');
     });
   });
 

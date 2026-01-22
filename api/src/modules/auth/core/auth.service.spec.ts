@@ -126,7 +126,7 @@ const createMockSessionService = () => ({
   create: jest.fn(),
   findByIdWithUser: jest.fn(),
   update: jest.fn(),
-  deleteById: jest.fn(),
+  delete: jest.fn(),
 });
 
 const createMockUnitOfWorkService = () => ({
@@ -446,11 +446,11 @@ describe('AuthService', () => {
         sessionId: 'session-1',
         atv: 1,
       };
-      sessionService.deleteById.mockResolvedValue(undefined);
+      sessionService.delete.mockResolvedValue(undefined);
 
       await service.logout(payload);
 
-      expect(sessionService.deleteById).toHaveBeenCalledWith(payload.sessionId);
+      expect(sessionService.delete).toHaveBeenCalledWith(payload.sessionId);
     });
   });
 });

@@ -408,6 +408,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Uh-oh! We\'ve had some trouble removing you from the workspace';
 
   @override
+  String get appDrawerLeaveWorkspaceErrorSoleManagerConflict =>
+      'Uh-oh! Leaving this workspace is not possible because you are the sole Manager in it. You must promote another member to Manager.';
+
+  @override
   String get appDrawerCreateNewWorkspace => 'Create new workspace';
 
   @override
@@ -907,7 +911,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountText =>
-      '**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. Otherwise, please consider promoting another non-virtual member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**';
+      '**Things to keep in mind:**\n\n1. **Sole Manager Restriction:** If you are the only Manager of a workspace with other non-virtual members, you **must** promote someone else to Manager first. Otherwise, this action will be blocked.\n\n2. **Workspace Deletion:** Any workspace where you are the sole Manager (and have no other non-virtual members) will be **permanently deleted** along with your account.\n\n**Account deletion is irreversible. Do you really want to delete your account?**';
 
   @override
   String get deleteAccountConfirmButton => 'Yes, I understand';
@@ -917,7 +921,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSoleManagerConflict =>
-      'Account deletion is not possible because you are the sole Manager in certain workspaces you are part of. Please consider promoting another member to Manager or leave those workspaces.';
+      'Uh-oh! Account deletion is not possible because you are the sole Manager in workspaces with other non-virtual members. You must promote another member to Manager in those workspaces.';
 
   @override
   String get workspaceAccessRevocationMessage =>

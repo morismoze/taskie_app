@@ -127,7 +127,7 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         return Result.ok(workspaceId);
       case Error():
-        return Result.error(result.error);
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -142,7 +142,7 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        return Result.error(resultLeave.error);
+        return Result.error(resultLeave.error, resultLeave.stackTrace);
     }
 
     // We need to refresh the access token since we keep list of roles with
@@ -153,7 +153,7 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        return Result.error(resultRefresh.error);
+        return Result.error(resultRefresh.error, resultRefresh.stackTrace);
     }
 
     // We need to load workspaces again - this will load from repository cache, which was updated with the
@@ -180,7 +180,7 @@ class AppDrawerViewModel extends ChangeNotifier {
               // screen, so we don't need to do navigation in the AppDrawer listener function.
               return const Result.ok(LeaveWorkspaceResultNoAction());
             case Error():
-              return Result.error(resultUser.error);
+              return Result.error(resultUser.error, resultUser.stackTrace);
           }
         }
 
@@ -205,7 +205,10 @@ class AppDrawerViewModel extends ChangeNotifier {
                 ),
               );
             case Error():
-              return Result.error(resultChangeActiveWorkspace.error);
+              return Result.error(
+                resultChangeActiveWorkspace.error,
+                resultChangeActiveWorkspace.stackTrace,
+              );
           }
         }
 
@@ -221,10 +224,10 @@ class AppDrawerViewModel extends ChangeNotifier {
           case Ok():
             return const Result.ok(LeaveWorkspaceResultCloseOverlays());
           case Error():
-            return Result.error(resultUser.error);
+            return Result.error(resultUser.error, resultUser.stackTrace);
         }
       case Error():
-        return Result.error(resultLoad.error);
+        return Result.error(resultLoad.error, resultLoad.stackTrace);
     }
   }
 

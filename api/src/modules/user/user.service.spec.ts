@@ -8,6 +8,7 @@ import { WorkspaceCore } from 'src/modules/workspace/workspace-module/domain/wor
 import { WorkspaceUserRole } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserWithWorkspaceCore } from 'src/modules/workspace/workspace-user-module/domain/workspace-user-with-workspace.domain';
 import { WorkspaceUserService } from 'src/modules/workspace/workspace-user-module/workspace-user.service';
+import { WorkspaceService } from '../workspace/workspace-module/workspace.service';
 import { UserStatus } from './domain/user-status.enum';
 import { User } from './domain/user.domain';
 import { UserEntity } from './persistence/user.entity';
@@ -56,13 +57,21 @@ const createMockRepository = () => ({
   delete: jest.fn(),
 });
 
+const createMockWorkspaceUserService = () => ({
+  findAllByUserIdWithWorkspace: jest.fn(),
+  countByWorkspace: jest.fn(),
+});
+
+const createMockWorkspaceService = () => ({
+  delete: jest.fn(),
+  softDelete: jest.fn(),
+});
+
 describe('UserService', () => {
   let service: UserService;
   let userRepository: ReturnType<typeof createMockRepository>;
-  let workspaceUserService: {
-    findAllByUserId: jest.Mock;
-    findAllByUserIdWithWorkspace: jest.Mock;
-  };
+  let workspaceUserService: ReturnType<typeof createMockWorkspaceUserService>;
+  let workspaceService: ReturnType<typeof createMockWorkspaceService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -79,7 +88,12 @@ describe('UserService', () => {
           useValue: {
             findAllByUserId: jest.fn(),
             findAllByUserIdWithWorkspace: jest.fn(),
+            countByWorkspace: jest.fn(),
           },
+        },
+        {
+          provide: WorkspaceService,
+          useValue: createMockWorkspaceService(),
         },
       ],
     }).compile();
@@ -87,6 +101,7 @@ describe('UserService', () => {
     service = module.get<UserService>(UserService);
     userRepository = module.get(UserRepository);
     workspaceUserService = module.get(WorkspaceUserService);
+    workspaceService = module.get(WorkspaceService);
   });
 
   describe('create', () => {
@@ -449,49 +464,118 @@ describe('UserService', () => {
   });
 
   describe('delete', () => {
-    it('deletes user successfully when not a manager', async () => {
+    it('deletes user successfully when user is just a MEMBER', async () => {
+      // Setup: User is member in one workspace
       const memberWsUser = mockWorkspaceUserCoreFactory({
         workspaceRole: WorkspaceUserRole.MEMBER,
       });
-      workspaceUserService.findAllByUserId.mockResolvedValue([memberWsUser]);
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
+        memberWsUser,
+      ]);
       userRepository.delete.mockResolvedValue(true);
 
       await service.delete('user-1');
 
+      // Assert: No checks for manager logic, straight to delete
+      expect(workspaceUserService.countByWorkspace).not.toHaveBeenCalled();
+      expect(workspaceService.delete).not.toHaveBeenCalled();
       expect(userRepository.delete).toHaveBeenCalledWith('user-1');
     });
 
-    it('throws SOLE_MANAGER_CONFLICT if user is manager in a workspace', async () => {
+    it('deletes user successfully if user is MANAGER but other managers exist', async () => {
+      // Setup: User is Manager
       const managerWsUser = mockWorkspaceUserCoreFactory({
         workspaceRole: WorkspaceUserRole.MANAGER,
+        workspace: { id: 'ws-1' } as WorkspaceCore,
       });
-      workspaceUserService.findAllByUserId.mockResolvedValue([managerWsUser]);
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
+        managerWsUser,
+      ]);
+
+      // Mock: There ARE other managers (count > 0)
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(1);
+
+      userRepository.delete.mockResolvedValue(true);
+
+      await service.delete('user-1');
+
+      // Assert
+      expect(workspaceUserService.countByWorkspace).toHaveBeenCalledWith(
+        'ws-1',
+        { role: WorkspaceUserRole.MANAGER, excludeUserId: 'user-1' },
+      );
+      // Should NOT check for real users because other manager exists
+      expect(workspaceUserService.countByWorkspace).toHaveBeenCalledTimes(1);
+      // Should NOT delete workspace
+      expect(workspaceService.delete).not.toHaveBeenCalled();
+      // Should delete user
+      expect(userRepository.delete).toHaveBeenCalledWith('user-1');
+    });
+
+    it('throws SOLE_MANAGER_CONFLICT if user is SOLE MANAGER and other REAL USERS exist', async () => {
+      // Setup: User is Manager
+      const managerWsUser = mockWorkspaceUserCoreFactory({
+        workspaceRole: WorkspaceUserRole.MANAGER,
+        workspace: { id: 'ws-1' } as WorkspaceCore,
+      });
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
+        managerWsUser,
+      ]);
+
+      // Mock 1: No other managers (count = 0)
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(0);
+      // Mock 2: Yes other real users (count = 1)
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(1);
 
       await expect(service.delete('user-1')).rejects.toMatchObject({
         status: HttpStatus.CONFLICT,
         response: { code: ApiErrorCode.SOLE_MANAGER_CONFLICT },
       });
 
+      // Assert
+      expect(workspaceUserService.countByWorkspace).toHaveBeenCalledTimes(2);
+      expect(workspaceService.delete).not.toHaveBeenCalled();
       expect(userRepository.delete).not.toHaveBeenCalled();
     });
 
-    it('throws INVALID_PAYLOAD if deletion fails', async () => {
-      workspaceUserService.findAllByUserId.mockResolvedValue([]);
+    it('deletes WORKSPACE and USER if user is SOLE MANAGER and NO other real users exist', async () => {
+      // Setup: User is Manager
+      const managerWsUser = mockWorkspaceUserCoreFactory({
+        workspaceRole: WorkspaceUserRole.MANAGER,
+        workspace: { id: 'ws-1' } as WorkspaceCore,
+      });
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
+        managerWsUser,
+      ]);
+
+      // Mock 1: No other managers
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(0);
+      // Mock 2: No other real users (only virtuals or empty)
+      workspaceUserService.countByWorkspace.mockResolvedValueOnce(0);
+
+      userRepository.delete.mockResolvedValue(true);
+
+      await service.delete('user-1');
+
+      // Assert
+      expect(workspaceService.delete).toHaveBeenCalledWith('ws-1'); // Workspace destroyed
+      expect(userRepository.delete).toHaveBeenCalledWith('user-1'); // User deleted
+    });
+
+    it('throws INVALID_PAYLOAD if user deletion fails in repo', async () => {
+      // Setup: Member (skip logic)
+      const memberWsUser = mockWorkspaceUserCoreFactory({
+        workspaceRole: WorkspaceUserRole.MEMBER,
+      });
+      workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
+        memberWsUser,
+      ]);
       userRepository.delete.mockResolvedValue(false);
 
       await expect(service.delete('user-1')).rejects.toMatchObject({
         status: HttpStatus.NOT_FOUND,
         response: { code: ApiErrorCode.INVALID_PAYLOAD },
       });
-    });
-
-    it('allows delete if user has no workspaces', async () => {
-      workspaceUserService.findAllByUserId.mockResolvedValue([]);
-      userRepository.delete.mockResolvedValue(true);
-
-      await service.delete('user-1');
-
-      expect(userRepository.delete).toHaveBeenCalledWith('user-1');
     });
   });
 });

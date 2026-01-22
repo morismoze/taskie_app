@@ -42,5 +42,5 @@ export abstract class TransactionalSessionRepository {
     id: Session['user']['id'],
   ): Promise<void>;
 
-  abstract deleteById(id: Session['id']): Promise<boolean>;
+  abstract delete(id: Session['id']): Promise<boolean>;
 }
