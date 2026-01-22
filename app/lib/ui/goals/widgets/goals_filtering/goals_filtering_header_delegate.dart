@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../view_models/goals_screen_viewmodel.dart';
+import '../../view_models/goals_screen_view_model.dart';
 import 'goals_filtering_header.dart';
 
 class GoalsFilteringHeaderDelegate extends SliverPersistentHeaderDelegate {
@@ -9,7 +9,7 @@ class GoalsFilteringHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.height,
   });
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
   final double height;
 
   @override

@@ -11,7 +11,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
@@ -79,6 +79,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
                       }
 
                       return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),
@@ -118,7 +119,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   void _onTaskDetailsEditResult() {
     if (widget.viewModel.editTaskDetails.completed) {
       widget.viewModel.editTaskDetails.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksDetailsEditSuccess,
       );
@@ -146,7 +147,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
             actions: AppFilledButton(
               label: context.localization.misc_goToHomepage,
               onPress: () {
-                context.pop(); // Close dialog
+                Navigator.of(context).pop(); // Close dialog
                 context.go(
                   Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
                 );
@@ -155,7 +156,7 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksDetailsEditError,
           );
@@ -166,17 +167,20 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   void _onTaskCloseResult() {
     if (widget.viewModel.closeTask.completed) {
       widget.viewModel.closeTask.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksDetailsCloseSuccess,
       );
-      context.pop(); // Close dialog
-      context.pop(); // Navigate back to tasks page
+      Navigator.of(context).pop(); // Close dialog
+      context.pop(); // Go back to Tasks page
+      Navigator.of(
+        context,
+      ).pop(); // Close task card bottom sheet because task is closed
     }
 
     if (widget.viewModel.closeTask.error) {
       widget.viewModel.closeTask.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.tasksCloseTaskError,
       );

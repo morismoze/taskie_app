@@ -49,7 +49,7 @@ const createMockRepository = () => ({
   findById: jest.fn(),
   update: jest.fn(),
   incrementAccessTokenVersionByUserId: jest.fn(),
-  deleteById: jest.fn(),
+  delete: jest.fn(),
 });
 
 describe('SessionService', () => {
@@ -85,6 +85,7 @@ describe('SessionService', () => {
         deviceModel: 'iPhone 12',
         osVersion: 'iOS 14.5',
         appVersion: '1.0.0',
+        buildNumber: '1',
       };
       const result = await service.create(payload);
 
@@ -102,6 +103,7 @@ describe('SessionService', () => {
         deviceModel: 'iPhone 12',
         osVersion: 'iOS 14.5',
         appVersion: '1.0.0',
+        buildNumber: '1',
       };
 
       await expect(service.create(payload)).rejects.toMatchObject({
@@ -219,14 +221,14 @@ describe('SessionService', () => {
     });
   });
 
-  describe('deleteById', () => {
+  describe('delete', () => {
     it('deletes a session by ID', async () => {
-      sessionRepository.deleteById.mockResolvedValue(true);
+      sessionRepository.delete.mockResolvedValue(true);
 
       const id = 'session-id';
-      await service.deleteById(id);
+      await service.delete(id);
 
-      expect(sessionRepository.deleteById).toHaveBeenCalledWith(id);
+      expect(sessionRepository.delete).toHaveBeenCalledWith(id);
     });
   });
 });

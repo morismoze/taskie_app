@@ -65,6 +65,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
   @override
   Future<bool> loadAuthenticatedState() async {
     final result = await _secureStorageService.getAccessToken();
+
     switch (result) {
       case Ok<String?>():
         // No need to call `notifyListeners` here because this load

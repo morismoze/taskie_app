@@ -8,5 +8,15 @@
         "0E:80:0F:37:10:E6:40:CC:03:73:FE:62:11:2F:8C:F9:AF:03:82:C4:7F:6C:E5:45:9A:23:90:61:AC:DB:9A:AB"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.taskie.Taskie",
+      "sha256_cert_fingerprints": [
+        "4E:DB:9D:EF:DE:21:45:25:C3:8D:9F:E6:2F:DD:40:3D:50:F1:AB:78:68:C8:EC:AE:13:EE:CA:CB:1D:BC:0D:45"
+      ]
+    }
   }
 ]

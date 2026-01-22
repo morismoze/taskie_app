@@ -9,7 +9,7 @@ import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_modal_bottom_sheet.dart';
 import '../../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../../core/ui/app_text_button.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 import 'workspace_image.dart';
 import 'workspace_leave_button.dart';
 
@@ -47,7 +47,10 @@ class WorkspaceTile extends StatelessWidget {
         onTap: () =>
             _onWorkspaceOptionsTap(context, viewModel.activeWorkspaceId, id),
         child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          padding: EdgeInsets.symmetric(
+            horizontal: Dimens.paddingHorizontal / 2,
+            vertical: Dimens.paddingVertical / 12,
+          ),
           child: FaIcon(
             FontAwesomeIcons.ellipsisVertical,
             color: AppColors.grey2,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../theme/dimens.dart';
 import 'activity_indicator.dart';
 
 class AppFilledButton extends StatelessWidget {
@@ -73,7 +74,11 @@ class AppFilledButton extends StatelessWidget {
                   const SizedBox(width: 8),
                 ],
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: shrinkWrap ? 2 : 12),
+                  padding: EdgeInsets.symmetric(
+                    vertical: shrinkWrap
+                        ? Dimens.paddingVertical / 12
+                        : Dimens.paddingVertical / 2,
+                  ),
                   child: Text(
                     label,
                     style: TextStyle(

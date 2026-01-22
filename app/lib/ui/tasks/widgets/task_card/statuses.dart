@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../data/services/api/workspace/progress_status.dart';
 import '../../../../domain/models/workspace_task.dart';
 import '../../../core/ui/objective_status_chip.dart';
-import '../../../core/utils/color.dart';
+import '../../../core/utils/extensions.dart';
 
 /// If the task has only one assignee, this will show full chip
 /// with status text and corresponding color. If there is more
@@ -25,9 +25,7 @@ class TaskStatuses extends StatelessWidget {
 
     if (assignees.length == 1) {
       final status = assignees[0].status;
-      final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(
-        status,
-      );
+      final (:textColor, :backgroundColor) = status.colors;
 
       return ObjectiveStatusChip(
         status: status,
@@ -39,9 +37,7 @@ class TaskStatuses extends StatelessWidget {
     if (assignees.every(
       (assignee) => assignee.status == ProgressStatus.closed,
     )) {
-      final (textColor, backgroundColor) = ColorsUtils.getProgressStatusColors(
-        ProgressStatus.closed,
-      );
+      final (:textColor, :backgroundColor) = ProgressStatus.closed.colors;
 
       return ObjectiveStatusChip(
         status: ProgressStatus.closed,
@@ -53,9 +49,7 @@ class TaskStatuses extends StatelessWidget {
     return Row(
       spacing: 4,
       children: assignees.mapIndexed((index, assignee) {
-        final (textColor, _) = ColorsUtils.getProgressStatusColors(
-          assignee.status,
-        );
+        final (:textColor, :backgroundColor) = assignee.status.colors;
 
         return Container(
           width: 6,

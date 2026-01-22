@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/workspace_settings_edit_screen_view_model.dart';
@@ -65,13 +64,11 @@ class _WorkspaceSettingsEditScreenState
                   listenable: widget.viewModel,
                   builder: (builderContext, child) {
                     if (widget.viewModel.details == null) {
-                      return ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 16);
                     }
 
                     return SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
                         vertical: Dimens.of(context).paddingScreenVertical,
                       ),
@@ -92,16 +89,15 @@ class _WorkspaceSettingsEditScreenState
   void _onWorkspaceDetailsEditResult() {
     if (widget.viewModel.editWorkspaceDetails.completed) {
       widget.viewModel.editWorkspaceDetails.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.workspaceSettingsEditSuccess,
       );
-      context.pop(); // Navigate back to settings page
     }
 
     if (widget.viewModel.editWorkspaceDetails.error) {
       widget.viewModel.editWorkspaceDetails.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.workspaceSettingsEditError,
       );

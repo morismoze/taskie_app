@@ -244,10 +244,15 @@ export class WorkspaceUserService {
     });
   }
 
-  countManagers(
-    workspaceId: WorkspaceUser['workspace']['id'],
+  countByWorkspace(
+    workspaceId: string,
+    options: {
+      role?: WorkspaceUser['workspaceRole'];
+      excludeUserId?: string;
+      onlyRealUsers?: boolean;
+    } = {},
   ): Promise<number> {
-    return this.workspaceUserRepository.countManagersInWorkspace(workspaceId);
+    return this.workspaceUserRepository.countByWorkspace(workspaceId, options);
   }
 
   async update({
@@ -277,17 +282,8 @@ export class WorkspaceUserService {
     return updatedWorkspaceUser;
   }
 
-  async delete({
-    workspaceId,
-    workspaceUserId,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    workspaceUserId: WorkspaceUser['user']['id'];
-  }): Promise<void> {
-    const result = await this.workspaceUserRepository.delete({
-      workspaceId,
-      workspaceUserId,
-    });
+  async delete(id: WorkspaceUser['user']['id']): Promise<void> {
+    const result = await this.workspaceUserRepository.delete(id);
 
     if (!result) {
       throw new ApiHttpException(

@@ -1,9 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { JwtPayload } from '../auth/core/strategies/jwt-payload.type';
+import { WorkspaceService } from '../workspace/workspace-module/workspace.service';
 import { WorkspaceUserRole } from '../workspace/workspace-user-module/domain/workspace-user-role.enum';
 import { WorkspaceUserService } from '../workspace/workspace-user-module/workspace-user.service';
 import { User } from './domain/user.domain';
@@ -18,6 +19,8 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly workspaceUserService: WorkspaceUserService,
+    @Inject(forwardRef(() => WorkspaceService))
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   /**
@@ -179,25 +182,53 @@ export class UserService {
    */
   async delete(userId: User['id']): Promise<void> {
     // We firstly need to check if user is the last Manager
-    // in any workspace. Because if he was, deleting
-    // it immediately would leave that/those workspace/s
-    // in a state where it can't be admistrated anymore.
-    const workspaceUsers =
-      await this.workspaceUserService.findAllByUserId(userId);
-    const workspaceUsersLastManager = workspaceUsers.filter(
+    // in any workspace where there are still some non-virtual
+    // users (Members). Because if he was, deleting the user
+    // immediately would leave that/those workspace/s in
+    // a state where they can't be admistrated anymore.
+    const userMemberships =
+      await this.workspaceUserService.findAllByUserIdWithWorkspace(userId);
+    const managerMemberships = userMemberships.filter(
       (wu) => wu.workspaceRole === WorkspaceUserRole.MANAGER,
     );
 
-    // If there are some workspaces user is part of and is Manager in them
-    // we block the deletion, and send those workspaces in the response
-    // and prompt the user to delete them before deleting the account.
-    if (workspaceUsersLastManager.length > 0) {
-      throw new ApiHttpException(
-        {
-          code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
-        },
-        HttpStatus.CONFLICT,
-      );
+    for (const membership of managerMemberships) {
+      const workspaceId = membership.workspace.id;
+
+      // Check if there are other Managers
+      const otherManagersCount =
+        await this.workspaceUserService.countByWorkspace(workspaceId, {
+          role: WorkspaceUserRole.MANAGER,
+          excludeUserId: userId,
+        });
+
+      if (otherManagersCount > 0) {
+        // There are other Manager users, so user can leave freely
+        continue;
+      }
+
+      // User is the only Manager, so we need to check if there are
+      // any other non-virtual users
+      const otherRealUsersCount =
+        await this.workspaceUserService.countByWorkspace(workspaceId, {
+          onlyRealUsers: true,
+          excludeUserId: userId,
+        });
+
+      if (otherRealUsersCount > 0) {
+        // Can't leave the workspace as there are other non-virtual Members
+        throw new ApiHttpException(
+          {
+            code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
+
+      // Sole Manager + Only Virtual Users left.
+      // Destroy the workspace.
+      // This will cascade delete all other necessary entities.
+      await this.workspaceService.delete(workspaceId);
     }
 
     const result = await this.userRepository.delete(userId);

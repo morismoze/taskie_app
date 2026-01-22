@@ -5,13 +5,13 @@ import 'package:provider/provider.dart';
 
 import '../data/repositories/auth/auth_state_repository.dart';
 import '../data/repositories/workspace/workspace/workspace_repository.dart';
-import '../ui/auth/sign_in/view_models/sign_in_viewmodel.dart';
+import '../ui/auth/sign_in/view_models/sign_in_view_model.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
-import '../ui/entry/view_models/entry_screen_viewmodel.dart';
+import '../ui/entry/view_models/entry_screen_view_model.dart';
 import '../ui/entry/widgets/entry_screen.dart';
-import '../ui/goals/view_models/goals_screen_viewmodel.dart';
+import '../ui/goals/view_models/goals_screen_view_model.dart';
 import '../ui/goals/widgets/goals_screen.dart';
-import '../ui/goals_create/view_models/create_goal_screen_viewmodel.dart';
+import '../ui/goals_create/view_models/create_goal_screen_view_model.dart';
 import '../ui/goals_create/widgets/create_goal_screen.dart';
 import '../ui/goals_details/view_models/goal_details_screen_view_model.dart';
 import '../ui/goals_details/widgets/goal_details_screen.dart';
@@ -21,16 +21,16 @@ import '../ui/goals_guide/widgets/goals_guide_screen.dart';
 import '../ui/leaderboard/view_models/leaderboard_screen_view_model.dart';
 import '../ui/leaderboard/widgets/leaderboard_screen.dart';
 import '../ui/navigation/app_bottom_navigation_bar/view_models/app_bottom_navigation_bar_view_model.dart';
-import '../ui/navigation/app_drawer/view_models/app_drawer_viewmodel.dart';
+import '../ui/navigation/app_drawer/view_models/app_drawer_view_model.dart';
 import '../ui/navigation/app_shell_scaffold.dart';
 import '../ui/navigation/back_button_handler.dart';
 import '../ui/not_found/widgets/not_found_screen.dart';
-import '../ui/preferences/view_models/preferences_screen_viewmodel.dart';
+import '../ui/preferences/view_models/preferences_screen_view_model.dart';
 import '../ui/preferences/widgets/preferences_screen.dart';
-import '../ui/tasks/view_models/tasks_screen_viewmodel.dart';
+import '../ui/tasks/view_models/tasks_screen_view_model.dart';
 import '../ui/tasks/widgets/tasks_screen.dart';
 import '../ui/tasks_assignments_guide/widgets/tasks_assignments_guide_screen.dart';
-import '../ui/tasks_create/view_models/create_task_screen_viewmodel.dart';
+import '../ui/tasks_create/view_models/create_task_screen_view_model.dart';
 import '../ui/tasks_create/widgets/create_task_screen.dart';
 import '../ui/tasks_details/view_models/task_details_screen_view_model.dart';
 import '../ui/tasks_details/widgets/task_details_screen.dart';
@@ -39,19 +39,19 @@ import '../ui/tasks_details_assignments_edit/widgets/task_assignments_edit_scree
 import '../ui/tasks_details_edit/view_models/task_details_edit_screen_view_model.dart';
 import '../ui/tasks_details_edit/widgets/task_details_edit_screen.dart';
 import '../ui/user_profile/view_models/user_profile_view_model.dart';
-import '../ui/workspace_create/view_models/create_workspace_screen_viewmodel.dart';
+import '../ui/workspace_create/view_models/create_workspace_screen_view_model.dart';
 import '../ui/workspace_create/widgets/create_workspace_screen.dart';
-import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_viewmodel.dart';
+import '../ui/workspace_create_initial/view_models/create_workspace_initial_screen_view_model.dart';
 import '../ui/workspace_create_initial/widgets/create_workspace_initial_screen.dart';
-import '../ui/workspace_join/view_models/join_workspace_screen_viewmodel.dart';
+import '../ui/workspace_join/view_models/join_workspace_screen_view_model.dart';
 import '../ui/workspace_join/widgets/join_workspace_screen.dart';
-import '../ui/workspace_settings/view_models/workspace_settings_screen_viewmodel.dart';
+import '../ui/workspace_settings/view_models/workspace_settings_screen_view_model.dart';
 import '../ui/workspace_settings/widgets/workspace_settings_screen.dart';
 import '../ui/workspace_settings_edit/view_models/workspace_settings_edit_screen_view_model.dart';
 import '../ui/workspace_settings_edit/widgets/workspace_settings_edit_screen.dart';
-import '../ui/workspace_users_management/view_models/workspace_users_management_screen_viewmodel.dart';
+import '../ui/workspace_users_management/view_models/workspace_users_management_screen_view_model.dart';
 import '../ui/workspace_users_management/widgets/workspace_users_management_screen.dart';
-import '../ui/workspace_users_management_create/view_models/create_workspace_user_screen_viewmodel.dart';
+import '../ui/workspace_users_management_create/view_models/create_workspace_user_screen_view_model.dart';
 import '../ui/workspace_users_management_create/widgets/create_workspace_user_screen.dart';
 import '../ui/workspace_users_management_guide/widgets/workspace_users_management_guide_screen.dart';
 import '../ui/workspace_users_management_user_details/view_models/workspace_user_details_screen_view_model.dart';
@@ -63,8 +63,6 @@ import 'routes.dart';
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
-final GlobalKey<StatefulNavigationShellState> _mainStatefulShellNavigatorKey =
-    GlobalKey<StatefulNavigationShellState>(debugLabel: 'workspaceIdshell');
 
 /// Top go_router entry point.
 ///
@@ -142,7 +140,7 @@ GoRouter router({
       path: Routes.login,
       builder: (context, state) {
         return SignInScreen(
-          viewModel: SignInViewModel(signInUseCase: context.read()),
+          viewModel: SignInScreenViewModel(signInUseCase: context.read()),
         );
       },
     ),
@@ -257,7 +255,6 @@ GoRouter router({
           builder: (_, _) => const SizedBox.shrink(),
           routes: [
             StatefulShellRoute(
-              key: _mainStatefulShellNavigatorKey,
               navigatorContainerBuilder: (context, navigationShell, children) {
                 // IndexedStack is basically a stack which has all the StatefulShellBranch
                 // and their subroutes in it, and on top of the stack will be a route defined
@@ -290,6 +287,7 @@ GoRouter router({
                         workspaceId: workspaceId,
                         workspaceRepository: notifierContext.read(),
                         userRepository: context.read(),
+                        clientInfoRepository: context.read(),
                         refreshTokenUseCase: notifierContext.read(),
                         activeWorkspaceChangeUseCase: notifierContext.read(),
                       ),
@@ -322,7 +320,6 @@ GoRouter router({
                             state.pathParameters['workspaceId']!;
 
                         return NoTransitionPage(
-                          key: ValueKey('tasks_page_$workspaceId'),
                           child: TasksScreen(
                             viewModel: TasksScreenViewModel(
                               workspaceId: workspaceId,
@@ -547,10 +544,12 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        final resetKey = state.extra;
+
                         return NoTransitionPage(
-                          key: ValueKey('goals_page_$workspaceId'),
+                          key: ValueKey('goals_${workspaceId}_$resetKey'),
                           child: GoalsScreen(
-                            viewModel: GoalsScreenViewmodel(
+                            viewModel: GoalsScreenViewModel(
                               workspaceId: workspaceId,
                               userRepository: context.read(),
                               workspaceGoalRepository: context.read(),
@@ -730,9 +729,10 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        final resetKey = state.extra;
 
                         return NoTransitionPage(
-                          key: ValueKey('leaderboard_page_$workspaceId'),
+                          key: ValueKey('leaderboard_${workspaceId}_$resetKey'),
                           child: LeaderboardScreen(
                             viewModel: LeaderboardScreenViewModel(
                               workspaceId: workspaceId,
@@ -996,15 +996,21 @@ String? _redirect(BuildContext context, GoRouterState state) {
       return null;
     }
 
-    final savedLocation = state.matchedLocation == '/'
+    final fromParam = state.matchedLocation == '/'
         ? ''
         : '?from=${state.matchedLocation}';
-    return '${Routes.login}$savedLocation';
+    return '${Routes.login}$fromParam';
   }
 
   // If the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
-    return state.uri.queryParameters['from'] ?? Routes.entry;
+    final from = state.uri.queryParameters['from'];
+
+    if (from != null && from.isNotEmpty) {
+      return '${Routes.entry}?next=$from';
+    }
+
+    return Routes.entry;
   }
 
   // If the user is not part of any workspace, redirect the user to the initial workspace creation page

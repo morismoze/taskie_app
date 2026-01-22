@@ -14,5 +14,5 @@ abstract class UserRepository extends ChangeNotifier {
 
   Future<Result<void>> deleteAccount();
 
-  void purgeUserCache();
+  Future<void> purgeUserCache();
 }

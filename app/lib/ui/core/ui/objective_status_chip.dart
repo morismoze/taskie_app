@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
+import '../theme/dimens.dart';
 import '../utils/extensions.dart';
 
 class ObjectiveStatusChip extends StatelessWidget {
@@ -19,7 +20,10 @@ class ObjectiveStatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Badge(
       backgroundColor: backgroundColor,
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+      padding: const EdgeInsets.symmetric(
+        vertical: Dimens.paddingVertical / 12,
+        horizontal: Dimens.paddingHorizontal / 2.5,
+      ),
       label: Text(
         status.l10n(context),
         style: Theme.of(context).textTheme.labelSmall!.copyWith(

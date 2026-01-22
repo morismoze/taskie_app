@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
-import '../../core/utils/user.dart';
-import '../view_models/tasks_screen_viewmodel.dart';
+import '../view_models/tasks_screen_view_model.dart';
 import 'workspace_switcher.dart';
 
 class TasksHeader extends StatelessWidget {
@@ -31,11 +31,6 @@ class TasksHeader extends StatelessWidget {
               valueListenable: viewModel.userNotifier,
               builder: (builderContext, userValue, _) {
                 if (userValue != null) {
-                  final fullName = UserUtils.constructFullName(
-                    firstName: userValue.firstName,
-                    lastName: userValue.lastName,
-                  );
-
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -46,7 +41,7 @@ class TasksHeader extends StatelessWidget {
                         ).textTheme.labelLarge!.copyWith(fontSize: 14),
                       ),
                       Text(
-                        fullName,
+                        userValue.fullName,
                         style: Theme.of(builderContext).textTheme.titleLarge!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),

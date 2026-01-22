@@ -11,7 +11,8 @@ export const setupHttpSecurity = (
   app.use(helmet());
 
   // No need to use other body parsers (text, urlencoded, raw) as we are only expecting JSON
-  // and if someone tries to send a different content-type, Nest will return a 415 Unsupported Media Type response
+  // and if someone tries to send a different content-type, Nest will return a 415 Unsupported
+  // Media Type response
   app.useBodyParser('json', { limit: '10mb' });
 
   const isDevelopment =

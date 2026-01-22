@@ -8,6 +8,7 @@ abstract final class AppColors {
   static Color green1 = Colors.green[800]!;
   static Color green1Light = Colors.green.shade50;
   static const Color green2 = Color(0xFF21CF29);
+  static const Color blue1 = Color(0xFF3387E8);
   static const white1 = Color(0xFFFFFFFF);
   static const grey1 = Color.fromARGB(255, 225, 225, 225);
   static const grey2 = Color(0xFF4D4D4D);

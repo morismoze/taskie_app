@@ -1,31 +1,20 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ClsService } from 'nestjs-cls';
-import { Environment } from 'src/config/app.config';
-import { AggregatedConfig } from 'src/config/config.type';
+import { CLS_CONTEXT_USER_ID_KEY } from 'src/common/helper/constants';
+import { UserClsContext } from 'src/common/interceptors/user-context.interceptor';
 import { AppLogger } from './app-logger';
 
 @Injectable()
 export class ConsoleAppLogger implements AppLogger {
   private readonly logger = new ConsoleLogger('App');
-  private readonly off: boolean;
 
-  constructor(
-    private readonly cls: ClsService,
-    private readonly configService: ConfigService<AggregatedConfig>,
-  ) {
-    const env = this.configService.getOrThrow('app.nodeEnv', { infer: true });
-    this.off = env === Environment.PRODUCTION;
-  }
+  constructor(private readonly cls: ClsService) {}
 
   log(message: any, context?: string) {
     this.logger.log(this.formatMessage(message), context);
   }
 
   warn(message: any, context?: string) {
-    if (this.off) {
-      return;
-    }
     this.logger.warn(this.formatMessage(message), context);
   }
 
@@ -34,7 +23,7 @@ export class ConsoleAppLogger implements AppLogger {
   }
 
   private formatMessage(message: any): string {
-    const userId = this.cls.get('userId');
+    const userId = this.cls.get<UserClsContext>(CLS_CONTEXT_USER_ID_KEY);
     const prefix = userId ? `[USER_ID: ${userId}] ` : '';
 
     // If message is an object, stringify it, or return plain message

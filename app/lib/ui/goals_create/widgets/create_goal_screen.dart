@@ -7,13 +7,13 @@ import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/create_goal_screen_viewmodel.dart';
+import '../view_models/create_goal_screen_view_model.dart';
 import 'create_goal_form.dart';
 
 class CreateGoalScreen extends StatefulWidget {
@@ -83,10 +83,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                   listenable: widget.viewModel.loadWorkspaceMembers,
                   builder: (builderContext, child) {
                     if (widget.viewModel.loadWorkspaceMembers.running) {
-                      return ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 16);
                     }
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
@@ -128,6 +125,7 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
                       }
 
                       return SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),
@@ -147,16 +145,16 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   void _onResult() {
     if (widget.viewModel.createGoal.completed) {
       widget.viewModel.createGoal.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.createNewGoalSuccess,
       );
-      context.pop();
+      context.pop(); // Go back to previous page
     }
 
     if (widget.viewModel.createGoal.error) {
       widget.viewModel.createGoal.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.createNewGoalError,
       );

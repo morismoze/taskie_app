@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../theme/colors.dart';
+import '../theme/dimens.dart';
 import '../utils/extensions.dart';
 
 class RoleChip extends StatelessWidget {
@@ -19,7 +20,10 @@ class RoleChip extends StatelessWidget {
         : AppColors.green1;
 
     return Chip(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+      padding: const EdgeInsets.symmetric(
+        vertical: 0,
+        horizontal: Dimens.paddingHorizontal / 8,
+      ),
       side: BorderSide.none,
       backgroundColor: roleChipBackgroundColor,
       label: Text(

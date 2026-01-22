@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../theme/colors.dart';
@@ -155,12 +154,12 @@ class _AppDatePickerState extends State<_AppDatePicker> {
   }
 
   void _onCancel() {
-    context.pop();
+    Navigator.of(context).pop(); // Close bottom sheet
   }
 
   void _onSubmit() {
     widget.onSubmit(_selectedDate);
-    context.pop();
+    Navigator.of(context).pop(); // Close bottom sheet
   }
 
   @override

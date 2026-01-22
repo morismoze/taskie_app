@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
@@ -12,9 +13,8 @@ import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
 import '../../goals_workspace_member_accumulated_points/widgets/workspace_member_accumulated_points.dart';
-import '../view_models/create_goal_screen_viewmodel.dart';
+import '../view_models/create_goal_screen_view_model.dart';
 
 class CreateGoalForm extends StatefulWidget {
   const CreateGoalForm({super.key, required this.viewModel});
@@ -59,12 +59,8 @@ class _CreateGoalFormState extends State<CreateGoalForm> {
   @override
   Widget build(BuildContext context) {
     final members = widget.viewModel.workspaceMembers.map((user) {
-      final fullName = UserUtils.constructFullName(
-        firstName: user.firstName,
-        lastName: user.lastName,
-      );
       return AppSelectFieldOption(
-        label: fullName,
+        label: user.fullName,
         value: user,
         leading: AppAvatar(
           hashString: user.id,

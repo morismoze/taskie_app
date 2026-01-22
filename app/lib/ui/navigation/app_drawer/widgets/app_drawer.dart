@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
+import '../../../../data/services/api/api_response.dart';
+import '../../../../data/services/api/exceptions/general_api_exception.dart';
 import '../../../../routing/routes.dart';
 import '../../../../utils/command.dart';
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/dimens.dart';
-import '../../../core/ui/app_snackbar.dart';
+import '../../../core/ui/app_dialog.dart';
+import '../../../core/ui/app_filled_button.dart';
+import '../../../core/ui/app_toast.dart';
 import '../../app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 import 'footer.dart';
 import 'workspaces_list.dart';
 
@@ -77,7 +81,7 @@ class _AppDrawerState extends State<AppDrawer> {
               ),
               const SizedBox(height: Dimens.paddingVertical / 1.25),
               WorkspacesList(viewModel: widget.viewModel),
-              const Footer(),
+              Footer(viewModel: widget.viewModel),
             ],
           ),
         ),
@@ -92,13 +96,16 @@ class _AppDrawerState extends State<AppDrawer> {
       final newActiveWorkspaceId =
           (widget.viewModel.changeActiveWorkspace.result as Ok<String>).value;
       widget.viewModel.changeActiveWorkspace.clearResult();
-      context.pop();
+      AppToast.showSuccess(
+        context: context,
+        message: context.localization.appDrawerChangeActiveWorkspaceSuccess,
+      );
       context.go(Routes.tasks(workspaceId: newActiveWorkspaceId));
     }
 
     if (widget.viewModel.changeActiveWorkspace.error) {
       widget.viewModel.changeActiveWorkspace.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.appDrawerChangeActiveWorkspaceError,
       );
@@ -111,7 +118,7 @@ class _AppDrawerState extends State<AppDrawer> {
           (widget.viewModel.leaveWorkspace.result as Ok<LeaveWorkspaceResult>)
               .value;
       widget.viewModel.leaveWorkspace.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.appDrawerLeaveWorkspaceSuccess,
       );
@@ -120,12 +127,12 @@ class _AppDrawerState extends State<AppDrawer> {
         case LeaveWorkspaceResultNoAction():
           break;
         case LeaveWorkspaceResultCloseOverlays():
-          context.pop(); // Close dialog
-          context.pop(); // Close bottom sheet
+          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context).pop(); // Close bottom sheet
           break;
         case LeaveWorkspaceResultNavigateTo(workspaceId: final workspaceId):
-          context.pop(); // Close dialog
-          context.pop(); // Close bottom sheet
+          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context).pop(); // Close bottom sheet
           context.go(Routes.tasks(workspaceId: workspaceId));
       }
     }
@@ -135,20 +142,41 @@ class _AppDrawerState extends State<AppDrawer> {
       widget.viewModel.leaveWorkspace.clearResult();
 
       switch (errorResult.error) {
-        case RefreshTokenFailedException():
-          AppSnackbar.showError(
-            context: context,
-            message: context.localization.appDrawerLeaveWorkspaceError,
-          );
-          context.pop(); // Close dialog
+        case GeneralApiException(error: final apiError)
+            when apiError.code == ApiErrorCode.soleManagerConflict:
+          Navigator.of(context).pop(); // Close dialog
+          _showSoleManagerConflictDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
       }
     }
+  }
+
+  void _showSoleManagerConflictDialog() {
+    AppDialog.show(
+      context: context,
+      canPop: false,
+      title: FaIcon(
+        FontAwesomeIcons.circleInfo,
+        color: Theme.of(context).colorScheme.primary,
+        size: 30,
+      ),
+      content: Text(
+        context.localization.appDrawerLeaveWorkspaceErrorSoleManagerConflict,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textAlign: TextAlign.center,
+      ),
+      actions: AppFilledButton(
+        label: context.localization.misc_ok,
+        onPress: () {
+          Navigator.of(context).pop(); // Close dialog
+        },
+      ),
+    );
   }
 }

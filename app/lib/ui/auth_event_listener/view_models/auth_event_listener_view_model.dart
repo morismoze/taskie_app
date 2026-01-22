@@ -93,7 +93,13 @@ class AuthEventListenerViewmodel extends ChangeNotifier {
         return Result.error(resultLoadWorkspaces.error);
     }
 
-    final firstWorkspaceId = resultLoadWorkspaces.value.first.id;
+    final updatedWorkspaces = resultLoadWorkspaces.value;
+
+    if (updatedWorkspaces.isEmpty) {
+      return const Result.ok(null);
+    }
+
+    final firstWorkspaceId = updatedWorkspaces.first.id;
     // handleWorkspaceChange already re-fetches user
     final resultWorkspaceChange = await _activeWorkspaceChangeUseCase
         .handleWorkspaceChange(firstWorkspaceId);

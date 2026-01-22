@@ -12,7 +12,7 @@ import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
@@ -120,70 +120,81 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
                         );
                       }
 
-                      return ListView(
+                      return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),
-                        children: [
-                          if (widget.viewModel.assignees!.isEmpty)
-                            Text(
-                              context.localization.tasksAssignmentsEmpty,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleSmall!
-                                  .copyWith(fontStyle: FontStyle.italic),
-                            )
-                          else
-                            EditAssignmentsForm(viewModel: widget.viewModel),
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: Dimens.paddingVertical * 1.6,
-                              ),
-                              const Separator(),
-                              const SizedBox(
-                                height: Dimens.paddingVertical * 1.25,
-                              ),
+                        child: Column(
+                          children: [
+                            if (widget.viewModel.assignees!.isEmpty)
                               Text(
-                                context
-                                    .localization
-                                    .tasksAssignmentsEditAddNewAssignee,
+                                context.localization.tasksAssignmentsEmpty,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleMedium!
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: Dimens.paddingVertical * 1.25,
-                              ),
-                              if (widget.viewModel.assignees!.length ==
-                                  ValidationRules.taskMaxAssigneesCount) ...[
-                                // The number of assignees is already maxed out
+                                style: Theme.of(context).textTheme.titleSmall!
+                                    .copyWith(fontStyle: FontStyle.italic),
+                              )
+                            else
+                              EditAssignmentsForm(viewModel: widget.viewModel),
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.6,
+                                ),
+                                const Separator(),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.25,
+                                ),
                                 Text(
                                   context
                                       .localization
-                                      .tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees,
+                                      .tasksAssignmentsEditAddNewAssignee,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall!
-                                      .copyWith(fontStyle: FontStyle.italic),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontWeight: FontWeight.bold),
                                 ),
-                              ] else if (widget
-                                  .viewModel
-                                  .workspaceMembersNotAssigned
-                                  .isEmpty) ...[
-                                // The number of assignees is already maxed out
-                                Text(
-                                  context
-                                      .localization
-                                      .tasksAssignmentsEditAddNewAssigneeEmptyAssignees,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall!
-                                      .copyWith(fontStyle: FontStyle.italic),
+                                const SizedBox(
+                                  height: Dimens.paddingVertical * 1.25,
                                 ),
-                              ] else ...[
-                                AddNewAssigneeForm(viewModel: widget.viewModel),
+                                if (widget.viewModel.assignees!.length ==
+                                    ValidationRules.taskMaxAssigneesCount) ...[
+                                  // The number of assignees is already maxed out
+                                  Text(
+                                    context
+                                        .localization
+                                        .tasksAssignmentsEditAddNewAssigneeMaxedOutAssignees,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(fontStyle: FontStyle.italic),
+                                  ),
+                                ] else if (widget
+                                    .viewModel
+                                    .workspaceMembersNotAssigned
+                                    .isEmpty) ...[
+                                  // The number of assignees is already maxed out
+                                  Text(
+                                    context
+                                        .localization
+                                        .tasksAssignmentsEditAddNewAssigneeEmptyAssignees,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(fontStyle: FontStyle.italic),
+                                  ),
+                                ] else ...[
+                                  AddNewAssigneeForm(
+                                    viewModel: widget.viewModel,
+                                  ),
+                                ],
                               ],
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -199,7 +210,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   void _onAddTaskAssigneeResult() {
     if (widget.viewModel.addTaskAssignee.completed) {
       widget.viewModel.addTaskAssignee.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksAddTaskAssignmentSuccess,
       );
@@ -220,7 +231,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           _showAssigneesWereAmendedErrorDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksAddTaskAssignmentError,
           );
@@ -231,15 +242,15 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   void _onRemoveTaskAssigneeResult() {
     if (widget.viewModel.removeTaskAssignee.completed) {
       widget.viewModel.removeTaskAssignee.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksRemoveTaskAssignmentSuccess,
       );
-      context.pop(); // Close confirmation dialog
+      Navigator.of(context).pop(); // Close dialog
     }
 
     if (widget.viewModel.removeTaskAssignee.error) {
-      context.pop(); // Close confirmation dialog
+      Navigator.of(context).pop(); // Close dialog
       final errorResult = widget.viewModel.removeTaskAssignee.result as Error;
       widget.viewModel.removeTaskAssignee.clearResult();
       switch (errorResult.error) {
@@ -248,7 +259,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           _showClosedTaskErrorDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksRemoveTaskAssignmentError,
           );
@@ -259,7 +270,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   void _onUpdateTaskAssignmentsResult() {
     if (widget.viewModel.updateTaskAssignments.completed) {
       widget.viewModel.updateTaskAssignments.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.tasksUpdateTaskAssignmentsSuccess,
       );
@@ -291,7 +302,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
           _showCompletedStatusDueDatePassedErrorDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksUpdateTaskAssignmentsUpdateError,
           );
@@ -316,7 +327,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       actions: AppFilledButton(
         label: context.localization.misc_goToHomepage,
         onPress: () {
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
           );
@@ -342,7 +353,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       actions: AppFilledButton(
         label: context.localization.misc_goToHomepage,
         onPress: () {
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
           );
@@ -368,7 +379,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       actions: AppFilledButton(
         label: context.localization.misc_ok,
         onPress: () {
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
         },
       ),
     );

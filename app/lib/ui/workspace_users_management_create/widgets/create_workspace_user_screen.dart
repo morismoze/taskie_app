@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
-import '../view_models/create_workspace_user_screen_viewmodel.dart';
+import '../view_models/create_workspace_user_screen_view_model.dart';
 import 'create_virtual_user_form.dart';
 import 'workspace_invite_section.dart';
 
@@ -86,6 +85,7 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     vertical: Dimens.of(context).paddingScreenVertical,
                     horizontal: Dimens.of(context).paddingScreenHorizontal,
@@ -149,19 +149,19 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
 
   void _onVirtualUserCreateResult() {
     if (widget.viewModel.createVirtualUser.completed) {
-      widget.viewModel.createVirtualUser.clearResult();
-      AppSnackbar.showSuccess(
+      // Don't clear the result, as we also listen to it
+      // in the form widget, where we clear the form on success
+      AppToast.showSuccess(
         context: context,
         message: context
             .localization
             .workspaceUsersManagementCreateVirtualUserSuccess,
       );
-      context.pop();
     }
 
     if (widget.viewModel.createVirtualUser.error) {
       widget.viewModel.createVirtualUser.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message:
             context.localization.workspaceUsersManagementCreateVirtualUserError,

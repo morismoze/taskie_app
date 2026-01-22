@@ -2,6 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DateTime } from 'luxon';
+import { ClsService } from 'nestjs-cls';
+import { CLS_CONTEXT_APP_METADATA_KEY } from 'src/common/helper/constants';
 import { SessionCore } from 'src/modules/session/domain/session-core.domain';
 import { Session } from 'src/modules/session/domain/session.domain';
 import { SessionService } from 'src/modules/session/session.service';
@@ -42,6 +44,7 @@ const mockSessionCoreFactory = (
   deviceModel: 'iPhone 15',
   osVersion: 'iOS 17.0',
   appVersion: '1.0.0',
+  buildNumber: '1',
   accessTokenVersion: 1,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -123,11 +126,16 @@ const createMockSessionService = () => ({
   create: jest.fn(),
   findByIdWithUser: jest.fn(),
   update: jest.fn(),
-  deleteById: jest.fn(),
+  delete: jest.fn(),
 });
 
 const createMockUnitOfWorkService = () => ({
   withTransaction: jest.fn().mockImplementation((cb) => cb()),
+});
+
+const createMockClsService = () => ({
+  get: jest.fn(),
+  set: jest.fn(),
 });
 
 describe('AuthService', () => {
@@ -136,6 +144,7 @@ describe('AuthService', () => {
   let userService: ReturnType<typeof createMockUserService>;
   let workspaceUserService: ReturnType<typeof createMockWorkspaceUserService>;
   let sessionService: ReturnType<typeof createMockSessionService>;
+  let clsService: ReturnType<typeof createMockClsService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -167,6 +176,10 @@ describe('AuthService', () => {
           provide: UnitOfWorkService,
           useValue: createMockUnitOfWorkService(),
         },
+        {
+          provide: ClsService,
+          useValue: createMockClsService(),
+        },
       ],
     }).compile();
 
@@ -175,14 +188,15 @@ describe('AuthService', () => {
     userService = module.get(UserService) as any;
     workspaceUserService = module.get(WorkspaceUserService) as any;
     sessionService = module.get(SessionService) as any;
+    clsService = module.get(ClsService) as any;
   });
 
   describe('socialLogin', () => {
-    const metaData = {
-      ipAddress: '192.168.1.1',
+    const appMetadata = {
       deviceModel: 'iPhone 15',
       osVersion: 'iOS 17.0',
       appVersion: '1.0.0',
+      buildNumber: '1',
     };
 
     it('should create a new user and session when user does not exist', async () => {
@@ -195,6 +209,12 @@ describe('AuthService', () => {
       userService.create.mockResolvedValue(createdUser);
       sessionService.create.mockResolvedValue(createdSession);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
+      clsService.get.mockImplementation((key) => {
+        if (key === CLS_CONTEXT_APP_METADATA_KEY) {
+          return appMetadata;
+        }
+        return null;
+      });
       jwtService.signAsync
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
@@ -203,7 +223,7 @@ describe('AuthService', () => {
       const result = await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
         socialData,
-        ...metaData,
+        ipAddress: '192.168.1.1',
       });
 
       // ASSERT
@@ -219,7 +239,8 @@ describe('AuthService', () => {
       expect(sessionService.create).toHaveBeenCalledWith({
         userId: createdUser.id,
         hash: expect.any(String),
-        ...metaData,
+        ...appMetadata,
+        ipAddress: '192.168.1.1',
       });
       expect(result).toEqual({
         accessToken: 'access-token',
@@ -252,12 +273,19 @@ describe('AuthService', () => {
       userService.update.mockResolvedValue(updatedUser);
       sessionService.create.mockResolvedValue(session);
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
+      clsService.get.mockImplementation((key) => {
+        if (key === CLS_CONTEXT_APP_METADATA_KEY) {
+          return appMetadata;
+        }
+        return null;
+      });
       jwtService.signAsync.mockResolvedValue('token');
 
       await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
         socialData,
-        ...metaData,
+        ...appMetadata,
+        ipAddress: '192.168.1.1.',
       });
 
       expect(userService.update).toHaveBeenCalledWith({
@@ -279,12 +307,19 @@ describe('AuthService', () => {
       userService.findBySocialIdAndProvider.mockResolvedValue(existingUser);
       sessionService.create.mockResolvedValue(mockSessionCoreFactory());
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([]);
+      clsService.get.mockImplementation((key) => {
+        if (key === CLS_CONTEXT_APP_METADATA_KEY) {
+          return appMetadata;
+        }
+        return null;
+      });
       jwtService.signAsync.mockResolvedValue('token');
 
       await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
         socialData,
-        ...metaData,
+        ...appMetadata,
+        ipAddress: '192.168.1.1',
       });
 
       expect(userService.update).not.toHaveBeenCalled();
@@ -298,12 +333,19 @@ describe('AuthService', () => {
       workspaceUserService.findAllByUserIdWithWorkspace.mockResolvedValue([
         workspaceUser,
       ]);
+      clsService.get.mockImplementation((key) => {
+        if (key === CLS_CONTEXT_APP_METADATA_KEY) {
+          return appMetadata;
+        }
+        return null;
+      });
       jwtService.signAsync.mockResolvedValue('token');
 
       const result = await service.socialLogin({
         authProvider: AuthProvider.GOOGLE,
         socialData: mockSocialLoginFactory(),
-        ...metaData,
+        ...appMetadata,
+        ipAddress: '192.168.1.1',
       });
 
       expect(result.user.roles).toHaveLength(1);
@@ -404,11 +446,11 @@ describe('AuthService', () => {
         sessionId: 'session-1',
         atv: 1,
       };
-      sessionService.deleteById.mockResolvedValue(undefined);
+      sessionService.delete.mockResolvedValue(undefined);
 
       await service.logout(payload);
 
-      expect(sessionService.deleteById).toHaveBeenCalledWith(payload.sessionId);
+      expect(sessionService.delete).toHaveBeenCalledWith(payload.sessionId);
     });
   });
 });

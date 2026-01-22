@@ -67,6 +67,15 @@ class AppLocalizationsHr extends AppLocalizations {
   String get misc_somethingWentWrong => 'Uh-oh! Nešto je pošlo po zlu';
 
   @override
+  String get misc_privacyPolicy => 'Pravila privatnosti';
+
+  @override
+  String get misc_termsAndConditions => 'Uvjeti korištenja';
+
+  @override
+  String get misc_contactSupport => 'Kontaktirajte podršku';
+
+  @override
   String get bootstrapError =>
       'Uh-oh! Došlo je do problema prilikom pokretanja. Molimo pokušajte ponovno ili ponovno pokrenite aplikaciju.';
 
@@ -82,6 +91,18 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get signInGetStarted => 'Započnimo';
+
+  @override
+  String get signInLegislation1 => 'Prijavom prihvaćate naše';
+
+  @override
+  String get signInLegislation2 => 'Uvjete korištenja';
+
+  @override
+  String get signInLegislation3 => 'i';
+
+  @override
+  String get signInLegislation4 => 'Pravila privatnosti';
 
   @override
   String get signInTitleProviders => 'Metoda prijave';
@@ -240,7 +261,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get tasksAddTaskAssignmentSuccess =>
-      'Uspješno ste dodjelili zadatak odabranome članu';
+      'Uspješno ste dodijelili zadatak odabranim članovima';
 
   @override
   String get tasksAddTaskAssignmentError =>
@@ -353,6 +374,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom izmjene aktivnog radnog prostora';
 
   @override
+  String get appDrawerChangeActiveWorkspaceSuccess =>
+      'Uspješno ste promijenili aktivni radni prostor';
+
+  @override
   String get appDrawerWorkspaceOptions => 'Opcije radnog prostora';
 
   @override
@@ -370,7 +395,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get appDrawerLeaveWorkspaceModalMessage =>
-      'Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunost izbrisati nakon što ga napustite.**';
+      'Jeste li sigurni da želite napustiti ovaj radni prostor? **Pažnja: ukoliko ste vi posljednji Menadžer, radni prostor će se u potpunosti izbrisati nakon što ga napustite.**';
 
   @override
   String get appDrawerLeaveWorkspaceModalCta => 'Napusti';
@@ -384,7 +409,20 @@ class AppLocalizationsHr extends AppLocalizations {
       'Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora';
 
   @override
+  String get appDrawerLeaveWorkspaceErrorSoleManagerConflict =>
+      'Uh-oh! Nije moguće napustiti ovaj radni prostor jer ste u njemu jedini Menadžer. Morate imenovati drugog člana Menadžerom.';
+
+  @override
   String get appDrawerCreateNewWorkspace => 'Kreiraj novi radni prostor';
+
+  @override
+  String get appDrawerAbout => 'O aplikaciji';
+
+  @override
+  String get appDrawerAboutSourceLicenses => 'Licence otvorenog koda';
+
+  @override
+  String get appDrawerAboutVisitWebsite => 'Posjetite našu web stranicu';
 
   @override
   String get preferencesLabel => 'Preference';
@@ -881,7 +919,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get deleteAccountText =>
-      '**Ovo treba imati na umu:**\n\nPrije brisanja računa provjerite da niste jedini Menadžer u nekom radnom prostoru čiji ste član. U suprotnom slučaju, molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom.\n\nBrisanjem računa uklanjaju se sva vaša članstva, dodjele na zadacima i ciljevi u svim radnim prostorima.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
+      '**Važne napomene:**\n\n1. **Ograničenje za Menadžere:** Ako ste jedini Menadžer radnog prostora koji ima druge ne-virtualne članove, **morate** imenovati novog Menadžera prije brisanja. U suprotnom, ova radnja će biti blokirana.\n\n2. **Brisanje radnih prostora:** Svi radni prostori u kojima ste jedini Menadžer (i nemaju drugih ne-virtualnih članova) bit će **trajno izbrisani** zajedno s vašim računom.\n\n**Brisanje računa je trajno i nepovratno. Želite li stvarno izbrisati svoj račun?**';
 
   @override
   String get deleteAccountConfirmButton => 'Da, razumijem';
@@ -891,7 +929,7 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get deleteAccountSoleManagerConflict =>
-      'Brisanje računa nije moguće jer ste jedini Menadžer u određenim radnim prostorima kojih ste član. Molimo razmotrite imenovanje drugog ne-virtualnog člana Menadžerom ili napustite te radne prostore.';
+      'Uh-oh! Brisanje računa nije moguće jer ste jedini Menadžer u radnim prostorima koji imaju druge ne-virtualne članove. Morate imenovati drugog člana Menadžerom u tim radnim prostorima.';
 
   @override
   String get workspaceAccessRevocationMessage =>

@@ -1,7 +1,8 @@
 import '../../data/services/api/user/models/response/user_response.dart';
 import 'created_by.dart';
+import 'interfaces/user_interface.dart';
 
-class WorkspaceUser {
+class WorkspaceUser implements BaseUser {
   WorkspaceUser({
     required this.id,
     required this.firstName,
@@ -15,14 +16,41 @@ class WorkspaceUser {
   });
 
   final String id;
+  @override
   final String firstName;
+  @override
   final String lastName;
   final WorkspaceRole role;
   final String userId;
   final DateTime createdAt;
+  @override
   final String? email;
   final String? profileImageUrl;
   final CreatedBy? createdBy;
+
+  WorkspaceUser copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    WorkspaceRole? role,
+    String? userId,
+    DateTime? createdAt,
+    String? email,
+    String? profileImageUrl,
+    CreatedBy? createdBy,
+  }) {
+    return WorkspaceUser(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      role: role ?? this.role,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      email: email ?? this.email,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      createdBy: createdBy ?? this.createdBy,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
     'id': id,

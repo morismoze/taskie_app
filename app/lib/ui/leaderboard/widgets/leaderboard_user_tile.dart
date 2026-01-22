@@ -1,38 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../../../domain/models/interfaces/user_interface.dart';
+import '../../../domain/models/workspace_leaderboard_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/card_container.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
 
 class LeaderboardUserTile extends StatelessWidget {
   const LeaderboardUserTile({
     super.key,
     required this.placement,
-    required this.userId,
-    required this.firstName,
-    required this.lastName,
-    required this.accumulatedPoints,
-    required this.completedTasks,
-    required this.profileImageUrl,
+    required this.user,
   });
 
   final int placement;
-  final String userId;
-  final String firstName;
-  final String lastName;
-  final int accumulatedPoints;
-  final int completedTasks;
-  final String? profileImageUrl;
+  final WorkspaceLeaderboardUser user;
 
   @override
   Widget build(BuildContext context) {
-    final fullName = UserUtils.constructFullName(
-      firstName: firstName,
-      lastName: lastName,
-    );
     final (placementBorderColor, placementBackgroundColor, placementTextColor) =
         _getPlacementColorScheme();
 
@@ -47,9 +34,9 @@ class LeaderboardUserTile extends StatelessWidget {
           ),
           const SizedBox(width: 15),
           AppAvatar(
-            hashString: userId,
-            firstName: firstName,
-            imageUrl: profileImageUrl,
+            hashString: user.id,
+            firstName: user.firstName,
+            imageUrl: user.profileImageUrl,
             size: 40,
           ),
           const SizedBox(width: 15),
@@ -59,7 +46,7 @@ class LeaderboardUserTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  fullName,
+                  user.fullName,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   textAlign: TextAlign.left,
@@ -69,7 +56,7 @@ class LeaderboardUserTile extends StatelessWidget {
                 ),
                 Text(
                   context.localization.leaderboardCompletedTasksLabel(
-                    completedTasks,
+                    user.completedTasks,
                   ),
                   style: Theme.of(
                     context,
@@ -80,7 +67,7 @@ class LeaderboardUserTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            '${accumulatedPoints.toString()} ${context.localization.misc_pointsAbbr}',
+            '${user.accumulatedPoints.toString()} ${context.localization.misc_pointsAbbr}',
             style: Theme.of(
               context,
             ).textTheme.titleLarge!.copyWith(color: placementBorderColor),

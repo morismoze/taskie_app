@@ -7,9 +7,9 @@ import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
-import '../view_models/create_workspace_initial_screen_viewmodel.dart';
+import '../view_models/create_workspace_initial_screen_view_model.dart';
 import 'create_workspace_initial_form.dart';
 import 'user_profile_button.dart';
 
@@ -58,6 +58,7 @@ class _CreateWorkspaceInitialScreenState
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Padding(
@@ -147,7 +148,7 @@ class _CreateWorkspaceInitialScreenState
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<String>).value;
       widget.viewModel.createWorkspace.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.workspaceCreationSuccess,
       );
@@ -156,7 +157,7 @@ class _CreateWorkspaceInitialScreenState
 
     if (widget.viewModel.createWorkspace.error) {
       widget.viewModel.createWorkspace.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.workspaceCreateError,
       );

@@ -7,9 +7,13 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_text_button.dart';
+import '../view_models/app_drawer_view_model.dart';
+import 'about_button.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
+  const Footer({super.key, required this.viewModel});
+
+  final AppDrawerViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +42,7 @@ class Footer extends StatelessWidget {
                 label: context.localization.appDrawerCreateNewWorkspace,
                 leadingIcon: FontAwesomeIcons.plus,
               ),
+              AboutButton(viewModel: viewModel),
             ],
           ),
         ),

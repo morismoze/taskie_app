@@ -74,8 +74,6 @@ abstract final class ApiEndpoints {
 
   // Workspaces
   static const getWorkspaces = '$_prefix/workspaces/me';
-  static const getWorkspacesSoleOwnership =
-      '$_prefix/workspaces/me/sole-ownership';
   static const createWorkspace = '$_prefix/workspaces';
   static String updateWorkspaceDetails(WorkspaceIdPathParam workspaceId) =>
       '$_prefix/workspaces/$workspaceId';

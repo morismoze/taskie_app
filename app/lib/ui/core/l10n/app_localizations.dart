@@ -212,6 +212,24 @@ abstract class AppLocalizations {
   /// **'Uh-oh! Something went wrong'**
   String get misc_somethingWentWrong;
 
+  /// No description provided for @misc_privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get misc_privacyPolicy;
+
+  /// No description provided for @misc_termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get misc_termsAndConditions;
+
+  /// No description provided for @misc_contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get misc_contactSupport;
+
   /// No description provided for @bootstrapError.
   ///
   /// In en, this message translates to:
@@ -241,6 +259,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Let\'s get started'**
   String get signInGetStarted;
+
+  /// No description provided for @signInLegislation1.
+  ///
+  /// In en, this message translates to:
+  /// **'By signing in, you agree to our'**
+  String get signInLegislation1;
+
+  /// No description provided for @signInLegislation2.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get signInLegislation2;
+
+  /// No description provided for @signInLegislation3.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get signInLegislation3;
+
+  /// No description provided for @signInLegislation4.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get signInLegislation4;
 
   /// No description provided for @signInTitleProviders.
   ///
@@ -515,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @tasksAddTaskAssignmentSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Successfully added new task assignee'**
+  /// **'Successfully added new task assignees'**
   String get tasksAddTaskAssignmentSuccess;
 
   /// No description provided for @tasksAddTaskAssignmentError.
@@ -692,6 +734,12 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble changing workspace'**
   String get appDrawerChangeActiveWorkspaceError;
 
+  /// No description provided for @appDrawerChangeActiveWorkspaceSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully changed active workspace'**
+  String get appDrawerChangeActiveWorkspaceSuccess;
+
   /// No description provided for @appDrawerWorkspaceOptions.
   ///
   /// In en, this message translates to:
@@ -746,11 +794,35 @@ abstract class AppLocalizations {
   /// **'Uh-oh! We\'ve had some trouble removing you from the workspace'**
   String get appDrawerLeaveWorkspaceError;
 
+  /// No description provided for @appDrawerLeaveWorkspaceErrorSoleManagerConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Uh-oh! Leaving this workspace is not possible because you are the sole Manager in it. You must promote another member to Manager.'**
+  String get appDrawerLeaveWorkspaceErrorSoleManagerConflict;
+
   /// No description provided for @appDrawerCreateNewWorkspace.
   ///
   /// In en, this message translates to:
   /// **'Create new workspace'**
   String get appDrawerCreateNewWorkspace;
+
+  /// No description provided for @appDrawerAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get appDrawerAbout;
+
+  /// No description provided for @appDrawerAboutSourceLicenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Source licenses'**
+  String get appDrawerAboutSourceLicenses;
+
+  /// No description provided for @appDrawerAboutVisitWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit out Website'**
+  String get appDrawerAboutVisitWebsite;
 
   /// No description provided for @preferencesLabel.
   ///
@@ -1565,7 +1637,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountText.
   ///
   /// In en, this message translates to:
-  /// **'**Things to keep in mind:**\n\nBefore deleting your account, please ensure you are not the sole Manager of any workspace you belong to. Otherwise, please consider promoting another non-virtual member to Manager.\n\nDeleting your account will remove all your memberships, task assignments, and goals across all workspaces.\n\n**Account deletion is permanent and irreversible. Do you really want to delete your account?**'**
+  /// **'**Things to keep in mind:**\n\n1. **Sole Manager Restriction:** If you are the only Manager of a workspace with other non-virtual members, you **must** promote someone else to Manager first. Otherwise, this action will be blocked.\n\n2. **Workspace Deletion:** Any workspace where you are the sole Manager (and have no other non-virtual members) will be **permanently deleted** along with your account.\n\n**Account deletion is irreversible. Do you really want to delete your account?**'**
   String get deleteAccountText;
 
   /// No description provided for @deleteAccountConfirmButton.
@@ -1583,7 +1655,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountSoleManagerConflict.
   ///
   /// In en, this message translates to:
-  /// **'Account deletion is not possible because you are the sole Manager in certain workspaces you are part of. Please consider promoting another member to Manager or leave those workspaces.'**
+  /// **'Uh-oh! Account deletion is not possible because you are the sole Manager in workspaces with other non-virtual members. You must promote another member to Manager in those workspaces.'**
   String get deleteAccountSoleManagerConflict;
 
   /// No description provided for @workspaceAccessRevocationMessage.

@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../../data/repositories/client_info/client_info_repository.dart';
 import '../../../../data/repositories/user/user_repository.dart';
 import '../../../../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../../../../domain/models/client_info.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../domain/use_cases/active_workspace_change_use_case.dart';
 import '../../../../domain/use_cases/refresh_token_use_case.dart';
@@ -36,12 +38,14 @@ class AppDrawerViewModel extends ChangeNotifier {
   AppDrawerViewModel({
     required String workspaceId,
     required WorkspaceRepository workspaceRepository,
+    required UserRepository userRepository,
+    required ClientInfoRepository clientInfoRepository,
     required RefreshTokenUseCase refreshTokenUseCase,
     required ActiveWorkspaceChangeUseCase activeWorkspaceChangeUseCase,
-    required UserRepository userRepository,
   }) : _activeWorkspaceId = workspaceId,
        _workspaceRepository = workspaceRepository,
        _userRepository = userRepository,
+       _clientInfoRepository = clientInfoRepository,
        _refreshTokenUseCase = refreshTokenUseCase,
        _activeWorkspaceChangeUseCase = activeWorkspaceChangeUseCase {
     _workspaceRepository.addListener(_onWorkspacesChanged);
@@ -53,13 +57,12 @@ class AppDrawerViewModel extends ChangeNotifier {
   final String _activeWorkspaceId;
   final WorkspaceRepository _workspaceRepository;
   final UserRepository _userRepository;
+  final ClientInfoRepository _clientInfoRepository;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final ActiveWorkspaceChangeUseCase _activeWorkspaceChangeUseCase;
 
   late Command0 loadWorkspaces;
 
-  /// Returns ID of the workspace which was left or null
-  /// if the updated workspaces list is empty.
   late Command1<LeaveWorkspaceResult, String> leaveWorkspace;
   late Command1<String, String> changeActiveWorkspace;
 
@@ -95,6 +98,8 @@ class AppDrawerViewModel extends ChangeNotifier {
 
   String? get inviteLink => _inviteLink;
 
+  ClientInfo get clientInfo => _clientInfoRepository.clientInfo;
+
   void _onWorkspacesChanged() {
     notifyListeners();
   }
@@ -122,7 +127,7 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         return Result.ok(workspaceId);
       case Error():
-        return Result.error(result.error);
+        return Result.error(result.error, result.stackTrace);
     }
   }
 
@@ -137,7 +142,7 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        return Result.error(resultLeave.error);
+        return Result.error(resultLeave.error, resultLeave.stackTrace);
     }
 
     // We need to refresh the access token since we keep list of roles with
@@ -148,7 +153,7 @@ class AppDrawerViewModel extends ChangeNotifier {
       case Ok():
         break;
       case Error():
-        return Result.error(resultRefresh.error);
+        return Result.error(resultRefresh.error, resultRefresh.stackTrace);
     }
 
     // We need to load workspaces again - this will load from repository cache, which was updated with the
@@ -158,26 +163,25 @@ class AppDrawerViewModel extends ChangeNotifier {
     switch (resultLoad) {
       case Ok():
         final updatedWorkspacesList = resultLoad.value;
+
         // CASE 1 - there are no more workspaces left
         if (updatedWorkspacesList.isEmpty) {
-          // We need to refresh the access token since we keep list of roles with
-          // corresponding workspaces in the user as well.
+          // We need to refresh the user since we keep list of roles with
+          // corresponding workspaces in it as well.
           final resultUser = await _userRepository
               .loadUser(forceFetch: true)
               .last;
 
           switch (resultUser) {
             case Ok():
-              break;
+              // Return LeaveWorkspaceResultNoAction in the case workspaces list is
+              // now empty, because gorouter redirect function will kick in automatically
+              // in this case and will redirect the user to workspaces/create/initial
+              // screen, so we don't need to do navigation in the AppDrawer listener function.
+              return const Result.ok(LeaveWorkspaceResultNoAction());
             case Error():
-              return Result.error(resultUser.error);
+              return Result.error(resultUser.error, resultUser.stackTrace);
           }
-
-          // Return null in the case workspaces list is now empty, because
-          // gorouter redirect function will kick in automatically in this case
-          // and will redirect the user to workspaces/create/initial screen, so
-          // we don't need to do navigation in the AppDrawer listener function.
-          return const Result.ok(LeaveWorkspaceResultNoAction());
         }
 
         // CASE 2 - we need to decide if the user has to navigate to another workspace.
@@ -189,30 +193,41 @@ class AppDrawerViewModel extends ChangeNotifier {
           // user just left, then we navigate to the workspace ID taken from
           // the first workspace in the workspaces list.
           final newActiveWorkspaceId = updatedWorkspacesList.first.id;
-          await _changeActiveWorkspace(newActiveWorkspaceId);
-          return Result.ok(
-            LeaveWorkspaceResultNavigateTo(newActiveWorkspaceId),
+          final resultChangeActiveWorkspace = await _changeActiveWorkspace(
+            newActiveWorkspaceId,
           );
+
+          switch (resultChangeActiveWorkspace) {
+            case Ok():
+              return Result.ok(
+                LeaveWorkspaceResultNavigateTo(
+                  resultChangeActiveWorkspace.value,
+                ),
+              );
+            case Error():
+              return Result.error(
+                resultChangeActiveWorkspace.error,
+                resultChangeActiveWorkspace.stackTrace,
+              );
+          }
         }
 
         // CASE 3 - non-active workspace was left, just close the overlays
 
-        // We need to refresh the access token since we keep list of roles with
-        // corresponding workspaces in the user as well.
+        // We need to refresh the user since we keep list of roles with
+        // corresponding workspaces in it as well.
         final resultUser = await _userRepository
             .loadUser(forceFetch: true)
             .last;
 
         switch (resultUser) {
           case Ok():
-            break;
+            return const Result.ok(LeaveWorkspaceResultCloseOverlays());
           case Error():
-            return Result.error(resultUser.error);
+            return Result.error(resultUser.error, resultUser.stackTrace);
         }
-
-        return const Result.ok(LeaveWorkspaceResultCloseOverlays());
       case Error():
-        return Result.error(resultLoad.error);
+        return Result.error(resultLoad.error, resultLoad.stackTrace);
     }
   }
 

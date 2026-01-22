@@ -8,8 +8,8 @@ import '../../../domain/models/paginable.dart';
 import '../../../domain/models/workspace_goal.dart';
 import '../../../utils/command.dart';
 
-class GoalsScreenViewmodel extends ChangeNotifier {
-  GoalsScreenViewmodel({
+class GoalsScreenViewModel extends ChangeNotifier {
+  GoalsScreenViewModel({
     required String workspaceId,
     required UserRepository userRepository,
     required WorkspaceGoalRepository workspaceGoalRepository,
@@ -36,6 +36,10 @@ class GoalsScreenViewmodel extends ChangeNotifier {
   bool get isFilterSearch => _workspaceGoalRepository.isFilterSearch;
 
   ObjectiveFilter get activeFilter => _workspaceGoalRepository.activeFilter;
+
+  bool _isForceFetching = false;
+
+  bool get isForceFetching => _isForceFetching;
 
   Paginable<WorkspaceGoal>? get goals {
     final goals = _workspaceGoalRepository.goals;
@@ -77,7 +81,7 @@ class GoalsScreenViewmodel extends ChangeNotifier {
   }
 
   void _onGoalsChanged() {
-    // Forward the change notification from repository to the viewmodel
+    // Forward the change notification from repository to the view
     notifyListeners();
   }
 
@@ -85,6 +89,7 @@ class GoalsScreenViewmodel extends ChangeNotifier {
     (ObjectiveFilter? filter, bool? forceFetch) details,
   ) async {
     final (filter, forceFetch) = details;
+    _isForceFetching = forceFetch ?? false;
     final result = await _workspaceGoalRepository
         .loadGoals(
           workspaceId: _activeWorkspaceId,
@@ -92,6 +97,7 @@ class GoalsScreenViewmodel extends ChangeNotifier {
           forceFetch: forceFetch ?? false,
         )
         .last;
+    _isForceFetching = false;
 
     switch (result) {
       case Ok():

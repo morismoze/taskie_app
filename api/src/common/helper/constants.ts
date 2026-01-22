@@ -10,3 +10,7 @@ export const WORKSPACE_DESCRIPTION_MAX_CHARS = 250;
 export const OBJECTIVE_NAME_MIN_CHARS = 3;
 export const OBJECTIVE_NAME_MAX_CHARS = 50;
 export const OBJECTIVE_DESCRIPTION_MAX_CHARS = 250;
+
+// CLS
+export const CLS_CONTEXT_USER_ID_KEY = 'userId';
+export const CLS_CONTEXT_APP_METADATA_KEY = 'appMetadata';

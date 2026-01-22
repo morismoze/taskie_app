@@ -1,17 +1,19 @@
 import {
   ClassSerializerInterceptor,
+  MiddlewareConsumer,
   Module,
+  NestModule,
   ValidationPipe,
 } from '@nestjs/common';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ClsModule } from 'nestjs-cls';
+import { ClsMiddleware, ClsModule } from 'nestjs-cls';
 import getValidationOptions from './common/helper/validation-options';
-import { RequestMetadataProcessingInterceptor } from './common/interceptors/request-metadata-processing.interceptor';
 import { ResponseTransformerInterceptor } from './common/interceptors/response-transformer.intereptor';
 import { UserContextInterceptor } from './common/interceptors/user-context.interceptor';
+import { AppMetadataContextMiddleware } from './common/middlewares/app-metadata-context.middleware';
 import appConfig from './config/app.config';
 import { AggregatedConfig } from './config/config.type';
 import databaseConfig from './database/config/database.config';
@@ -25,6 +27,7 @@ import authConfig from './modules/auth/core/config/auth.config';
 import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { AppLogger } from './modules/logger/app-logger';
+import grafanaConfig from './modules/logger/config/grafana.config';
 import { AppLoggerModule } from './modules/logger/logger.module';
 import { UserModule } from './modules/user/user.module';
 import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.module';
@@ -33,21 +36,35 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, authConfig, googleConfig],
-      envFilePath: ['.env'],
+      load: [
+        appConfig,
+        databaseConfig,
+        authConfig,
+        googleConfig,
+        grafanaConfig,
+      ],
+      envFilePath: [
+        // `.env.${process.env.NODE_ENV}`, // First try to search the process ENV
+        '.env', // Fallback to default .env
+      ],
     }),
+    // CLS needs to initalize before any other middleware tries to do actions on the request object
+    ClsModule.forRoot({
+      global: true,
+      // We initialize the CLS middleware below where we define other middlewares.
+      // In our case it's only the AppMetadataContextMiddleware and it requires
+      // CLS middleware, so we need to explicitly define the order of initalizing
+      // middlewares (first the CLS middleware, then the AppMetadataContextMiddleware).
+      middleware: { mount: false },
+    }),
+    AppLoggerModule,
     DatabaseModule,
     AuthModule,
     AuthGoogleModule,
     UserModule,
     WorkspaceModule,
-    ScheduleModule.forRoot(),
-    ClsModule.forRoot({
-      global: true,
-      middleware: { mount: true }, // Automatically mounts middleware for every request
-    }),
-    AppLoggerModule,
     HealthModule,
+    ScheduleModule.forRoot(),
   ],
   providers: [
     {
@@ -65,10 +82,6 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     {
       provide: APP_INTERCEPTOR,
       useClass: UserContextInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: RequestMetadataProcessingInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
@@ -93,4 +106,8 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ClsMiddleware, AppMetadataContextMiddleware).forRoutes('*');
+  }
+}

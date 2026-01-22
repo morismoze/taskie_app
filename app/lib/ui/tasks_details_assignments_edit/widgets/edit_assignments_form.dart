@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/workspace/progress_status.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -73,10 +72,7 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
           ...widget.viewModel.assignees!.map((assignee) {
             if (_assigneesStatuses[assignee.id] != null) {
               return TaskAssignmentFormField(
-                assigneeId: assignee.id,
-                firstName: assignee.firstName,
-                lastName: assignee.lastName,
-                profileImageUrl: assignee.profileImageUrl,
+                assignee: assignee,
                 status: _assigneesStatuses[assignee.id]!,
                 dueDate: widget.viewModel.dueDate,
                 onStatusChanged: _onStatusChanged,
@@ -141,13 +137,12 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.removeTaskAssignee,
-          onSubmit: (BuildContext builderContext) =>
+          onSubmit: () =>
               widget.viewModel.removeTaskAssignee.execute(assigneeId),
-          onCancel: (BuildContext builderContext) => builderContext.pop(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.tasksRemoveTaskAssignmentModalCta,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onCancel: () => Navigator.of(context).pop(), // Close dialog,
+          submitButtonText:
+              context.localization.tasksRemoveTaskAssignmentModalCta,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );

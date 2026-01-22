@@ -3,7 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
-import { FindOptionsRelations, In, Repository } from 'typeorm';
+import {
+  FindOptionsRelations,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from 'typeorm';
 import { WorkspaceUserCore } from '../domain/workspace-user-core.domain';
 import { WorkspaceUserRole } from '../domain/workspace-user-role.enum';
 import { WorkspaceUser } from '../domain/workspace-user.domain';
@@ -125,15 +132,37 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     });
   }
 
-  async countManagersInWorkspace(
-    workspaceId: WorkspaceUser['workspace']['id'],
+  async countByWorkspace(
+    workspaceId: string,
+    options: {
+      role?: WorkspaceUserRole;
+      excludeUserId?: string;
+      onlyRealUsers?: boolean;
+    } = {},
   ): Promise<number> {
-    return this.repositoryContext.count({
-      where: {
-        workspace: { id: workspaceId },
-        workspaceRole: WorkspaceUserRole.MANAGER,
-      },
-    });
+    const where: FindOptionsWhere<WorkspaceUserEntity> = {
+      workspace: { id: workspaceId },
+    };
+
+    if (options.role) {
+      where.workspaceRole = options.role;
+    }
+
+    const userWhere: any = {};
+
+    if (options.excludeUserId) {
+      userWhere.id = Not(options.excludeUserId);
+    }
+
+    if (options.onlyRealUsers) {
+      userWhere.email = Not(IsNull());
+    }
+
+    if (Object.keys(userWhere).length > 0) {
+      where.user = userWhere;
+    }
+
+    return this.repositoryContext.count({ where });
   }
 
   async create({
@@ -189,16 +218,9 @@ export class WorkspaceUserRepositoryImpl implements WorkspaceUserRepository {
     return updatedEntity;
   }
 
-  async delete({
-    workspaceId,
-    workspaceUserId,
-  }: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    workspaceUserId: WorkspaceUser['user']['id'];
-  }): Promise<boolean> {
+  async delete(id: WorkspaceUser['user']['id']): Promise<boolean> {
     const result = await this.repositoryContext.delete({
-      id: workspaceUserId,
-      workspace: { id: workspaceId },
+      id,
     });
     return (result.affected ?? 0) > 0;
   }

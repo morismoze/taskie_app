@@ -25,10 +25,7 @@ class WorkspaceMemberAccumulatedPoints extends StatelessWidget {
       listenable: loadAccumulatedPointsCommand,
       builder: (builderContext, child) {
         if (loadAccumulatedPointsCommand.running) {
-          return ActivityIndicator(
-            radius: 10,
-            color: Theme.of(builderContext).colorScheme.primary,
-          );
+          return const ActivityIndicator(radius: 10);
         }
 
         if (loadAccumulatedPointsCommand.error) {

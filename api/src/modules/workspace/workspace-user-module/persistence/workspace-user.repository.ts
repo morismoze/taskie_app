@@ -39,8 +39,13 @@ export abstract class WorkspaceUserRepository {
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<WorkspaceUserEntity[]>;
 
-  abstract countManagersInWorkspace(
-    workspaceId: WorkspaceUser['workspace']['id'],
+  abstract countByWorkspace(
+    workspaceId: string,
+    options: {
+      role?: WorkspaceUser['workspaceRole'];
+      excludeUserId?: string;
+      onlyRealUsers?: boolean;
+    },
   ): Promise<number>;
 
   abstract create(args: {
@@ -59,10 +64,7 @@ export abstract class WorkspaceUserRepository {
     relations?: FindOptionsRelations<WorkspaceUserEntity>;
   }): Promise<Nullable<WorkspaceUserEntity>>;
 
-  abstract delete(args: {
-    workspaceId: WorkspaceUser['workspace']['id'];
-    workspaceUserId: WorkspaceUser['user']['id'];
-  }): Promise<boolean>;
+  abstract delete(id: WorkspaceUser['user']['id']): Promise<boolean>;
 
   abstract getWorkspaceLeaderboard(
     workspaceId: WorkspaceUser['workspace']['id'],

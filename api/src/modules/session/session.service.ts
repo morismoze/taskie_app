@@ -28,6 +28,7 @@ export class SessionService {
     deviceModel: Session['deviceModel'];
     osVersion: Session['osVersion'];
     appVersion: Session['appVersion'];
+    buildNumber: Session['buildNumber'];
   }): Promise<SessionCore> {
     const newSession = await this.sessionRepository.create({
       data,
@@ -100,7 +101,7 @@ export class SessionService {
     return this.sessionRepository.incrementAccessTokenVersionByUserId(id);
   }
 
-  async deleteById(id: Session['id']): Promise<void> {
-    await this.sessionRepository.deleteById(id);
+  async delete(id: Session['id']): Promise<void> {
+    await this.sessionRepository.delete(id);
   }
 }

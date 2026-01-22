@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/l10n_extensions.dart';
-import '../../../view_models/preferences_screen_viewmodel.dart';
+import '../../../view_models/preferences_screen_view_model.dart';
 import '../../preferences_section.dart';
 import 'localization_language_option.dart';
 

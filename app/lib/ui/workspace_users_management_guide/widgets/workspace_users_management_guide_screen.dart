@@ -23,6 +23,7 @@ class WorkspaceUsersManagementGuideScreen extends StatelessWidget {
               ),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: Dimens.of(context).paddingScreenVertical,

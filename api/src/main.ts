@@ -11,7 +11,7 @@ import { AggregatedConfig } from './config/config.type';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    bufferLogs: true, // Buffer logs until a logger is set up
+    bufferLogs: true, // Buffer logs until AppLogger is instantiated and set up
   });
   const configService = app.get(ConfigService<AggregatedConfig>);
 
@@ -27,7 +27,7 @@ async function bootstrap() {
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
   logger.log(
-    `This application is runnning on: ${await app.getUrl()}`,
+    `This application is runnning on: ${await app.getUrl()} [env: ${process.env.NODE_ENV}]`,
     'Bootstrap',
   );
 }

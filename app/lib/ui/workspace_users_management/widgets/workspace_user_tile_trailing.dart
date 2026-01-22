@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/constants/rbac.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
+import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
@@ -11,29 +12,20 @@ import '../../core/ui/app_modal_bottom_sheet.dart';
 import '../../core/ui/app_modal_bottom_sheet_content_wrapper.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
-import '../../core/utils/user.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 import 'delete_workspace_user_button.dart';
 
 class WorkspaceUserTileTrailing extends StatelessWidget {
   const WorkspaceUserTileTrailing({
     super.key,
     required this.viewModel,
-    required this.workspaceUserId,
-    required this.role,
-    required this.firstName,
-    required this.lastName,
+    required this.workspaceUser,
     required this.isCurrentUser,
-    this.profileImageUrl,
   });
 
   final WorkspaceUsersManagementScreenViewModel viewModel;
-  final String workspaceUserId;
-  final WorkspaceRole role;
-  final String firstName;
-  final String lastName;
+  final WorkspaceUser workspaceUser;
   final bool isCurrentUser;
-  final String? profileImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +33,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          RoleChip(role: role),
+          RoleChip(role: workspaceUser.role),
           if (!isCurrentUser)
             Rbac(
               permission: RbacPermission.workspaceUsersRemove,
@@ -49,11 +41,8 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                 onTap: () => _userOptionsTap(
                   context,
                   viewModel,
-                  firstName,
-                  lastName,
+                  workspaceUser,
                   viewModel.activeWorkspaceId,
-                  workspaceUserId,
-                  profileImageUrl,
                 ),
                 child: Container(
                   // Space between RoleChip and InkWell. Not used as spacing: 10 on Row
@@ -61,7 +50,10 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
                   // meaning there will whitespace of 10 width because SizedBox.shrink() is still a widget
                   margin: const EdgeInsets.only(left: 10),
                   child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.paddingHorizontal / 4,
+                      vertical: Dimens.paddingVertical / 12,
+                    ),
                     child: FaIcon(
                       FontAwesomeIcons.ellipsisVertical,
                       color: AppColors.grey2,
@@ -79,16 +71,9 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
   void _userOptionsTap(
     BuildContext context,
     WorkspaceUsersManagementScreenViewModel viewModel,
-    String firstName,
-    String lastName,
+    WorkspaceUser workspaceUser,
     String workspaceId,
-    String workspaceUserId,
-    String? profileImageUrl,
   ) {
-    final fullName = UserUtils.constructFullName(
-      firstName: firstName,
-      lastName: lastName,
-    );
     AppModalBottomSheet.show(
       context: context,
       enableDrag: !viewModel.deleteWorkspaceUser.running,
@@ -102,14 +87,14 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
             Row(
               children: [
                 AppAvatar(
-                  hashString: workspaceUserId,
-                  firstName: firstName,
-                  imageUrl: profileImageUrl,
+                  hashString: workspaceUser.id,
+                  firstName: workspaceUser.firstName,
+                  imageUrl: workspaceUser.profileImageUrl,
                 ),
                 const SizedBox(width: 12),
                 Flexible(
                   child: Text(
-                    fullName,
+                    workspaceUser.fullName,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -121,7 +106,7 @@ class WorkspaceUserTileTrailing extends StatelessWidget {
             DeleteWorkspaceUserButton(
               viewModel: viewModel,
               workspaceId: workspaceId,
-              workspaceUserId: workspaceUserId,
+              workspaceUserId: workspaceUser.id,
             ),
           ],
         ),

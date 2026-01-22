@@ -6,12 +6,12 @@ import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/app_select_field/app_select_field.dart';
 import '../../../core/ui/sort_by_button.dart';
 import '../../../core/utils/extensions.dart';
-import '../../view_models/goals_screen_viewmodel.dart';
+import '../../view_models/goals_screen_view_model.dart';
 
 class FilterByStatusButton extends StatelessWidget {
   const FilterByStatusButton({super.key, required this.viewModel});
 
-  final GoalsScreenViewmodel viewModel;
+  final GoalsScreenViewModel viewModel;
 
   void onSubmit(AppSelectFieldOption selectedOption) {
     ObjectiveFilter? updatedFilter;

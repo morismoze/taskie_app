@@ -1,6 +1,7 @@
 import '../../data/services/api/user/models/response/user_response.dart';
+import 'interfaces/user_interface.dart';
 
-class User {
+class User implements BaseUser {
   User({
     required this.id,
     required this.firstName,
@@ -12,12 +13,15 @@ class User {
   });
 
   final String id;
+  @override
   final String firstName;
+  @override
   final String lastName;
   final DateTime createdAt;
   final List<RolePerWorkspace> roles;
 
   /// Email can be null in case of virtual users
+  @override
   final String? email;
 
   /// Profile image URL can be null in case of virtual users

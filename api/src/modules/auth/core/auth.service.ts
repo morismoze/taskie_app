@@ -5,6 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
 import { DateTime } from 'luxon';
 import * as ms from 'ms';
+import { ClsService } from 'nestjs-cls';
+import { CLS_CONTEXT_APP_METADATA_KEY } from 'src/common/helper/constants';
+import { AppMetadataClsContext } from 'src/common/middlewares/app-metadata-context.middleware';
 import { AggregatedConfig } from 'src/config/config.type';
 import { Session } from 'src/modules/session/domain/session.domain';
 import { SessionService } from 'src/modules/session/session.service';
@@ -30,22 +33,17 @@ export class AuthService {
     private readonly configService: ConfigService<AggregatedConfig>,
     private readonly sessionService: SessionService,
     private readonly unitOfWorkService: UnitOfWorkService,
+    private readonly cls: ClsService,
   ) {}
 
   async socialLogin({
     authProvider,
     socialData,
     ipAddress,
-    deviceModel,
-    osVersion,
-    appVersion,
   }: {
     authProvider: AuthProvider;
     socialData: SocialLogin;
     ipAddress: Session['ipAddress'];
-    deviceModel: Session['deviceModel'];
-    osVersion: Session['osVersion'];
-    appVersion: Session['appVersion'];
   }): Promise<LoginResponse> {
     const { user, session } = await this.unitOfWorkService.withTransaction(
       async () => {
@@ -109,6 +107,8 @@ export class AuthService {
           .update(randomStringGenerator())
           .digest('hex');
 
+        const { appVersion, buildNumber, deviceModel, osVersion } =
+          this.cls.get<AppMetadataClsContext>(CLS_CONTEXT_APP_METADATA_KEY);
         const session = await this.sessionService.create({
           userId: user.id,
           hash,
@@ -116,6 +116,7 @@ export class AuthService {
           deviceModel,
           osVersion,
           appVersion,
+          buildNumber,
         });
 
         return { user, session };
@@ -210,7 +211,7 @@ export class AuthService {
   }
 
   logout(data: JwtPayload): Promise<void> {
-    return this.sessionService.deleteById(data.sessionId);
+    return this.sessionService.delete(data.sessionId);
   }
 
   private async getTokensData(data: JwtPayload, hash: Session['hash']) {
