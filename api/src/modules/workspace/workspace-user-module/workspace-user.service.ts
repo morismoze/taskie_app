@@ -244,7 +244,7 @@ export class WorkspaceUserService {
     });
   }
 
-  async countByWorkspace(
+  countByWorkspace(
     workspaceId: string,
     options: {
       role?: WorkspaceUser['workspaceRole'];

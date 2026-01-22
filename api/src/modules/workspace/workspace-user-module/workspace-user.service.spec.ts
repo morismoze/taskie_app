@@ -49,7 +49,7 @@ const createMockRepository = () => ({
   findAllByUserId: jest.fn(),
   findAllByIds: jest.fn(),
   findAllByWorkspaceId: jest.fn(),
-  countManagersInWorkspace: jest.fn(),
+  countByWorkspace: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
   getWorkspaceLeaderboard: jest.fn(),
@@ -393,11 +393,11 @@ describe('WorkspaceUserService', () => {
     });
   });
 
-  describe('countManagers', () => {
-    it('returns the count', async () => {
-      workspaceUserRepository.countManagersInWorkspace.mockResolvedValue(5);
+  describe('countByWorkspace', () => {
+    it('returns the count without additional options', async () => {
+      workspaceUserRepository.countByWorkspace.mockResolvedValue(5);
 
-      const result = await service.countManagers('workspace-1');
+      const result = await service.countByWorkspace('workspace-1');
 
       expect(result).toBe(5);
     });
@@ -442,12 +442,7 @@ describe('WorkspaceUserService', () => {
     it('throws NOT_FOUND if repository returns false', async () => {
       workspaceUserRepository.delete.mockResolvedValue(false);
 
-      await expect(
-        service.delete({
-          workspaceId: 'ws-1',
-          workspaceUserId: 'u-1',
-        }),
-      ).rejects.toMatchObject({
+      await expect(service.delete('u-1')).rejects.toMatchObject({
         status: HttpStatus.NOT_FOUND,
         response: { code: ApiErrorCode.INVALID_PAYLOAD },
       });
@@ -456,12 +451,7 @@ describe('WorkspaceUserService', () => {
     it('resolves successfully if repository returns true', async () => {
       workspaceUserRepository.delete.mockResolvedValue(true);
 
-      await expect(
-        service.delete({
-          workspaceId: 'ws-1',
-          workspaceUserId: 'u-1',
-        }),
-      ).resolves.not.toThrow();
+      await expect(service.delete('u-1')).resolves.not.toThrow();
     });
   });
 
