@@ -20,11 +20,28 @@ jobs:
         uses: actions/checkout@v4
 
       # 3. Minify the code
-      - name: Minify HTML/CSS/JS
-        uses: anthonyftwang/html-minifier-action@v1.0.1
+      # 3a. Setup Node.js env
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          input: "web"
-          output: "web_dist"
+          node-version: "20"
+
+      # 3b. Minification (Native Script)
+      - name: Build and Minify
+        run: |
+          # Copy all files (images, fonts, html...) to web_dist
+          mkdir -p web_dist
+          cp -r web/. web_dist/
+
+          npm install -g html-minifier-terser
+
+          # Find all .html files in web_dist and minify them "in-place"
+          find web_dist -type f -name "*.html" -exec html-minifier-terser \
+            --collapse-whitespace \
+            --remove-comments \
+            --minify-css true \
+            --minify-js true \
+            -o {} {} \;
 
       # 4. SSH Deploy Web Files to VPS
       - name: Deploy Web files to Server via SSH
