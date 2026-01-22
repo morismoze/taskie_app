@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { checkIsVirtualUser } from 'src/common/helper/util';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
@@ -55,6 +55,7 @@ export class WorkspaceService {
   constructor(
     private readonly workspaceRepository: WorkspaceRepository,
     private readonly workspaceUserService: WorkspaceUserService,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly taskService: TaskService,
     private readonly goalService: GoalService,
@@ -1130,10 +1131,7 @@ export class WorkspaceService {
 
     await this.invalidateUserSession({ workspaceId, workspaceUserId });
 
-    await this.workspaceUserService.delete({
-      workspaceId,
-      workspaceUserId,
-    });
+    await this.workspaceUserService.delete(workspaceUserId);
   }
 
   async leaveWorkspace({
@@ -1158,30 +1156,50 @@ export class WorkspaceService {
       );
     }
 
-    // Original implementation was fetching all workspace users
-    // from the given workspaceId and then filtering Managers
-    // and checking if there is only 1 Manager left. This is bad
-    // because there can be large number of workspace user, and
-    // which we are loading into RAM.
-    const noOfManagers =
-      await this.workspaceUserService.countManagers(workspaceId);
-
-    const currentUserIsManager =
-      workspaceUser.workspaceRole === WorkspaceUserRole.MANAGER;
-    const currentUserIsLastManager = noOfManagers === 1;
-
-    if (currentUserIsLastManager && currentUserIsManager) {
-      // This user is the last Manager so we delete the entire workspace which
-      // cascadely deletes all task assignments, workspace users, etc.
-      await this.workspaceRepository.deleteById(workspaceId);
-    } else {
-      // This user is not the last Manager, so just delete that workspace user.
-      // Should not throw NOT_FOUND since we have JWT role guard
-      await this.workspaceUserService.delete({
-        workspaceId,
-        workspaceUserId: workspaceUser.id,
-      });
+    // User is not a Manager, so user can leave freely
+    if (workspaceUser.workspaceRole !== WorkspaceUserRole.MANAGER) {
+      await this.workspaceUserService.delete(workspaceUser.id);
+      return;
     }
+
+    // Check if there are other Managers
+    const otherManagersCount = await this.workspaceUserService.countByWorkspace(
+      workspaceId,
+      {
+        role: WorkspaceUserRole.MANAGER,
+        excludeUserId: userId,
+      },
+    );
+
+    // User is not the only Manager
+    if (otherManagersCount > 0) {
+      // There are other Manager users, so user can leave freely
+      await this.workspaceUserService.delete(workspaceUser.id);
+      return;
+    }
+
+    // User is the only Manager, so we need to check if there are
+    // any other non-virtual users
+    const otherRealUsersCount =
+      await this.workspaceUserService.countByWorkspace(workspaceId, {
+        onlyRealUsers: true,
+        excludeUserId: userId,
+      });
+
+    if (otherRealUsersCount > 0) {
+      // Can't leave the workspace as there are other non-virtual Members
+      throw new ApiHttpException(
+        {
+          code: ApiErrorCode.SOLE_MANAGER_CONFLICT,
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    // Sole Manager + Only Virtual Users left.
+    // Destroy the workspace.
+    // This will cascade delete all other necessary entities.
+    await this.delete(workspaceId);
   }
 
   async updateTask({
@@ -1465,6 +1483,10 @@ export class WorkspaceService {
     );
 
     return response;
+  }
+
+  async delete(id: Workspace['id']): Promise<void> {
+    await this.workspaceRepository.delete(id);
   }
 
   private async checkTaskIsClosed(taskId: string) {

@@ -1,21 +1,21 @@
 import 'package:dio/dio.dart';
 
 import '../../../repositories/auth/auth_state_repository.dart';
-import '../../local/client_info_service.dart';
+import '../../../repositories/client_info/client_info_repository.dart';
 
 enum AuthHeaderTokenType { access, refresh }
 
 class RequestHeadersInterceptor extends Interceptor {
   RequestHeadersInterceptor({
     required AuthStateRepository authStateRepository,
-    required ClientInfoService clientInfoService,
+    required ClientInfoRepository clientInfoRepository,
     AuthHeaderTokenType authHeaderTokenType = AuthHeaderTokenType.access,
   }) : _authStateRepository = authStateRepository,
-       _clientInfoService = clientInfoService,
+       _clientInfoRepository = clientInfoRepository,
        _authHeaderTokenType = authHeaderTokenType;
 
   final AuthStateRepository _authStateRepository;
-  final ClientInfoService _clientInfoService;
+  final ClientInfoRepository _clientInfoRepository;
   final AuthHeaderTokenType _authHeaderTokenType;
 
   @override
@@ -35,13 +35,15 @@ class RequestHeadersInterceptor extends Interceptor {
     }
     options.headers['Authorization'] = 'Bearer $token';
 
-    final deviceModel = _clientInfoService.deviceModel;
-    final deviceOsVersion = _clientInfoService.osVersion;
-    final appVersion = _clientInfoService.appVersion;
+    final deviceModel = _clientInfoRepository.clientInfo.deviceModel;
+    final deviceOsVersion = _clientInfoRepository.clientInfo.osVersion;
+    final appVersion = _clientInfoRepository.clientInfo.appVersion;
+    final buildNumber = _clientInfoRepository.clientInfo.buildNumber;
 
     options.headers['x-device-model'] = deviceModel;
     options.headers['x-os-version'] = deviceOsVersion;
     options.headers['x-app-version'] = appVersion;
+    options.headers['x-build-number'] = buildNumber;
 
     return handler.next(options);
   }

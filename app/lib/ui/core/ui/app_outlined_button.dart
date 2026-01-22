@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../theme/dimens.dart';
+
 class AppOutlinedButton extends StatelessWidget {
   const AppOutlinedButton({
     super.key,
@@ -42,7 +44,9 @@ class AppOutlinedButton extends StatelessWidget {
             const SizedBox(width: 8),
           ],
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(
+              vertical: Dimens.paddingVertical / 2,
+            ),
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall!.copyWith(

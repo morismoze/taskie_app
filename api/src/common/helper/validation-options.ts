@@ -10,6 +10,14 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { AppLogger } from 'src/modules/logger/app-logger';
 
+const formatErrors = (errors: ValidationError[]) => {
+  return errors.map((err) => ({
+    property: err.property,
+    errors: err.constraints,
+    children: err.children?.length ? formatErrors(err.children) : undefined,
+  }));
+};
+
 const getValidationOptions = (
   configService: ConfigService<AggregatedConfig>,
   logger: AppLogger,
@@ -24,7 +32,17 @@ const getValidationOptions = (
   whitelist: true,
   errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {
-    logger.error({ message: errors.toString(), context: 'ValidationPipe' });
+    const formattedErrors = formatErrors(errors);
+    // Logging validation exceptions also on the prod
+    // because we want to know if there is discrepancy
+    // between frontend and backend validation
+    logger.warn(
+      {
+        msg: 'Validation failed',
+        validationErrors: formattedErrors,
+      },
+      'ValidationPipe',
+    );
 
     return new ApiHttpException(
       {

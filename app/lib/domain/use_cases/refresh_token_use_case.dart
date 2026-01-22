@@ -1,6 +1,5 @@
 import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
-import '../../data/repositories/auth/exceptions/refresh_token_failed_exception.dart';
 import '../../utils/command.dart';
 
 class RefreshTokenUseCase {
@@ -33,12 +32,12 @@ class RefreshTokenUseCase {
         case Error():
           await _authStateRepository.setTokens(null);
           _authStateRepository.setAuthenticated(false);
-          return const Result.error(RefreshTokenFailedException());
+          return Result.error(result.error, result.stackTrace);
       }
-    } on Exception catch (_) {
+    } on Exception catch (error, stackTrace) {
       await _authStateRepository.setTokens(null);
       _authStateRepository.setAuthenticated(false);
-      return const Result.error(RefreshTokenFailedException());
+      return Result.error(error, stackTrace);
     }
   }
 }

@@ -17,7 +17,7 @@
         --text-color: #2d3436;
         --bg-color: #f9f9f9;
         --white: #ffffff;
-        --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
       * {
         margin: 0;
@@ -169,6 +169,22 @@
         font-size: 0.9rem;
         background-color: var(--white);
       }
+      .footer-links {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .footer-links a {
+        color: #636e72;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+      }
       @keyframes fadeIn {
         to {
           opacity: 1;
@@ -259,27 +275,33 @@
         </div>
       </div>
     </section>
+
     <footer>
       <div class="container">
         <p>&copy; 2026 Taskie. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="/privacy-policy">Privacy Policy</a>
+          <a href="/terms-and-conditions">Terms and Conditions</a>
+        </div>
       </div>
     </footer>
+
     <script>
       document
-        .getElementById('downloadBtn')
-        .addEventListener('click', function () {
-          alert('Taskie is coming soon to the Google Play Store! Stay tuned.');
+        .getElementById("downloadBtn")
+        .addEventListener("click", function () {
+          alert("Taskie is coming soon to the Google Play Store! Stay tuned.");
         });
       const observerOptions = { threshold: 0.1 };
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
+            entry.target.classList.add("fade-in-up");
             observer.unobserve(entry.target);
           }
         });
       }, observerOptions);
-      document.querySelectorAll('.hidden-card').forEach((card) => {
+      document.querySelectorAll(".hidden-card").forEach((card) => {
         observer.observe(card);
       });
     </script>

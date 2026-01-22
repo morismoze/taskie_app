@@ -6,7 +6,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_text_button.dart';
 import '../../core/ui/app_text_field/app_text_field.dart';
-import '../view_models/create_workspace_user_screen_viewmodel.dart';
+import '../view_models/create_workspace_user_screen_view_model.dart';
 import 'workspace_invite_action_button.dart';
 
 class WorkspaceInviteSection extends StatelessWidget {
@@ -70,10 +70,7 @@ class WorkspaceInviteSection extends StatelessWidget {
 
             if (viewModel.createWorkspaceInviteLink.running ||
                 controller.text.isEmpty) {
-              return ActivityIndicator(
-                radius: 11,
-                color: Theme.of(context).colorScheme.primary,
-              );
+              return const ActivityIndicator(radius: 11);
             }
 
             return Column(
@@ -84,7 +81,7 @@ class WorkspaceInviteSection extends StatelessWidget {
                   // `baseline` "centers" the Row children by
                   // the plane they are "sitting" on.
                   crossAxisAlignment: CrossAxisAlignment.baseline,
-                  // This is neeeded when `baseline`alignment is used
+                  // This is neeeded when `baseline` alignment is used
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Expanded(

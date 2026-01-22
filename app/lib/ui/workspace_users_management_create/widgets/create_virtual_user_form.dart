@@ -5,7 +5,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
-import '../view_models/create_workspace_user_screen_viewmodel.dart';
+import '../view_models/create_workspace_user_screen_view_model.dart';
 
 class CreateVirtualUserForm extends StatefulWidget {
   const CreateVirtualUserForm({super.key, required this.viewModel});
@@ -22,9 +22,27 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   final TextEditingController _lastNameController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+  }
+
+  @override
+  void didUpdateWidget(covariant CreateVirtualUserForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.viewModel.createVirtualUser.removeListener(
+      _onVirtualUserCreateResult,
+    );
+    widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+  }
+
+  @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    widget.viewModel.createVirtualUser.removeListener(
+      _onVirtualUserCreateResult,
+    );
     super.dispose();
   }
 
@@ -92,6 +110,9 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
@@ -128,6 +149,15 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
         return context.localization.workspaceUserLastNameMaxLength;
       default:
         return null;
+    }
+  }
+
+  void _onVirtualUserCreateResult() {
+    if (widget.viewModel.createVirtualUser.completed) {
+      widget.viewModel.createVirtualUser.clearResult();
+      // Clear form
+      _firstNameController.clear();
+      _lastNameController.clear();
     }
   }
 }

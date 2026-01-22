@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../data/services/api/api_response.dart';
 import '../../../data/services/api/exceptions/general_api_exception.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
@@ -13,11 +14,10 @@ import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/role_chip.dart';
 import '../../core/ui/separator.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
 import '../view_models/user_profile_view_model.dart';
 import 'user_profile_button.dart';
 
@@ -66,16 +66,8 @@ class _UserProfileState extends State<UserProfile> {
         final details = widget.viewModel.details;
 
         if (details == null) {
-          return ActivityIndicator(
-            radius: 16,
-            color: Theme.of(builderContext).colorScheme.primary,
-          );
+          return const ActivityIndicator(radius: 16);
         }
-
-        final fullName = UserUtils.constructFullName(
-          firstName: details.firstName,
-          lastName: details.lastName,
-        );
 
         return Padding(
           padding: const EdgeInsets.symmetric(
@@ -98,7 +90,7 @@ class _UserProfileState extends State<UserProfile> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        fullName,
+                        details.fullName,
                         style: Theme.of(builderContext).textTheme.titleLarge!
                             .copyWith(fontWeight: FontWeight.bold, height: 1),
                       ),
@@ -150,7 +142,7 @@ class _UserProfileState extends State<UserProfile> {
 
     if (widget.viewModel.signOut.error) {
       widget.viewModel.signOut.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.signOutError,
       );
@@ -159,7 +151,7 @@ class _UserProfileState extends State<UserProfile> {
 
   void _onAccountDeleteResult() {
     if (widget.viewModel.deleteAccount.completed) {
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.deleteAccountSuccess,
       );
@@ -172,11 +164,11 @@ class _UserProfileState extends State<UserProfile> {
       switch (errorResult.error) {
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.soleManagerConflict:
-          context.pop(); // Close account deletion confirmation dialog
+          Navigator.of(context).pop(); // Close dialog
           _showSoleManagerConflictDialog();
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.tasksAddTaskAssignmentError,
           );
@@ -193,19 +185,16 @@ class _UserProfileState extends State<UserProfile> {
         color: Theme.of(context).colorScheme.error,
         size: 30,
       ),
-      content: context.localization.deleteAccountText.format(
+      content: context.localization.deleteAccountText.toStyledText(
         style: Theme.of(context).textTheme.bodyMedium!,
       ),
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.deleteAccount,
-          onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.deleteAccount.execute(),
-          onCancel: (BuildContext builderContext) => builderContext.pop(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.deleteAccountConfirmButton,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => widget.viewModel.deleteAccount.execute(),
+          onCancel: () => Navigator.of(context).pop(), // Close dialog
+          submitButtonText: context.localization.deleteAccountConfirmButton,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );
@@ -228,7 +217,7 @@ class _UserProfileState extends State<UserProfile> {
       actions: AppFilledButton(
         label: context.localization.misc_ok,
         onPress: () {
-          context.pop(); // Close dialog
+          Navigator.of(context).pop(); // Close dialog
         },
       ),
     );

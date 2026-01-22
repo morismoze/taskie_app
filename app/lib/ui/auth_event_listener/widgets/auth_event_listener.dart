@@ -12,8 +12,8 @@ import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
-import '../../core/ui/app_snackbar.dart';
-import '../view_models/auth_event_listener_viewmodel.dart';
+import '../../core/ui/app_toast.dart';
+import '../view_models/auth_event_listener_view_model.dart';
 
 class AuthEventListener extends StatefulWidget {
   const AuthEventListener({
@@ -122,12 +122,9 @@ class _AuthEventListenerState extends State<AuthEventListener> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleWorkspaceRoleChange,
-          onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.handleWorkspaceRoleChange.execute(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.misc_ok,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => widget.viewModel.handleWorkspaceRoleChange.execute(),
+          submitButtonText: context.localization.misc_ok,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );
@@ -155,12 +152,9 @@ class _AuthEventListenerState extends State<AuthEventListener> {
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleRemovalFromWorkspace,
-          onSubmit: (BuildContext builderContext) =>
-              widget.viewModel.handleRemovalFromWorkspace.execute(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.misc_ok,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => widget.viewModel.handleRemovalFromWorkspace.execute(),
+          submitButtonText: context.localization.misc_ok,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );
@@ -187,13 +181,13 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         return;
       }
       // Close dialog
-      rootNavigatorContext.pop();
+      Navigator.of(rootNavigatorContext).pop();
       rootNavigatorContext.go(Routes.tasks(workspaceId: activeWorkspaceId));
     }
 
     if (widget.viewModel.handleWorkspaceRoleChange.error) {
       widget.viewModel.handleWorkspaceRoleChange.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );
@@ -224,7 +218,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
       }
 
       // Close dialog
-      rootNavigatorContext.pop();
+      Navigator.of(rootNavigatorContext).pop();
       // User could have been on a screen which is allowed only
       // to a higher role, so we navigate back to homepage
       rootNavigatorContext.go(Routes.tasks(workspaceId: workspaceId));
@@ -232,7 +226,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
     if (widget.viewModel.handleRemovalFromWorkspace.error) {
       widget.viewModel.handleRemovalFromWorkspace.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );
@@ -248,7 +242,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
     if (widget.viewModel.signOut.error) {
       widget.viewModel.signOut.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );

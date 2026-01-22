@@ -11,12 +11,12 @@ import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
 import '../../core/ui/app_filled_button.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/separator.dart';
 import '../../core/utils/extensions.dart';
-import '../view_models/join_workspace_screen_viewmodel.dart';
+import '../view_models/join_workspace_screen_view_model.dart';
 import 'workspace_info.dart';
 
 class JoinWorkspaceScreen extends StatefulWidget {
@@ -64,6 +64,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight,
@@ -87,12 +88,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                 .viewModel
                                 .fetchWorkspaceInfoByInviteToken
                                 .running) {
-                              return ActivityIndicator(
-                                radius: 16,
-                                color: Theme.of(
-                                  builderContext,
-                                ).colorScheme.primary,
-                              );
+                              return const ActivityIndicator(radius: 16);
                             }
 
                             if (widget
@@ -174,7 +170,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                         .workspaceJoinViaInviteText(
                                           widget.viewModel.user!.firstName,
                                         )
-                                        .format(
+                                        .toStyledText(
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodyMedium!,
@@ -196,7 +192,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
                                 innerBuilderContext
                                     .localization
                                     .workspaceJoinViaInviteTextConfirm
-                                    .format(
+                                    .toStyledText(
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodyMedium!,
@@ -250,7 +246,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
       switch (errorResult.error) {
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.notFoundWorkspaceInviteToken:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message:
                 context.localization.workspaceCreateJoinViaInviteLinkNotFound,
@@ -260,7 +256,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExpired:
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message: context
                 .localization
@@ -269,7 +265,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           break;
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message:
                 context.localization.workspaceJoinViaInviteLinkExistingUser,
@@ -279,7 +275,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.workspaceCreateJoinViaInviteLinkError,
           );

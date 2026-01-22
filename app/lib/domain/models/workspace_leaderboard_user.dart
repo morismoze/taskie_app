@@ -1,4 +1,6 @@
-class WorkspaceLeaderboardUser {
+import 'interfaces/user_interface.dart';
+
+class WorkspaceLeaderboardUser implements BaseUser {
   WorkspaceLeaderboardUser({
     required this.id, // workspace user ID
     required this.firstName,
@@ -9,11 +11,18 @@ class WorkspaceLeaderboardUser {
   });
 
   final String id;
+  @override
   final String firstName;
+  @override
   final String lastName;
   final int accumulatedPoints;
   final int completedTasks;
   final String? profileImageUrl;
+
+  // Maybe in the future, we will update assignee response to include email
+  // as now we don't need it anywhere on this object
+  @override
+  String? get email => null;
 
   Map<String, dynamic> toMap() => {
     'id': id,

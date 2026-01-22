@@ -2,8 +2,8 @@ import '../../../../data/repositories/auth/auth_id_provider_repository.dart';
 import '../../../../domain/use_cases/sign_in_use_case.dart';
 import '../../../../utils/command.dart';
 
-class SignInViewModel {
-  SignInViewModel({required SignInUseCase signInUseCase})
+class SignInScreenViewModel {
+  SignInScreenViewModel({required SignInUseCase signInUseCase})
     : _signInUseCase = signInUseCase {
     signInWithGoogle = Command0(_signInWithGoogle);
   }

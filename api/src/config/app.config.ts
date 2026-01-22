@@ -31,7 +31,6 @@ class AppEnvironmentVariablesValidator {
     NODE_ENV: Environment,
     APP_NAME: string,
     APP_PORT: number,
-    APP_SERVER_CNAME_URL: string,
     API_PREFIX: string,
   ) {
     this.NODE_ENV = NODE_ENV;

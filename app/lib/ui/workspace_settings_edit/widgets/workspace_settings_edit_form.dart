@@ -66,17 +66,16 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
           const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
+              widget.viewModel,
               widget.viewModel.editWorkspaceDetails,
               _nameController,
               _descriptionController,
             ]),
             builder: (builderContext, _) {
               final isDirty =
-                  _nameController.text != widget.viewModel.details!.name &&
-                      _nameController.text.isNotEmpty ||
-                  _descriptionController.text !=
-                          widget.viewModel.details!.description &&
-                      _descriptionController.text.isNotEmpty;
+                  _nameController.text != widget.viewModel.details!.name ||
+                  _descriptionController.text.nullIfEmpty !=
+                      widget.viewModel.details!.description;
 
               return AppFilledButton(
                 onPress: _onSubmit,
@@ -92,6 +91,9 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final trimmedName = _nameController.text.trim();
       final name = trimmedName.isNotEmpty ? trimmedName : null;

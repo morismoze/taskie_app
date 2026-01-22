@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../domain/constants/rbac.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/colors.dart';
@@ -17,7 +18,6 @@ import '../../core/ui/labeled_data/labeled_data.dart';
 import '../../core/ui/labeled_data/labeled_data_text.dart';
 import '../../core/ui/rbac.dart';
 import '../../core/ui/role_chip.dart';
-import '../../core/utils/user.dart';
 import '../view_models/workspace_user_details_screen_view_model.dart';
 
 class WorkspaceUserDetailsScreen extends StatelessWidget {
@@ -72,6 +72,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                 ],
               ),
               SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 padding: EdgeInsets.symmetric(
                   vertical: Dimens.of(context).paddingScreenVertical,
                   horizontal: Dimens.of(context).paddingScreenHorizontal,
@@ -82,16 +83,8 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                     final details = viewModel.details;
 
                     if (details == null) {
-                      return ActivityIndicator(
-                        radius: 11,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 11);
                     }
-
-                    final fullName = UserUtils.constructFullName(
-                      firstName: details.firstName,
-                      lastName: details.lastName,
-                    );
 
                     return Column(
                       children: [
@@ -112,7 +105,7 @@ class WorkspaceUserDetailsScreen extends StatelessWidget {
                         FractionallySizedBox(
                           widthFactor: 0.8,
                           child: Text(
-                            fullName,
+                            details.fullName,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),

@@ -24,8 +24,10 @@ class TaskAssignees extends StatelessWidget {
     // How much each avatar will overlap with each other
     const overlap = kAppAvatarDefaultSize / 2;
     // Total width
-    final totalWidth =
-        (assignees.length * (kAppAvatarDefaultSize - overlap)) + overlap;
+    final shown = assignees.length > _kShownAvatarsNumbers
+        ? 4
+        : assignees.length; // max 3 + overflow
+    final totalWidth = (shown * (kAppAvatarDefaultSize - overlap)) + overlap;
 
     return SizedBox(
       width: totalWidth,

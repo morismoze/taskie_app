@@ -13,9 +13,9 @@ on:
           - production
           # staging will be added in the future if needed
       confirm_deploy:
-        description: 'Type "yes" to confirm deployment'
+        description: 'Type "deployment" to confirm'
         required: true
-        default: "no"
+        default: ""
 
 env:
   REGISTRY: ghcr.io
@@ -142,7 +142,13 @@ jobs:
             docker rm $CONTAINER_NAME || true
 
             # Start new container
-            # Using --network host for simplicity (DB on localhost)
+            # Using --network host for simplicity (DB on localhost) and this means
+            # that this docker container is not in an isolated network, but it
+            # shared network card with the VPS - this can be dangerous if the public
+            # can access it on the port which NestJS app is running on, but we'va
+            # made sure that Nginx does not listen on that port and also we've
+            # locked out other ports except 22, 443 and 80 on the entire VPS using
+            # UFW firewall.
             echo "🚀 Starting new container..."
             docker run -d \
               --name $CONTAINER_NAME \
@@ -153,5 +159,8 @@ jobs:
 
             # Cleanup - cleans up dangling images to save space
             docker image prune -f
+
+            # PM2 is not needed on the server as we are using Docker, which pretty
+            # much acts as PM2 and also we've set the --restart flag to 'always'
 
             echo "✅ Deployment successful!"

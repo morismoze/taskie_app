@@ -6,6 +6,7 @@ import '../../core/ui/app_icon.dart';
 import '../../core/ui/error_prompt.dart';
 import '../view_models/app_startup_view_model.dart';
 
+/// This is technical init
 class AppStartup extends StatefulWidget {
   const AppStartup({super.key, required this.viewModel, required this.child});
 

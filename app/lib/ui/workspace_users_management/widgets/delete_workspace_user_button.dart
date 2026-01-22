@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_text_button.dart';
-import '../view_models/workspace_users_management_screen_viewmodel.dart';
+import '../view_models/workspace_users_management_screen_view_model.dart';
 
 class DeleteWorkspaceUserButton extends StatelessWidget {
   const DeleteWorkspaceUserButton({
@@ -47,14 +46,12 @@ class DeleteWorkspaceUserButton extends StatelessWidget {
       actions: [
         ActionButtonBar.withCommand(
           command: viewModel.deleteWorkspaceUser,
-          onSubmit: (_) =>
+          onSubmit: () =>
               viewModel.deleteWorkspaceUser.execute(workspaceUserId),
-          onCancel: (BuildContext builderContext) => builderContext.pop(),
-          submitButtonText: (BuildContext builderContext) => builderContext
-              .localization
-              .workspaceUsersManagementDeleteUserModalCta,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onCancel: () => Navigator.of(context).pop(), // Close dialog
+          submitButtonText:
+              context.localization.workspaceUsersManagementDeleteUserModalCta,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );

@@ -12,7 +12,7 @@ import '../../../core/ui/app_text_button.dart';
 import '../../../core/ui/card_container.dart';
 import '../../../core/ui/new_objective_badge.dart';
 import '../../../core/ui/rbac.dart';
-import '../../view_models/tasks_screen_viewmodel.dart';
+import '../../view_models/tasks_screen_view_model.dart';
 import 'assignees.dart';
 import 'due_date.dart';
 import 'reward_points.dart';

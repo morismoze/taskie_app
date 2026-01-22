@@ -31,6 +31,14 @@ export class SessionEntity extends RootBaseEntity {
   @Column({ name: 'app_version', type: 'varchar', length: 255, nullable: true })
   appVersion!: string | null;
 
+  @Column({
+    name: 'build_number',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  buildNumber!: string | null;
+
   @Column({ name: 'access_token_version', type: 'int', default: 0 })
   accessTokenVersion!: number;
 }

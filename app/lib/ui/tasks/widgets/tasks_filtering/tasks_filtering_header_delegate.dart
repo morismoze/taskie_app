@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../view_models/tasks_screen_viewmodel.dart';
+import '../../view_models/tasks_screen_view_model.dart';
 import 'tasks_filtering_header.dart';
 
 class TasksFilteringHeaderDelegate extends SliverPersistentHeaderDelegate {

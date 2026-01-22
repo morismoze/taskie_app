@@ -5,7 +5,7 @@ import '../../core/theme/colors.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/preferences_screen_viewmodel.dart';
+import '../view_models/preferences_screen_view_model.dart';
 import 'sections/localization_section/localization_section.dart';
 import 'sections/theme_section/theme_section.dart';
 
@@ -29,6 +29,9 @@ class PreferencesScreen extends StatelessWidget {
             HeaderBar(title: context.localization.preferencesLabel),
             Expanded(
               child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: ClampingScrollPhysics(),
+                ),
                 padding: const EdgeInsets.symmetric(
                   vertical: Dimens.paddingVertical,
                 ),

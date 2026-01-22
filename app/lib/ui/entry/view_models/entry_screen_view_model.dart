@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
 import '../../../utils/command.dart';
@@ -76,5 +78,17 @@ class EntryScreenViewModel {
           return Result.error(resultSetActiveWorkspaceId.error);
       }
     }
+  }
+
+  /// We check if user is part of this workspace ID
+  bool checkRouteWorkspaceId(String workspaceId) {
+    if (_workspaceRepository.workspaces == null) {
+      return false;
+    }
+
+    return _workspaceRepository.workspaces!.firstWhereOrNull(
+          (workspace) => workspace.id == workspaceId,
+        ) !=
+        null;
   }
 }

@@ -19,6 +19,7 @@ class GoalsGuideScreen extends StatelessWidget {
               HeaderBar(title: context.localization.goalsGuideMainTitle),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: Dimens.of(context).paddingScreenVertical,

@@ -24,8 +24,17 @@ class AppStartupViewModel {
     await _authStateRepository.loadAuthenticatedState();
 
     // Init client info
-    await _clientInfoRepository.initializeClientInfo();
+    final clientInfoInitResult = await _clientInfoRepository
+        .initializeClientInfo();
 
-    return const Result.ok(null);
+    switch (clientInfoInitResult) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        return Result.error(
+          clientInfoInitResult.error,
+          clientInfoInitResult.stackTrace,
+        );
+    }
   }
 }

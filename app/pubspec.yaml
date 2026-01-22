@@ -34,6 +34,8 @@ dependencies:
   package_info_plus: ^9.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  url_launcher: ^6.3.2
+  toastification: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -60,4 +62,6 @@ scripts:
   build_runner:production: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.production"
   generate_localization: flutter gen-l10n
   run:development: flutter run --flavor development --target lib/main.dart
+  run:development:profile: flutter run --flavor development --target lib/main.dart --profile
   run:production: flutter run --flavor production --target lib/main_production.dart
+  run:production:profile: flutter run --flavor production --target lib/main_production.dart --profile

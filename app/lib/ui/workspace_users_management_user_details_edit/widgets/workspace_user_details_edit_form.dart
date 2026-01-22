@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
@@ -10,7 +11,6 @@ import '../../core/ui/app_select_field/app_select_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/info_icon_with_tooltip.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
 import '../view_models/workspace_user_details_edit_screen_view_model.dart';
 
 class WorkspaceUserDetailsEditForm extends StatefulWidget {
@@ -41,10 +41,14 @@ class _WorkspaceUserDetailsEditFormState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _selectedRoleNotifier.value = AppSelectFieldOption(
-      label: widget.viewModel.details!.role.l10n(context),
-      value: widget.viewModel.details!.role,
-    );
+
+    // Do this only on init
+    if (_selectedRoleNotifier.value == null) {
+      _selectedRoleNotifier.value = AppSelectFieldOption(
+        label: widget.viewModel.details!.role.l10n(context),
+        value: widget.viewModel.details!.role,
+      );
+    }
   }
 
   @override
@@ -76,9 +80,7 @@ class _WorkspaceUserDetailsEditFormState
       ),
     ]).toList();
     // Virtual users don't have emails, and real users must have emails.
-    final isVirtualUser = UserUtils.checkIsVirtualUser(
-      email: widget.viewModel.details!.email,
-    );
+    final isVirtualUser = widget.viewModel.details!.isVirtual;
 
     return Form(
       key: _formKey,
@@ -150,6 +152,7 @@ class _WorkspaceUserDetailsEditFormState
           const SizedBox(height: Dimens.paddingVertical / 1.2),
           ListenableBuilder(
             listenable: Listenable.merge([
+              widget.viewModel,
               widget.viewModel.editWorkspaceUserDetails,
               _firstNameController,
               _lastNameController,
@@ -158,11 +161,9 @@ class _WorkspaceUserDetailsEditFormState
             builder: (builderContext, _) {
               final isDirty = isVirtualUser
                   ? _firstNameController.text !=
-                                widget.viewModel.details!.firstName &&
-                            _firstNameController.text.isNotEmpty ||
+                            widget.viewModel.details!.firstName ||
                         _lastNameController.text !=
-                                widget.viewModel.details!.lastName &&
-                            _lastNameController.text.isNotEmpty
+                            widget.viewModel.details!.lastName
                   : _selectedRoleNotifier.value != null &&
                         _selectedRoleNotifier.value!.value !=
                             widget.viewModel.details!.role;
@@ -181,6 +182,9 @@ class _WorkspaceUserDetailsEditFormState
   }
 
   void _onSubmit() {
+    // Unfocus the last field
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();

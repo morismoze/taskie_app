@@ -55,8 +55,7 @@ export class UserController {
   @ApiNoContentResponse()
   @ApiConflictResponse({
     description:
-      'Cannot delete account. User is the sole manager of one or more workspaces.\n\n' +
-      'Resolve conflicts by fetching GET /workspaces/me/sole-ownership.',
+      'Cannot delete account. User is the sole manager of one or more workspaces containing other non-virtual members.',
   })
   deleteMe(@Req() request: RequestWithUser): Promise<void> {
     return this.userService.delete(request.user.sub);

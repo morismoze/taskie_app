@@ -7,11 +7,11 @@ import '../../../routing/routes.dart';
 import '../../../utils/command.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../../core/ui/separator.dart';
-import '../view_models/create_workspace_screen_viewmodel.dart';
+import '../view_models/create_workspace_screen_view_model.dart';
 import 'create_workspace_form.dart';
 import 'join_workspace_via_invite_form.dart';
 
@@ -68,6 +68,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
               HeaderBar(title: context.localization.workspaceCreate),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     vertical: Dimens.of(context).paddingScreenVertical,
                     horizontal: Dimens.of(context).paddingScreenHorizontal,
@@ -95,7 +96,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
       final newWorkspaceId =
           (widget.viewModel.createWorkspace.result as Ok<String>).value;
       widget.viewModel.createWorkspace.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.workspaceCreationSuccess,
       );
@@ -104,7 +105,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
 
     if (widget.viewModel.createWorkspace.error) {
       widget.viewModel.createWorkspace.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.workspaceCreateError,
       );
@@ -128,7 +129,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
       switch (errorResult.error) {
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.notFoundWorkspaceInviteToken:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message:
                 context.localization.workspaceCreateJoinViaInviteLinkNotFound,
@@ -138,7 +139,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExpired:
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message: context
                 .localization
@@ -147,7 +148,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
           break;
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
-          AppSnackbar.showInfo(
+          AppToast.showInfo(
             context: context,
             message: context
                 .localization
@@ -155,7 +156,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
           );
           break;
         default:
-          AppSnackbar.showError(
+          AppToast.showError(
             context: context,
             message: context.localization.workspaceCreateJoinViaInviteLinkError,
           );

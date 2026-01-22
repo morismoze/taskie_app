@@ -4,15 +4,16 @@ import '../../../data/services/api/paginable.dart';
 import '../../../data/services/api/user/models/response/user_response.dart';
 import '../../../data/services/api/workspace/progress_status.dart';
 import '../l10n/l10n_extensions.dart';
+import '../theme/colors.dart';
 
-extension StringExtension on String {
+extension StringExtensions on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 
   String? get nullIfEmpty => isEmpty ? null : this;
 
-  Widget format({required TextStyle style, TextAlign? textAlign}) {
+  Widget toStyledText({required TextStyle style, TextAlign? textAlign}) {
     // ** is parsed as bold
     // __ (double underscore) is parsed as underline
     // * is parsed as italic
@@ -73,7 +74,7 @@ extension StringExtension on String {
   }
 }
 
-extension WorkspaceRoleLocalization on WorkspaceRole {
+extension WorkspaceRoleLocalizationX on WorkspaceRole {
   String l10n(BuildContext context) {
     switch (this) {
       case WorkspaceRole.manager:
@@ -84,7 +85,7 @@ extension WorkspaceRoleLocalization on WorkspaceRole {
   }
 }
 
-extension ProgressStatusLocalization on ProgressStatus {
+extension ProgressStatusLocalizationX on ProgressStatus {
   String l10n(BuildContext context) => switch (this) {
     ProgressStatus.inProgress => context.localization.progressStatusInProgress,
     ProgressStatus.completed => context.localization.progressStatusCompleted,
@@ -96,7 +97,39 @@ extension ProgressStatusLocalization on ProgressStatus {
   };
 }
 
-extension SortByLocalisation on SortBy {
+extension ProgressStatusColorsX on ProgressStatus {
+  ({Color textColor, Color backgroundColor}) get colors {
+    switch (this) {
+      case ProgressStatus.inProgress:
+        return (
+          textColor: AppColors.orange1,
+          backgroundColor: AppColors.orange1.lighten(),
+        );
+      case ProgressStatus.completed:
+        return (
+          textColor: AppColors.green1,
+          backgroundColor: AppColors.green1.lighten(),
+        );
+      case ProgressStatus.completedAsStale:
+        return (
+          textColor: AppColors.purple1,
+          backgroundColor: AppColors.purple1.lighten(),
+        );
+      case ProgressStatus.notCompleted:
+        return (
+          textColor: AppColors.red1,
+          backgroundColor: AppColors.red1.lighten(),
+        );
+      case ProgressStatus.closed:
+        return (
+          textColor: AppColors.grey2,
+          backgroundColor: AppColors.grey2.lighten(),
+        );
+    }
+  }
+}
+
+extension SortByLocalisationX on SortBy {
   String l10n(BuildContext context) {
     switch (this) {
       case SortBy.newestFirst:
@@ -107,7 +140,7 @@ extension SortByLocalisation on SortBy {
   }
 }
 
-extension ColorBrightness on Color {
+extension ColorBrightnessX on Color {
   Color lighten([double amount = 0.85]) {
     assert(amount >= 0 && amount <= 1);
     return Color.lerp(this, Colors.white, amount)!;

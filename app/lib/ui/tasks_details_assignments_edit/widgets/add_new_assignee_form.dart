@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
@@ -8,7 +9,6 @@ import '../../core/ui/app_avatar.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_select_field/app_select_field.dart';
 import '../../core/ui/app_select_field/app_select_form_field.dart';
-import '../../core/utils/user.dart';
 import '../view_models/task_assignments_edit_screen_view_model.dart';
 
 class AddNewAssigneeForm extends StatefulWidget {
@@ -47,12 +47,8 @@ class _AddNewAssigneeFormState extends State<AddNewAssigneeForm> {
 
   void _updateOptions() {
     options = widget.viewModel.workspaceMembersNotAssigned.map((user) {
-      final fullName = UserUtils.constructFullName(
-        firstName: user.firstName,
-        lastName: user.lastName,
-      );
       return AppSelectFieldOption<WorkspaceUser>(
-        label: fullName,
+        label: user.fullName,
         value: user,
         leading: AppAvatar(
           hashString: user.id,

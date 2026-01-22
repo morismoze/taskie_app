@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n_extensions.dart';
 import '../../../core/ui/action_button_bar.dart';
 import '../../../core/ui/app_dialog.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../../../core/utils/extensions.dart';
-import '../view_models/app_drawer_viewmodel.dart';
+import '../view_models/app_drawer_view_model.dart';
 
 class WorkspaceLeaveButton extends StatelessWidget {
   const WorkspaceLeaveButton({
@@ -38,19 +37,19 @@ class WorkspaceLeaveButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.error,
         size: 30,
       ),
-      content: context.localization.appDrawerLeaveWorkspaceModalMessage.format(
-        style: Theme.of(context).textTheme.bodyMedium!,
-        textAlign: TextAlign.center,
-      ),
+      content: context.localization.appDrawerLeaveWorkspaceModalMessage
+          .toStyledText(
+            style: Theme.of(context).textTheme.bodyMedium!,
+            textAlign: TextAlign.center,
+          ),
       actions: [
         ActionButtonBar.withCommand(
           command: viewModel.leaveWorkspace,
-          onSubmit: (_) => viewModel.leaveWorkspace.execute(workspaceId),
-          onCancel: (BuildContext builderContext) => builderContext.pop(),
-          submitButtonText: (BuildContext builderContext) =>
-              builderContext.localization.appDrawerLeaveWorkspaceModalCta,
-          submitButtonColor: (BuildContext builderContext) =>
-              Theme.of(builderContext).colorScheme.error,
+          onSubmit: () => viewModel.leaveWorkspace.execute(workspaceId),
+          onCancel: () => Navigator.of(context).pop(), // Close dialog,
+          submitButtonText:
+              context.localization.appDrawerLeaveWorkspaceModalCta,
+          submitButtonColor: Theme.of(context).colorScheme.error,
         ),
       ],
     );

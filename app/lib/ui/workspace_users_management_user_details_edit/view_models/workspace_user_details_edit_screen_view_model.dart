@@ -79,6 +79,12 @@ class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok():
+        _details = _details!.copyWith(
+          firstName: firstName,
+          lastName: lastName,
+          role: role,
+        );
+        notifyListeners();
         return const Result.ok(null);
       case Error():
         return result;

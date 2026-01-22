@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/constants/objective_rules.dart';
 import '../../../domain/constants/validation_rules.dart';
+import '../../../domain/models/interfaces/user_interface.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
@@ -14,8 +15,7 @@ import '../../core/ui/app_slider_field/app_slider_form_field.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
 import '../../core/ui/separator.dart';
 import '../../core/utils/extensions.dart';
-import '../../core/utils/user.dart';
-import '../view_models/create_task_screen_viewmodel.dart';
+import '../view_models/create_task_screen_view_model.dart';
 
 class CreateTaskForm extends StatefulWidget {
   const CreateTaskForm({super.key, required this.viewModel});
@@ -78,12 +78,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   @override
   Widget build(BuildContext context) {
     final options = widget.viewModel.workspaceMembers.map((user) {
-      final fullName = UserUtils.constructFullName(
-        firstName: user.firstName,
-        lastName: user.lastName,
-      );
       return AppSelectFieldOption<WorkspaceUser>(
-        label: fullName,
+        label: user.fullName,
         value: user,
         leading: AppAvatar(
           hashString: user.id,

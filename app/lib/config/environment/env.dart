@@ -16,8 +16,11 @@ abstract final class Env {
   @EnviedField(varName: 'ENV')
   static final Environment env = _Env.env;
 
-  @EnviedField(varName: 'BACKEND_URL')
-  static final String backendUrl = _Env.backendUrl;
+  @EnviedField(varName: 'WEBSITE_BASE_URL')
+  static final String websiteBaseUrl = _Env.websiteBaseUrl;
+
+  @EnviedField(varName: 'BACKEND_BASE_URL')
+  static final String backendBaseUrl = _Env.backendBaseUrl;
 
   @EnviedField(varName: 'DEEPLINK_BASE_URL')
   static final String deepLinkBaseUrl = _Env.deepLinkBaseUrl;

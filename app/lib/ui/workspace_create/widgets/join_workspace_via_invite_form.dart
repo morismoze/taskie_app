@@ -7,7 +7,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/app_filled_button.dart';
 import '../../core/ui/app_text_field/app_text_form_field.dart';
-import '../view_models/create_workspace_screen_viewmodel.dart';
+import '../view_models/create_workspace_screen_view_model.dart';
 
 class JoinWorkspaceViaInviteForm extends StatefulWidget {
   const JoinWorkspaceViaInviteForm({super.key, required this.viewModel});
@@ -46,26 +46,28 @@ class _JoinWorkspaceViaInviteFormState
             context,
           ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
         ),
-        Text.rich(
-          TextSpan(
-            text: '${context.localization.misc_note}: ',
-            style: Theme.of(context).textTheme.labelMedium!.copyWith(
-              fontSize: 13,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold,
-            ),
-            children: [
-              TextSpan(
-                text: context.localization.workspaceCreateJoinViaInviteLinkNote(
-                  inviteLinkExample,
-                ),
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.normal,
-                ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text.rich(
+            TextSpan(
+              text: '${context.localization.misc_note}: ',
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold,
               ),
-            ],
+              children: [
+                TextSpan(
+                  text: context.localization
+                      .workspaceCreateJoinViaInviteLinkNote(inviteLinkExample),
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Form(

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { GoalModule } from 'src/modules/goal/goal.module';
 import { SessionModule } from 'src/modules/session/session.module';
 import { TaskAssignmentModule } from 'src/modules/task/task-assignment/task-assignment.module';
@@ -17,7 +17,8 @@ import { WorkspaceService } from './workspace.service';
   imports: [
     WorkspacePersistenceModule,
     WorkspaceUserModule,
-    UserModule,
+    // Mirroring WorkspaceModule import in the UserModule
+    forwardRef(() => UserModule),
     GoalModule,
     TaskModule,
     TaskAssignmentModule,
@@ -27,5 +28,6 @@ import { WorkspaceService } from './workspace.service';
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService, WorkspaceRoleGuard, WorkspaceMembershipGuard],
+  exports: [WorkspaceService],
 })
 export class WorkspaceModule {}

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../theme/dimens.dart';
 import '../action_button_bar.dart';
@@ -64,12 +63,12 @@ class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
   }
 
   void _onCancel() {
-    context.pop();
+    Navigator.of(context).pop(); // Close bottom sheet
   }
 
   void _onSubmit() {
     widget.onSubmit(_selectedOptions);
-    context.pop();
+    Navigator.of(context).pop(); // Close bottom sheet
   }
 
   @override

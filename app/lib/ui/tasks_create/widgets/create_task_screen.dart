@@ -7,13 +7,13 @@ import '../../../routing/routes.dart';
 import '../../core/l10n/l10n_extensions.dart';
 import '../../core/theme/dimens.dart';
 import '../../core/ui/activity_indicator.dart';
-import '../../core/ui/app_snackbar.dart';
+import '../../core/ui/app_toast.dart';
 import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/empty_data_placeholder.dart';
 import '../../core/ui/error_prompt.dart';
 import '../../core/ui/header_bar/app_header_action_button.dart';
 import '../../core/ui/header_bar/header_bar.dart';
-import '../view_models/create_task_screen_viewmodel.dart';
+import '../view_models/create_task_screen_view_model.dart';
 import 'create_task_form.dart';
 
 class CreateTaskScreen extends StatefulWidget {
@@ -88,10 +88,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                   listenable: widget.viewModel.loadWorkspaceMembers,
                   builder: (builderContext, child) {
                     if (widget.viewModel.loadWorkspaceMembers.running) {
-                      return ActivityIndicator(
-                        radius: 16,
-                        color: Theme.of(builderContext).colorScheme.primary,
-                      );
+                      return const ActivityIndicator(radius: 16);
                     }
 
                     if (widget.viewModel.loadWorkspaceMembers.error) {
@@ -133,6 +130,7 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
                       }
 
                       return SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: Dimens.of(context).paddingScreenVertical,
                         ),
@@ -152,16 +150,16 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   void _onResult() {
     if (widget.viewModel.createTask.completed) {
       widget.viewModel.createTask.clearResult();
-      AppSnackbar.showSuccess(
+      AppToast.showSuccess(
         context: context,
         message: context.localization.createNewTaskSuccess,
       );
-      context.pop();
+      context.pop(); // Go back to previous page
     }
 
     if (widget.viewModel.createTask.error) {
       widget.viewModel.createTask.clearResult();
-      AppSnackbar.showError(
+      AppToast.showError(
         context: context,
         message: context.localization.createNewTaskError,
       );
