@@ -122,7 +122,8 @@ jobs:
         with:
           ruby-version: "3.3"
           bundler-cache: true
-          working-directory: android # Gemfile location
+          # Gemfile location - "uses" steps look at the repository root
+          working-directory: app/android
 
       # 15. Upload Artifact (Backup)
       # Save the build to Github as well for backup before trying to upload to GP
@@ -141,6 +142,6 @@ jobs:
         with:
           # Inside platform :android block execute commands inside lane deploy_internal
           lane: 'android deploy track:${{ (inputs.target_env == "Production") && "production" || "internal" }}'
-          subdirectory: "android"
+          subdirectory: "app/android" # "uses" steps look at the repository root
         env:
           AAB_PATH: "app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"
