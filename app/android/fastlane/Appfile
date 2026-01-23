@@ -1,0 +1,2 @@
+json_key_file("api-key.json") # Github Action creates this dynamically in android older
+package_name("com.taskie.taskie")

@@ -1,0 +1,26 @@
+default_platform(:android)
+
+platform :android do
+  desc "Upload to Google Play with specific track"
+  
+  # Lane accepts 'options' argument from outside (Github Action)
+  lane :deploy do |options|
+    
+    track = options[:track] || 'internal'
+    
+    UI.message "🚀 Uploading to Google Play Track: #{track}"
+
+    upload_to_play_store(
+      track: track,
+      aab: ENV['AAB_PATH'], # This env var is defined in the Github Action
+      
+      # We want to do these manually
+      skip_upload_metadata: true, 
+      skip_upload_images: true, 
+      skip_upload_screenshots: true,
+      
+      # Put to false to test (dry run)
+      validate_only: false
+    )
+  end
+end

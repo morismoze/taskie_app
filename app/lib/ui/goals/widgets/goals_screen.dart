@@ -65,11 +65,6 @@ class _GoalssScreenState extends State<GoalsScreen> {
                   widget.viewModel,
                 ]),
                 builder: (builderContext, _) {
-                  // Show loader only on initial load (goals are null)
-                  if (widget.viewModel.goals == null) {
-                    return const ActivityIndicator(radius: 16);
-                  }
-
                   // Show error prompt only on initial load (goals are null)
                   if (widget.viewModel.loadGoals.error &&
                       widget.viewModel.goals == null) {
@@ -82,6 +77,11 @@ class _GoalssScreenState extends State<GoalsScreen> {
                             widget.viewModel.loadGoals.execute((null, true)),
                       ),
                     );
+                  }
+
+                  // Show loader only on initial load (goals are null)
+                  if (widget.viewModel.goals == null) {
+                    return const ActivityIndicator(radius: 16);
                   }
 
                   return ObjectivesListView(
