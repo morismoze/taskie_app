@@ -112,6 +112,7 @@ GoRouter router({
   navigatorKey: rootNavigatorKey,
   errorPageBuilder: (context, state) {
     return CustomTransitionPage(
+      key: state.pageKey,
       transitionDuration: const Duration(milliseconds: 250),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return SharedAxisTransition(
@@ -154,6 +155,7 @@ GoRouter router({
             final inviteToken = state.pathParameters['inviteToken']!;
 
             return CustomTransitionPage(
+              key: state.pageKey,
               transitionDuration: const Duration(milliseconds: 250),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -182,6 +184,7 @@ GoRouter router({
           path: Routes.workspaceCreateInitialRelative,
           pageBuilder: (context, state) {
             return CustomTransitionPage(
+              key: state.pageKey,
               transitionDuration: const Duration(milliseconds: 250),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -231,6 +234,7 @@ GoRouter router({
           path: Routes.createRelative,
           pageBuilder: (context, state) {
             return CustomTransitionPage(
+              key: state.pageKey,
               transitionDuration: const Duration(milliseconds: 250),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -274,27 +278,26 @@ GoRouter router({
                   providers: [
                     ChangeNotifierProvider(
                       key: ValueKey('bottom_nav_bar_$workspaceId'),
-                      create: (notifierContext) =>
-                          AppBottomNavigationBarViewModel(
-                            workspaceId: workspaceId,
-                            userRepository: notifierContext.read(),
-                            rbacService: notifierContext.read(),
-                          ),
+                      create: (context) => AppBottomNavigationBarViewModel(
+                        workspaceId: workspaceId,
+                        userRepository: context.read(),
+                        rbacService: context.read(),
+                      ),
                     ),
                     ChangeNotifierProvider(
                       key: ValueKey('app_drawer_$workspaceId'),
-                      create: (notifierContext) => AppDrawerViewModel(
+                      create: (context) => AppDrawerViewModel(
                         workspaceId: workspaceId,
-                        workspaceRepository: notifierContext.read(),
+                        workspaceRepository: context.read(),
                         userRepository: context.read(),
                         clientInfoRepository: context.read(),
-                        refreshTokenUseCase: notifierContext.read(),
-                        activeWorkspaceChangeUseCase: notifierContext.read(),
+                        refreshTokenUseCase: context.read(),
+                        activeWorkspaceChangeUseCase: context.read(),
                       ),
                     ),
                     ChangeNotifierProvider(
                       key: ValueKey('user_profile_$workspaceId'),
-                      create: (notifierContext) => UserProfileViewModel(
+                      create: (context) => UserProfileViewModel(
                         workspaceId: workspaceId,
                         userRepository: context.read(),
                         signOutUseCase: context.read(),
@@ -318,8 +321,12 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        // Reset key is not needed as we always land on Tasks screen
+                        // when changing workspace and under different /:workspaceId
+                        // so it will reset automatically
 
                         return NoTransitionPage(
+                          key: state.pageKey,
                           child: TasksScreen(
                             viewModel: TasksScreenViewModel(
                               workspaceId: workspaceId,
@@ -339,6 +346,7 @@ GoRouter router({
                                 state.pathParameters['workspaceId']!;
 
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 400,
                               ),
@@ -389,6 +397,7 @@ GoRouter router({
                           parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 400,
                               ),
@@ -420,6 +429,7 @@ GoRouter router({
                             final taskId = state.pathParameters['taskId']!;
 
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 250,
                               ),
@@ -438,11 +448,18 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: TaskDetailsScreen(
-                                viewModel: TaskDetailsScreenViewModel(
+                              child: ChangeNotifierProvider(
+                                create: (context) => TaskDetailsScreenViewModel(
                                   workspaceId: workspaceId,
                                   taskId: taskId,
                                   workspaceTaskRepository: context.read(),
+                                ),
+                                child: Builder(
+                                  builder: (context) {
+                                    return TaskDetailsScreen(
+                                      viewModel: context.read(),
+                                    );
+                                  },
                                 ),
                               ),
                             );
@@ -457,6 +474,7 @@ GoRouter router({
                                 final taskId = state.pathParameters['taskId']!;
 
                                 return CustomTransitionPage(
+                                  key: state.pageKey,
                                   transitionDuration: const Duration(
                                     milliseconds: 400,
                                   ),
@@ -497,6 +515,7 @@ GoRouter router({
                                 final taskId = state.pathParameters['taskId']!;
 
                                 return CustomTransitionPage(
+                                  key: state.pageKey,
                                   transitionDuration: const Duration(
                                     milliseconds: 400,
                                   ),
@@ -544,6 +563,7 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        // This comes from AppBottomNavigationBar
                         final resetKey = state.extra;
 
                         return NoTransitionPage(
@@ -567,6 +587,7 @@ GoRouter router({
                                 state.pathParameters['workspaceId']!;
 
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 400,
                               ),
@@ -617,6 +638,7 @@ GoRouter router({
                           parentNavigatorKey: rootNavigatorKey,
                           pageBuilder: (context, state) {
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 400,
                               ),
@@ -648,6 +670,7 @@ GoRouter router({
                             final goalId = state.pathParameters['goalId']!;
 
                             return CustomTransitionPage(
+                              key: state.pageKey,
                               transitionDuration: const Duration(
                                 milliseconds: 250,
                               ),
@@ -666,11 +689,18 @@ GoRouter router({
                                       child: child,
                                     );
                                   },
-                              child: GoalDetailsScreen(
-                                viewModel: GoalDetailsScreenViewModel(
+                              child: ChangeNotifierProvider(
+                                create: (context) => GoalDetailsScreenViewModel(
                                   workspaceId: workspaceId,
                                   goalId: goalId,
                                   workspaceGoalRepository: context.read(),
+                                ),
+                                child: Builder(
+                                  builder: (context) {
+                                    return GoalDetailsScreen(
+                                      viewModel: context.read(),
+                                    );
+                                  },
                                 ),
                               ),
                             );
@@ -685,6 +715,7 @@ GoRouter router({
                                 final goalId = state.pathParameters['goalId']!;
 
                                 return CustomTransitionPage(
+                                  key: state.pageKey,
                                   transitionDuration: const Duration(
                                     milliseconds: 400,
                                   ),
@@ -729,6 +760,7 @@ GoRouter router({
                       pageBuilder: (context, state) {
                         final workspaceId =
                             state.pathParameters['workspaceId']!;
+                        // This comes from AppBottomNavigationBar
                         final resetKey = state.extra;
 
                         return NoTransitionPage(
@@ -752,6 +784,7 @@ GoRouter router({
                 final workspaceId = state.pathParameters['workspaceId']!;
 
                 return CustomTransitionPage(
+                  key: state.pageKey,
                   transitionDuration: const Duration(milliseconds: 250),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
@@ -762,11 +795,19 @@ GoRouter router({
                           child: child,
                         );
                       },
-                  child: WorkspaceUsersManagementScreen(
-                    viewModel: WorkspaceUsersManagementScreenViewModel(
-                      workspaceId: workspaceId,
-                      userRepository: context.read(),
-                      workspaceUserRepository: context.read(),
+                  child: ChangeNotifierProvider(
+                    create: (context) =>
+                        WorkspaceUsersManagementScreenViewModel(
+                          workspaceId: workspaceId,
+                          userRepository: context.read(),
+                          workspaceUserRepository: context.read(),
+                        ),
+                    child: Builder(
+                      builder: (context) {
+                        return WorkspaceUsersManagementScreen(
+                          viewModel: context.read(),
+                        );
+                      },
                     ),
                   ),
                 );
@@ -782,6 +823,7 @@ GoRouter router({
                     // land on this route, so the repository can check if the cached
                     // workspace invite is expired.
                     return CustomTransitionPage(
+                      key: state.pageKey,
                       transitionDuration: const Duration(milliseconds: 400),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
@@ -809,6 +851,7 @@ GoRouter router({
                   path: Routes.guideRelative,
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
+                      key: state.pageKey,
                       transitionDuration: const Duration(milliseconds: 400),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
@@ -838,6 +881,7 @@ GoRouter router({
                     // data, and we are not listening to entire workspace user repository
                     // `users` listenable value on this route, as that would be unnecessary.
                     return CustomTransitionPage(
+                      key: state.pageKey,
                       transitionDuration: const Duration(milliseconds: 250),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
@@ -848,12 +892,20 @@ GoRouter router({
                               child: child,
                             );
                           },
-                      child: WorkspaceUserDetailsScreen(
-                        viewModel: WorkspaceUserDetailsScreenViewModel(
-                          workspaceId: workspaceId,
-                          workspaceUserId: workspaceUserId,
-                          userRepository: context.read(),
-                          workspaceUserRepository: context.read(),
+                      child: ChangeNotifierProvider(
+                        create: (context) =>
+                            WorkspaceUserDetailsScreenViewModel(
+                              workspaceId: workspaceId,
+                              workspaceUserId: workspaceUserId,
+                              userRepository: context.read(),
+                              workspaceUserRepository: context.read(),
+                            ),
+                        child: Builder(
+                          builder: (context) {
+                            return WorkspaceUserDetailsScreen(
+                              viewModel: context.read(),
+                            );
+                          },
                         ),
                       ),
                     );
@@ -868,6 +920,7 @@ GoRouter router({
                             state.pathParameters['workspaceUserId']!;
 
                         return CustomTransitionPage(
+                          key: state.pageKey,
                           transitionDuration: const Duration(milliseconds: 400),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
@@ -905,6 +958,7 @@ GoRouter router({
                 // and we are not listening to entire workspace repository
                 // `workspaces` listenable value on this route, as that would be unnecessary.
                 return CustomTransitionPage(
+                  key: state.pageKey,
                   transitionDuration: const Duration(milliseconds: 250),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
@@ -915,10 +969,17 @@ GoRouter router({
                           child: child,
                         );
                       },
-                  child: WorkspaceSettingsScreen(
-                    viewModel: WorkspaceSettingsScreenViewModel(
+                  child: ChangeNotifierProvider(
+                    create: (context) => WorkspaceSettingsScreenViewModel(
                       workspaceId: workspaceId,
                       workspaceRepository: context.read(),
+                    ),
+                    child: Builder(
+                      builder: (context) {
+                        return WorkspaceSettingsScreen(
+                          viewModel: context.read(),
+                        );
+                      },
                     ),
                   ),
                 );
@@ -930,6 +991,7 @@ GoRouter router({
                     final workspaceId = state.pathParameters['workspaceId']!;
 
                     return CustomTransitionPage(
+                      key: state.pageKey,
                       transitionDuration: const Duration(milliseconds: 400),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
@@ -960,6 +1022,7 @@ GoRouter router({
       path: Routes.preferences,
       pageBuilder: (context, state) {
         return CustomTransitionPage(
+          key: state.pageKey,
           transitionDuration: const Duration(milliseconds: 250),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SharedAxisTransition(
@@ -1006,6 +1069,10 @@ String? _redirect(BuildContext context, GoRouterState state) {
   if (loggingIn) {
     final from = state.uri.queryParameters['from'];
 
+    // Entry screen is the main business logic entry point so it
+    // always needs to be the first one in line, and then inside
+    // it we will decide where to redirect next, while considering
+    // "next" param.
     if (from != null && from.isNotEmpty) {
       return '${Routes.entry}?next=$from';
     }
