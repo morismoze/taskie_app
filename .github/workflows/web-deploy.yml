@@ -6,6 +6,9 @@ on:
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
+    # At this project phase web deployment is simple landing page
+    # and can go directly to production
+    environment: production
     steps:
       # 1. Branch Check
       - name: Safety Check - Branch Restriction
@@ -47,9 +50,9 @@ jobs:
       - name: Deploy Web files to Server via SSH
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.PROD_SSH_HOST }}
-          username: ${{ secrets.PROD_SSH_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
+          host: ${{ secrets.API_SSH_HOST }}
+          username: ${{ secrets.API_SSH_USER }}
+          key: ${{ secrets.API_SSH_KEY }}
           port: 22
           source: "web_dist/*"
           target: "/tmp/taskie_web_temp"
@@ -60,9 +63,9 @@ jobs:
       - name: Move files and Set Permissions via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.PROD_SSH_HOST }}
-          username: ${{ secrets.PROD_SSH_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
+          host: ${{ secrets.API_SSH_HOST }}
+          username: ${{ secrets.API_SSH_USER }}
+          key: ${{ secrets.API_SSH_KEY }}
           port: 22
           script: |
             echo "🚀 Starting deployment logic..."
