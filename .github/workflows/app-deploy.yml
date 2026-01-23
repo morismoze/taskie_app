@@ -1,0 +1,146 @@
+name: App Deploy
+
+on:
+  # Manual trigger with Environment selection
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Select Target Track"
+        required: true
+        default: "Internal"
+        type: choice
+        options:
+          - Internal
+          - Production
+      confirm_deploy:
+        description: 'Type "deployment" to confirm'
+        required: true
+        default: ""
+
+# Cancel in progress workflow, if new code push happened
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    # In this app project phase, we will always use production environment
+    # for both Internal and Production tracks
+    environment: production
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      # 1. Safety & Branch Checks
+      - name: Safety Check - Deployment Confirmation
+        if: inputs.confirm_deploy != 'deployment'
+        working-directory: .
+        run: |
+          echo "❌ You must type 'deployment' to confirm deployment."
+          exit 1
+
+      - name: Safety Check - Production Branch Restriction
+        # If target is Production, we MUST be on the 'main' branch
+        if: inputs.target_env == 'Production' && github.ref != 'refs/heads/main'
+        working-directory: .
+        run: |
+          echo "❌ Production deployment is only allowed from the 'main' branch."
+          echo "Current branch: ${{ github.ref }}"
+          exit 1
+
+      # 2. Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 3. Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      # 4. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.0"
+          channel: "stable"
+          cache: true # Cache Flutter SDK
+
+      # 5. Install dependencies
+      - name: Get Dependencies
+        run: flutter pub get
+
+      # 6. Create/Update .env
+      - name: Create/Update .env
+        run: echo "${{ secrets.APP_ENV }}" > .env
+
+      # 7. Generate Localization
+      - name: Generate Localization
+        run: flutter gen-l10n
+
+      # 8. Run Build Runner
+      - name: Run Build Runner
+        # .env file used generated on the step 6
+        run: dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env"
+
+      # 9. Decode keystore from base64 format
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # 10. Create key.properties
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.ANDROID_KEY_STORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+
+      # 11. Define flavor based on chose environment
+      - name: Setup Flavor Variable
+        working-directory: .
+        run: |
+          # In this app project phase, we will always use production environment
+          # for both Internal and Production tracks, hence we use here the 
+          # production flavor from /android/app/build.gradle.kts
+          echo "FLAVOR=production" >> $GITHUB_ENV
+          echo "✅ Flavor set to: production"
+
+      # 12. Build release bundle (.aab) with defined flavor
+      - name: Build App Bundle (Release)
+        run: flutter build appbundle --release --flavor ${{ env.FLAVOR }}
+
+      # 13. Create Google Play API Key JSON
+      - name: Create Google Play Service Account JSON
+        run: echo '${{ secrets.GOOGLE_PLAY_DEPLOYER_SERVICE_ACCOUNT_JSON }}' > android/api-key.json
+
+      # 14. Setup Ruby & Fastlane (Fastlane is setup via )
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: android # Gemfile location
+
+      # 15. Upload Artifact (Backup)
+      # Save the build to Github as well for backup before trying to upload to GP
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-bundle-${{ env.FLAVOR }}
+          path: |
+            app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab
+            app/build/app/outputs/mapping/${{ env.FLAVOR }}Release/mapping.txt
+          retention-days: 5
+
+      # 16. Upload to Google Play (Dynamic Track)
+      - name: Upload to Google Play
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          # Inside platform :android block execute commands inside lane deploy_internal
+          lane: 'android deploy track:${{ (inputs.target_env == "Production") && "production" || "internal" }}'
+          subdirectory: "android"
+        env:
+          AAB_PATH: "app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"

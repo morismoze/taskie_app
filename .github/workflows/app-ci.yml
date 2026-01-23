@@ -1,0 +1,73 @@
+name: App CI
+
+on:
+  # On every pull request
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "app/**"
+  # On push to main (this should generally happen via PRs develop to main)
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+
+# Cancel in progress workflow, if new code push happened
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint, Test and Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      # 1. Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      # 3. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.0"
+          channel: "stable"
+          cache: true # Cache Flutter SDK
+
+      # 4. Install dependencies
+      - name: Get Dependencies
+        run: flutter pub get
+
+      # 5. Generate Localization
+      - name: Generate Localization
+        run: flutter gen-l10n
+
+      # 6. Run Build Runner (for model classes)
+      - name: Run Build Runner
+        run: dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.test"
+
+      # 7. Perform static analysis (Linter)
+      - name: Analyze Code
+        run: flutter analyze
+
+      # 8. Perform formatting check
+      - name: Check Formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      # 9. Run tests
+      - name: Run Tests
+        run: flutter test
+
+      # 10. Building APK in debug mode just to check Gradle i Native config for any errors
+      - name: Build Debug APK (Dry Run)
+        run: flutter build apk --debug

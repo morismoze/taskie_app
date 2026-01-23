@@ -1,28 +1,8 @@
-# NestJS
-
-# compiled output
-/api/dist
-/api/node_modules
-
-# envs
-/api/.env
-/api/.env.production
-
-# Logs
-/api/logs
-/api/*.log
-/api/npm-debug.log*
-/api/pnpm-debug.log*
-/api/yarn-debug.log*
-/api/yarn-error.log*
-/api/lerna-debug.log*
-
-# OS
+# OS junk
 .DS_Store
-
-# Tests
-/api/coverage
-/api/.nyc_output
+Thumbs.db
+.spotlight-V100
+.Trashes
 
 # IDEs and editors
 /.idea
@@ -32,61 +12,18 @@
 *.launch
 .settings/
 *.sublime-workspace
+*.swp
+*.swo
 
-# IDE - VSCode
+# VSCode (Team settings allowed, local user state ignored)
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/*.code-snippets
 
-# Flutter
-
-# Miscellaneous
-/app/*.class
-/app/*.log
-/app/*.pyc
-/app/*.swp
-/app/.DS_Store
-/app/.atom/
-/app/.buildlog/
-/app/.history
-/app/.svn/
-/app/.swiftpm/
-/app/migrate_working_dir/
-
-# IntelliJ related
-/app/*.iml
-/app/*.ipr
-/app/*.iws
-/app/.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-/app/**/doc/api/
-/app/**/ios/Flutter/.last_build_id
-/app/.dart_tool/
-/app/.flutter-plugins
-/app/.flutter-plugins-dependencies
-/app/.pub-cache/
-/app/.pub/
-/app/build/
-
-# Symbolication related
-/app/app.*.symbols
-
-# Obfuscation related
-/app/app.*.map.json
-
-# Android Studio will place build artifacts here
-/app/android/app/debug
-/app/android/app/profile
-/app/android/app/release
-
-# Env
-/app/.env.development
-/app/.env.production
+# Safety nets (in case commands are run in the root)
+node_modules/
+npm-debug.log
+*.log
