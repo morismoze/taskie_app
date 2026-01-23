@@ -54,6 +54,7 @@ class LoggerService {
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
+      // ignore: avoid_print
       print(
         '[${record.loggerName}] - ${record.level.name} - ${record.time} - ${record.message} - ${record.stackTrace}',
       );
