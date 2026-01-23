@@ -12,18 +12,24 @@ on:
     paths:
       - "api/**"
 
+# Cancel in progress workflow, if new code push happened
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  # JOB 1: Check code quality
-  quality-check:
-    name: Lint, Test & Build
+  ci:
+    name: Lint, Test and Build
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./api
     steps:
-      - name: Checkout code
+      # 1. Checkout the code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -31,15 +37,19 @@ jobs:
           cache: "npm" # Cache node_modules
           cache-dependency-path: api/package-lock.json # Specify path to lockfile
 
-      - name: Install dependencies
+      # 3. Install Dependencies
+      - name: Install Dependencies
         run: npm ci
 
+      # 4. Run lint check
       - name: Check Linting
         # Only check if there are linting errors, do not auto-fix
         run: npm run lint:check
 
+      # 5. Run tests
       - name: Run Tests
         run: npm run test
 
-      - name: Build Project
+      # 6. Build the bundle
+      - name: Build the bundle
         run: npm run build

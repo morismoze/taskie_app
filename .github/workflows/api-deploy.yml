@@ -5,13 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       target_env:
-        description: 'Select Target Environment (currently only "production" is available)'
+        description: 'Select Target Environment (currently only "Production" is available)'
         required: true
-        default: "production"
+        default: "Production"
         type: choice
         options:
-          - production
-          # staging will be added in the future if needed
+          - Production
+          # Staging will be added in the future if needed
       confirm_deploy:
         description: 'Type "deployment" to confirm'
         required: true
@@ -24,6 +24,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
     permissions:
       contents: read
       # Needed for GHCR push - gives write access to Container Registry (GHCR)
@@ -32,14 +33,14 @@ jobs:
     steps:
       # 1. Safety & Branch Checks
       - name: Safety Check - Deployment Confirmation
-        if: inputs.confirm_deploy != 'yes'
+        if: inputs.confirm_deploy != 'deployment'
         run: |
-          echo "❌ You must type 'yes' to confirm deployment."
+          echo "❌ You must type 'deployment' to confirm deployment."
           exit 1
 
       - name: Safety Check - Production Branch Restriction
         # If target is Production, we MUST be on the 'main' branch
-        if: inputs.target_env == 'production' && github.ref != 'refs/heads/main'
+        if: inputs.target_env == 'Production' && github.ref != 'refs/heads/main'
         run: |
           echo "❌ Production deployment is only allowed from the 'main' branch."
           echo "Current branch: ${{ github.ref }}"
@@ -76,10 +77,10 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             # If Staging -> use tag 'staging'
-            type=raw,value=staging,enable=${{ inputs.target_env == 'staging' }}
+            type=raw,value=staging,enable=${{ inputs.target_env == 'Staging' }}
             # If Production -> use tag 'latest' + commit SHA
-            type=raw,value=latest,enable=${{ inputs.target_env == 'production' }}
-            type=sha,format=long,enable=${{ inputs.target_env == 'production' }}
+            type=raw,value=latest,enable=${{ inputs.target_env == 'Production' }}
+            type=sha,format=long,enable=${{ inputs.target_env == 'Production' }}
             # For example, for production:
             # ghcr.io/actor/taskie_api:latest (for practicality)
             # ghcr.io/actor/taskie_api:sha-5f2a1b3... (for uniqueness, history, security
@@ -100,27 +101,31 @@ jobs:
       # 7. SSH Deploy (Dynamic Logic)
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          # Forward GITHUB_TOKEN as a variable so it's not in the logs
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Forward ENV as a variable so it's not in the logs
+          ENV_FILE_CONTENT: ${{ secrets.API_ENV }}
         with:
           # Dynamic selection of secrets based on input
           # Note: Currently we only have PROD secrets
-          host: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_HOST || secrets.STAGING_SSH_HOST }}
-          username: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_USER || secrets.STAGING_SSH_USER }}
-          key: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
+          host: ${{ secrets.API_SSH_HOST }}
+          username: ${{ secrets.API_SSH_USER }}
+          key: ${{ secrets.API_SSH_KEY }}
           port: 22
+          envs: GH_TOKEN,ENV_FILE_CONTENT
           script: |
             REPO_NAME="${{ github.repository }}"
             # Convert to lowercase for GHCR (it is case sensitive)
             IMAGE_REPO=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
 
             # Determine variables based on selected environment
-            if [ "${{ inputs.target_env }}" == "production" ]; then
+            if [ "${{ inputs.target_env }}" == "Production" ]; then
               TAG="latest"
-              ENV_CONTENT="${{ secrets.ENV_PRODUCTION }}"
               CONTAINER_NAME="taskie-api"
               echo "🚀 Deploying to PRODUCTION..."
             else
               TAG="staging"
-              ENV_CONTENT="${{ secrets.ENV_STAGING }}"
               CONTAINER_NAME="taskie-api-staging"
               echo "🚧 Deploying to STAGING..."
             fi
@@ -128,10 +133,10 @@ jobs:
             IMAGE_URL="ghcr.io/$IMAGE_REPO:$TAG"
 
             # Login to GHCR on server (using GITHUB_TOKEN because we defined read writes above)
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "$GH_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Create/Update .env file
-            echo "$ENV_CONTENT" > .env
+            echo "$ENV_FILE_CONTENT" > .env
 
             # Pull the specific tag (staging or latest)
             docker pull $IMAGE_URL
