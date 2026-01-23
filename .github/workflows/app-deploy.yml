@@ -141,7 +141,7 @@ jobs:
         uses: maierj/fastlane-action@v3.1.0
         with:
           # Inside platform :android block execute commands inside lane deploy_internal
-          lane: 'android deploy track:${{ (inputs.target_env == "Production") && "production" || "internal" }}'
+          lane: "android deploy track:${{ (inputs.target_env == 'Production') && 'production' || 'internal' }}"
           subdirectory: "app/android" # "uses" steps look at the repository root
         env:
           AAB_PATH: "app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"
