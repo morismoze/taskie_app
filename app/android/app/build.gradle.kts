@@ -15,7 +15,7 @@ plugins {
 }
 
 android {
-    namespace = "com.taskie.Taskie"
+    namespace = "com.taskie.taskie"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.taskie.Taskie"
+        applicationId = "com.taskie.taskie"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -51,7 +51,7 @@ android {
                 storePassword = storePass
                 storeFile = file(sFile)
             } else {
-                // If the properties are not set, use debug signing config as a fallback
+                // Fallback to debug if nothing is set
                 initWith(getByName("debug"))
             }
         }

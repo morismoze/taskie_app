@@ -65,11 +65,6 @@ class _TasksScreenState extends State<TasksScreen> {
                   widget.viewModel,
                 ]),
                 builder: (builderContext, _) {
-                  // Show loader only on initial load (tasks are null)
-                  if (widget.viewModel.tasks == null) {
-                    return const ActivityIndicator(radius: 16);
-                  }
-
                   // Show error prompt only on initial load (tasks are null)
                   if (widget.viewModel.loadTasks.error &&
                       widget.viewModel.tasks == null) {
@@ -82,6 +77,11 @@ class _TasksScreenState extends State<TasksScreen> {
                             widget.viewModel.loadTasks.execute((null, true)),
                       ),
                     );
+                  }
+
+                  // Show loader only on initial load (tasks are null)
+                  if (widget.viewModel.tasks == null) {
+                    return const ActivityIndicator(radius: 16);
                   }
 
                   // We don't have the standard 'First ListenableBuilder listening to a command
