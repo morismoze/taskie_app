@@ -48,13 +48,13 @@ jobs:
       - name: Get Dependencies
         run: flutter pub get
 
-      # 5. Generate Localization
-      - name: Generate Localization
-        run: flutter gen-l10n
-
-      # 6. Run Build Runner (for model classes)
+      # 5. Run Build Runner (for model classes)
       - name: Run Build Runner
         run: dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.test"
+
+      # 6. Generate Localization
+      - name: Generate Localization
+        run: flutter gen-l10n
 
       # 7. Perform static analysis (Linter)
       - name: Analyze Code
