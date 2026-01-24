@@ -22,6 +22,7 @@ class MainApp extends StatelessWidget {
 
     return MaterialApp.router(
       // For DevicePreview set
+      // ignore: deprecated_member_use
       useInheritedMediaQuery: enableDevicePreview,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
