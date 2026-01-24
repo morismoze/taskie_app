@@ -187,14 +187,15 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         // Also it is added to the current active filter key.
         final newGoal = _mapGoalFromResponse(result.value, isNew: true);
 
-        // [_cachedGoals] should always be != null at this point in time, because
-        // we show a error prompt with retry on the GoalsScreen if there was a problem
-        // with initial goals load from origin.
-        _cachedGoals!.items.add(newGoal);
-        ++_cachedGoals!.total;
-        // Re-calculate total pages
-        _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
-            .ceil();
+        if (_cachedGoals != null) {
+          _cachedGoals!.items.add(newGoal);
+          _cachedGoals!.total++;
+          // Re-calculate total pages
+          _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
+              .ceil();
+        } else {
+          _cachedGoals = Paginable(items: [newGoal], total: 1, totalPages: 1);
+        }
         notifyListeners();
 
         // Update persistent cache

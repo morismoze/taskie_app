@@ -18,6 +18,7 @@ void main() async {
 
   await DatabaseService.init();
 
+  // Switch this as wanted
   LoggerService.init(off: true);
 
   runApp(
