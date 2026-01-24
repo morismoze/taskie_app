@@ -2,6 +2,10 @@ name: taskie
 description: "Create workspaces, crush your goals, and climb the leaderboard. Taskie makes productivity fun and collaborative for everyone."
 publish_to: "none" # Don't publish to pub.dev
 
+# Build number is not necessary here as it is defined
+# by the Github deploy workflow on deploy, but that
+# workflow reads the version from here, so manual
+# change here is necessary
 version: 1.0.0+1
 
 environment:

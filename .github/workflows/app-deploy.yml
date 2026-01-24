@@ -17,15 +17,24 @@ on:
         required: true
         default: ""
 
-# Cancelling deploy to Google Play is no good
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.target_env }}
+  # Hardcoded because build number generated below by the Flutter
+  # needs to be always greater than the previous publish to GP.
+  # GP also check build number globally, meaning for all tracks
+  # (in our case internal and production), and if we start both
+  # at the same time and the latter one finished before the former,
+  # the former one will fail due to lower build number, because
+  # former started with e.g. run_number = 10, and latter with
+  # run_number = 11.
+  # We will make this dynamic in the future if we decide to have
+  # more than production env.
+  group: app-deploy
+  # Cancelling deploy to Google Play is no good
   cancel-in-progress: false
 
 permissions:
-  contents: read
-  # For uploading the artifact (artifacts are under actions scope)
-  actions: write
+  # For Github release (changelog)
+  contents: write
 
 jobs:
   build-and-release:
@@ -130,18 +139,38 @@ jobs:
           echo "FLAVOR=production" >> $GITHUB_ENV
           echo "✅ Flavor set to: production"
 
-      # 12. Build release bundle (.aab) with defined flavor
-      # Generates build dir in root/app dir (root = ${{ github.workspace }}).
-      - name: Build App Bundle (Release)
-        run: flutter build appbundle --release --flavor ${{ env.FLAVOR }} -t lib/main_production.dart
+      # 12. Compute build number
+      # Using GITHUB_RUN_ATTEMPT in case of workflow re-runs
+      - name: Compute build number
+        id: buildno
+        working-directory: .
+        run: |
+          BUILD_NUMBER=$((GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
-      # 13. Create Google Play API Key JSON
+      # 13. Read version from pubspec
+      # Remove any indentation, next line, inline comments
+      - name: Read version from pubspec
+        id: pubver
+        run: |
+          VER=$(grep -E '^\s*version:\s*' pubspec.yaml | head -n1 \
+            | sed -E 's/^\s*version:\s*//; s/\s*#.*$//' | tr -d '\r')
+          VER_NAME="${VER%%+*}"
+          echo "ver_name=$VER_NAME" >> $GITHUB_OUTPUT
+
+      # 14. Build release bundle (.aab) with defined flavor
+      # Generates build dir in root/app dir (root = ${{ github.workspace }}).
+      # Using lib/main_production.dart since currently we use only production flavor.
+      - name: Build App Bundle (Release)
+        run: flutter build appbundle --release --flavor ${{ env.FLAVOR }} -t lib/main_production.dart --build-number=${{ steps.buildno.outputs.build_number }}
+
+      # 15. Create Google Play API Key JSON
       - name: Create Google Play Service Account JSON
         env:
           GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_DEPLOYER_SERVICE_ACCOUNT_JSON }}
         run: printf '%s' "$GOOGLE_PLAY_JSON" > android/api-key.json
 
-      # 14. Setup Ruby & Fastlane (Fastlane is setup via )
+      # 16. Setup Ruby & Fastlane (Fastlane is setup via )
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -150,26 +179,10 @@ jobs:
           # Gemfile location - "uses" steps look at the repository root
           working-directory: app/android
 
-      # 15. Upload Artifact (Backup)
-      # Save the build to Github as well for backup before trying to upload to GP.
-      # "mapping.txt" is used to decipher errors (e.g. app crashes) since R8 does
-      # code obfuscation, making error messages unreadable. This file is used
-      # for checking errors in Google Play Console ("Android Vitals"), but also
-      # for custom logging services (e.g. Sentry), so they also know how to decipher.
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-bundle-${{ env.FLAVOR }}
-          # "uses" steps look at the repository root, so no need for ${{ github.workspace }}
-          path: |
-            app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab
-            app/build/app/outputs/mapping/${{ env.FLAVOR }}Release/mapping.txt
-          retention-days: 5
-          # If R8 for some reason didn't generate mapping.txt, don't fail the workflow
-          # just because artifact backup failed
-          if-no-files-found: warn
+      # Upload artifact step is removed because this is a public repo
+      # and uploading .aab and mapping.txt files is not good.
 
-      # 16. Upload to Google Play (Dynamic Track)
+      # 17. Upload to Google Play (Dynamic Track)
       - name: Upload to Google Play
         uses: maierj/fastlane-action@v3.1.0
         with:
@@ -179,3 +192,18 @@ jobs:
         env:
           AAB_PATH: "${{ github.workspace }}/app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"
           JSON_KEY_FILE: "${{ github.workspace }}/app/android/api-key.json"
+
+      # 18. Create GitHub Release
+      # Without .aab and mapping.txt files because repository is public and these
+      # files are private, so only tag + release notes.
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: inputs.target_env == 'Production' # Create release only for production
+        with:
+          tag_name: app-v${{ steps.pubver.outputs.ver_name }}+${{ steps.buildno.outputs.build_number }}
+          name: App Release v${{ steps.pubver.outputs.ver_name }}+${{ steps.buildno.outputs.build_number }}
+          draft: false # Not a draft, but a direct release
+          # Is this version stable (false) or test - since this entire step executes only
+          # if the chosen env is production, then false value is correct
+          prerelease: false
+          generate_release_notes: true # GitHub generates changelog automatically

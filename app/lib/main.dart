@@ -21,6 +21,8 @@ void main() async {
 
   LoggerService.init();
 
+  const enableDevicePreview = false;
+
   runApp(
     MultiProvider(
       providers: providers,
@@ -30,7 +32,7 @@ void main() async {
             preferencesRepository: context.read(),
           ),
           child: DevicePreview(
-            enabled: false,
+            enabled: enableDevicePreview,
             devices: [
               ...Devices.all,
               DeviceInfo.genericPhone(
@@ -48,7 +50,8 @@ void main() async {
                 pixelRatio: 3.0,
               ),
             ],
-            builder: (_) => const MainApp(),
+            builder: (_) =>
+                const MainApp(enableDevicePreview: enableDevicePreview),
           ),
         ),
       ),

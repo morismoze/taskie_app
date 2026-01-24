@@ -17,6 +17,12 @@ on:
         required: true
         default: ""
 
+permissions:
+  # Needed for changelog
+  contents: write
+  # Needed for GHCR push - gives write access to Container Registry (GHCR)
+  packages: write
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -25,10 +31,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
-    permissions:
-      contents: read
-      # Needed for GHCR push - gives write access to Container Registry (GHCR)
-      packages: write
 
     steps:
       # 1. Safety & Branch Checks
@@ -136,7 +138,9 @@ jobs:
             echo "$GH_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Create/Update .env file
-            echo "$ENV_FILE_CONTENT" > .env
+            # Safer then echo due to possible "$" symbol in the ENV_FILE_CONTENT
+            # and echo's interpretation of that symbol
+            printf '%s' "$ENV_FILE_CONTENT" > .env
 
             # Pull the specific tag (staging or latest)
             docker pull $IMAGE_URL
@@ -169,3 +173,23 @@ jobs:
             # much acts as PM2 and also we've set the --restart flag to 'always'
 
             echo "✅ Deployment successful!"
+
+      # 8. Read version from package.json
+      - name: Read version from package.json
+        id: pubver
+        run: |
+          VERSION=$(jq -r .version ./api/package.json)
+          echo "ver_name=$VERSION" >> $GITHUB_OUTPUT
+
+      # 9. Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: inputs.target_env == 'Production' # Create release only for production
+        with:
+          tag_name: api-v${{ steps.pubver.outputs.ver_name }}
+          name: API Release v${{ steps.pubver.outputs.ver_name }}
+          draft: false # Not a draft, but a direct release
+          # Is this version stable (false) or test - since this entire step executes only
+          # if the chosen env is production, then false value is correct
+          prerelease: false
+          generate_release_notes: true # GitHub generates changelog automatically

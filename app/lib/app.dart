@@ -11,7 +11,9 @@ import 'ui/core/l10n/app_localizations.dart';
 import 'ui/core/theme/theme.dart';
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, this.enableDevicePreview = false});
+
+  final bool enableDevicePreview;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class MainApp extends StatelessWidget {
 
     return MaterialApp.router(
       // For DevicePreview set
-      // useInheritedMediaQuery: true,
+      useInheritedMediaQuery: enableDevicePreview,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: appLocale,
@@ -29,7 +31,9 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: goRouter,
       builder: (context, child) {
-        final devicePreviewChild = DevicePreview.appBuilder(context, child);
+        final widgetToWrap = enableDevicePreview
+            ? DevicePreview.appBuilder(context, child)
+            : child!;
 
         return ToastificationConfigProvider(
           config: const ToastificationConfig(alignment: Alignment.topCenter),
@@ -37,7 +41,7 @@ class MainApp extends StatelessWidget {
             viewModel: context.read(),
             child: AuthEventListener(
               viewModel: context.read(),
-              child: devicePreviewChild,
+              child: widgetToWrap,
             ),
           ),
         );
