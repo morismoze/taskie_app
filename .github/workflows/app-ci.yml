@@ -5,6 +5,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
+      - ".github/workflows/app-ci.yml"
       - "app/**"
   # On push to main (this should generally happen via PRs develop to main)
   push:
@@ -45,8 +46,10 @@ jobs:
           cache: true # Cache Flutter SDK
 
       # 4. Install dependencies
+      # "--enforce-lockfile" is used to install exact versions defined in pubspec.yaml,
+      # and if there is any diff between pubspec.yaml and pubspec.lock, this will fail
       - name: Get Dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
       # 5. Run Build Runner (for model classes)
       - name: Run Build Runner
@@ -58,7 +61,7 @@ jobs:
 
       # 7. Perform static analysis (Linter)
       - name: Analyze Code
-        run: flutter analyze
+        run: flutter analyze --fatal-infos --fatal-warnings
 
       # 8. Perform formatting check
       - name: Check Formatting
