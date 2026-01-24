@@ -5,11 +5,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
+      - ".github/workflows/api-ci.yml"
       - "api/**"
   # On push to main (this should generally happen via PRs develop to main)
   push:
     branches: [main]
     paths:
+      - ".github/workflows/api-ci.yml"
       - "api/**"
 
 # Cancel in progress workflow, if new code push happened

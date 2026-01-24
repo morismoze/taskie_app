@@ -17,10 +17,15 @@ on:
         required: true
         default: ""
 
-# Cancel in progress workflow, if new code push happened
+# Cancelling deploy to Google Play is no good
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.target_env }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # For uploading the artifact (artifacts are under actions scope)
+  actions: write
 
 jobs:
   build-and-release:
@@ -69,12 +74,19 @@ jobs:
           cache: true # Cache Flutter SDK
 
       # 5. Install dependencies
+      # "--enforce-lockfile" is used to install exact versions defined in pubspec.yaml,
+      # and if there is any diff between pubspec.yaml and pubspec.lock, this will fail
       - name: Get Dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
       # 6. Create/Update .env
+      # Using printf because using echo can be a bit dangerous due to
+      # possible "$" symbols in the secret, since "$" defines a variable.
+      # Using print also requires to define env.
       - name: Create/Update .env
-        run: echo "${{ secrets.APP_ENV }}" > .env
+        env:
+          APP_ENV: ${{ secrets.APP_ENV }}
+        run: printf '%s' "$APP_ENV" > .env
 
       # 7. Generate Localization
       - name: Generate Localization
@@ -87,16 +99,26 @@ jobs:
 
       # 9. Decode keystore from base64 format
       - name: Decode Keystore
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
 
       # 10. Create key.properties
+      # For storeFile it's important to use ${{ github.workspace }} because storeFile is
+      # being loaded from the disc by the build.gradle.kts. The rest (storePassword,
+      # keyPassword, keyAlias) are just read, and not looked up on the disc.
       - name: Create key.properties
+        env:
+          ANDROID_KEY_STORE_PASSWORD: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          echo "storePassword=${{ secrets.ANDROID_KEY_STORE_PASSWORD }}" > android/key.properties
-          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=upload-keystore.jks" >> android/key.properties
+          {
+            printf 'storePassword=%s\n' "$ANDROID_KEY_STORE_PASSWORD"
+            printf 'keyPassword=%s\n' "$ANDROID_KEY_PASSWORD"
+            printf 'keyAlias=%s\n' "$ANDROID_KEY_ALIAS"
+            printf 'storeFile=%s\n' "${{ github.workspace }}/app/android/app/upload-keystore.jks"
+          } > android/key.properties
 
       # 11. Define flavor based on chose environment
       - name: Setup Flavor Variable
@@ -109,12 +131,15 @@ jobs:
           echo "✅ Flavor set to: production"
 
       # 12. Build release bundle (.aab) with defined flavor
+      # Generates build dir in root/app dir (root = ${{ github.workspace }})
       - name: Build App Bundle (Release)
         run: flutter build appbundle --release --flavor ${{ env.FLAVOR }}
 
       # 13. Create Google Play API Key JSON
       - name: Create Google Play Service Account JSON
-        run: echo '${{ secrets.GOOGLE_PLAY_DEPLOYER_SERVICE_ACCOUNT_JSON }}' > android/api-key.json
+        env:
+          GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_DEPLOYER_SERVICE_ACCOUNT_JSON }}
+        run: printf '%s' "$GOOGLE_PLAY_JSON" > android/api-key.json
 
       # 14. Setup Ruby & Fastlane (Fastlane is setup via )
       - name: Setup Ruby
@@ -126,15 +151,23 @@ jobs:
           working-directory: app/android
 
       # 15. Upload Artifact (Backup)
-      # Save the build to Github as well for backup before trying to upload to GP
+      # Save the build to Github as well for backup before trying to upload to GP.
+      # "mapping.txt" is used to decipher errors (e.g. app crashes) since R8 does
+      # code obfuscation, making error messages unreadable. This file is used
+      # for checking errors in Google Play Console ("Android Vitals"), but also
+      # for custom logging services (e.g. Sentry), so they also know how to decipher.
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-bundle-${{ env.FLAVOR }}
+          # "uses" steps look at the repository root, so no need for ${{ github.workspace }}
           path: |
             app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab
             app/build/app/outputs/mapping/${{ env.FLAVOR }}Release/mapping.txt
           retention-days: 5
+          # If R8 for some reason didn't generate mapping.txt, don't fail the workflow
+          # just because artifact backup failed
+          if-no-files-found: warn
 
       # 16. Upload to Google Play (Dynamic Track)
       - name: Upload to Google Play
@@ -144,4 +177,5 @@ jobs:
           lane: "android deploy track:${{ (inputs.target_env == 'Production') && 'production' || 'internal' }}"
           subdirectory: "app/android" # "uses" steps look at the repository root
         env:
-          AAB_PATH: "app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"
+          AAB_PATH: "${{ github.workspace }}/app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"
+          JSON_KEY_FILE: "${{ github.workspace }}/app/android/api-key.json"

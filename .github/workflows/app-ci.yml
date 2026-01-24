@@ -11,6 +11,7 @@ on:
   push:
     branches: [main]
     paths:
+      - ".github/workflows/app-ci.yml"
       - "app/**"
 
 # Cancel in progress workflow, if new code push happened
@@ -73,4 +74,4 @@ jobs:
 
       # 10. Building APK in debug mode just to check Gradle i Native config for any errors
       - name: Build Debug APK (Dry Run)
-        run: flutter build apk --debug
+        run: flutter build apk --debug --flavor production

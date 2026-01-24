@@ -1,5 +1,5 @@
 name: taskie
-description: "An app to help parents track tasks being done by their kids"
+description: "Create workspaces, crush your goals, and climb the leaderboard. Taskie makes productivity fun and collaborative for everyone."
 publish_to: "none" # Don't publish to pub.dev
 
 version: 1.0.0+1
