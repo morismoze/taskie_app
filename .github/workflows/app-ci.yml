@@ -74,4 +74,4 @@ jobs:
 
       # 10. Building APK in debug mode just to check Gradle i Native config for any errors
       - name: Build Debug APK (Dry Run)
-        run: flutter build apk --debug --flavor production
+        run: flutter build apk --debug --flavor production -t lib/main_production.dart

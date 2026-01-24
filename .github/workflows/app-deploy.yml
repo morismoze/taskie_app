@@ -131,9 +131,9 @@ jobs:
           echo "✅ Flavor set to: production"
 
       # 12. Build release bundle (.aab) with defined flavor
-      # Generates build dir in root/app dir (root = ${{ github.workspace }})
+      # Generates build dir in root/app dir (root = ${{ github.workspace }}).
       - name: Build App Bundle (Release)
-        run: flutter build appbundle --release --flavor ${{ env.FLAVOR }}
+        run: flutter build appbundle --release --flavor ${{ env.FLAVOR }} -t lib/main_production.dart
 
       # 13. Create Google Play API Key JSON
       - name: Create Google Play Service Account JSON

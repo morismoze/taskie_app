@@ -117,9 +117,6 @@
   "appDrawerLeaveWorkspaceError": "Uh-oh! We've had some trouble removing you from the workspace",
   "appDrawerLeaveWorkspaceErrorSoleManagerConflict": "Uh-oh! Leaving this workspace is not possible because you are the sole Manager in it. You must promote another member to Manager.",
   "appDrawerCreateNewWorkspace": "Create new workspace",
-  "appDrawerAbout": "About",
-  "appDrawerAboutSourceLicenses": "Source licenses",
-  "appDrawerAboutVisitWebsite": "Visit out Website",
   "preferencesLabel": "Preferences",
   "createNewTaskNoMembers": "It looks like your workspace doesn't have any members to assign a task to yet. Try inviting someone or creating virtual members.",
   "createNewTaskSuccess": "Successfully created new task",
@@ -275,5 +272,10 @@
   "workspaceJoinViaInviteText": "Welcome, **{invitedFirstName}**! 🎉\nWe're thrilled to have you.\nYou are invited to join the following workspace:",
   "workspaceJoinViaInviteTextConfirm": "__To confirm, continue by clicking the button below__",
   "notFoundPageTitle": "Uh-oh! Wrong turn...",
-  "notFoundPageText": "Looks like you've wandered off the beaten path!\nThe page you were looking for was not found."
+  "notFoundPageText": "Looks like you've wandered off the beaten path!\nThe page you were looking for was not found.",
+  "aboutLabel": "About",
+  "aboutVersion": "Version",
+  "aboutBuild": "Build",
+  "aboutSourceLicenses": "Source licenses",
+  "aboutVisitWebsite": "Visit out Website"
 }

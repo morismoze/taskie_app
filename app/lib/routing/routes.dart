@@ -93,7 +93,10 @@ abstract final class Routes {
   static String goalsGuide({required String workspaceId}) =>
       '/$workspacesRelative/$workspaceId/$goalsRelative/$guideRelative';
 
-  // Private global route for setting global settings (e.g. language).
+  // Private global route for About app details
+  static const about = '/about';
+
+  // Private global route for setting global settings (e.g. language)
   static const preferences = '/preferences';
 
   static const notFound = '/not-found';

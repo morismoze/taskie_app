@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,27 @@ void main() async {
           viewModel: LocaleInitializerViewModel(
             preferencesRepository: context.read(),
           ),
-          child: const MainApp(),
+          child: DevicePreview(
+            enabled: false,
+            devices: [
+              ...Devices.all,
+              DeviceInfo.genericPhone(
+                platform: TargetPlatform.android,
+                id: 'zfold_cover',
+                name: 'Z Fold (Cover)',
+                screenSize: const Size(904 / 3, 2316 / 3),
+                pixelRatio: 3.0,
+              ),
+              DeviceInfo.genericTablet(
+                platform: TargetPlatform.android,
+                id: 'zfold_main',
+                name: 'Z Fold (Main)',
+                screenSize: const Size(1812 / 3, 2176 / 3),
+                pixelRatio: 3.0,
+              ),
+            ],
+            builder: (_) => const MainApp(),
+          ),
         ),
       ),
     ),

@@ -111,6 +111,7 @@ class _AppDatePickerFieldState extends State<AppDatePickerField> {
 
     AppModalBottomSheet.show(
       context: context,
+      isScrollControlled: true,
       child: AppModalBottomSheetContentWrapper(
         title: widget.label,
         child: _AppDatePicker(

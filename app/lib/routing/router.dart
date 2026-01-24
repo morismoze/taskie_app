@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../data/repositories/auth/auth_state_repository.dart';
 import '../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../ui/about/view_models/about_screen_view_model.dart';
+import '../ui/about/widgets/about_screen.dart';
 import '../ui/auth/sign_in/view_models/sign_in_view_model.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_screen_view_model.dart';
@@ -290,7 +292,6 @@ GoRouter router({
                         workspaceId: workspaceId,
                         workspaceRepository: context.read(),
                         userRepository: context.read(),
-                        clientInfoRepository: context.read(),
                         refreshTokenUseCase: context.read(),
                         activeWorkspaceChangeUseCase: context.read(),
                       ),
@@ -1017,6 +1018,28 @@ GoRouter router({
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: Routes.about,
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          transitionDuration: const Duration(milliseconds: 250),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.scaled,
+              child: child,
+            );
+          },
+          child: AboutScreen(
+            viewModel: AboutScreenViewModel(
+              clientInfoRepository: context.read(),
+            ),
+          ),
+        );
+      },
     ),
     GoRoute(
       path: Routes.preferences,

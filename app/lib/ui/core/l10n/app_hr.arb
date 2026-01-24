@@ -118,9 +118,6 @@
   "appDrawerLeaveWorkspaceError": "Uh-oh! Došlo je do problema prilikom brisanja korisnika iz radnog prostora",
   "appDrawerLeaveWorkspaceErrorSoleManagerConflict": "Uh-oh! Nije moguće napustiti ovaj radni prostor jer ste u njemu jedini Menadžer. Morate imenovati drugog člana Menadžerom.",
   "appDrawerCreateNewWorkspace": "Kreiraj novi radni prostor",
-  "appDrawerAbout": "O aplikaciji",
-  "appDrawerAboutSourceLicenses": "Licence otvorenog koda",
-  "appDrawerAboutVisitWebsite": "Posjetite našu web stranicu",
   "preferencesLabel": "Preference",
   "createNewTaskNoMembers": "Čini se da vaš radni prostor još nema nijednog člana kojemu se može dodijeliti zadatak. Pokušajte pozvati nekoga ili kreirati virtualne članove.",
   "createNewTaskSuccess": "Uspješno ste kreirali novi zadatak",
@@ -276,5 +273,10 @@
   "workspaceJoinViaInviteText": "Dobrodošli, **{invitedFirstName}**! 🎉\nOduševljeni smo što ste s nama.\nPozvani ste da se pridružite sljedećem radnom prostoru:",
   "workspaceJoinViaInviteTextConfirm": "__Za potvrdu nastavite klikom na gumb ispod__",
   "notFoundPageTitle": "Uh-oh! Krivi smjer...",
-  "notFoundPageText": "Izgleda da ste skrenuli s puta!\nStranica koju tražite nije pronađena."
+  "notFoundPageText": "Izgleda da ste skrenuli s puta!\nStranica koju tražite nije pronađena.",
+  "aboutLabel": "O aplikaciji",
+  "aboutVersion": "Verzija",
+  "aboutBuild": "Broj međuverzije",
+  "aboutSourceLicenses": "Licence otvorenog koda",
+  "aboutVisitWebsite": "Posjetite našu web stranicu"
 }

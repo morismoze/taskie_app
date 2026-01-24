@@ -125,7 +125,11 @@ class _EntryScreenState extends State<EntryScreen> {
         // to the workspaceId from that route, if it exists as
         // path param
 
-        final regExp = RegExp('/${Routes.workspacesRelative}/([^/]+)');
+        // Detect UUIDv4 workspaceId
+        final regExp = RegExp(
+          '^/${Routes.workspacesRelative}/'
+          r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+        );
         final match = regExp.firstMatch(decodedRoute);
         final decodedWorkspaceIdPathParam = match?.group(1);
         // If there is no workspaceId path param then just let the user on that route
