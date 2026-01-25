@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 
 import 'data/repositories/preferences/preferences_repository.dart';
+import 'ui/app_lifecycle_state_listener/widgets/app_lifecycle_state_listener.dart';
 import 'ui/app_startup/widgets/app_startup.dart';
 import 'ui/auth_event_listener/widgets/auth_event_listener.dart';
 import 'ui/core/l10n/app_localizations.dart';
@@ -42,7 +43,10 @@ class MainApp extends StatelessWidget {
             viewModel: context.read(),
             child: AuthEventListener(
               viewModel: context.read(),
-              child: widgetToWrap,
+              child: AppLifecycleStateListener(
+                viewModel: context.read(),
+                child: widgetToWrap,
+              ),
             ),
           ),
         );

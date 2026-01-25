@@ -46,7 +46,10 @@ class AppFloatingActionButton extends StatelessWidget {
           AppFilledButton(
             label: context.localization.taskCreateNew,
             onPress: () {
-              Navigator.of(context).pop(); // Close bottom sheet
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pop(); // Close bottom sheet
               context.push(
                 Routes.taskCreate(workspaceId: viewModel.activeWorkspaceId),
               );
@@ -55,7 +58,10 @@ class AppFloatingActionButton extends StatelessWidget {
           AppFilledButton(
             label: context.localization.goalCreateNew,
             onPress: () {
-              Navigator.of(context).pop(); // Close bottom sheet
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pop(); // Close bottom sheet
               context.push(
                 Routes.goalCreate(workspaceId: viewModel.activeWorkspaceId),
               );

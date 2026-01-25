@@ -25,7 +25,7 @@ class RbacService extends ChangeNotifier {
 
   bool hasPermission({
     required RbacPermission permission,
-    required String? workspaceId,
+    required String workspaceId,
   }) {
     final currentUser = _userRepository.user;
 

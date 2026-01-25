@@ -182,11 +182,8 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
         context: context,
         message: context.localization.goalsDetailsCloseSuccess,
       );
-      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
       context.pop(); // Navigate back to goals page
-      Navigator.of(
-        context,
-      ).pop(); // Close goal card bottom sheet because goal is closed
     }
 
     if (widget.viewModel.closeGoal.error) {

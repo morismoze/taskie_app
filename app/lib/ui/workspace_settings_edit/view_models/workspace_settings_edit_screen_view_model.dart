@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../../../data/services/api/value_patch.dart';
 import '../../../domain/models/workspace.dart';
 import '../../../utils/command.dart';
 
@@ -43,15 +44,20 @@ class WorkspaceSettingsEditScreenViewModel extends ChangeNotifier {
   ) async {
     final (String? name, String? description) = details;
 
-    // Don't invoke API request if the data stayed the same
-    if (name == _details!.name && description == _details!.description) {
+    // Diffs are needed to actually see what data has changed
+    // and send only that data
+    final hasNameChanged = name != _details!.name;
+    final hasDescriptionChanged = description != _details!.description;
+
+    // If nothing changed, return
+    if (!hasNameChanged && !hasDescriptionChanged) {
       return const Result.ok(null);
     }
 
     final result = await _workspaceRepository.updateWorkspaceDetails(
       _activeWorkspaceId,
-      name: name,
-      description: description,
+      name: hasNameChanged ? ValuePatch(name!) : null,
+      description: hasDescriptionChanged ? ValuePatch(description) : null,
     );
 
     switch (result) {

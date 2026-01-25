@@ -155,12 +155,12 @@ class _AppDatePickerState extends State<_AppDatePicker> {
   }
 
   void _onCancel() {
-    Navigator.of(context).pop(); // Close bottom sheet
+    Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
   }
 
   void _onSubmit() {
     widget.onSubmit(_selectedDate);
-    Navigator.of(context).pop(); // Close bottom sheet
+    Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
   }
 
   @override

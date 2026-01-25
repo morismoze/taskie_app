@@ -120,6 +120,14 @@ class TaskCard extends StatelessWidget {
           children: [
             AppTextButton(
               onPress: () {
+                // Bottom sheer is on the root navigator
+                // and Navigator should be used instead
+                // of context.pop to pop overlays.
+                // context.pop should be used for popping routes only
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pop(); // Close bottom sheet
                 context.push(
                   Routes.taskDetails(
                     workspaceId: activeWorkspaceId,
@@ -135,6 +143,10 @@ class TaskCard extends StatelessWidget {
                 permission: RbacPermission.objectiveEdit,
                 child: AppTextButton(
                   onPress: () {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pop(); // Close bottom sheet
                     context.push(
                       Routes.taskDetailsEdit(
                         workspaceId: activeWorkspaceId,

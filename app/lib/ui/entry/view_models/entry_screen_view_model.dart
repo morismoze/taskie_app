@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../../../domain/models/user.dart';
 import '../../../utils/command.dart';
 
 class EntryScreenViewModel {
@@ -22,9 +23,11 @@ class EntryScreenViewModel {
   /// if the loaded workspaces list is empty.
   late Command0 setupInitial;
 
+  User? get user => _userRepository.user;
+
   Future<Result<String?>> _setupInitial() async {
     // 1. Load user
-    final resultLoadUser = await firstOkOrLastError(_userRepository.loadUser());
+    final resultLoadUser = await lastOkOrLastError(_userRepository.loadUser());
 
     switch (resultLoadUser) {
       case Ok():
@@ -34,7 +37,7 @@ class EntryScreenViewModel {
     }
 
     // 2. Load workspaces
-    final resultLoadWorkspaces = await firstOkOrLastError(
+    final resultLoadWorkspaces = await lastOkOrLastError(
       _workspaceRepository.loadWorkspaces(),
     );
 
@@ -90,5 +93,17 @@ class EntryScreenViewModel {
           (workspace) => workspace.id == workspaceId,
         ) !=
         null;
+  }
+
+  Future<Result<void>> setActiveWorkspaceId(String workspaceId) async {
+    final resultSetActiveWorkspaceId = await _workspaceRepository
+        .setActiveWorkspaceId(workspaceId);
+
+    switch (resultSetActiveWorkspaceId) {
+      case Ok():
+        return const Result.ok(null);
+      case Error():
+        return Result.error(resultSetActiveWorkspaceId.error);
+    }
   }
 }

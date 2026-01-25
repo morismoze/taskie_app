@@ -139,7 +139,8 @@ class _EditAssignmentsFormState extends State<EditAssignmentsForm> {
           command: widget.viewModel.removeTaskAssignee,
           onSubmit: () =>
               widget.viewModel.removeTaskAssignee.execute(assigneeId),
-          onCancel: () => Navigator.of(context).pop(), // Close dialog,
+          onCancel: () =>
+              Navigator.of(context, rootNavigator: true).pop(), // Close dialog
           submitButtonText:
               context.localization.tasksRemoveTaskAssignmentModalCta,
           submitButtonColor: Theme.of(context).colorScheme.error,

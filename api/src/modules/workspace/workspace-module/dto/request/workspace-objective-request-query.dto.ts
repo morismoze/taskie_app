@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
 export enum SortBy {
@@ -39,13 +39,14 @@ export class WorkspaceObjectiveRequestQuery {
   @IsEnum(ProgressStatus)
   status?: ProgressStatus;
 
-  @ApiPropertyOptional({
-    type: String,
-    description: 'Search by title - THIS IS NOT YET IMPLEMENTED',
-  })
-  @IsOptional()
-  @IsString()
-  search?: string;
+  // Not yet fully, secure-wise implemented on the DB
+  // @ApiPropertyOptional({
+  //   type: String,
+  //   description: 'Search by title - THIS IS NOT YET IMPLEMENTED',
+  // })
+  // @IsOptional()
+  // @IsString()
+  // search?: string;
 
   @ApiPropertyOptional({
     enum: SortBy,
@@ -59,13 +60,11 @@ export class WorkspaceObjectiveRequestQuery {
     page?: number,
     limit?: number,
     status?: ProgressStatus,
-    search?: string,
     sort?: SortBy,
   ) {
     this.page = page;
     this.limit = limit;
     this.status = status;
-    this.search = search;
     this.sort = sort;
   }
 }

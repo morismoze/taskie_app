@@ -2,6 +2,7 @@ import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace_user.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/user/models/response/user_response.dart';
+import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/workspace_user/models/request/create_virtual_workspace_user_request.dart';
 import '../../../services/api/workspace/workspace_user/models/request/update_workspace_user_details_request.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_accumulated_points_response.dart';
@@ -170,9 +171,9 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   Future<Result<void>> updateWorkspaceUserDetails({
     required String workspaceId,
     required String workspaceUserId,
-    String? firstName,
-    String? lastName,
-    WorkspaceRole? role,
+    ValuePatch<String>? firstName,
+    ValuePatch<String>? lastName,
+    ValuePatch<WorkspaceRole>? role,
   }) async {
     final result = await _workspaceUserApiService.updateWorkspaceUserDetails(
       workspaceId: workspaceId,
@@ -180,7 +181,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       payload: UpdateWorkspaceUserDetailsRequest(
         firstName: firstName,
         lastName: lastName,
-        role: role?.value,
+        role: role,
       ),
     );
 

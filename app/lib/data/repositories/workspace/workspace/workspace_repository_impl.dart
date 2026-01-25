@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/workspace/models/request/create_workspace_request.dart';
 import '../../../services/api/workspace/workspace/models/request/update_workspace_details_request.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
@@ -77,6 +78,10 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
     switch (result) {
       case Ok():
+        _loggerService.log(
+          LogLevel.info,
+          'Set active workspace ID to $workspaceId',
+        );
         _activeWorkspaceId = workspaceId;
       case Error():
         _loggerService.log(
@@ -262,8 +267,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   @override
   Future<Result<void>> updateWorkspaceDetails(
     String workspaceId, {
-    String? name,
-    String? description,
+    ValuePatch<String>? name,
+    ValuePatch<String?>? description,
   }) async {
     final result = await _workspaceApiService.updateWorkspaceDetails(
       workspaceId: workspaceId,

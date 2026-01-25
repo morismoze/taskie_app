@@ -24,7 +24,7 @@ export class UpdateTaskRequest {
   })
   @IsValidTaskTitle()
   @NotEquals(null)
-  @ValidateIf((_, value) => value !== undefined)
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   title?: string;
 
   @ApiPropertyOptional({
@@ -33,9 +33,8 @@ export class UpdateTaskRequest {
     description: 'Setting it to null, removes description',
     maxLength: OBJECTIVE_DESCRIPTION_MAX_CHARS,
   })
-  @IsOptional()
+  @IsOptional() // Optional, and null is valid
   @IsValidTaskDescription()
-  // Can be set to null - resets it
   description?: string | null;
 
   @ApiPropertyOptional({
@@ -45,8 +44,7 @@ export class UpdateTaskRequest {
     multipleOf: TASK_REWARD_POINTS_STEP,
   })
   @IsValidTaskRewardPoints()
-  @NotEquals(null)
-  @ValidateIf((_, value) => value !== undefined)
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   rewardPoints?: number;
 
   @ApiPropertyOptional({
@@ -55,8 +53,7 @@ export class UpdateTaskRequest {
     format: 'date-time',
     description: 'Due date in ISO 8601 (UTC). Must not be in the past.',
   })
-  @IsOptional()
+  @IsOptional() // Optional, and null is valid
   @IsValidTaskDueDate()
-  // Can be set to null - resets it
   dueDate?: string | null;
 }

@@ -34,7 +34,6 @@ export class GoalService {
       page: query.page ?? 1,
       limit: query.limit ?? WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
       status: query.status ?? null,
-      search: query.search?.trim() || null,
       sort: query.sort ?? SortBy.NEWEST,
     };
     const {

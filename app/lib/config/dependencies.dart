@@ -51,6 +51,7 @@ import '../domain/use_cases/share_workspace_invite_link_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
 import '../domain/use_cases/sign_out_use_case.dart';
 import '../routing/router.dart';
+import '../ui/app_lifecycle_state_listener/view_models/app_lifecycle_state_listener_view_model.dart';
 import '../ui/app_startup/view_models/app_startup_view_model.dart';
 import '../ui/auth_event_listener/view_models/auth_event_listener_view_model.dart';
 import '../ui/core/services/rbac_service.dart';
@@ -274,6 +275,13 @@ List<SingleChildWidget> get providers {
         userRepository: context.read(),
         activeWorkspaceChangeUseCase: context.read(),
         signOutUseCase: context.read(),
+      ),
+    ),
+    Provider(
+      create: (context) => AppLifecycleStateListenerViewModel(
+        userRepository: context.read(),
+        workspaceRepository: context.read(),
+        authEventBus: context.read(),
       ),
     ),
   ];

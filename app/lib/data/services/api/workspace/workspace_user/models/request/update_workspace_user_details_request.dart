@@ -1,17 +1,26 @@
-import 'package:json_annotation/json_annotation.dart';
+import '../../../../user/models/response/user_response.dart';
+import '../../../../value_patch.dart';
 
-part 'update_workspace_user_details_request.g.dart';
-
-@JsonSerializable(createFactory: false)
 class UpdateWorkspaceUserDetailsRequest {
   UpdateWorkspaceUserDetailsRequest({this.firstName, this.lastName, this.role});
 
-  final String? firstName;
-  final String? lastName;
+  final ValuePatch<String>? firstName;
+  final ValuePatch<String>? lastName;
+  final ValuePatch<WorkspaceRole>? role;
 
-  /// This is the value of `WorkspaceRole` enum option
-  final String? role;
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
 
-  Map<String, dynamic> toJson() =>
-      _$UpdateWorkspaceUserDetailsRequestToJson(this);
+    if (firstName != null) {
+      json['firstName'] = firstName!.value;
+    }
+    if (lastName != null) {
+      json['lastName'] = lastName!.value;
+    }
+    if (role != null) {
+      json['role'] = role!.value.value;
+    }
+
+    return json;
+  }
 }

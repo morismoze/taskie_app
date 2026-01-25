@@ -246,11 +246,11 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
         context: context,
         message: context.localization.tasksRemoveTaskAssignmentSuccess,
       );
-      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
     }
 
     if (widget.viewModel.removeTaskAssignee.error) {
-      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
       final errorResult = widget.viewModel.removeTaskAssignee.result as Error;
       widget.viewModel.removeTaskAssignee.clearResult();
       switch (errorResult.error) {
@@ -327,7 +327,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       actions: AppFilledButton(
         label: context.localization.misc_goToHomepage,
         onPress: () {
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
           );
@@ -353,7 +353,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       actions: AppFilledButton(
         label: context.localization.misc_goToHomepage,
         onPress: () {
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
           );
@@ -379,7 +379,7 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
       actions: AppFilledButton(
         label: context.localization.misc_ok,
         onPress: () {
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
         },
       ),
     );

@@ -135,3 +135,25 @@ Future<Result<T>> firstOkOrLastError<T>(Stream<Result<T>> stream) async {
 
   return Result.error(Exception('Stream emitted no values'));
 }
+
+Future<Result<T>> lastOkOrLastError<T>(Stream<Result<T>> stream) async {
+  Ok<T>? lastOk;
+  Result<T>? last;
+
+  await for (final r in stream) {
+    last = r;
+    if (r is Ok<T>) {
+      lastOk = r;
+    }
+  }
+
+  if (lastOk != null) {
+    return lastOk;
+  }
+
+  if (last is Error<T>) {
+    return last;
+  }
+
+  return Result.error(Exception('Stream emitted no values'));
+}

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/models/workspace_user.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/user/models/response/user_response.dart';
+import '../../../services/api/value_patch.dart';
 
 abstract class WorkspaceUserRepository extends ChangeNotifier {
   List<WorkspaceUser>? get users;
@@ -31,9 +32,9 @@ abstract class WorkspaceUserRepository extends ChangeNotifier {
   Future<Result<void>> updateWorkspaceUserDetails({
     required String workspaceId,
     required String workspaceUserId,
-    String? firstName,
-    String? lastName,
-    WorkspaceRole? role,
+    ValuePatch<String>? firstName,
+    ValuePatch<String>? lastName,
+    ValuePatch<WorkspaceRole>? role,
   });
 
   Future<Result<int>> getWorkspaceUserAccumulatedPoints({

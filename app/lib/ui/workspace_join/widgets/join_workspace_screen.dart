@@ -235,6 +235,10 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           (widget.viewModel.joinWorkspaceViaInviteLink.result as Ok<String>)
               .value;
       widget.viewModel.joinWorkspaceViaInviteLink.clearResult();
+      AppToast.showInfo(
+        context: context,
+        message: context.localization.workspaceCreateJoinViaInviteLinkSuccess,
+      );
       context.go(Routes.tasks(workspaceId: newWorkspaceId));
     }
 

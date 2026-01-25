@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsEnum, ValidateIf } from 'class-validator';
 import { IsValidPersonName } from 'src/common/decorators/request-validation-decorators';
 import {
   PERSON_NAME_MAX_CHARS,
@@ -17,7 +17,7 @@ export class UpdateWorkspaceUserRequest {
     minLength: PERSON_NAME_MIN_CHARS,
     maxLength: PERSON_NAME_MAX_CHARS,
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @IsValidPersonName()
   firstName?: string;
 
@@ -26,7 +26,7 @@ export class UpdateWorkspaceUserRequest {
     minLength: PERSON_NAME_MIN_CHARS,
     maxLength: PERSON_NAME_MAX_CHARS,
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @IsValidPersonName()
   lastName?: string;
 
@@ -34,7 +34,7 @@ export class UpdateWorkspaceUserRequest {
     description: 'Can be changed only on non-virtual users',
     enum: WorkspaceUserRole,
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @IsEnum(WorkspaceUserRole)
   role?: WorkspaceUserRole;
 

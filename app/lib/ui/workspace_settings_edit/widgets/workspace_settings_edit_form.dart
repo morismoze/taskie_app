@@ -95,10 +95,8 @@ class _WorkspaceSettingsEditFormState extends State<WorkspaceSettingsEditForm> {
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState!.validate()) {
-      final trimmedName = _nameController.text.trim();
-      final name = trimmedName.isNotEmpty ? trimmedName : null;
-      final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.nullIfEmpty;
+      final name = _nameController.text.trim();
+      final description = _descriptionController.text.trim().nullIfEmpty;
 
       widget.viewModel.editWorkspaceDetails.execute((name, description));
     }

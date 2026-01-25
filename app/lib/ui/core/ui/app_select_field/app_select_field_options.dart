@@ -63,12 +63,12 @@ class _AppSelectFieldOptionsState<T> extends State<AppSelectFieldOptions<T>> {
   }
 
   void _onCancel() {
-    Navigator.of(context).pop(); // Close bottom sheet
+    Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
   }
 
   void _onSubmit() {
     widget.onSubmit(_selectedOptions);
-    Navigator.of(context).pop(); // Close bottom sheet
+    Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
   }
 
   @override

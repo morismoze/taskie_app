@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -44,8 +45,7 @@ class WorkspaceTile extends StatelessWidget {
         child: WorkspaceImage(url: pictureUrl, isActive: isActive),
       ),
       trailing: InkWell(
-        onTap: () =>
-            _onWorkspaceOptionsTap(context, viewModel.activeWorkspaceId, id),
+        onTap: () => _onWorkspaceOptionsTap(context, id),
         child: const Padding(
           padding: EdgeInsets.symmetric(
             horizontal: Dimens.paddingHorizontal / 2,
@@ -67,67 +67,97 @@ class WorkspaceTile extends StatelessWidget {
     );
   }
 
-  void _onWorkspaceOptionsTap(
-    BuildContext context,
-    String activeWorkspaceId,
-    String workspaceId,
-  ) {
+  void _onWorkspaceOptionsTap(BuildContext context, String workspaceId) {
     AppModalBottomSheet.show(
       context: context,
-      enableDrag: !viewModel.leaveWorkspace.running,
-      isDismissable: !viewModel.leaveWorkspace.running,
-      child: AppModalBottomSheetContentWrapper(
-        title: context.localization.appDrawerWorkspaceOptions,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+      // Note: the bottom sheet is pushed as a separate route, so it won’t rebuild
+      // when the WorkspaceTile rebuilds. If we pass `name`/`isActive` as plain
+      // values, the sheet will keep showing the snapshot from the moment it was opened.
+      // Therefore we only pass `workspaceId` and read the latest data from `viewModel`
+      // inside a ListenableBuilder, so the sheet updates live when the workspace changes.
+      child: ListenableBuilder(
+        listenable: viewModel,
+        builder: (context, _) {
+          final workspace = viewModel.workspaces.firstWhereOrNull(
+            (w) => w.id == workspaceId,
+          );
+
+          if (workspace == null) {
+            // This is specifically for the case when user gets removed from this
+            // workspace, while the user had this bottom sheet open
+            return const SizedBox.shrink();
+          }
+
+          final isActiveNow = viewModel.activeWorkspaceId == workspaceId;
+
+          return AppModalBottomSheetContentWrapper(
+            title: context.localization.appDrawerWorkspaceOptions,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                WorkspaceImage(url: pictureUrl, size: 50, isActive: isActive),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: Text(
-                    name,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    WorkspaceImage(
+                      url: workspace.pictureUrl,
+                      size: 50,
+                      isActive: isActiveNow,
+                    ),
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
+                        workspace.name,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: Dimens.paddingVertical / 1.2),
+                if (isActiveNow) ...[
+                  AppTextButton(
+                    onPress: () {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pop(); // Close bottom sheet
+                      context.push(
+                        Routes.workspaceSettings(workspaceId: workspaceId),
+                      );
+                    },
+                    label: context.localization.appDrawerEditWorkspace,
+                    leadingIcon: FontAwesomeIcons.pencil,
+                  ),
+                  AppTextButton(
+                    onPress: () {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pop(); // Close bottom sheet
+                      context.push(
+                        Routes.workspaceUsers(workspaceId: workspaceId),
+                      );
+                    },
+                    label: context.localization.appDrawerManageUsers,
+                    leadingIcon: FontAwesomeIcons.userGroup,
+                  ),
+                ] else
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      context.localization.appDrawerNotActiveWorkspace,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
+                WorkspaceLeaveButton(
+                  viewModel: viewModel,
+                  workspaceId: workspaceId,
                 ),
               ],
             ),
-            const SizedBox(height: Dimens.paddingVertical / 1.2),
-            // Show these two options only if the this workspace
-            // is the current active one
-            if (activeWorkspaceId == workspaceId) ...[
-              AppTextButton(
-                onPress: () {
-                  context.push(Routes.workspaceSettings(workspaceId: id));
-                },
-                label: context.localization.appDrawerEditWorkspace,
-                leadingIcon: FontAwesomeIcons.pencil,
-              ),
-              AppTextButton(
-                onPress: () {
-                  context.push(Routes.workspaceUsers(workspaceId: id));
-                },
-                label: context.localization.appDrawerManageUsers,
-                leadingIcon: FontAwesomeIcons.userGroup,
-              ),
-            ] else
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  context.localization.appDrawerNotActiveWorkspace,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            WorkspaceLeaveButton(
-              viewModel: viewModel,
-              workspaceId: workspaceId,
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

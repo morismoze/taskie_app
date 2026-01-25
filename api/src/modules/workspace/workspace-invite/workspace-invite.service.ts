@@ -165,7 +165,9 @@ export class WorkspaceInviteService {
           id: workspaceInvite.id,
           usedById: newWorkspaceUser.id,
           relations: {
-            workspace: true,
+            workspace: {
+              createdBy: true,
+            },
           },
         });
 
