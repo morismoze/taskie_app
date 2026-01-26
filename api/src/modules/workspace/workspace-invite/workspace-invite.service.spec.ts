@@ -295,7 +295,9 @@ describe('WorkspaceInviteService', () => {
         id: mockInvite.id,
         usedById: mockCreatedUser.id,
         relations: {
-          workspace: true,
+          workspace: {
+            createdBy: true,
+          },
         },
       });
 
