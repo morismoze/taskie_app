@@ -32,6 +32,26 @@ class UserRepositoryImpl extends UserRepository {
 
   @override
   Stream<Result<User>> loadUser({bool forceFetch = false}) async* {
+    final stack = StackTrace.current.toString().split('\n');
+
+    for (var i = 0; i < stack.length; i++) {
+      final line = stack[i];
+
+      // Preskoči trenutnu metodu (sebe)
+      if (line.contains('printCaller')) continue;
+
+      // Preskoči sistemske async poruke i prazne linije
+      if (line.contains('<asynchronous suspension>') || line.trim().isEmpty)
+        continue;
+
+      // Preskoči interne Dart/Flutter stvari (opcionalno)
+      if (line.contains('package:flutter') || line.contains('dart:')) continue;
+
+      // Prva linija koja preživi ove filtere je tvoj pravi caller!
+      print('🕵️ Pravi caller je vjerojatno: $line');
+      break; // Našli smo ga, stani
+    }
+
     // Read from in-memory cache
     if (!forceFetch && _cachedUser != null) {
       yield Result.ok(_cachedUser!);

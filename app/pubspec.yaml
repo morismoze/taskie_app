@@ -69,4 +69,4 @@ scripts:
   run:development: flutter run --flavor development --target lib/main.dart
   run:development:profile: flutter run --flavor development --target lib/main.dart --profile
   run:production: flutter run --flavor production --target lib/main_production.dart --release
-  run:production:profile: flutter run --flavor production --target lib/main_production.dart --release --profile
+  run:production:profile: flutter run --flavor production --target lib/main_production.dart --profile

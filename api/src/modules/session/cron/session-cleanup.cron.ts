@@ -15,7 +15,15 @@ export class SessionCleanupService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async cleanupInactiveSessions() {
-    const cutoffDate = DateTime.now().toUTC().minus({ days: 7 }).toJSDate();
+    // Currently we've set refresh token TTL in the env to 30 days
+    const REFRESH_TOKEN_TTL_DAYS = 30;
+    const BUFFER_DAYS = 1;
+
+    const cutoffDate = DateTime.now()
+
+      .toUTC()
+      .minus({ days: REFRESH_TOKEN_TTL_DAYS + BUFFER_DAYS })
+      .toJSDate();
 
     await this.sessionRepository.deleteInactiveSessionsBefore(cutoffDate);
   }

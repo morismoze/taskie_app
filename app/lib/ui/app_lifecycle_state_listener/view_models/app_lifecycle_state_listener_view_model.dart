@@ -5,6 +5,18 @@ import '../../../data/repositories/workspace/workspace/workspace_repository.dart
 import '../../../data/services/local/auth_event_bus.dart';
 import '../../../utils/command.dart';
 
+sealed class CheckUserResult {
+  const CheckUserResult();
+}
+
+class CheckUserResultRemovedFromWorkspace extends CheckUserResult {
+  const CheckUserResultRemovedFromWorkspace();
+}
+
+class CheckUserResultChangedRole extends CheckUserResult {
+  const CheckUserResultChangedRole();
+}
+
 class AppLifecycleStateListenerViewModel {
   AppLifecycleStateListenerViewModel({
     required UserRepository userRepository,
@@ -25,13 +37,7 @@ class AppLifecycleStateListenerViewModel {
   /// Returns bool record: first bool defines if user is still part of
   /// the active workspace; second bool represents if the user still
   /// has the same role in the active workspace.
-  late Command0<
-    (
-      bool isStillPartOfTheActiveWorkspace,
-      bool stillHasTheSameRoleInTheActiveWorkspace,
-    )?
-  >
-  checkUser;
+  late Command0<CheckUserResult?> checkUser;
 
   static const _minInterval = Duration(seconds: 2);
   DateTime? _lastRunAt;
@@ -48,8 +54,18 @@ class AppLifecycleStateListenerViewModel {
     checkUser.execute();
   }
 
-  Future<Result<(bool, bool)?>> _checkUser() async {
+  Future<Result<CheckUserResult?>> _checkUser() async {
     final previousUser = _userRepository.user;
+
+    // 0. Early return if user is not set. This can happen
+    // in case of sign in as Google opens up external activity
+    // window in which user picks the account, and then Google
+    // closes the window, app gets resumed, and tries to invoke
+    // this. But actual login to our API is not yet finished
+    // and this will fail with auth error.
+    if (previousUser == null) {
+      return const Result.ok(null);
+    }
 
     // 1. Load user
     final resultLoadUser = await _userRepository.loadUser().last;
@@ -89,7 +105,7 @@ class AppLifecycleStateListenerViewModel {
             .firstWhereOrNull((workspace) => workspace.id == activeWorkspaceId);
 
         if (currentActiveWorkspace != null) {
-          final previousUserRole = previousUser?.roles.firstWhereOrNull(
+          final previousUserRole = previousUser.roles.firstWhereOrNull(
             (role) => role.workspaceId == activeWorkspaceId,
           );
 
@@ -105,9 +121,13 @@ class AppLifecycleStateListenerViewModel {
               ) !=
               null;
 
-          return Result.ok((true, stillHasTheSameRoleInTheActiveWorkspace));
+          return Result.ok(
+            stillHasTheSameRoleInTheActiveWorkspace
+                ? null
+                : const CheckUserResultChangedRole(),
+          );
         } else {
-          return const Result.ok((false, false));
+          return const Result.ok(CheckUserResultRemovedFromWorkspace());
         }
       case Error():
         return Result.error(activeWorkspaceIdResult.error);

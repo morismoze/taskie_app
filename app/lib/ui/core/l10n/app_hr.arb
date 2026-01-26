@@ -158,7 +158,7 @@
   "workspaceUsersManagementCreateWorkspaceInviteDescription": "Pozovite nove korisnike u ovaj radni prostor slanjem donje poveznice za pozivnicu:",
   "workspaceInviteLabel": "Pozivni link radnog prostora",
   "workspaceUsersManagementCreateWorkspaceInviteError": "Uh-oh! Došlo je do problema prilikom kreiranja pozivnog linka radnog prostora.",
-  "workspaceUsersManagementCreateWorkspaceInviteNote": "Svaki link je jednokratan (pošaljite ga samo jednom korisniku). Možete ga kopirati u međuspremnik ili podijeliti. Radi vaše praktičnosti, nakon bilo koje od tih radnji, generira se novi link za iduću upotrebu.",
+  "workspaceUsersManagementCreateWorkspaceInviteNote": "Svaki link je jednokratan (pošaljite ga samo jednom korisniku) i traje 7 do dana. Možete ga kopirati u međuspremnik ili podijeliti. Radi vaše praktičnosti, nakon bilo koje od tih radnji, generira se novi link za iduću upotrebu.",
   "workspaceUsersManagementCreateWorkspaceInviteClipboard": "Uspješno kopirano u međuspremnik",
   "workspaceUsersManagementCreateVirtualUserDescription": "Kreirajte novog virtualnog korisnika:",
   "workspaceUserFirstNameMinLength": "Ime mora imati najmanje 2 znaka",

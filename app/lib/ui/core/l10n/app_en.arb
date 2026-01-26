@@ -157,7 +157,7 @@
   "workspaceUsersManagementCreateWorkspaceInviteDescription": "Invite new users to this workspace by sending them the invite link below:",
   "workspaceInviteLabel": "Workspace invite link",
   "workspaceUsersManagementCreateWorkspaceInviteError": "Uh-oh! We've had some trouble creating a workspace invite link.",
-  "workspaceUsersManagementCreateWorkspaceInviteNote": "Each link is single-use (send it to one user only). You can copy it to the clipboard or share it. For your convenience, after either of those two actions, a new link is generated for new usage.",
+  "workspaceUsersManagementCreateWorkspaceInviteNote": "Each link is single-use (send it to one user only) and lasts up to 7 days. You can copy it to the clipboard or share it. For your convenience, after either of those two actions, a new link is generated for new usage.",
   "workspaceUsersManagementCreateWorkspaceInviteClipboard": "Successfully copied to clipboard",
   "workspaceUsersManagementCreateVirtualUserDescription": "Create a new virtual user:",
   "workspaceUserFirstNameMinLength": "First name must have at least 2 characters",

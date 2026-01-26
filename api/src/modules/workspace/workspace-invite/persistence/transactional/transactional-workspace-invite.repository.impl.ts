@@ -4,7 +4,7 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { TransactionalRepository } from 'src/modules/unit-of-work/persistence/transactional.repository';
 import { User } from 'src/modules/user/domain/user.domain';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { FindOptionsRelations, IsNull, Repository } from 'typeorm';
 import { WorkspaceInvite } from '../../domain/workspace-invite.domain';
 import { WorkspaceInviteEntity } from '../workspace-invite.entity';
 import { TransactionalWorkspaceInviteRepository } from './transactional-workspace-invite.repository';
@@ -93,9 +93,16 @@ export class TransactionalWorkspaceInviteRepositoryImpl
     usedById: User['id'];
     relations?: FindOptionsRelations<WorkspaceInviteEntity>;
   }): Promise<Nullable<WorkspaceInviteEntity>> {
-    const result = await this.repositoryContext.update(id, {
-      usedBy: { id: usedById },
-    });
+    const result = await this.repositoryContext.update(
+      {
+        id: id,
+        // Race condition - if it was already marked as used
+        usedBy: IsNull(),
+      },
+      {
+        usedBy: { id: usedById },
+      },
+    );
 
     // Early return - provided ID does not exist
     if (result.affected === 0) {

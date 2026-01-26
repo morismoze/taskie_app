@@ -25,7 +25,7 @@ export class WorkspaceInviteService {
   ) {}
 
   /**
-   * Invite links will last up to 1 day and be one-time only
+   * Invite links will last up to 7 days and be one-time only
    */
   async createInviteToken({
     workspaceId,
@@ -36,7 +36,7 @@ export class WorkspaceInviteService {
   }): Promise<WorkspaceInviteCore> {
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
     const now = DateTime.now().toUTC();
-    const expiresAt = now.plus({ hours: 24 }).toISO();
+    const expiresAt = now.plus({ days: 7 }).toISO();
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
         token,

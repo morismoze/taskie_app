@@ -53,6 +53,13 @@ const createMockRepository = () => ({
   updateAllByTaskId: jest.fn(),
 });
 
+const createMockUnitOfWorkService = () => ({
+  withTransaction: jest.fn().mockImplementation(async (cb) => {
+    await Promise.resolve();
+    return cb();
+  }),
+});
+
 describe('TaskAssignmentService', () => {
   let service: TaskAssignmentService;
   let taskAssignmentRepository: ReturnType<typeof createMockRepository>;
@@ -69,9 +76,7 @@ describe('TaskAssignmentService', () => {
         },
         {
           provide: UnitOfWorkService,
-          useValue: {
-            withTransaction: jest.fn().mockImplementation((cb) => cb()),
-          },
+          useValue: createMockUnitOfWorkService(),
         },
       ],
     }).compile();

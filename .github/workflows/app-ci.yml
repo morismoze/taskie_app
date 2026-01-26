@@ -73,5 +73,6 @@ jobs:
         run: flutter test
 
       # 10. Building APK in debug mode just to check Gradle i Native config for any errors
+      # "--no-pub" - because we already did flutter pub get in the step 4.
       - name: Build Debug APK (Dry Run)
-        run: flutter build apk --debug --flavor production -t lib/main_production.dart
+        run: flutter build apk --debug --no-pub --flavor production -t lib/main_production.dart

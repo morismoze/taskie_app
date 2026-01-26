@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../utils/command.dart';
 import '../view_models/app_lifecycle_state_listener_view_model.dart';
@@ -25,14 +24,6 @@ class _AppLifecycleStateListenerState extends State<AppLifecycleStateListener>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarContrastEnforced: false,
-      ),
-    );
     widget.viewModel.checkUser.addListener(_onUserCheckResult);
   }
 
@@ -67,17 +58,21 @@ class _AppLifecycleStateListenerState extends State<AppLifecycleStateListener>
       final result = widget.viewModel.checkUser.result;
       widget.viewModel.checkUser.clearResult();
 
-      if (result is Ok<(bool, bool)?>) {
+      if (result is Ok<CheckUserResult?>) {
         final value = result.value;
-        if (value == null) return;
 
-        final (isMember, sameRole) = value;
+        if (value == null) {
+          return;
+        }
 
-        if (!isMember) {
-          widget.viewModel.emitRemovedfromWorkspaceEvent();
-        } else if (!sameRole)
-          // ignore: curly_braces_in_flow_control_structures
-          widget.viewModel.emitChangedRoleEvent();
+        switch (value) {
+          case CheckUserResultChangedRole():
+            widget.viewModel.emitChangedRoleEvent();
+            break;
+          case CheckUserResultRemovedFromWorkspace():
+            widget.viewModel.emitRemovedfromWorkspaceEvent();
+            break;
+        }
       }
     }
 

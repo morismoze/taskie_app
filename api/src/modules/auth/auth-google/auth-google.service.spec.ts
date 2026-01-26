@@ -21,6 +21,18 @@ describe('AuthGoogleService', () => {
     picture: 'https://example.com/pic.jpg',
   };
 
+  const createMockConfigService = () => ({
+    getOrThrow: jest.fn((key) => {
+      if (key === 'google.auth.clientId') {
+        return 'mock-client-id';
+      }
+      if (key === 'google.auth.clientSecret') {
+        return 'mock-client-secret';
+      }
+      return null;
+    }),
+  });
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -37,17 +49,7 @@ describe('AuthGoogleService', () => {
         AuthGoogleService,
         {
           provide: ConfigService<AggregatedConfig>,
-          useValue: {
-            getOrThrow: jest.fn((key) => {
-              if (key === 'google.auth.clientId') {
-                return 'mock-client-id';
-              }
-              if (key === 'google.auth.clientSecret') {
-                return 'mock-client-secret';
-              }
-              return null;
-            }),
-          },
+          useValue: createMockConfigService(),
         },
       ],
     }).compile();

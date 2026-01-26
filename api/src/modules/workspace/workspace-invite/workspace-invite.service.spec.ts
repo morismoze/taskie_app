@@ -85,6 +85,18 @@ const createMockRepository = () => ({
   markUsedBy: jest.fn(),
 });
 
+const createMockWorkspaceUserService = () => ({
+  create: jest.fn(),
+  findByUserIdAndWorkspaceId: jest.fn(),
+});
+
+const createMockUnitOfWorkService = () => ({
+  withTransaction: jest.fn().mockImplementation(async (cb) => {
+    await Promise.resolve();
+    return cb();
+  }),
+});
+
 describe('WorkspaceInviteService', () => {
   let service: WorkspaceInviteService;
   let workspaceInviteRepository: ReturnType<typeof createMockRepository>;
@@ -103,16 +115,11 @@ describe('WorkspaceInviteService', () => {
         },
         {
           provide: WorkspaceUserService,
-          useValue: {
-            create: jest.fn(),
-            findByUserIdAndWorkspaceId: jest.fn(),
-          },
+          useValue: createMockWorkspaceUserService(),
         },
         {
           provide: UnitOfWorkService,
-          useValue: {
-            withTransaction: jest.fn(),
-          },
+          useValue: createMockUnitOfWorkService(),
         },
       ],
     }).compile();
