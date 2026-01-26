@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../logger/logger_interface.dart';
 import '../../../ui/core/utils/intl.dart';
 import '../../../utils/command.dart';
-import '../../services/local/logger_service.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'preferences_repository.dart';
 
@@ -47,6 +47,7 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
           'sharedPreferencesService.getAppLanguageCode failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'PreferencesRepositoryImpl',
         );
         // We don't want to error the program since preferences miss
         // is not fatal as we can always fallback to default values
@@ -74,6 +75,7 @@ class PreferencesRepositoryImpl extends PreferencesRepository {
           'sharedPreferencesService.setAppLanguageCode failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'PreferencesRepositoryImpl',
         );
     }
 

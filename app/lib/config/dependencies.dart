@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -28,6 +29,8 @@ import '../data/repositories/workspace/workspace_user/workspace_user_repository.
 import '../data/repositories/workspace/workspace_user/workspace_user_repository_impl.dart';
 import '../data/services/api/api_client.dart';
 import '../data/services/api/auth/auth_api_service.dart';
+import '../data/services/api/mobile-logging/mobile_logging_api_service.dart';
+import '../data/services/api/mobile_logging_api_client.dart';
 import '../data/services/api/user/user_api_service.dart';
 import '../data/services/api/workspace/workspace/workspace_api_service.dart';
 import '../data/services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
@@ -39,7 +42,6 @@ import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/auth_event_bus.dart';
 import '../data/services/local/client_info_service.dart';
 import '../data/services/local/database_service.dart';
-import '../data/services/local/logger_service.dart';
 import '../data/services/local/secure_storage_service.dart';
 import '../data/services/local/shared_preferences_service.dart';
 import '../domain/use_cases/active_workspace_change_use_case.dart';
@@ -50,15 +52,20 @@ import '../domain/use_cases/refresh_token_use_case.dart';
 import '../domain/use_cases/share_workspace_invite_link_use_case.dart';
 import '../domain/use_cases/sign_in_use_case.dart';
 import '../domain/use_cases/sign_out_use_case.dart';
+import '../logger/console_logger.dart';
+import '../logger/logger_hub.dart';
+import '../logger/logger_interface.dart';
+import '../logger/remote_logger.dart';
 import '../routing/router.dart';
 import '../ui/app_lifecycle_state_listener/view_models/app_lifecycle_state_listener_view_model.dart';
 import '../ui/app_startup/view_models/app_startup_view_model.dart';
 import '../ui/auth_event_listener/view_models/auth_event_listener_view_model.dart';
 import '../ui/core/services/rbac_service.dart';
 
-List<SingleChildWidget> get providers {
+List<SingleChildWidget> buildProviders({required bool enableRemoteLogging}) {
   return [
-    Provider(create: (context) => LoggerService()),
+    Provider<LoggerHub>(create: (_) => LoggerHub(ConsoleLogger())),
+    Provider<LoggerService>(create: (context) => context.read<LoggerHub>()),
     Provider(create: (context) => SecureStorageService()),
     Provider(create: (context) => SharedPreferencesService()),
     Provider(create: (context) => GoogleAuthService()),
@@ -283,6 +290,34 @@ List<SingleChildWidget> get providers {
         workspaceRepository: context.read(),
         authEventBus: context.read(),
       ),
+    ),
+    // Problem:
+    // A circular dependency exists:
+    // `ClientInfoRepository` -> `LoggerService` (ApiLogger) -> `MobileLoggingApiService` ->
+    // `MobileLoggingApiClient` -> `ClientInfoRepository`.
+    //
+    // Solution:
+    // We use the "Setter Injection" pattern via `ProxyProvider2`.
+    // 1. `LoggerHub` is initialized early in the provider list (initially ConsoleLogger).
+    // 2. We use `ProxyProvider2` because we need access to two objects:
+    //    a) `ClientInfoRepository`: To build the local `MobileLoggingApiService`.
+    //    b) `LoggerHub`: The target instance where we inject the service.
+    //    And we return from it the updated LoggerHub.
+    // 3. The MobileLoggingApiClient and MobileLoggingApiService are instantiated locally here
+    // to avoid polluting the global provider scope.
+    ProxyProvider2<ClientInfoRepository, LoggerHub, LoggerHub>(
+      lazy: false,
+      update: (context, clientInfoRepository, hub, _) {
+        // kReleaseMode guard is just sanity guard
+        if (enableRemoteLogging && kReleaseMode) {
+          final apiClient = MobileLoggingApiClient(
+            clientInfoRepository: clientInfoRepository,
+          );
+          final apiService = MobileLoggingApiService(apiClient: apiClient);
+          hub.setDelegate(RemoteLogger(apiService: apiService));
+        }
+        return hub;
+      },
     ),
   ];
 }

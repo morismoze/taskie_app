@@ -4,6 +4,7 @@ import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_task.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/value_patch.dart';
@@ -19,7 +20,6 @@ import '../../../services/api/workspace/workspace_task/models/response/update_ta
 import '../../../services/api/workspace/workspace_task/models/response/workspace_task_response.dart';
 import '../../../services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../../../services/local/database_service.dart';
-import '../../../services/local/logger_service.dart';
 import 'workspace_task_repository.dart';
 
 final _defaultFilter = ObjectiveFilter(
@@ -152,6 +152,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.getTasks failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
 
         if (isChangingFilter) {
@@ -212,6 +213,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.createTask failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -281,6 +283,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.updateTaskDetails failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -341,6 +344,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.addTaskAssignee failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -389,6 +393,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.removeTaskAssignee failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -452,6 +457,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.updateTaskAssignments failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -500,6 +506,7 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
           'workspaceTaskApiService.closeTask failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceTaskRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -526,6 +533,8 @@ class WorkspaceTaskRepositoryImpl extends WorkspaceTaskRepository {
         LogLevel.warn,
         'databaseService.setTasks failed',
         error: dbSaveResult.error,
+        stackTrace: dbSaveResult.stackTrace,
+        context: 'WorkspaceTaskRepositoryImpl',
       );
     }
   }

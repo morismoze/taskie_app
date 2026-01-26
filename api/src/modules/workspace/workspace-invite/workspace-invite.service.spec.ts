@@ -171,7 +171,7 @@ describe('WorkspaceInviteService', () => {
       expect(callArgs.data.token.length).toBeGreaterThan(0);
     });
 
-    it('sets expiration to 24 hours from now', async () => {
+    it('sets expiration to 7 days from now', async () => {
       const mockInvite = mockWorkspaceInviteEntityFactory();
       workspaceInviteRepository.create.mockResolvedValue(mockInvite);
 
@@ -184,9 +184,8 @@ describe('WorkspaceInviteService', () => {
       const callArgs = workspaceInviteRepository.create.mock.calls[0][0];
       const expiresAt = DateTime.fromISO(callArgs.data.expiresAt);
 
-      const diffInHours = expiresAt.diff(beforeCall, 'hours').toObject().hours;
-      expect(diffInHours).toBeGreaterThanOrEqual(23.9);
-      expect(diffInHours).toBeLessThanOrEqual(24.1);
+      const diffInDays = expiresAt.diff(beforeCall, 'days').toObject().days;
+      expect(diffInDays).toEqual(7);
     });
 
     it('throws SERVER_ERROR if invite creation fails', async () => {

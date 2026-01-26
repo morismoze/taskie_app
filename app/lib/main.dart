@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'config/dependencies.dart';
 import 'data/services/local/database_service.dart';
-import 'data/services/local/logger_service.dart';
 import 'ui/localization_listener/view_models/locale_initializer_view_model.dart';
 import 'ui/localization_listener/widgets/locale_initializer.dart';
 
@@ -19,13 +18,10 @@ void main() async {
 
   await DatabaseService.init();
 
-  LoggerService.init();
-
   const enableDevicePreview = false;
-
   runApp(
     MultiProvider(
-      providers: providers,
+      providers: buildProviders(enableRemoteLogging: false),
       child: Builder(
         builder: (context) => LocaleInitializer(
           viewModel: LocaleInitializerViewModel(

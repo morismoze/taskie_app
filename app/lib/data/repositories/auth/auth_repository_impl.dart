@@ -1,11 +1,11 @@
 import '../../../domain/models/auth.dart';
 import '../../../domain/models/user.dart';
+import '../../../logger/logger_interface.dart';
 import '../../../utils/command.dart';
 import '../../services/api/auth/auth_api_service.dart';
 import '../../services/api/auth/models/request/social_login_request.dart';
 import '../../services/api/auth/models/response/login_response.dart';
 import '../../services/api/auth/models/response/refresh_token_response.dart';
-import '../../services/local/logger_service.dart';
 import '../../services/local/shared_preferences_service.dart';
 import 'auth_id_provider_repository.dart';
 import 'auth_repository.dart';
@@ -46,6 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
           'sharedPreferencesService.getActiveAuthIdProvider failed',
           error: resultGetActiveAuthIdProvider.error,
           stackTrace: resultGetActiveAuthIdProvider.stackTrace,
+          context: 'AuthRepositoryImpl',
         );
         return Result.error(
           resultGetActiveAuthIdProvider.error,
@@ -69,6 +70,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'extProvider.signIn failed',
         error: idProviderResult.error,
         stackTrace: idProviderResult.stackTrace,
+        context: 'AuthRepositoryImpl',
       );
       return Result.error(idProviderResult.error, idProviderResult.stackTrace);
     }
@@ -97,6 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'sharedPreferencesService.setActiveAuthIdProvider failed',
             error: resultSetActiveAuthIdProvider.error,
             stackTrace: resultSetActiveAuthIdProvider.stackTrace,
+            context: 'AuthRepositoryImpl',
           );
           return Result.error(
             resultSetActiveAuthIdProvider.error,
@@ -133,6 +136,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'extProvider.signOut (cleanup) failed',
             error: resultSignOutIdProvider.error,
             stackTrace: resultSignOutIdProvider.stackTrace,
+            context: 'AuthRepositoryImpl',
           );
         }
 
@@ -141,6 +145,7 @@ class AuthRepositoryImpl implements AuthRepository {
           'authApiService.login failed',
           error: apiLoginResult.error,
           stackTrace: apiLoginResult.stackTrace,
+          context: 'AuthRepositoryImpl',
         );
         return Result.error(apiLoginResult.error, apiLoginResult.stackTrace);
     }
@@ -158,6 +163,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'authApiService.logout failed',
         error: resultApiLogout.error,
         stackTrace: resultApiLogout.stackTrace,
+        context: 'AuthRepositoryImpl',
       );
     }
 
@@ -179,6 +185,7 @@ class AuthRepositoryImpl implements AuthRepository {
           'authApiService.refreshAccessToken failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'AuthRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -206,6 +213,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'extProvider.signOut failed',
         error: resultIdProviderSignOut.error,
         stackTrace: resultIdProviderSignOut.stackTrace,
+        context: 'AuthRepositoryImpl',
       );
     }
 

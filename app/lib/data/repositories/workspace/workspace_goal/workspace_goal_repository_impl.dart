@@ -5,6 +5,7 @@ import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_goal.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/value_patch.dart';
@@ -14,7 +15,6 @@ import '../../../services/api/workspace/workspace_goal/models/request/update_goa
 import '../../../services/api/workspace/workspace_goal/models/response/workspace_goal_response.dart';
 import '../../../services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
 import '../../../services/local/database_service.dart';
-import '../../../services/local/logger_service.dart';
 import 'workspace_goal_repository.dart';
 
 final _defaultFilter = ObjectiveFilter(
@@ -148,6 +148,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.getGoals failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
 
         if (isChangingFilter) {
@@ -208,6 +209,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.createGoal failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -277,6 +279,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.updateGoalDetails failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -325,6 +328,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.closeGoal failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -351,6 +355,8 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         LogLevel.warn,
         'databaseService.setGoals failed',
         error: dbSaveResult.error,
+        stackTrace: dbSaveResult.stackTrace,
+        context: 'WorkspaceGoalRepositoryImpl',
       );
     }
   }

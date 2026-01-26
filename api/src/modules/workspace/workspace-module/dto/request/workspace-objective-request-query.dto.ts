@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsEnum, IsInt, Max, Min, ValidateIf } from 'class-validator';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 
 export enum SortBy {
@@ -12,7 +12,7 @@ export const WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT = 20;
 
 export class WorkspaceObjectiveRequestQuery {
   @ApiPropertyOptional({ type: Number, minimum: 1, default: 1 })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -24,7 +24,7 @@ export class WorkspaceObjectiveRequestQuery {
     maximum: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
     default: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -35,7 +35,7 @@ export class WorkspaceObjectiveRequestQuery {
     enum: ProgressStatus,
     description: 'Default - all statuses are returned',
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @IsEnum(ProgressStatus)
   status?: ProgressStatus;
 
@@ -52,7 +52,7 @@ export class WorkspaceObjectiveRequestQuery {
     enum: SortBy,
     default: SortBy.NEWEST,
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @IsEnum(SortBy)
   sort?: SortBy;
 

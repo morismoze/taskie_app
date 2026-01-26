@@ -1,11 +1,11 @@
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
 import '../../../../domain/models/workspace_invite.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace_invite/models/response/create_workspace_invite_token_response.dart';
 import '../../../services/api/workspace/workspace_invite/workspace_invite_api_service.dart';
-import '../../../services/local/logger_service.dart';
 import 'workspace_invite_repository.dart';
 
 class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
@@ -56,6 +56,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
           'workspaceInviteApiService.createWorkspaceInviteToken failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceInviteRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -90,6 +91,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
           'workspaceInviteApiService.joinWorkspace failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceInviteRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -127,6 +129,7 @@ class WorkspaceInviteRepositoryImpl implements WorkspaceInviteRepository {
           'workspaceInviteApiService.fetchWorkspaceInfoByInviteToken failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceInviteRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
