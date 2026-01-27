@@ -74,7 +74,14 @@ jobs:
           distribution: "zulu"
           java-version: "17"
 
-      # 4. Setup Flutter
+      # 4. Decode google-services JSON from base64 format from env and
+      # add that to a new file where upload-keystore.jks should be
+      - name: Create Google Services JSON
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > android/app/google-services.json
+
+      # 5. Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -82,13 +89,13 @@ jobs:
           channel: "stable"
           cache: true # Cache Flutter SDK
 
-      # 5. Install dependencies
+      # 6. Install dependencies
       # "--enforce-lockfile" is used to install exact versions defined in pubspec.yaml,
       # and if there is any diff between pubspec.yaml and pubspec.lock, this will fail
       - name: Get Dependencies
         run: flutter pub get --enforce-lockfile
 
-      # 6. Create/Update .env
+      # 7. Create/Update .env
       # Using printf because using echo can be a bit dangerous due to
       # possible "$" symbols in the secret, since "$" defines a variable.
       # Using print also requires to define env.
@@ -97,22 +104,23 @@ jobs:
           APP_ENV: ${{ secrets.APP_ENV }}
         run: printf '%s' "$APP_ENV" > .env
 
-      # 7. Generate Localization
+      # 8. Generate Localization
       - name: Generate Localization
         run: flutter gen-l10n
 
-      # 8. Run Build Runner
+      # 9. Run Build Runner
       - name: Run Build Runner
         # .env file used generated on the step 6
         run: dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env"
 
-      # 9. Decode keystore from base64 format
+      # 10. Decode keystore from base64 format from env and
+      # add that to a new file where upload-keystore.jks should be
       - name: Decode Keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
 
-      # 10. Create key.properties
+      # 11. Create key.properties
       # For storeFile it's important to use ${{ github.workspace }} because storeFile is
       # being loaded from the disc by the build.gradle.kts. The rest (storePassword,
       # keyPassword, keyAlias) are just read, and not looked up on the disc.
@@ -129,7 +137,7 @@ jobs:
             printf 'storeFile=%s\n' "${{ github.workspace }}/app/android/app/upload-keystore.jks"
           } > android/key.properties
 
-      # 11. Define flavor based on chose environment
+      # 12. Define flavor based on chose environment
       - name: Setup Flavor Variable
         working-directory: .
         run: |
@@ -139,7 +147,7 @@ jobs:
           echo "FLAVOR=production" >> $GITHUB_ENV
           echo "✅ Flavor set to: production"
 
-      # 12. Compute build number
+      # 13. Compute build number
       # Using GITHUB_RUN_ATTEMPT in case of workflow re-runs
       - name: Compute build number
         id: buildno
@@ -148,7 +156,7 @@ jobs:
           BUILD_NUMBER=$((GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))
           echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
-      # 13. Read version from pubspec
+      # 14. Read version from pubspec
       # Remove any indentation, next line, inline comments
       - name: Read version from pubspec
         id: pubver
@@ -158,19 +166,19 @@ jobs:
           VER_NAME="${VER%%+*}"
           echo "ver_name=$VER_NAME" >> $GITHUB_OUTPUT
 
-      # 14. Build release bundle (.aab) with defined flavor
+      # 15. Build release bundle (.aab) with defined flavor
       # Generates build dir in root/app dir (root = ${{ github.workspace }}).
       # Using lib/main_production.dart since currently we use only production flavor.
       - name: Build App Bundle (Release)
         run: flutter build appbundle --release --flavor ${{ env.FLAVOR }} -t lib/main_production.dart --build-number=${{ steps.buildno.outputs.build_number }}
 
-      # 15. Create Google Play API Key JSON
+      # 16. Create Google Play API Key JSON
       - name: Create Google Play Service Account JSON
         env:
           GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_DEPLOYER_SERVICE_ACCOUNT_JSON }}
         run: printf '%s' "$GOOGLE_PLAY_JSON" > android/api-key.json
 
-      # 16. Setup Ruby & Fastlane (Fastlane is setup via )
+      # 17. Setup Ruby & Fastlane (Fastlane is setup via )
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -182,7 +190,7 @@ jobs:
       # Upload artifact step is removed because this is a public repo
       # and uploading .aab and mapping.txt files is not good.
 
-      # 17. Upload to Google Play (Dynamic Track)
+      # 18. Upload to Google Play (Dynamic Track)
       - name: Upload to Google Play
         uses: maierj/fastlane-action@v3.1.0
         with:
@@ -193,7 +201,7 @@ jobs:
           AAB_PATH: "${{ github.workspace }}/app/build/app/outputs/bundle/${{ env.FLAVOR }}Release/app-${{ env.FLAVOR }}-release.aab"
           JSON_KEY_FILE: "${{ github.workspace }}/app/android/api-key.json"
 
-      # 18. Create GitHub Release
+      # 19. Create GitHub Release
       # Without .aab and mapping.txt files because repository is public and these
       # files are private, so only tag + release notes.
       - name: Create GitHub Release
