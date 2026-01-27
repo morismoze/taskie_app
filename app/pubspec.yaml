@@ -1,7 +1,11 @@
 name: taskie
-description: "An app to help parents track tasks being done by their kids"
+description: "Create workspaces, crush your goals, and climb the leaderboard. Taskie makes productivity fun and collaborative for everyone."
 publish_to: "none" # Don't publish to pub.dev
 
+# Build number is not necessary here as it is defined
+# by the Github deploy workflow on deploy, but that
+# workflow reads the version from here, so manual
+# change here is necessary
 version: 1.0.0+1
 
 environment:
@@ -36,6 +40,8 @@ dependencies:
   hive_flutter: ^1.1.0
   url_launcher: ^6.3.2
   toastification: ^3.0.3
+  firebase_remote_config: ^6.1.4
+  firebase_core: ^4.4.0
 
 dev_dependencies:
   flutter_test:
@@ -58,10 +64,11 @@ flutter:
         - asset: assets/fonts/Roboto-Bold.ttf
 
 scripts:
+  # derry is used for running commands
   build_runner:development: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.development"
   build_runner:production: dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.production"
   generate_localization: flutter gen-l10n
   run:development: flutter run --flavor development --target lib/main.dart
   run:development:profile: flutter run --flavor development --target lib/main.dart --profile
-  run:production: flutter run --flavor production --target lib/main_production.dart
+  run:production: flutter run --flavor production --target lib/main_production.dart --release
   run:production:profile: flutter run --flavor production --target lib/main_production.dart --profile

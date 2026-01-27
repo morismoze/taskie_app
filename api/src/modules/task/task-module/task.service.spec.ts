@@ -111,7 +111,6 @@ describe('TaskService', () => {
           page: 1,
           limit: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
           status: null,
-          search: null,
           sort: SortBy.NEWEST,
         },
       });
@@ -137,7 +136,6 @@ describe('TaskService', () => {
         page: 2,
         limit: 10,
         status: ProgressStatus.COMPLETED,
-        search: 'task',
         sort: SortBy.OLDEST,
       };
 
@@ -152,7 +150,6 @@ describe('TaskService', () => {
           page: 2,
           limit: 10,
           status: ProgressStatus.COMPLETED,
-          search: 'task',
           sort: SortBy.OLDEST,
         },
       });
@@ -172,25 +169,6 @@ describe('TaskService', () => {
       });
 
       expect(result.data[0].createdBy).toBeNull();
-    });
-
-    it('trims search query', async () => {
-      taskRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [],
-        totalPages: 0,
-        total: 0,
-      });
-
-      await service.findPaginatedByWorkspaceWithAssignees({
-        workspaceId: 'workspace-1',
-        query: { search: '  term  ' },
-      });
-
-      expect(taskRepository.findAllByWorkspaceId).toHaveBeenCalledWith(
-        expect.objectContaining({
-          query: expect.objectContaining({ search: 'term' }),
-        }),
-      );
     });
   });
 

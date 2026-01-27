@@ -72,7 +72,8 @@ class AuthEventListenerViewmodel extends ChangeNotifier {
   }
 
   Future<Result<String?>> _handleRemovalFromWorkspace() async {
-    // For this case we need to re-fetch workspaces list and the user.
+    // For this case we need to re-fetch workspaces list and the user
+    // (token refresh already happened).
     // User is re-fetched in the ActiveWorkspaceChangeUseCase.
     // After those two request are successful we take first workspace
     // from the list and navigate to it. If the user is not part

@@ -1,14 +1,15 @@
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace_user.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/user/models/response/user_response.dart';
+import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/workspace_user/models/request/create_virtual_workspace_user_request.dart';
 import '../../../services/api/workspace/workspace_user/models/request/update_workspace_user_details_request.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_accumulated_points_response.dart';
 import '../../../services/api/workspace/workspace_user/models/response/workspace_user_response.dart';
 import '../../../services/api/workspace/workspace_user/workspace_user_api_service.dart';
 import '../../../services/local/database_service.dart';
-import '../../../services/local/logger_service.dart';
 import 'workspace_user_repository.dart';
 
 class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
@@ -76,6 +77,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           'workspaceUserApiService.getWorkspaceUsers failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceUserRepositoryImpl',
         );
         yield Result.error(result.error, result.stackTrace);
     }
@@ -112,6 +114,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           'workspaceUserApiService.createVirtualUser failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceUserRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -161,6 +164,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           'workspaceUserApiService.deleteWorkspaceUser failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceUserRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -170,9 +174,9 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
   Future<Result<void>> updateWorkspaceUserDetails({
     required String workspaceId,
     required String workspaceUserId,
-    String? firstName,
-    String? lastName,
-    WorkspaceRole? role,
+    ValuePatch<String>? firstName,
+    ValuePatch<String>? lastName,
+    ValuePatch<WorkspaceRole>? role,
   }) async {
     final result = await _workspaceUserApiService.updateWorkspaceUserDetails(
       workspaceId: workspaceId,
@@ -180,7 +184,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
       payload: UpdateWorkspaceUserDetailsRequest(
         firstName: firstName,
         lastName: lastName,
-        role: role?.value,
+        role: role,
       ),
     );
 
@@ -210,6 +214,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           'workspaceUserApiService.updateWorkspaceUserDetails failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceUserRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -235,6 +240,7 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
           'workspaceUserApiService.getWorkspaceUserAccumulatedPoints failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceUserRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -253,6 +259,8 @@ class WorkspaceUserRepositoryImpl extends WorkspaceUserRepository {
         LogLevel.warn,
         'databaseService.setWorkspaceUsers failed',
         error: dbSaveResult.error,
+        stackTrace: dbSaveResult.stackTrace,
+        context: 'WorkspaceUserRepositoryImpl',
       );
     }
   }

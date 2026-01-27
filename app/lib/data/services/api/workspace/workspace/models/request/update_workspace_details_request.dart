@@ -1,13 +1,21 @@
-import 'package:json_annotation/json_annotation.dart';
+import '../../../../value_patch.dart';
 
-part 'update_workspace_details_request.g.dart';
-
-@JsonSerializable(createFactory: false)
 class UpdateWorkspaceDetailsRequest {
   UpdateWorkspaceDetailsRequest({this.name, this.description});
 
-  final String? name;
-  final String? description;
+  final ValuePatch<String>? name;
+  final ValuePatch<String?>? description;
 
-  Map<String, dynamic> toJson() => _$UpdateWorkspaceDetailsRequestToJson(this);
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+
+    if (name != null) {
+      json['name'] = name!.value;
+    }
+    if (description != null) {
+      json['description'] = description!.value;
+    }
+
+    return json;
+  }
 }

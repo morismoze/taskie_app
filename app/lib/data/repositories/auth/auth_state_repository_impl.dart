@@ -1,5 +1,5 @@
+import '../../../logger/logger_interface.dart';
 import '../../../utils/command.dart';
-import '../../services/local/logger_service.dart';
 import '../../services/local/secure_storage_service.dart';
 import 'auth_state_repository.dart';
 
@@ -38,6 +38,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
             'secureStorage.getAccessToken failed',
             error: accessTokenResult.error,
             stackTrace: accessTokenResult.stackTrace,
+            context: 'AuthStateRepositoryImpl',
           );
       }
     }
@@ -55,6 +56,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
             'secureStorage.getRefreshToken failed',
             error: refreshTokenResult.error,
             stackTrace: refreshTokenResult.stackTrace,
+            context: 'AuthStateRepositoryImpl',
           );
       }
     }
@@ -77,6 +79,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
           'secureStorage.getAccessToken failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'AuthStateRepositoryImpl',
         );
     }
 
@@ -86,6 +89,9 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
   @override
   void setAuthenticated(bool isAuthenticated) {
     _isAuthenticated = isAuthenticated;
+    if (!_isAuthenticated) {
+      _loggerService.clearState();
+    }
     notifyListeners();
   }
 
@@ -106,6 +112,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
             'secureStorage.clearTokens failed',
             error: result.error,
             stackTrace: result.stackTrace,
+            context: 'AuthStateRepositoryImpl',
           );
           return result;
       }
@@ -133,6 +140,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
         'secureStorage.setTokens failed',
         error: error,
         stackTrace: stackTrace,
+        context: 'AuthStateRepositoryImpl',
       );
 
       // Best-effort rollback to keep the storage consistent
@@ -143,6 +151,7 @@ class AuthStateRepositoryImpl extends AuthStateRepository {
           'secureStorage.clearTokens rollback failed',
           error: rollback.error,
           stackTrace: rollback.stackTrace,
+          context: 'AuthStateRepositoryImpl',
         );
       }
 

@@ -7,7 +7,6 @@ import '../../core/ui/blurred_circles_background.dart';
 import '../../core/ui/header_bar/header_bar.dart';
 import '../view_models/preferences_screen_view_model.dart';
 import 'sections/localization_section/localization_section.dart';
-import 'sections/theme_section/theme_section.dart';
 
 class PreferencesScreen extends StatelessWidget {
   const PreferencesScreen({super.key, required this.viewModel});
@@ -15,7 +14,7 @@ class PreferencesScreen extends StatelessWidget {
   final PreferencesScreenViewModel viewModel;
 
   List<Widget> _getPreferencesSectionsWidgets() {
-    return [LocalizationSection(viewModel: viewModel), const ThemeSection()];
+    return [LocalizationSection(viewModel: viewModel)];
   }
 
   @override

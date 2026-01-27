@@ -1,6 +1,6 @@
+import '../../../logger/logger_interface.dart';
 import '../../../utils/command.dart';
 import '../../services/external/google/google_auth_service.dart';
-import '../../services/local/logger_service.dart';
 import 'auth_id_provider_repository.dart';
 
 class AuthGoogleIdProviderRepositoryImpl implements AuthIdProviderRepository {
@@ -30,6 +30,7 @@ class AuthGoogleIdProviderRepositoryImpl implements AuthIdProviderRepository {
           'googleAuthService.authenticate failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'AuthGoogleIdProviderRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }

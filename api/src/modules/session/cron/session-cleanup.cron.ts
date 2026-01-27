@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DateTime } from 'luxon';
-import { SessionRepository } from '../persistence/session.repository';
+import { NonTransactionalSessionRepository } from '../persistence/non-transactional/non-transactional-session.repository';
 
 @Injectable()
 export class SessionCleanupService {
-  constructor(private readonly sessionRepository: SessionRepository) {}
+  constructor(
+    private readonly sessionRepository: NonTransactionalSessionRepository,
+  ) {}
 
   /**
    * We'll initally delete sessions every week on Sunday midnight.
@@ -15,7 +17,15 @@ export class SessionCleanupService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async cleanupInactiveSessions() {
-    const cutoffDate = DateTime.now().toUTC().minus({ days: 7 }).toJSDate();
+    // Currently we've set refresh token TTL in the env to 30 days
+    const REFRESH_TOKEN_TTL_DAYS = 30;
+    const BUFFER_DAYS = 1;
+
+    const cutoffDate = DateTime.now()
+
+      .toUTC()
+      .minus({ days: REFRESH_TOKEN_TTL_DAYS + BUFFER_DAYS })
+      .toJSDate();
 
     await this.sessionRepository.deleteInactiveSessionsBefore(cutoffDate);
   }

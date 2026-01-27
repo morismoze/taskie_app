@@ -37,16 +37,20 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   void didUpdateWidget(covariant CreateWorkspaceScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspace.removeListener(
-      _onWorkspaceCreateResult,
-    );
-    oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
-      _onWorkspaceJoinResult,
-    );
-    widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
-    widget.viewModel.joinWorkspaceViaInviteLink.addListener(
-      _onWorkspaceJoinResult,
-    );
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.createWorkspace.removeListener(
+        _onWorkspaceCreateResult,
+      );
+      oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
+        _onWorkspaceJoinResult,
+      );
+
+      widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
+      widget.viewModel.joinWorkspaceViaInviteLink.addListener(
+        _onWorkspaceJoinResult,
+      );
+    }
   }
 
   @override
@@ -141,7 +145,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
           AppToast.showInfo(
             context: context,
-            message: context
+            title: context
                 .localization
                 .workspaceCreateJoinViaInviteLinkExpiredOrUsed,
           );
@@ -150,7 +154,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
           AppToast.showInfo(
             context: context,
-            message: context
+            title: context
                 .localization
                 .workspaceCreateJoinViaInviteLinkExistingUser,
           );

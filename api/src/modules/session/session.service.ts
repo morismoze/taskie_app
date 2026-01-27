@@ -4,7 +4,7 @@ import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { ApiHttpException } from 'src/exception/api-http-exception.type';
 import { SessionCore } from './domain/session-core.domain';
 import { Session } from './domain/session.domain';
-import { TransactionalSessionRepository } from './persistence/transactional/transactional-session.repository';
+import { SessionRepository } from './persistence/session.repository';
 
 /**
  * We create sessions on user login because:
@@ -17,9 +17,7 @@ import { TransactionalSessionRepository } from './persistence/transactional/tran
  */
 @Injectable()
 export class SessionService {
-  constructor(
-    private readonly sessionRepository: TransactionalSessionRepository,
-  ) {}
+  constructor(private readonly sessionRepository: SessionRepository) {}
 
   async create(data: {
     userId: Session['user']['id'];

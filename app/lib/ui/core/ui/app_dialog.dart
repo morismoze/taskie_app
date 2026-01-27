@@ -13,6 +13,7 @@ class AppDialog {
     bool canPop = true,
   }) {
     showDialog(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext dialogContext) {
         return PopScope(
@@ -48,6 +49,7 @@ class AppDialog {
     bool canPop = true,
   }) {
     showDialog(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext dialogContext) {
         return PopScope(

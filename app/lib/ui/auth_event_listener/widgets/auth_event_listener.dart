@@ -13,6 +13,7 @@ import '../../core/l10n/l10n_extensions.dart';
 import '../../core/ui/action_button_bar.dart';
 import '../../core/ui/app_dialog.dart';
 import '../../core/ui/app_toast.dart';
+import '../../navigation/app_shell_scaffold.dart';
 import '../view_models/auth_event_listener_view_model.dart';
 
 class AuthEventListener extends StatefulWidget {
@@ -31,6 +32,8 @@ class AuthEventListener extends StatefulWidget {
 
 class _AuthEventListenerState extends State<AuthEventListener> {
   StreamSubscription<AuthEvent>? _subscription;
+  bool _handlingRemovalFromWorkspace = false;
+  bool _handlingRoleChange = false;
 
   @override
   void initState() {
@@ -53,9 +56,35 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
         switch (event) {
           case UserRoleChangedEvent():
-            _showRoleChangedDialog();
+            if (_handlingRoleChange) {
+              return;
+            }
+
+            // Lock the event processing
+            _handlingRoleChange = true;
+
+            _dismissOverlays(); // Close overlays on the current page
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                _showRoleChangedDialog();
+              }
+            });
+            return;
           case UserRemovedFromWorkspaceEvent():
-            _showRemovedFromWorkspaceDialog();
+            if (_handlingRemovalFromWorkspace) {
+              return;
+            }
+
+            // Lock the event processing
+            _handlingRemovalFromWorkspace = true;
+
+            _dismissOverlays(); // Close overlays on the current page
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                _showRemovedFromWorkspaceDialog();
+              }
+            });
+            return;
           case AccessTokenRefreshFailed():
             widget.viewModel.signOutLocally.execute();
         }
@@ -66,20 +95,24 @@ class _AuthEventListenerState extends State<AuthEventListener> {
   @override
   void didUpdateWidget(covariant AuthEventListener oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.handleWorkspaceRoleChange.removeListener(
-      _onWorkspaceRoleChangeResult,
-    );
-    oldWidget.viewModel.handleRemovalFromWorkspace.removeListener(
-      _onRemovalFromWorkspaceResult,
-    );
-    oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
-    widget.viewModel.handleRemovalFromWorkspace.addListener(
-      _onRemovalFromWorkspaceResult,
-    );
-    widget.viewModel.handleWorkspaceRoleChange.addListener(
-      _onWorkspaceRoleChangeResult,
-    );
-    widget.viewModel.signOut.addListener(_onSignOutResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.handleWorkspaceRoleChange.removeListener(
+        _onWorkspaceRoleChangeResult,
+      );
+      oldWidget.viewModel.handleRemovalFromWorkspace.removeListener(
+        _onRemovalFromWorkspaceResult,
+      );
+      oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
+
+      widget.viewModel.handleWorkspaceRoleChange.addListener(
+        _onWorkspaceRoleChangeResult,
+      );
+      widget.viewModel.handleRemovalFromWorkspace.addListener(
+        _onRemovalFromWorkspaceResult,
+      );
+      widget.viewModel.signOut.addListener(_onSignOutResult);
+    }
   }
 
   @override
@@ -102,6 +135,7 @@ class _AuthEventListenerState extends State<AuthEventListener> {
 
   void _showRoleChangedDialog() {
     final rootNavigatorContext = rootNavigatorKey.currentContext;
+
     if (rootNavigatorContext == null) {
       return;
     }
@@ -123,44 +157,50 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleWorkspaceRoleChange,
           onSubmit: () => widget.viewModel.handleWorkspaceRoleChange.execute(),
-          submitButtonText: context.localization.misc_ok,
-          submitButtonColor: Theme.of(context).colorScheme.error,
+          submitButtonText: rootNavigatorContext.localization.misc_ok,
+          submitButtonColor: Theme.of(rootNavigatorContext).colorScheme.error,
         ),
       ],
     );
   }
 
   void _showRemovedFromWorkspaceDialog() {
-    final dialogContext = rootNavigatorKey.currentContext;
-    if (dialogContext == null) {
+    final rootNavigatorContext = rootNavigatorKey.currentContext;
+
+    if (rootNavigatorContext == null) {
       return;
     }
 
     AppDialog.showAlert(
-      context: dialogContext,
+      context: rootNavigatorContext,
       canPop: false,
       title: FaIcon(
         FontAwesomeIcons.circleExclamation,
-        color: Theme.of(dialogContext).colorScheme.error,
+        color: Theme.of(rootNavigatorContext).colorScheme.error,
         size: 30,
       ),
       content: Text(
-        dialogContext.localization.workspaceAccessRevocationMessage,
-        style: Theme.of(dialogContext).textTheme.bodyMedium,
+        rootNavigatorContext.localization.workspaceAccessRevocationMessage,
+        style: Theme.of(rootNavigatorContext).textTheme.bodyMedium,
         textAlign: TextAlign.center,
       ),
       actions: [
         ActionButtonBar.withCommand(
           command: widget.viewModel.handleRemovalFromWorkspace,
           onSubmit: () => widget.viewModel.handleRemovalFromWorkspace.execute(),
-          submitButtonText: context.localization.misc_ok,
-          submitButtonColor: Theme.of(context).colorScheme.error,
+          submitButtonText: rootNavigatorContext.localization.misc_ok,
+          submitButtonColor: Theme.of(rootNavigatorContext).colorScheme.error,
         ),
       ],
     );
   }
 
   void _onWorkspaceRoleChangeResult() {
+    if (widget.viewModel.handleWorkspaceRoleChange.completed ||
+        widget.viewModel.handleWorkspaceRoleChange.error) {
+      _handlingRoleChange = false;
+    }
+
     final rootNavigatorContext = rootNavigatorKey.currentContext;
 
     if (widget.viewModel.handleWorkspaceRoleChange.completed) {
@@ -180,9 +220,8 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         widget.viewModel.signOut.execute();
         return;
       }
-      // Close dialog
-      Navigator.of(rootNavigatorContext).pop();
-      rootNavigatorContext.go(Routes.tasks(workspaceId: activeWorkspaceId));
+
+      _goSafe(Routes.tasks(workspaceId: activeWorkspaceId));
     }
 
     if (widget.viewModel.handleWorkspaceRoleChange.error) {
@@ -197,6 +236,11 @@ class _AuthEventListenerState extends State<AuthEventListener> {
   }
 
   void _onRemovalFromWorkspaceResult() {
+    if (widget.viewModel.handleRemovalFromWorkspace.completed ||
+        widget.viewModel.handleRemovalFromWorkspace.error) {
+      _handlingRemovalFromWorkspace = false;
+    }
+
     final rootNavigatorContext = rootNavigatorKey.currentContext;
 
     if (widget.viewModel.handleRemovalFromWorkspace.completed) {
@@ -211,17 +255,11 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         return;
       }
 
-      if (workspaceId == null) {
-        // User doesn't have any workspace left, so we navigate to initial workspace creation screen
-        rootNavigatorContext.go(Routes.workspaceCreateInitial);
-        return;
-      }
+      final target = workspaceId == null
+          ? Routes.workspaceCreateInitial
+          : Routes.tasks(workspaceId: workspaceId);
 
-      // Close dialog
-      Navigator.of(rootNavigatorContext).pop();
-      // User could have been on a screen which is allowed only
-      // to a higher role, so we navigate back to homepage
-      rootNavigatorContext.go(Routes.tasks(workspaceId: workspaceId));
+      _goSafe(target);
     }
 
     if (widget.viewModel.handleRemovalFromWorkspace.error) {
@@ -246,6 +284,40 @@ class _AuthEventListenerState extends State<AuthEventListener> {
         context: context,
         message: context.localization.misc_somethingWentWrong,
       );
+      // As the last resort do the local sign out
+      widget.viewModel.signOutLocally.execute();
     }
+  }
+
+  void _dismissOverlays() {
+    // Close drawer if present
+    appShellScaffoldKey.currentState?.closeDrawer();
+
+    // Close dialogs + bottom sheets + snackbars (PopupRoutes) on the
+    // *ROOT* navigator (root navigator meaning it closes every popup
+    // even the ones which are not visually seen on the current screen
+    // because the current screen is a e.g. a page over opened bottom
+    // sheet). Important prerequisite for this is that all the popups
+    // use useRootnavigator: true (which AppDialog and
+    // AppModalBottomSheet are).
+    final rootNav = rootNavigatorKey.currentState;
+    rootNav?.popUntil((route) => route is! PopupRoute);
+  }
+
+  void _goSafe(String location) {
+    final rootNavigatorState = rootNavigatorKey.currentState;
+
+    if (rootNavigatorState == null) {
+      return;
+    }
+
+    _dismissOverlays();
+
+    final router = GoRouter.of(rootNavigatorState.context);
+    router.go(location);
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _dismissOverlays(); // Close misc popus which maybe surfaced after navigation
+    // });
   }
 }

@@ -24,7 +24,7 @@ export class UpdateGoalRequest {
   })
   @IsValidGoalTitle()
   @NotEquals(null)
-  @ValidateIf((_, value) => value !== undefined)
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   title?: string;
 
   @ApiPropertyOptional({
@@ -33,7 +33,7 @@ export class UpdateGoalRequest {
     nullable: true,
     maxLength: OBJECTIVE_DESCRIPTION_MAX_CHARS,
   })
-  @IsOptional()
+  @IsOptional() // Optional, and null is valid
   @IsValidGoalDescription()
   description?: string | null;
 
@@ -45,7 +45,7 @@ export class UpdateGoalRequest {
   })
   @IsValidGoalRequiredPoints()
   @NotEquals(null)
-  @ValidateIf((_, value) => value !== undefined)
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   requiredPoints?: number;
 
   @ApiPropertyOptional({
@@ -53,6 +53,6 @@ export class UpdateGoalRequest {
   })
   @IsValidGoalAssignee()
   @NotEquals(null)
-  @ValidateIf((_, value) => value !== undefined)
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   assigneeId?: string;
 }

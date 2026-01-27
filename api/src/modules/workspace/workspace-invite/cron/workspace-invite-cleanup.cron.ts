@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { WorkspaceInviteRepository } from '../persistence/workspace-invite.repository';
+import { NonTransactionalWorkspaceInviteRepository } from '../persistence/non-transactional/non-transactional-workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteCleanupService {
   constructor(
-    private readonly workspaceInviteRepository: WorkspaceInviteRepository,
+    private readonly workspaceInviteRepository: NonTransactionalWorkspaceInviteRepository,
   ) {}
 
   /**

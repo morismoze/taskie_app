@@ -6,7 +6,8 @@ import '../../repositories/auth/auth_state_repository.dart';
 import '../../repositories/client_info/client_info_repository.dart';
 import '../local/auth_event_bus.dart';
 import 'interceptors/forbidden_interceptor.dart';
-import 'interceptors/request_headers_interceptor.dart';
+import 'interceptors/request_headers_auth_interceptor.dart';
+import 'interceptors/request_headers_client_info_interceptor.dart';
 import 'interceptors/unauthorized_interceptor.dart';
 
 class ApiClient {
@@ -30,10 +31,12 @@ class ApiClient {
          ),
        ) {
     _refreshClient.interceptors.addAll([
-      RequestHeadersInterceptor(
+      RequestHeadersAuthInterceptor(
         authStateRepository: _authStateRepository,
-        clientInfoRepository: _clientInfoRepository,
         authHeaderTokenType: AuthHeaderTokenType.refresh,
+      ),
+      RequestHeadersClientInfoInterceptor(
+        clientInfoRepository: _clientInfoRepository,
       ),
       PrettyDioLogger(
         requestHeader: true,
@@ -44,10 +47,12 @@ class ApiClient {
     ]);
 
     _client.interceptors.addAll([
-      RequestHeadersInterceptor(
+      RequestHeadersAuthInterceptor(
         authStateRepository: _authStateRepository,
-        clientInfoRepository: _clientInfoRepository,
         authHeaderTokenType: AuthHeaderTokenType.access,
+      ),
+      RequestHeadersClientInfoInterceptor(
+        clientInfoRepository: _clientInfoRepository,
       ),
       PrettyDioLogger(
         requestHeader: true,

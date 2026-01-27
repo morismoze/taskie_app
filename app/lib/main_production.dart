@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -5,12 +6,10 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'config/dependencies.dart';
 import 'data/services/local/database_service.dart';
-import 'data/services/local/logger_service.dart';
 import 'ui/localization_listener/view_models/locale_initializer_view_model.dart';
 import 'ui/localization_listener/widgets/locale_initializer.dart';
 
-/// Production config entry point.
-/// Launch with `derry run:production`
+/// Production entry point
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -18,11 +17,11 @@ void main() async {
 
   await DatabaseService.init();
 
-  LoggerService.init(off: true);
+  await Firebase.initializeApp();
 
   runApp(
     MultiProvider(
-      providers: providers,
+      providers: buildProviders(enableRemoteLogging: true),
       child: Builder(
         builder: (context) => LocaleInitializer(
           viewModel: LocaleInitializerViewModel(

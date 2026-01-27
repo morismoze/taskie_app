@@ -47,7 +47,8 @@ class GoalCloseButton extends StatelessWidget {
         ActionButtonBar.withCommand(
           command: viewModel.closeGoal,
           onSubmit: () => viewModel.closeGoal.execute(),
-          onCancel: () => Navigator.of(context).pop(), // Close dialog
+          onCancel: () =>
+              Navigator.of(context, rootNavigator: true).pop(), // Close dialog
           submitButtonText: context.localization.goalsDetailsCloseGoal,
           submitButtonColor: Theme.of(context).colorScheme.error,
         ),

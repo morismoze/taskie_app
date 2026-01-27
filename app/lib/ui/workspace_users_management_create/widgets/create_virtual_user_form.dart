@@ -30,10 +30,16 @@ class _CreateVirtualUserFormState extends State<CreateVirtualUserForm> {
   @override
   void didUpdateWidget(covariant CreateVirtualUserForm oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createVirtualUser.removeListener(
-      _onVirtualUserCreateResult,
-    );
-    widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+
+    if (widget.viewModel.createVirtualUser !=
+        oldWidget.viewModel.createVirtualUser) {
+      oldWidget.viewModel.createVirtualUser.removeListener(
+        _onVirtualUserCreateResult,
+      );
+      widget.viewModel.createVirtualUser.addListener(
+        _onVirtualUserCreateResult,
+      );
+    }
   }
 
   @override

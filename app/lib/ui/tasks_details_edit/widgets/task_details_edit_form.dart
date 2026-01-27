@@ -188,14 +188,15 @@ class _TaskDetailsEditFormState extends State<TaskDetailsEditForm> {
 
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
-      final trimmedDescription = _descriptionController.text.trim();
-      final description = trimmedDescription.nullIfEmpty;
+      final description = _descriptionController.text.trim().nullIfEmpty;
+      final rewardPoints = _rewardPointsNotifier.value;
+      final dueDate = _dueDateNotifier.value;
 
       widget.viewModel.editTaskDetails.execute((
         title,
         description,
-        _rewardPointsNotifier.value,
-        _dueDateNotifier.value,
+        rewardPoints,
+        dueDate,
       ));
     }
   }

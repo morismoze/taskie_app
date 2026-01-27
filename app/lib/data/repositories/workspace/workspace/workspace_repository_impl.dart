@@ -2,13 +2,14 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/workspace.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/value_patch.dart';
 import '../../../services/api/workspace/workspace/models/request/create_workspace_request.dart';
 import '../../../services/api/workspace/workspace/models/request/update_workspace_details_request.dart';
 import '../../../services/api/workspace/workspace/models/response/workspace_response.dart';
 import '../../../services/api/workspace/workspace/workspace_api_service.dart';
 import '../../../services/local/database_service.dart';
-import '../../../services/local/logger_service.dart';
 import '../../../services/local/shared_preferences_service.dart';
 import 'workspace_repository.dart';
 
@@ -61,6 +62,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
             'sharedPreferencesService.deleteActiveWorkspaceId failed',
             error: result.error,
             stackTrace: result.stackTrace,
+            context: 'WorkspaceRepositoryImpl',
           );
           return Result.error(result.error, result.stackTrace);
       }
@@ -77,6 +79,11 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
 
     switch (result) {
       case Ok():
+        _loggerService.log(
+          LogLevel.info,
+          'Set active workspace ID to $workspaceId',
+          context: 'WorkspaceRepositoryImpl',
+        );
         _activeWorkspaceId = workspaceId;
       case Error():
         _loggerService.log(
@@ -84,6 +91,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           'sharedPreferencesService.setActiveWorkspaceId failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceRepositoryImpl',
         );
     }
 
@@ -107,6 +115,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           'sharedPreferencesService.getActiveWorkspaceId failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -160,6 +169,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           'workspaceApiService.getWorkspaces failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceRepositoryImpl',
         );
         yield Result.error(result.error, result.stackTrace);
     }
@@ -205,6 +215,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           'workspaceApiService.createWorkspace failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -242,6 +253,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           'workspaceApiService.leaveWorkspace failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -262,8 +274,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
   @override
   Future<Result<void>> updateWorkspaceDetails(
     String workspaceId, {
-    String? name,
-    String? description,
+    ValuePatch<String>? name,
+    ValuePatch<String?>? description,
   }) async {
     final result = await _workspaceApiService.updateWorkspaceDetails(
       workspaceId: workspaceId,
@@ -297,6 +309,7 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
           'workspaceApiService.updateWorkspaceDetails failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -356,6 +369,8 @@ class WorkspaceRepositoryImpl extends WorkspaceRepository {
         LogLevel.warn,
         'databaseService.setWorkspaces failed',
         error: dbSaveResult.error,
+        stackTrace: dbSaveResult.stackTrace,
+        context: 'WorkspaceRepositoryImpl',
       );
     }
   }

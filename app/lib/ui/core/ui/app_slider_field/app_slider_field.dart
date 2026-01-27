@@ -63,6 +63,7 @@ class AppSliderField extends StatelessWidget {
         Slider(
           // This has to be set to false to get new M3 design, because it defaults
           // to true (old design), even though the old design should be depreceated
+          // ignore: deprecated_member_use
           year2023: false,
           value: value,
           onChanged: readOnly

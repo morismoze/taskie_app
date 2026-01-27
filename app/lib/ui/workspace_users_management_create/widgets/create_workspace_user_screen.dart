@@ -40,22 +40,28 @@ class _CreateWorkspaceUserScreenState extends State<CreateWorkspaceUserScreen> {
   @override
   void didUpdateWidget(covariant CreateWorkspaceUserScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspaceInviteLink.removeListener(
-      _onInviteLinkCreateResult,
-    );
-    oldWidget.viewModel.shareWorkspaceInviteLink.removeListener(
-      _onInviteLinkShareResult,
-    );
-    oldWidget.viewModel.createVirtualUser.removeListener(
-      _onVirtualUserCreateResult,
-    );
-    widget.viewModel.createWorkspaceInviteLink.addListener(
-      _onInviteLinkCreateResult,
-    );
-    widget.viewModel.shareWorkspaceInviteLink.addListener(
-      _onInviteLinkShareResult,
-    );
-    widget.viewModel.createVirtualUser.addListener(_onVirtualUserCreateResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.createWorkspaceInviteLink.removeListener(
+        _onInviteLinkCreateResult,
+      );
+      oldWidget.viewModel.shareWorkspaceInviteLink.removeListener(
+        _onInviteLinkShareResult,
+      );
+      oldWidget.viewModel.createVirtualUser.removeListener(
+        _onVirtualUserCreateResult,
+      );
+
+      widget.viewModel.createWorkspaceInviteLink.addListener(
+        _onInviteLinkCreateResult,
+      );
+      widget.viewModel.shareWorkspaceInviteLink.addListener(
+        _onInviteLinkShareResult,
+      );
+      widget.viewModel.createVirtualUser.addListener(
+        _onVirtualUserCreateResult,
+      );
+    }
   }
 
   @override

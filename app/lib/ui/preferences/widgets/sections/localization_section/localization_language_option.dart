@@ -18,12 +18,11 @@ class LocalizationLanguageOption extends StatelessWidget {
     if (newLocale != viewModel.appLocale) {
       viewModel.setAppLocale.execute(newLocale);
     }
-
-    Navigator.of(context).pop(); // Close dialog
+    Navigator.of(context, rootNavigator: true).pop(); // Close dialog
   }
 
   void _onCancel(BuildContext context) {
-    Navigator.of(context).pop(); // Close dialog
+    Navigator.of(context, rootNavigator: true).pop(); // Close dialog
   }
 
   @override

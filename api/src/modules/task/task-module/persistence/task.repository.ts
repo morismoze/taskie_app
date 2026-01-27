@@ -36,7 +36,6 @@ export abstract class TaskRepository {
       limit: number;
       sort: SortBy;
       status: ProgressStatus | null;
-      search: string | null;
     };
   }): Promise<{
     data: TaskEntity[];

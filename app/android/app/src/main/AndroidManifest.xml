@@ -37,6 +37,7 @@
 
                 <data android:scheme="https" />
                 <data android:host="taskieapp.xyz" />
+                <data android:host="www.taskieapp.xyz" />
                 <!-- For now we will only have one app link. -->
                 <data android:pathPrefix="/workspaces/join/" />
             </intent-filter>

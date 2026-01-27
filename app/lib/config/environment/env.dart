@@ -4,7 +4,8 @@ part 'env.g.dart';
 
 enum Environment {
   development('development'),
-  production('production');
+  production('production'),
+  test('test');
 
   final String value;
 

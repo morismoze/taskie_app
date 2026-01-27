@@ -1,9 +1,9 @@
 import '../../../../domain/models/workspace_leaderboard_user.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/workspace/workspace_leaderboard/models/response/workspace_leaderboard_user_response.dart';
 import '../../../services/api/workspace/workspace_leaderboard/workspace_leaderboard_api_service.dart';
 import '../../../services/local/database_service.dart';
-import '../../../services/local/logger_service.dart';
 import 'workspace_leaderboard_repository.dart';
 
 class WorkspaceLeaderboardRepositoryImpl
@@ -77,6 +77,8 @@ class WorkspaceLeaderboardRepositoryImpl
             LogLevel.warn,
             'databaseService.setLeaderboard failed',
             error: dbSaveResult.error,
+            stackTrace: dbSaveResult.stackTrace,
+            context: 'WorkspaceLeaderboardRepositoryImpl',
           );
         }
 
@@ -87,6 +89,7 @@ class WorkspaceLeaderboardRepositoryImpl
           'workspaceLeaderboardApiService.loadLeaderboard failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceLeaderboardRepositoryImpl',
         );
         yield Result.error(result.error);
     }

@@ -51,6 +51,8 @@ class ClientInfoService {
 
       return Result.ok(
         ClientInfo(
+          // For iOS this won't work and will probably fail
+          appId: pkg.packageName,
           appName: pkg.appName,
           appVersion: pkg.version,
           buildNumber: pkg.buildNumber,

@@ -104,7 +104,6 @@ describe('GoalService', () => {
           page: 1,
           limit: WORKSPACE_OBJECTIVE_DEFAULT_QUERY_LIMIT,
           status: null,
-          search: null,
           sort: SortBy.NEWEST,
         },
         relations: {
@@ -130,7 +129,6 @@ describe('GoalService', () => {
         page: 2,
         limit: 10,
         status: ProgressStatus.COMPLETED,
-        search: 'test',
         sort: SortBy.OLDEST,
       };
 
@@ -145,7 +143,6 @@ describe('GoalService', () => {
           page: 2,
           limit: 10,
           status: ProgressStatus.COMPLETED,
-          search: 'test',
           sort: SortBy.OLDEST,
         },
         relations: expect.any(Object),
@@ -166,25 +163,6 @@ describe('GoalService', () => {
       });
 
       expect(result.data[0].createdBy).toBeNull();
-    });
-
-    it('trims search query', async () => {
-      goalRepository.findAllByWorkspaceId.mockResolvedValue({
-        data: [],
-        totalPages: 0,
-        total: 0,
-      });
-
-      await service.findPaginatedByWorkspaceWithAssignee({
-        workspaceId: 'workspace-1',
-        query: { search: '  spaces  ' },
-      });
-
-      expect(goalRepository.findAllByWorkspaceId).toHaveBeenCalledWith(
-        expect.objectContaining({
-          query: expect.objectContaining({ search: 'spaces' }),
-        }),
-      );
     });
   });
 

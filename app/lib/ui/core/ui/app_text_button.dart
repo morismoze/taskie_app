@@ -54,12 +54,14 @@ class AppTextButton extends StatelessWidget {
             ),
             const SizedBox(width: 12),
           ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-              color: color ?? Theme.of(context).colorScheme.secondary,
-              fontSize: 16,
-              decoration: underline ? TextDecoration.underline : null,
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: color ?? Theme.of(context).colorScheme.secondary,
+                fontSize: 16,
+                decoration: underline ? TextDecoration.underline : null,
+              ),
             ),
           ),
         ],

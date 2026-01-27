@@ -26,6 +26,7 @@ import { AuthModule } from './modules/auth/core/auth.module';
 import authConfig from './modules/auth/core/config/auth.config';
 import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
+import { LoggerMobileModule } from './modules/logger-mobile/logger-mobile.module';
 import { AppLogger } from './modules/logger/app-logger';
 import grafanaConfig from './modules/logger/config/grafana.config';
 import { AppLoggerModule } from './modules/logger/logger.module';
@@ -64,6 +65,7 @@ import { WorkspaceModule } from './modules/workspace/workspace-module/workspace.
     UserModule,
     WorkspaceModule,
     HealthModule,
+    LoggerMobileModule,
     ScheduleModule.forRoot(),
   ],
   providers: [

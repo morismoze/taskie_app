@@ -42,18 +42,22 @@ class _WorkspaceUsersManagementScreenState
   @override
   void didUpdateWidget(covariant WorkspaceUsersManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadWorkspaceMembers.removeListener(
-      _onWorkspaceUsersLoadResult,
-    );
-    oldWidget.viewModel.deleteWorkspaceUser.removeListener(
-      _onWorkspaceUserDeleteResult,
-    );
-    widget.viewModel.loadWorkspaceMembers.addListener(
-      _onWorkspaceUsersLoadResult,
-    );
-    widget.viewModel.deleteWorkspaceUser.addListener(
-      _onWorkspaceUserDeleteResult,
-    );
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.loadWorkspaceMembers.removeListener(
+        _onWorkspaceUsersLoadResult,
+      );
+      oldWidget.viewModel.deleteWorkspaceUser.removeListener(
+        _onWorkspaceUserDeleteResult,
+      );
+
+      widget.viewModel.loadWorkspaceMembers.addListener(
+        _onWorkspaceUsersLoadResult,
+      );
+      widget.viewModel.deleteWorkspaceUser.addListener(
+        _onWorkspaceUserDeleteResult,
+      );
+    }
   }
 
   @override
@@ -186,8 +190,8 @@ class _WorkspaceUsersManagementScreenState
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserSuccess,
       );
-      Navigator.of(context).pop(); // Close dialog
-      Navigator.of(context).pop(); // Close bottom sheet
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
     }
 
     if (widget.viewModel.deleteWorkspaceUser.error) {
@@ -196,8 +200,8 @@ class _WorkspaceUsersManagementScreenState
         context: context,
         message: context.localization.workspaceUsersManagementDeleteUserError,
       );
-      Navigator.of(context).pop(); // Close dialog
-      Navigator.of(context).pop(); // Close bottom sheet
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
     }
   }
 }

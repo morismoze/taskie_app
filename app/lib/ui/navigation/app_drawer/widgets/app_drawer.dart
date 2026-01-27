@@ -38,14 +38,20 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   void didUpdateWidget(covariant AppDrawer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.changeActiveWorkspace.removeListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    oldWidget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
-    widget.viewModel.changeActiveWorkspace.addListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.changeActiveWorkspace.removeListener(
+        _onActiveWorkspaceChangeResult,
+      );
+      oldWidget.viewModel.leaveWorkspace.removeListener(
+        _onWorkspaceLeaveResult,
+      );
+
+      widget.viewModel.changeActiveWorkspace.addListener(
+        _onActiveWorkspaceChangeResult,
+      );
+      widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
+    }
   }
 
   @override
@@ -127,12 +133,18 @@ class _AppDrawerState extends State<AppDrawer> {
         case LeaveWorkspaceResultNoAction():
           break;
         case LeaveWorkspaceResultCloseOverlays():
-          Navigator.of(context).pop(); // Close dialog
-          Navigator.of(context).pop(); // Close bottom sheet
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(); // Close bottom sheet
           break;
         case LeaveWorkspaceResultNavigateTo(workspaceId: final workspaceId):
-          Navigator.of(context).pop(); // Close dialog
-          Navigator.of(context).pop(); // Close bottom sheet
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(); // Close bottom sheet
           context.go(Routes.tasks(workspaceId: workspaceId));
       }
     }
@@ -144,15 +156,15 @@ class _AppDrawerState extends State<AppDrawer> {
       switch (errorResult.error) {
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.soleManagerConflict:
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
           _showSoleManagerConflictDialog();
           break;
         default:
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
           AppToast.showError(
             context: context,
             message: context.localization.appDrawerLeaveWorkspaceError,
           );
-          Navigator.of(context).pop(); // Close dialog
       }
     }
   }
@@ -174,7 +186,7 @@ class _AppDrawerState extends State<AppDrawer> {
       actions: AppFilledButton(
         label: context.localization.misc_ok,
         onPress: () {
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
         },
       ),
     );

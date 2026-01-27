@@ -29,7 +29,7 @@ class AppModalBottomSheetContentWrapper extends StatelessWidget {
 
   void _onClosePress(BuildContext context) {
     onCloseButtonPress?.call();
-    Navigator.of(context).pop(); // Close bottom sheet
+    Navigator.of(context, rootNavigator: true).pop(); // Close bottom sheet
   }
 
   @override
