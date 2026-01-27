@@ -42,6 +42,7 @@ dependencies:
   toastification: ^3.0.3
   firebase_remote_config: ^6.1.4
   firebase_core: ^4.4.0
+  cupertino_icons: ^1.0.8 # Release build was giving some warnings
 
 dev_dependencies:
   flutter_test:
