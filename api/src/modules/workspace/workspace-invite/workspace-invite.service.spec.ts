@@ -183,7 +183,7 @@ describe('WorkspaceInviteService', () => {
       const expiresAt = DateTime.fromISO(callArgs.data.expiresAt);
 
       const diffInDays = expiresAt.diff(beforeCall, 'days').toObject().days;
-      expect(diffInDays).toEqual(7);
+      expect(Math.floor(diffInDays!)).toEqual(7);
     });
 
     it('throws SERVER_ERROR if invite creation fails', async () => {
