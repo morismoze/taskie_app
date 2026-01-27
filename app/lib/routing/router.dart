@@ -337,6 +337,8 @@ GoRouter router({
                               userRepository: context.read(),
                               workspaceTaskRepository: context.read(),
                               preferencesRepository: context.read(),
+                              clientInfoRepository: context.read(),
+                              remoteConfigRepository: context.read(),
                             ),
                           ),
                         );

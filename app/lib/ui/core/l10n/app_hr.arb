@@ -280,5 +280,7 @@
   "aboutVersion": "Verzija",
   "aboutBuild": "Broj međuverzije",
   "aboutSourceLicenses": "Licence otvorenog koda",
-  "aboutVisitWebsite": "Posjetite našu web stranicu"
+  "aboutVisitWebsite": "Posjetite našu web stranicu",
+  "appUpdateTitle": "Ažuriranje dostupno",
+  "appUpdateText": "Nova verzija ({latestVersion}) je dostupna"
 }

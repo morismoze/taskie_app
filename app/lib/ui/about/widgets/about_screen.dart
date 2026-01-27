@@ -49,14 +49,18 @@ class AboutScreen extends StatelessWidget {
                         ),
                         const Separator(),
                         AppTextButton(
-                          onPress: () => launchUrl(AppUrls.privacyPolicy),
+                          onPress: () => launchUrl(
+                            AppUrls.privacyPolicy,
+                          ).catchError((_) => false),
                           label: context.localization.misc_privacyPolicy,
                           underline: true,
                           minimumSize: Size.zero,
                           shrinkWrap: true,
                         ),
                         AppTextButton(
-                          onPress: () => launchUrl(AppUrls.termsAndConditions),
+                          onPress: () => launchUrl(
+                            AppUrls.termsAndConditions,
+                          ).catchError((_) => false),
                           label: context.localization.misc_termsAndConditions,
                           underline: true,
                           minimumSize: Size.zero,
@@ -71,15 +75,18 @@ class AboutScreen extends StatelessWidget {
                         ),
                         const Separator(),
                         AppTextButton(
-                          onPress: () =>
-                              launchUrl(AppUrls.supportEmailLaunchUri),
+                          onPress: () => launchUrl(
+                            AppUrls.supportEmailLaunchUri,
+                          ).catchError((_) => false),
                           label: context.localization.misc_contactSupport,
                           underline: true,
                           minimumSize: Size.zero,
                           shrinkWrap: true,
                         ),
                         AppTextButton(
-                          onPress: () => launchUrl(AppUrls.website),
+                          onPress: () => launchUrl(
+                            AppUrls.website,
+                          ).catchError((_) => false),
                           label: context.localization.aboutVisitWebsite,
                           underline: true,
                           minimumSize: Size.zero,

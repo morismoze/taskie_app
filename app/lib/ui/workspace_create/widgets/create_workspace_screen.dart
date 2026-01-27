@@ -141,7 +141,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
           AppToast.showInfo(
             context: context,
-            message: context
+            title: context
                 .localization
                 .workspaceCreateJoinViaInviteLinkExpiredOrUsed,
           );
@@ -150,7 +150,7 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
           AppToast.showInfo(
             context: context,
-            message: context
+            title: context
                 .localization
                 .workspaceCreateJoinViaInviteLinkExistingUser,
           );

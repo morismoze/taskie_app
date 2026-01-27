@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ApiErrorCode } from 'src/exception/api-error-code.enum';
 import { UserEntity } from 'src/modules/user/persistence/user.entity';
 import { SessionEntity } from './persistence/session.entity';
-import { TransactionalSessionRepository } from './persistence/transactional/transactional-session.repository';
+import { SessionRepository } from './persistence/session.repository';
 import { SessionService } from './session.service';
 
 const mockUserEntityFactory = (overrides?: Partial<UserEntity>): UserEntity =>
@@ -63,14 +63,14 @@ describe('SessionService', () => {
       providers: [
         SessionService,
         {
-          provide: TransactionalSessionRepository,
+          provide: SessionRepository,
           useValue: createMockRepository(),
         },
       ],
     }).compile();
 
     service = module.get<SessionService>(SessionService);
-    sessionRepository = module.get(TransactionalSessionRepository);
+    sessionRepository = module.get(SessionRepository);
   });
 
   describe('create', () => {

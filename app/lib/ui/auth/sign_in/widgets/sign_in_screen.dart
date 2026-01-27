@@ -143,7 +143,7 @@ class _SignInScreenState extends State<SignInScreen> {
         case GoogleSignInCancelledException():
           AppToast.showInfo(
             context: context,
-            message: context.localization.signInGoogleCanceled,
+            title: context.localization.signInGoogleCanceled,
           );
           break;
         default:

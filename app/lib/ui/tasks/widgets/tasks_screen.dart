@@ -9,6 +9,7 @@ import '../../core/ui/error_prompt.dart';
 import '../../core/ui/objectives_list_view.dart';
 import '../../navigation/app_bottom_navigation_bar/widgets/app_bottom_navigation_bar.dart';
 import '../view_models/tasks_screen_view_model.dart';
+import 'app_update_listener.dart';
 import 'tasks_filtering/tasks_filtering_header_delegate.dart';
 import 'tasks_header.dart';
 import 'tasks_list.dart';
@@ -50,71 +51,78 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlurredCirclesBackground(
-      child: Column(
-        children: [
-          TasksHeader(viewModel: widget.viewModel),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: kAppBottomNavigationBarHeight,
-              ),
-              child: ListenableBuilder(
-                listenable: Listenable.merge([
-                  widget.viewModel.loadTasks,
-                  widget.viewModel,
-                ]),
-                builder: (builderContext, _) {
-                  // Show error prompt only on initial load (tasks are null)
-                  if (widget.viewModel.loadTasks.error &&
-                      widget.viewModel.tasks == null) {
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: kAppBottomNavigationBarHeight,
+    return AppUpdateListener(
+      viewModel: widget.viewModel,
+      child: BlurredCirclesBackground(
+        child: Column(
+          children: [
+            TasksHeader(viewModel: widget.viewModel),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  bottom: kAppBottomNavigationBarHeight,
+                ),
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([
+                    widget.viewModel.loadTasks,
+                    widget.viewModel,
+                  ]),
+                  builder: (builderContext, _) {
+                    // Show error prompt only on initial load (tasks are null)
+                    if (widget.viewModel.loadTasks.error &&
+                        widget.viewModel.tasks == null) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: kAppBottomNavigationBarHeight,
+                        ),
+                        child: ErrorPrompt(
+                          onRetry: () =>
+                              widget.viewModel.loadTasks.execute((null, true)),
+                        ),
+                      );
+                    }
+
+                    // Show loader only on initial load (tasks are null)
+                    if (widget.viewModel.tasks == null) {
+                      return const ActivityIndicator(radius: 16);
+                    }
+
+                    // We don't have the standard 'First ListenableBuilder listening to a command
+                    // and its child is the second ListenableBuilder listening to viewModel' because
+                    // we want to show [ActivityIndicator] only on the initial load. All other loads
+                    // after that will happen when user pulls-to-refresh (and if the app process was not
+                    // killed by the underlying OS). And in that case we want to show the existing
+                    // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
+                    return ObjectivesListView(
+                      headerDelegate: TasksFilteringHeaderDelegate(
+                        viewModel: widget.viewModel,
+                        height: 50,
                       ),
-                      child: ErrorPrompt(
-                        onRetry: () =>
-                            widget.viewModel.loadTasks.execute((null, true)),
-                      ),
+                      list: TasksList(viewModel: widget.viewModel),
+                      totalPages: widget.viewModel.tasks!.totalPages,
+                      total: widget.viewModel.tasks!.total,
+                      isFilterSearch: widget.viewModel.isFilterSearch,
+                      currentFilter: widget.viewModel.activeFilter,
+                      onPageChange: (page) {
+                        final updatedFilter = widget.viewModel.activeFilter
+                            .copyWith(page: page);
+                        widget.viewModel.loadTasks.execute((
+                          updatedFilter,
+                          null,
+                        ));
+                      },
+                      onRefresh: () async => await Future.wait([
+                        widget.viewModel.loadTasks.execute((null, true)),
+                        widget.viewModel.refreshUser.execute(),
+                        widget.viewModel.checkLatestAppUpdate.execute(),
+                      ]),
                     );
-                  }
-
-                  // Show loader only on initial load (tasks are null)
-                  if (widget.viewModel.tasks == null) {
-                    return const ActivityIndicator(radius: 16);
-                  }
-
-                  // We don't have the standard 'First ListenableBuilder listening to a command
-                  // and its child is the second ListenableBuilder listening to viewModel' because
-                  // we want to show [ActivityIndicator] only on the initial load. All other loads
-                  // after that will happen when user pulls-to-refresh (and if the app process was not
-                  // killed by the underlying OS). And in that case we want to show the existing
-                  // list and only the refresh indicator loader - not [ActivityIndicator] everytime.
-                  return ObjectivesListView(
-                    headerDelegate: TasksFilteringHeaderDelegate(
-                      viewModel: widget.viewModel,
-                      height: 50,
-                    ),
-                    list: TasksList(viewModel: widget.viewModel),
-                    totalPages: widget.viewModel.tasks!.totalPages,
-                    total: widget.viewModel.tasks!.total,
-                    isFilterSearch: widget.viewModel.isFilterSearch,
-                    currentFilter: widget.viewModel.activeFilter,
-                    onPageChange: (page) {
-                      final updatedFilter = widget.viewModel.activeFilter
-                          .copyWith(page: page);
-                      widget.viewModel.loadTasks.execute((updatedFilter, null));
-                    },
-                    onRefresh: () async => await Future.wait([
-                      widget.viewModel.loadTasks.execute((null, true)),
-                      widget.viewModel.refreshUser.execute(),
-                    ]),
-                  );
-                },
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

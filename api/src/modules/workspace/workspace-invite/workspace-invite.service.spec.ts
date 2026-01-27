@@ -11,8 +11,8 @@ import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-use
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserEntity } from '../workspace-user-module/persistence/workspace-user.entity';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
-import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
 import { WorkspaceInviteEntity } from './persistence/workspace-invite.entity';
+import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 import { WorkspaceInviteService } from './workspace-invite.service';
 
 const mockUserFactory = (overrides?: Partial<User>): User =>
@@ -110,7 +110,7 @@ describe('WorkspaceInviteService', () => {
       providers: [
         WorkspaceInviteService,
         {
-          provide: TransactionalWorkspaceInviteRepository,
+          provide: WorkspaceInviteRepository,
           useValue: createMockRepository(),
         },
         {
@@ -125,9 +125,7 @@ describe('WorkspaceInviteService', () => {
     }).compile();
 
     service = module.get<WorkspaceInviteService>(WorkspaceInviteService);
-    workspaceInviteRepository = module.get(
-      TransactionalWorkspaceInviteRepository,
-    );
+    workspaceInviteRepository = module.get(WorkspaceInviteRepository);
     workspaceUserService = module.get(
       WorkspaceUserService,
     ) as jest.Mocked<WorkspaceUserService>;

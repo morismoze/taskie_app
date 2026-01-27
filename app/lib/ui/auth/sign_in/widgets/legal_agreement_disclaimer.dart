@@ -23,7 +23,9 @@ class LegalAgreementDisclaimer extends StatelessWidget {
               decoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
-              ..onTap = () => launchUrl(AppUrls.termsAndConditions),
+              ..onTap = () => launchUrl(
+                AppUrls.termsAndConditions,
+              ).catchError((_) => false),
           ),
           TextSpan(text: ' ${context.localization.signInLegislation3} '),
           TextSpan(
@@ -33,7 +35,8 @@ class LegalAgreementDisclaimer extends StatelessWidget {
               decoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
-              ..onTap = () => launchUrl(AppUrls.privacyPolicy),
+              ..onTap = () =>
+                  launchUrl(AppUrls.privacyPolicy).catchError((_) => false),
           ),
           const TextSpan(text: '.'),
         ],

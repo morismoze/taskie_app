@@ -279,5 +279,7 @@
   "aboutVersion": "Version",
   "aboutBuild": "Build",
   "aboutSourceLicenses": "Source licenses",
-  "aboutVisitWebsite": "Visit out Website"
+  "aboutVisitWebsite": "Visit out Website",
+  "appUpdateTitle": "Update available",
+  "appUpdateText": "New app version ({latestVersion}) is available"
 }

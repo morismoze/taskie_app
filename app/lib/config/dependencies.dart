@@ -13,6 +13,8 @@ import '../data/repositories/client_info/client_info_repository.dart';
 import '../data/repositories/client_info/client_info_repository_impl.dart';
 import '../data/repositories/preferences/preferences_repository.dart';
 import '../data/repositories/preferences/preferences_repository_impl.dart';
+import '../data/repositories/remote_config/remote_config_repository.dart';
+import '../data/repositories/remote_config/remote_config_repository_impl.dart';
 import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/user/user_repository_impl.dart';
 import '../data/repositories/workspace/leaderboard/workspace_leaderboard_repository.dart';
@@ -38,6 +40,7 @@ import '../data/services/api/workspace/workspace_invite/workspace_invite_api_ser
 import '../data/services/api/workspace/workspace_leaderboard/workspace_leaderboard_api_service.dart';
 import '../data/services/api/workspace/workspace_task/workspace_task_api_service.dart';
 import '../data/services/api/workspace/workspace_user/workspace_user_api_service.dart';
+import '../data/services/external/firebase/remote_config_service.dart';
 import '../data/services/external/google/google_auth_service.dart';
 import '../data/services/local/auth_event_bus.dart';
 import '../data/services/local/client_info_service.dart';
@@ -71,6 +74,7 @@ List<SingleChildWidget> buildProviders({required bool enableRemoteLogging}) {
     Provider(create: (context) => GoogleAuthService()),
     Provider(create: (context) => ClientInfoService()),
     Provider(create: (context) => DatabaseService()),
+    Provider(create: (context) => RemoteConfigService()),
     Provider(create: (context) => AuthEventBus()),
     ChangeNotifierProvider(
       create: (context) =>
@@ -87,6 +91,14 @@ List<SingleChildWidget> buildProviders({required bool enableRemoteLogging}) {
                 loggerService: context.read(),
               )
               as ClientInfoRepository,
+    ),
+    Provider(
+      create: (context) =>
+          RemoteConfigRepositoryImpl(
+                remoteConfigService: context.read(),
+                loggerService: context.read(),
+              )
+              as RemoteConfigRepository,
     ),
     Provider(
       create: (context) => ApiClient(

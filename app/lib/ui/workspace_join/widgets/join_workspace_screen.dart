@@ -237,7 +237,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
       widget.viewModel.joinWorkspaceViaInviteLink.clearResult();
       AppToast.showInfo(
         context: context,
-        message: context.localization.workspaceCreateJoinViaInviteLinkSuccess,
+        title: context.localization.workspaceCreateJoinViaInviteLinkSuccess,
       );
       context.go(Routes.tasks(workspaceId: newWorkspaceId));
     }
@@ -262,7 +262,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
           AppToast.showInfo(
             context: context,
-            message: context
+            title: context
                 .localization
                 .workspaceCreateJoinViaInviteLinkExpiredOrUsed,
           );
@@ -271,8 +271,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
           AppToast.showInfo(
             context: context,
-            message:
-                context.localization.workspaceJoinViaInviteLinkExistingUser,
+            title: context.localization.workspaceJoinViaInviteLinkExistingUser,
           );
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.workspaceInfo!.id),

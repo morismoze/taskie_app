@@ -14,12 +14,12 @@ import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
 import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore } from './domain/workspace-invite-with-workspace-core-and-user-core.domain';
 import { WorkspaceInviteWithWorkspaceWithCreatedByUser } from './domain/workspace-invite-with-workspace-with-created-by-user.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
-import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
+import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteService {
   constructor(
-    private readonly workspaceInviteRepository: TransactionalWorkspaceInviteRepository,
+    private readonly workspaceInviteRepository: WorkspaceInviteRepository,
     private readonly workspaceUserService: WorkspaceUserService,
     private readonly unitOfWorkService: UnitOfWorkService,
   ) {}

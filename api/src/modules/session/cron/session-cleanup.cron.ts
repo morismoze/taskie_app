@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DateTime } from 'luxon';
-import { SessionRepository } from '../persistence/session.repository';
+import { NonTransactionalSessionRepository } from '../persistence/non-transactional/non-transactional-session.repository';
 
 @Injectable()
 export class SessionCleanupService {
-  constructor(private readonly sessionRepository: SessionRepository) {}
+  constructor(
+    private readonly sessionRepository: NonTransactionalSessionRepository,
+  ) {}
 
   /**
    * We'll initally delete sessions every week on Sunday midnight.
