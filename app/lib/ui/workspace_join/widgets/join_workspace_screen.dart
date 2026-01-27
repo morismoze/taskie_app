@@ -40,12 +40,16 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
   @override
   void didUpdateWidget(covariant JoinWorkspaceScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
-      _onWorkspaceJoinResult,
-    );
-    widget.viewModel.joinWorkspaceViaInviteLink.addListener(
-      _onWorkspaceJoinResult,
-    );
+
+    if (widget.viewModel.joinWorkspaceViaInviteLink !=
+        oldWidget.viewModel.joinWorkspaceViaInviteLink) {
+      oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
+        _onWorkspaceJoinResult,
+      );
+      widget.viewModel.joinWorkspaceViaInviteLink.addListener(
+        _onWorkspaceJoinResult,
+      );
+    }
   }
 
   @override

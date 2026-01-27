@@ -95,20 +95,24 @@ class _AuthEventListenerState extends State<AuthEventListener> {
   @override
   void didUpdateWidget(covariant AuthEventListener oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.handleWorkspaceRoleChange.removeListener(
-      _onWorkspaceRoleChangeResult,
-    );
-    oldWidget.viewModel.handleRemovalFromWorkspace.removeListener(
-      _onRemovalFromWorkspaceResult,
-    );
-    oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
-    widget.viewModel.handleRemovalFromWorkspace.addListener(
-      _onRemovalFromWorkspaceResult,
-    );
-    widget.viewModel.handleWorkspaceRoleChange.addListener(
-      _onWorkspaceRoleChangeResult,
-    );
-    widget.viewModel.signOut.addListener(_onSignOutResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.handleWorkspaceRoleChange.removeListener(
+        _onWorkspaceRoleChangeResult,
+      );
+      oldWidget.viewModel.handleRemovalFromWorkspace.removeListener(
+        _onRemovalFromWorkspaceResult,
+      );
+      oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
+
+      widget.viewModel.handleWorkspaceRoleChange.addListener(
+        _onWorkspaceRoleChangeResult,
+      );
+      widget.viewModel.handleRemovalFromWorkspace.addListener(
+        _onRemovalFromWorkspaceResult,
+      );
+      widget.viewModel.signOut.addListener(_onSignOutResult);
+    }
   }
 
   @override

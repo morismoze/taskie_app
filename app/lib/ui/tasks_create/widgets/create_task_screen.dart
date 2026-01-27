@@ -35,8 +35,11 @@ class _WorkspaceSettingsScreenState extends State<CreateTaskScreen> {
   @override
   void didUpdateWidget(covariant CreateTaskScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createTask.removeListener(_onResult);
-    widget.viewModel.createTask.addListener(_onResult);
+
+    if (widget.viewModel.createTask != oldWidget.viewModel.createTask) {
+      oldWidget.viewModel.createTask.removeListener(_onResult);
+      widget.viewModel.createTask.addListener(_onResult);
+    }
   }
 
   @override

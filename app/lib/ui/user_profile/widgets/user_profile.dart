@@ -41,10 +41,14 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void didUpdateWidget(covariant UserProfile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
-    oldWidget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
-    widget.viewModel.signOut.addListener(_onSignOutResult);
-    widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
+      oldWidget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
+
+      widget.viewModel.signOut.addListener(_onSignOutResult);
+      widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
+    }
   }
 
   @override

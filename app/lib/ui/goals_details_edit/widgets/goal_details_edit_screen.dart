@@ -41,12 +41,16 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
   @override
   void didUpdateWidget(covariant GoalDetailsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editGoalDetails.removeListener(
-      _onGoalDetailsEditResult,
-    );
-    oldWidget.viewModel.closeGoal.removeListener(_onGoalCloseResult);
-    widget.viewModel.editGoalDetails.addListener(_onGoalDetailsEditResult);
-    widget.viewModel.closeGoal.addListener(_onGoalCloseResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.editGoalDetails.removeListener(
+        _onGoalDetailsEditResult,
+      );
+      oldWidget.viewModel.closeGoal.removeListener(_onGoalCloseResult);
+
+      widget.viewModel.editGoalDetails.addListener(_onGoalDetailsEditResult);
+      widget.viewModel.closeGoal.addListener(_onGoalCloseResult);
+    }
   }
 
   @override

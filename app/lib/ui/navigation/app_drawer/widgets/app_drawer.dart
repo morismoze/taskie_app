@@ -38,14 +38,20 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   void didUpdateWidget(covariant AppDrawer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.changeActiveWorkspace.removeListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    oldWidget.viewModel.leaveWorkspace.removeListener(_onWorkspaceLeaveResult);
-    widget.viewModel.changeActiveWorkspace.addListener(
-      _onActiveWorkspaceChangeResult,
-    );
-    widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.changeActiveWorkspace.removeListener(
+        _onActiveWorkspaceChangeResult,
+      );
+      oldWidget.viewModel.leaveWorkspace.removeListener(
+        _onWorkspaceLeaveResult,
+      );
+
+      widget.viewModel.changeActiveWorkspace.addListener(
+        _onActiveWorkspaceChangeResult,
+      );
+      widget.viewModel.leaveWorkspace.addListener(_onWorkspaceLeaveResult);
+    }
   }
 
   @override

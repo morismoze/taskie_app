@@ -53,14 +53,16 @@ class _ObjectivesListViewState extends State<ObjectivesListView> {
   void didUpdateWidget(covariant ObjectivesListView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final paginatorCurrentPage = _controller.currentPage + 1;
-    final repositoryCurrentPage = widget.currentFilter.page;
+    if (widget.currentFilter != oldWidget.currentFilter) {
+      final paginatorCurrentPage = _controller.currentPage + 1;
+      final repositoryCurrentPage = widget.currentFilter.page;
 
-    // This case can happen when the user closes all tasks/goals of the current page
-    // and then we need to change the current page. This currentPage should only
-    // visually change to the provided page and not invoke onPageChange.
-    if (paginatorCurrentPage != repositoryCurrentPage) {
-      _controller.currentPage = repositoryCurrentPage - 1;
+      // This case can happen when the user closes all tasks/goals of the current page
+      // and then we need to change the current page. This currentPage should only
+      // visually change to the provided page and not invoke onPageChange.
+      if (paginatorCurrentPage != repositoryCurrentPage) {
+        _controller.currentPage = repositoryCurrentPage - 1;
+      }
     }
   }
 

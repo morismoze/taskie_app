@@ -39,8 +39,11 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   void didUpdateWidget(covariant TasksScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadTasks.removeListener(_onLoadTasksResult);
-    widget.viewModel.loadTasks.addListener(_onLoadTasksResult);
+
+    if (widget.viewModel.loadTasks != oldWidget.viewModel.loadTasks) {
+      oldWidget.viewModel.loadTasks.removeListener(_onLoadTasksResult);
+      widget.viewModel.loadTasks.addListener(_onLoadTasksResult);
+    }
   }
 
   @override

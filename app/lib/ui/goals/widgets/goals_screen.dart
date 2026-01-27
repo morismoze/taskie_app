@@ -38,8 +38,11 @@ class _GoalssScreenState extends State<GoalsScreen> {
   @override
   void didUpdateWidget(covariant GoalsScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadGoals.removeListener(_onLoadGoalsResult);
-    widget.viewModel.loadGoals.addListener(_onLoadGoalsResult);
+
+    if (widget.viewModel.loadGoals != oldWidget.viewModel.loadGoals) {
+      oldWidget.viewModel.loadGoals.removeListener(_onLoadGoalsResult);
+      widget.viewModel.loadGoals.addListener(_onLoadGoalsResult);
+    }
   }
 
   @override

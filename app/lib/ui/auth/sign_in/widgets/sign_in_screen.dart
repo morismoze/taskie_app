@@ -42,8 +42,12 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void didUpdateWidget(covariant SignInScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.signInWithGoogle.removeListener(_onResult);
-    widget.viewModel.signInWithGoogle.addListener(_onResult);
+
+    if (widget.viewModel.signInWithGoogle !=
+        oldWidget.viewModel.signInWithGoogle) {
+      oldWidget.viewModel.signInWithGoogle.removeListener(_onResult);
+      widget.viewModel.signInWithGoogle.addListener(_onResult);
+    }
   }
 
   @override

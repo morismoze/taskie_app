@@ -40,12 +40,16 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   @override
   void didUpdateWidget(covariant TaskDetailsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editTaskDetails.removeListener(
-      _onTaskDetailsEditResult,
-    );
-    oldWidget.viewModel.closeTask.removeListener(_onTaskCloseResult);
-    widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
-    widget.viewModel.closeTask.addListener(_onTaskCloseResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.editTaskDetails.removeListener(
+        _onTaskDetailsEditResult,
+      );
+      oldWidget.viewModel.closeTask.removeListener(_onTaskCloseResult);
+
+      widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
+      widget.viewModel.closeTask.addListener(_onTaskCloseResult);
+    }
   }
 
   @override

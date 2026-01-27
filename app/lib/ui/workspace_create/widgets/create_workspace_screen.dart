@@ -37,16 +37,20 @@ class _CreateWorkspaceScreenState extends State<CreateWorkspaceScreen> {
   @override
   void didUpdateWidget(covariant CreateWorkspaceScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspace.removeListener(
-      _onWorkspaceCreateResult,
-    );
-    oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
-      _onWorkspaceJoinResult,
-    );
-    widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
-    widget.viewModel.joinWorkspaceViaInviteLink.addListener(
-      _onWorkspaceJoinResult,
-    );
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.createWorkspace.removeListener(
+        _onWorkspaceCreateResult,
+      );
+      oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
+        _onWorkspaceJoinResult,
+      );
+
+      widget.viewModel.createWorkspace.addListener(_onWorkspaceCreateResult);
+      widget.viewModel.joinWorkspaceViaInviteLink.addListener(
+        _onWorkspaceJoinResult,
+      );
+    }
   }
 
   @override

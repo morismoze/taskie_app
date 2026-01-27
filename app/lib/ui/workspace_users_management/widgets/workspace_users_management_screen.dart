@@ -42,18 +42,22 @@ class _WorkspaceUsersManagementScreenState
   @override
   void didUpdateWidget(covariant WorkspaceUsersManagementScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadWorkspaceMembers.removeListener(
-      _onWorkspaceUsersLoadResult,
-    );
-    oldWidget.viewModel.deleteWorkspaceUser.removeListener(
-      _onWorkspaceUserDeleteResult,
-    );
-    widget.viewModel.loadWorkspaceMembers.addListener(
-      _onWorkspaceUsersLoadResult,
-    );
-    widget.viewModel.deleteWorkspaceUser.addListener(
-      _onWorkspaceUserDeleteResult,
-    );
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.loadWorkspaceMembers.removeListener(
+        _onWorkspaceUsersLoadResult,
+      );
+      oldWidget.viewModel.deleteWorkspaceUser.removeListener(
+        _onWorkspaceUserDeleteResult,
+      );
+
+      widget.viewModel.loadWorkspaceMembers.addListener(
+        _onWorkspaceUsersLoadResult,
+      );
+      widget.viewModel.deleteWorkspaceUser.addListener(
+        _onWorkspaceUserDeleteResult,
+      );
+    }
   }
 
   @override

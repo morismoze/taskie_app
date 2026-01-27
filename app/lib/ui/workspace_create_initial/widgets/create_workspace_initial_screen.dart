@@ -41,8 +41,12 @@ class _CreateWorkspaceInitialScreenState
   @override
   void didUpdateWidget(covariant CreateWorkspaceInitialScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createWorkspace.removeListener(_onResult);
-    widget.viewModel.createWorkspace.addListener(_onResult);
+
+    if (widget.viewModel.createWorkspace !=
+        oldWidget.viewModel.createWorkspace) {
+      oldWidget.viewModel.createWorkspace.removeListener(_onResult);
+      widget.viewModel.createWorkspace.addListener(_onResult);
+    }
   }
 
   @override

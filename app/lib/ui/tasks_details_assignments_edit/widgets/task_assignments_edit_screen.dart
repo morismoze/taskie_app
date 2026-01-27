@@ -47,24 +47,29 @@ class _TaskAssignmentsEditScreenState extends State<TaskAssignmentsEditScreen> {
   @override
   void didUpdateWidget(covariant TaskAssignmentsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.updateTaskAssignments.removeListener(
-      _onAddTaskAssigneeResult,
-    );
-    oldWidget.viewModel.updateTaskAssignments.removeListener(
-      _onRemoveTaskAssigneeResult,
-    );
-    oldWidget.viewModel.updateTaskAssignments.removeListener(
-      _onUpdateTaskAssignmentsResult,
-    );
-    widget.viewModel.updateTaskAssignments.addListener(
-      _onAddTaskAssigneeResult,
-    );
-    widget.viewModel.updateTaskAssignments.addListener(
-      _onRemoveTaskAssigneeResult,
-    );
-    widget.viewModel.updateTaskAssignments.addListener(
-      _onUpdateTaskAssignmentsResult,
-    );
+
+    if (widget.viewModel.updateTaskAssignments !=
+        oldWidget.viewModel.updateTaskAssignments) {
+      oldWidget.viewModel.updateTaskAssignments.removeListener(
+        _onAddTaskAssigneeResult,
+      );
+      oldWidget.viewModel.updateTaskAssignments.removeListener(
+        _onRemoveTaskAssigneeResult,
+      );
+      oldWidget.viewModel.updateTaskAssignments.removeListener(
+        _onUpdateTaskAssignmentsResult,
+      );
+
+      widget.viewModel.updateTaskAssignments.addListener(
+        _onAddTaskAssigneeResult,
+      );
+      widget.viewModel.updateTaskAssignments.addListener(
+        _onRemoveTaskAssigneeResult,
+      );
+      widget.viewModel.updateTaskAssignments.addListener(
+        _onUpdateTaskAssignmentsResult,
+      );
+    }
   }
 
   @override

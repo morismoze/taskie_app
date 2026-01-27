@@ -30,8 +30,11 @@ class _AppLifecycleStateListenerState extends State<AppLifecycleStateListener>
   @override
   void didUpdateWidget(covariant AppLifecycleStateListener oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.checkUser.addListener(_onUserCheckResult);
-    oldWidget.viewModel.checkUser.removeListener(_onUserCheckResult);
+
+    if (widget.viewModel.checkUser != oldWidget.viewModel.checkUser) {
+      oldWidget.viewModel.checkUser.removeListener(_onUserCheckResult);
+      widget.viewModel.checkUser.addListener(_onUserCheckResult);
+    }
   }
 
   @override

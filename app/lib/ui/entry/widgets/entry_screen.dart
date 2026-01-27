@@ -40,8 +40,11 @@ class _EntryScreenState extends State<EntryScreen> {
   @override
   void didUpdateWidget(covariant EntryScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.setupInitial.addListener(_onInitialLoad);
-    oldWidget.viewModel.setupInitial.removeListener(_onInitialLoad);
+
+    if (widget.viewModel.setupInitial != oldWidget.viewModel.setupInitial) {
+      oldWidget.viewModel.setupInitial.removeListener(_onInitialLoad);
+      widget.viewModel.setupInitial.addListener(_onInitialLoad);
+    }
   }
 
   @override
