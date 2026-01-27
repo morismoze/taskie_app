@@ -9,8 +9,7 @@ import 'data/services/local/database_service.dart';
 import 'ui/localization_listener/view_models/locale_initializer_view_model.dart';
 import 'ui/localization_listener/widgets/locale_initializer.dart';
 
-/// Production config entry point.
-/// Launch with `derry run:production`
+/// Production entry point
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

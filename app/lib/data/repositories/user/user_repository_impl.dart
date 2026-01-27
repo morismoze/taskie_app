@@ -45,6 +45,7 @@ class UserRepositoryImpl extends UserRepository {
         if (dbUser != null) {
           _cachedUser = dbUser;
           notifyListeners();
+          _loggerService.setUser(dbUser.id);
           yield Result.ok(dbUser);
         }
       }
@@ -76,6 +77,7 @@ class UserRepositoryImpl extends UserRepository {
         }
 
         _cachedUser = user;
+        _loggerService.setUser(apiResult.value.id);
         notifyListeners();
 
         yield Result.ok(_cachedUser!);

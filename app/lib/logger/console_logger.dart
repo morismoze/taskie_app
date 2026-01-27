@@ -1,4 +1,3 @@
-// infrastructure/logger/console_logger.dart
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -29,7 +28,12 @@ class ConsoleLogger implements LoggerService {
   String? _userId;
 
   @override
-  void setUser(String userId) => _userId = userId;
+  void setUser(String userId) {
+    if (_userId == userId) {
+      return;
+    }
+    _userId = userId;
+  }
 
   // This is used on user sign out
   @override

@@ -52,27 +52,33 @@ jobs:
       - name: Get Dependencies
         run: flutter pub get --enforce-lockfile
 
-      # 5. Run Build Runner (for model classes)
+      # 5 Decode google-services JSON for Dry Run
+      - name: Create Google Services JSON
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > android/app/google-services.json
+
+      # 6. Run Build Runner (for model classes)
       - name: Run Build Runner
         run: dart run build_runner build --delete-conflicting-outputs --define="envied_generator:envied=path=.env.test"
 
-      # 6. Generate Localization
+      # 7. Generate Localization
       - name: Generate Localization
         run: flutter gen-l10n
 
-      # 7. Perform static analysis (Linter)
+      # 8. Perform static analysis (Linter)
       - name: Analyze Code
         run: flutter analyze --fatal-infos --fatal-warnings
 
-      # 8. Perform formatting check
+      # 9. Perform formatting check
       - name: Check Formatting
         run: dart format --output=none --set-exit-if-changed .
 
-      # 9. Run tests
+      # 10. Run tests
       - name: Run Tests
         run: flutter test
 
-      # 10. Building APK in debug mode just to check Gradle i Native config for any errors
+      # 11. Building APK in debug mode just to check Gradle i Native config for any errors
       # "--no-pub" - because we already did flutter pub get in the step 4.
       - name: Build Debug APK (Dry Run)
         run: flutter build apk --debug --no-pub --flavor production -t lib/main_production.dart

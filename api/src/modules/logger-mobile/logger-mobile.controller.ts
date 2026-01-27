@@ -36,7 +36,7 @@ export class LoggerMobileController {
       userId,
       message,
       // This is important, as it is the only way to filter logs on Grafana
-      source: 'taskie-app',
+      source: 'taskie-mobile-app',
       ip: request.ip,
     };
 

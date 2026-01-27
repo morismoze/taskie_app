@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../config/environment/env.dart';
 import '../../repositories/client_info/client_info_repository.dart';
@@ -16,6 +17,12 @@ class MobileLoggingApiClient {
     _client.interceptors.addAll([
       RequestHeadersClientInfoInterceptor(
         clientInfoRepository: _clientInfoRepository,
+      ),
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        enabled: Env.env != Environment.production,
       ),
     ]);
   }

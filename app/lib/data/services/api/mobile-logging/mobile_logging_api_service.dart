@@ -21,6 +21,9 @@ class MobileLoggingApiService {
     } on DioException {
       // Do nothing
       return const Result.ok(null);
+    } on Exception {
+      // Do nothing
+      return const Result.ok(null);
     }
   }
 }
