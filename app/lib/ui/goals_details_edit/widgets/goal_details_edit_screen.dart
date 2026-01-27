@@ -41,12 +41,16 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
   @override
   void didUpdateWidget(covariant GoalDetailsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editGoalDetails.removeListener(
-      _onGoalDetailsEditResult,
-    );
-    oldWidget.viewModel.closeGoal.removeListener(_onGoalCloseResult);
-    widget.viewModel.editGoalDetails.addListener(_onGoalDetailsEditResult);
-    widget.viewModel.closeGoal.addListener(_onGoalCloseResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.editGoalDetails.removeListener(
+        _onGoalDetailsEditResult,
+      );
+      oldWidget.viewModel.closeGoal.removeListener(_onGoalCloseResult);
+
+      widget.viewModel.editGoalDetails.addListener(_onGoalDetailsEditResult);
+      widget.viewModel.closeGoal.addListener(_onGoalCloseResult);
+    }
   }
 
   @override
@@ -182,11 +186,8 @@ class _GoalDetailsEditScreenState extends State<GoalDetailsEditScreen> {
         context: context,
         message: context.localization.goalsDetailsCloseSuccess,
       );
-      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
       context.pop(); // Navigate back to goals page
-      Navigator.of(
-        context,
-      ).pop(); // Close goal card bottom sheet because goal is closed
     }
 
     if (widget.viewModel.closeGoal.error) {

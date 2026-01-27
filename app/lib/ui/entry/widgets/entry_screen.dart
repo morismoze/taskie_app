@@ -40,8 +40,11 @@ class _EntryScreenState extends State<EntryScreen> {
   @override
   void didUpdateWidget(covariant EntryScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.setupInitial.addListener(_onInitialLoad);
-    oldWidget.viewModel.setupInitial.removeListener(_onInitialLoad);
+
+    if (widget.viewModel.setupInitial != oldWidget.viewModel.setupInitial) {
+      oldWidget.viewModel.setupInitial.removeListener(_onInitialLoad);
+      widget.viewModel.setupInitial.addListener(_onInitialLoad);
+    }
   }
 
   @override
@@ -108,53 +111,75 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
-  void _onInitialLoad() {
+  void _onInitialLoad() async {
     if (widget.viewModel.setupInitial.completed) {
       final activeWorkspaceId =
           (widget.viewModel.setupInitial.result as Ok<String?>).value;
       widget.viewModel.setupInitial.clearResult();
 
-      // Check if 'from' query param is not empty and valid
-      // and if it is navigate to that route
-      final nextRoute = GoRouterState.of(context).uri.queryParameters['next'];
+      final qp = GoRouterState.of(context).uri.queryParameters;
+      final nextRoute = qp['next'];
+      final fromUid = qp['from_uid'];
+      final currentUserId = widget.viewModel.user?.id;
 
-      if (nextRoute != null) {
-        final decodedRoute = Uri.decodeComponent(nextRoute);
+      // We only honor the `next` route if it belongs to the same user session.
+      //
+      // When the app redirects to login, we store both:
+      // - `from`/`next`: the route the user attempted to access
+      // - `from_uid`: the userId of the currently logged-in user at that moment
+      //
+      // This prevents leaking a "return-to" route across different accounts.
+      // Example: if the refresh token expires (or the user logs out) and the user then logs
+      // in as a different account, we must NOT navigate the new user to a route that
+      // was captured for the previous user. Therefore, `next` is considered valid
+      // only when `from_uid` matches the currently authenticated userId.
+      final canUseNext =
+          nextRoute != null &&
+          nextRoute.isNotEmpty &&
+          fromUid != null &&
+          fromUid.isNotEmpty &&
+          currentUserId != null &&
+          currentUserId.isNotEmpty &&
+          fromUid == currentUserId;
 
+      if (canUseNext) {
         // Check if user has access to this route, specifically
         // to the workspaceId from that route, if it exists as
         // path param
 
-        final regExp = RegExp('/${Routes.workspacesRelative}/([^/]+)');
-        final match = regExp.firstMatch(decodedRoute);
-        final decodedWorkspaceIdPathParam = match?.group(1);
+        // Detect UUIDv4 workspaceId
+        final regExp = RegExp(
+          '^/${Routes.workspacesRelative}/'
+          r'([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})(?=/|$)',
+        );
+        final match = regExp.firstMatch(nextRoute);
+        final decodedPathParamWorkspaceId = match?.group(1);
         // If there is no workspaceId path param then just let the user on that route
-        if (decodedWorkspaceIdPathParam == null) {
-          context.go(decodedRoute);
+        if (decodedPathParamWorkspaceId == null) {
+          context.go(nextRoute);
           return;
         }
 
         if (widget.viewModel.checkRouteWorkspaceId(
-          decodedWorkspaceIdPathParam,
+          decodedPathParamWorkspaceId,
         )) {
-          context.go(decodedRoute);
-        } else {
-          if (activeWorkspaceId != null) {
-            context.go(Routes.tasks(workspaceId: activeWorkspaceId));
-          } else {
-            // activeWorkspaceId is null only if user's workspaces list is empty
-            // and in that case hasNoWorkspaces WorkspaceRepository flag will
-            // kick in GoRouter's redirect function
+          await widget.viewModel.setActiveWorkspaceId(
+            decodedPathParamWorkspaceId,
+          );
+          if (!mounted) {
+            return;
           }
+          context.go(nextRoute);
+          return;
         }
+      }
+
+      if (activeWorkspaceId != null) {
+        context.go(Routes.tasks(workspaceId: activeWorkspaceId));
       } else {
-        if (activeWorkspaceId != null) {
-          context.go(Routes.tasks(workspaceId: activeWorkspaceId));
-        } else {
-          // activeWorkspaceId is null only if user's workspaces list is empty
-          // and in that case hasNoWorkspaces WorkspaceRepository flag will
-          // kick in GoRouter's redirect function
-        }
+        // activeWorkspaceId is null only if user's workspaces list is empty
+        // and in that case hasNoWorkspaces WorkspaceRepository flag will
+        // kick in GoRouter's redirect function
       }
     }
   }

@@ -94,15 +94,14 @@ export class TaskRepositoryImpl implements TaskRepository {
 
   async findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, status, search, sort },
+    query: { page, limit, status, sort },
   }: {
     workspaceId: string;
     query: {
       page: number;
       limit: number;
-      sort: SortBy;
       status: ProgressStatus | null;
-      search: string | null;
+      sort: SortBy;
     };
   }): Promise<{
     data: TaskEntity[];
@@ -139,23 +138,24 @@ export class TaskRepositoryImpl implements TaskRepository {
         .setParameter('status', status);
     }
 
-    if (search) {
-      // Escape special characters used in SQL LIKE/ILIKE
-      // 1. Escape backslash first
-      // 2. Escape percent sign
-      // 3. Escape underscore
-      // E.g. ILIKE '%%%' - this would return all the goals
-      // which, if there are many goals, would fill up RAM
-      // and possibly fail the server.
-      const sanitizedSearch = search
-        .replace(/\\/g, '\\\\')
-        .replace(/%/g, '\\%')
-        .replace(/_/g, '\\_');
+    // Not yet fully, secure-wise implemented on the DB
+    // if (search) {
+    //   // Escape special characters used in SQL LIKE/ILIKE
+    //   // 1. Escape backslash first
+    //   // 2. Escape percent sign
+    //   // 3. Escape underscore
+    //   // E.g. ILIKE '%%%' - this would return all the goals
+    //   // which, if there are many goals, would fill up RAM
+    //   // and possibly fail the server.
+    //   const sanitizedSearch = search
+    //     .replace(/\\/g, '\\\\')
+    //     .replace(/%/g, '\\%')
+    //     .replace(/_/g, '\\_');
 
-      baseQb.andWhere('LOWER(task.title) LIKE :search', {
-        search: `%${sanitizedSearch.toLowerCase()}%`,
-      });
-    }
+    //   baseQb.andWhere('LOWER(task.title) LIKE :search', {
+    //     search: `%${sanitizedSearch.toLowerCase()}%`,
+    //   });
+    // }
 
     switch (sort) {
       case SortBy.NEWEST:

@@ -8,7 +8,6 @@ import '../../../core/theme/colors.dart';
 import '../../../core/theme/dimens.dart';
 import '../../../core/ui/app_text_button.dart';
 import '../view_models/app_drawer_view_model.dart';
-import 'about_button.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key, required this.viewModel});
@@ -42,7 +41,11 @@ class Footer extends StatelessWidget {
                 label: context.localization.appDrawerCreateNewWorkspace,
                 leadingIcon: FontAwesomeIcons.plus,
               ),
-              AboutButton(viewModel: viewModel),
+              AppTextButton(
+                onPress: () => context.push(Routes.about),
+                label: context.localization.aboutLabel,
+                leadingIcon: FontAwesomeIcons.circleInfo,
+              ),
             ],
           ),
         ),

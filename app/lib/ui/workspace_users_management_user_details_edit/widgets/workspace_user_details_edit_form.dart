@@ -79,7 +79,6 @@ class _WorkspaceUserDetailsEditFormState
         value: WorkspaceRole.member,
       ),
     ]).toList();
-    // Virtual users don't have emails, and real users must have emails.
     final isVirtualUser = widget.viewModel.details!.isVirtual;
 
     return Form(
@@ -199,6 +198,10 @@ class _WorkspaceUserDetailsEditFormState
   }
 
   String? _validateFirstName(String? value) {
+    if (!widget.viewModel.details!.isVirtual) {
+      return null;
+    }
+
     final trimmedValue = value?.trim();
     switch (trimmedValue) {
       case final String trimmedValue when trimmedValue.isEmpty:
@@ -215,6 +218,10 @@ class _WorkspaceUserDetailsEditFormState
   }
 
   String? _validateLastName(String? value) {
+    if (!widget.viewModel.details!.isVirtual) {
+      return null;
+    }
+
     final trimmedValue = value?.trim();
     switch (trimmedValue) {
       case final String trimmedValue when trimmedValue.isEmpty:
@@ -234,6 +241,10 @@ class _WorkspaceUserDetailsEditFormState
     BuildContext context,
     List<AppSelectFieldOption>? role,
   ) {
+    if (widget.viewModel.details!.isVirtual) {
+      return null;
+    }
+
     switch (role) {
       case final List<AppSelectFieldOption>? value when value == null:
       case final List<AppSelectFieldOption> value when value.isEmpty:

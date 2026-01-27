@@ -34,10 +34,14 @@ class _WorkspaceUsersManagementScreenState extends State<LeaderboardScreen> {
   @override
   void didUpdateWidget(covariant LeaderboardScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.loadLeaderboard.removeListener(
-      _onLeaderboardLoadResult,
-    );
-    widget.viewModel.loadLeaderboard.addListener(_onLeaderboardLoadResult);
+
+    if (widget.viewModel.loadLeaderboard !=
+        oldWidget.viewModel.loadLeaderboard) {
+      oldWidget.viewModel.loadLeaderboard.removeListener(
+        _onLeaderboardLoadResult,
+      );
+      widget.viewModel.loadLeaderboard.addListener(_onLeaderboardLoadResult);
+    }
   }
 
   @override

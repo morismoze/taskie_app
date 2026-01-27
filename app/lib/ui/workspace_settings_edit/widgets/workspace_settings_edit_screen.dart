@@ -32,12 +32,16 @@ class _WorkspaceSettingsEditScreenState
   @override
   void didUpdateWidget(covariant WorkspaceSettingsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editWorkspaceDetails.removeListener(
-      _onWorkspaceDetailsEditResult,
-    );
-    widget.viewModel.editWorkspaceDetails.addListener(
-      _onWorkspaceDetailsEditResult,
-    );
+
+    if (widget.viewModel.editWorkspaceDetails !=
+        oldWidget.viewModel.editWorkspaceDetails) {
+      oldWidget.viewModel.editWorkspaceDetails.removeListener(
+        _onWorkspaceDetailsEditResult,
+      );
+      widget.viewModel.editWorkspaceDetails.addListener(
+        _onWorkspaceDetailsEditResult,
+      );
+    }
   }
 
   @override

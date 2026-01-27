@@ -35,8 +35,11 @@ class _WorkspaceSettingsScreenState extends State<CreateGoalScreen> {
   @override
   void didUpdateWidget(covariant CreateGoalScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.createGoal.removeListener(_onResult);
-    widget.viewModel.createGoal.addListener(_onResult);
+
+    if (widget.viewModel.createGoal != oldWidget.viewModel.createGoal) {
+      oldWidget.viewModel.createGoal.removeListener(_onResult);
+      widget.viewModel.createGoal.addListener(_onResult);
+    }
   }
 
   @override

@@ -2,7 +2,7 @@ import '../../data/repositories/auth/auth_repository.dart';
 import '../../data/repositories/auth/auth_state_repository.dart';
 import '../../data/repositories/user/user_repository.dart';
 import '../../data/repositories/workspace/workspace/workspace_repository.dart';
-import '../../data/services/local/logger_service.dart';
+import '../../logger/logger_interface.dart';
 import '../../utils/command.dart';
 import 'purge_data_cache_use_case.dart';
 
@@ -82,6 +82,5 @@ class SignOutUseCase {
     await _workspaceRepository.purgeWorkspacesCache();
     await _userRepository.purgeUserCache();
     await _authStateRepository.setTokens(null);
-    _loggerService.clearState();
   }
 }

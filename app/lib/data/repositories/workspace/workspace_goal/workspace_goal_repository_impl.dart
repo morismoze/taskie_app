@@ -5,6 +5,7 @@ import '../../../../domain/models/created_by.dart';
 import '../../../../domain/models/filter.dart';
 import '../../../../domain/models/paginable.dart';
 import '../../../../domain/models/workspace_goal.dart';
+import '../../../../logger/logger_interface.dart';
 import '../../../../utils/command.dart';
 import '../../../services/api/paginable.dart';
 import '../../../services/api/value_patch.dart';
@@ -14,7 +15,6 @@ import '../../../services/api/workspace/workspace_goal/models/request/update_goa
 import '../../../services/api/workspace/workspace_goal/models/response/workspace_goal_response.dart';
 import '../../../services/api/workspace/workspace_goal/workspace_goal_api_service.dart';
 import '../../../services/local/database_service.dart';
-import '../../../services/local/logger_service.dart';
 import 'workspace_goal_repository.dart';
 
 final _defaultFilter = ObjectiveFilter(
@@ -148,6 +148,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.getGoals failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
 
         if (isChangingFilter) {
@@ -187,14 +188,15 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         // Also it is added to the current active filter key.
         final newGoal = _mapGoalFromResponse(result.value, isNew: true);
 
-        // [_cachedGoals] should always be != null at this point in time, because
-        // we show a error prompt with retry on the GoalsScreen if there was a problem
-        // with initial goals load from origin.
-        _cachedGoals!.items.add(newGoal);
-        ++_cachedGoals!.total;
-        // Re-calculate total pages
-        _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
-            .ceil();
+        if (_cachedGoals != null) {
+          _cachedGoals!.items.add(newGoal);
+          _cachedGoals!.total++;
+          // Re-calculate total pages
+          _cachedGoals!.totalPages = (_cachedGoals!.total / _activeFilter.limit)
+              .ceil();
+        } else {
+          _cachedGoals = Paginable(items: [newGoal], total: 1, totalPages: 1);
+        }
         notifyListeners();
 
         // Update persistent cache
@@ -207,6 +209,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.createGoal failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -276,6 +279,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.updateGoalDetails failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -324,6 +328,7 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
           'workspaceGoalApiService.closeGoal failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'WorkspaceGoalRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }
@@ -350,6 +355,8 @@ class WorkspaceGoalRepositoryImpl extends WorkspaceGoalRepository {
         LogLevel.warn,
         'databaseService.setGoals failed',
         error: dbSaveResult.error,
+        stackTrace: dbSaveResult.stackTrace,
+        context: 'WorkspaceGoalRepositoryImpl',
       );
     }
   }

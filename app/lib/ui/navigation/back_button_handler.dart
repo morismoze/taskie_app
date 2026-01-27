@@ -63,7 +63,7 @@ class _BackButtonHandlerState extends State<BackButtonHandler> {
           if (mounted) {
             AppToast.showInfo(
               context: context,
-              message: context.localization.tasksPressAgainToExit,
+              title: context.localization.tasksPressAgainToExit,
               duration: _exitAppPromptDuration,
             );
           }

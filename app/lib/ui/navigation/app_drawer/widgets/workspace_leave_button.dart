@@ -46,7 +46,8 @@ class WorkspaceLeaveButton extends StatelessWidget {
         ActionButtonBar.withCommand(
           command: viewModel.leaveWorkspace,
           onSubmit: () => viewModel.leaveWorkspace.execute(workspaceId),
-          onCancel: () => Navigator.of(context).pop(), // Close dialog,
+          onCancel: () =>
+              Navigator.of(context, rootNavigator: true).pop(), // Close dialog
           submitButtonText:
               context.localization.appDrawerLeaveWorkspaceModalCta,
           submitButtonColor: Theme.of(context).colorScheme.error,

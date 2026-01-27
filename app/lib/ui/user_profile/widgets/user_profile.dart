@@ -41,10 +41,14 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void didUpdateWidget(covariant UserProfile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
-    oldWidget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
-    widget.viewModel.signOut.addListener(_onSignOutResult);
-    widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.signOut.removeListener(_onSignOutResult);
+      oldWidget.viewModel.deleteAccount.removeListener(_onAccountDeleteResult);
+
+      widget.viewModel.signOut.addListener(_onSignOutResult);
+      widget.viewModel.deleteAccount.addListener(_onAccountDeleteResult);
+    }
   }
 
   @override
@@ -164,7 +168,7 @@ class _UserProfileState extends State<UserProfile> {
       switch (errorResult.error) {
         case GeneralApiException(error: final apiError)
             when apiError.code == ApiErrorCode.soleManagerConflict:
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
           _showSoleManagerConflictDialog();
           break;
         default:
@@ -192,7 +196,8 @@ class _UserProfileState extends State<UserProfile> {
         ActionButtonBar.withCommand(
           command: widget.viewModel.deleteAccount,
           onSubmit: () => widget.viewModel.deleteAccount.execute(),
-          onCancel: () => Navigator.of(context).pop(), // Close dialog
+          onCancel: () =>
+              Navigator.of(context, rootNavigator: true).pop(), // Close dialog
           submitButtonText: context.localization.deleteAccountConfirmButton,
           submitButtonColor: Theme.of(context).colorScheme.error,
         ),
@@ -217,7 +222,7 @@ class _UserProfileState extends State<UserProfile> {
       actions: AppFilledButton(
         label: context.localization.misc_ok,
         onPress: () {
-          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context, rootNavigator: true).pop(); // Close dialog
         },
       ),
     );

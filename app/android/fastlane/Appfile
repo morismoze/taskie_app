@@ -1,2 +1,2 @@
-json_key_file("api-key.json") # Github Action creates this dynamically in android older
+json_key_file(ENV['JSON_KEY_FILE']) # Github Action creates this env
 package_name("com.taskie.taskie")

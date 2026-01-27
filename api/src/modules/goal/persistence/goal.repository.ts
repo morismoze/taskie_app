@@ -37,7 +37,6 @@ export abstract class GoalRepository {
       limit: number;
       sort: SortBy;
       status: ProgressStatus | null;
-      search: string | null;
     };
     relations?: FindOptionsRelations<GoalEntity>;
   }): Promise<{

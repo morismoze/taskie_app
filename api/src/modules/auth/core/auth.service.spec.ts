@@ -130,7 +130,10 @@ const createMockSessionService = () => ({
 });
 
 const createMockUnitOfWorkService = () => ({
-  withTransaction: jest.fn().mockImplementation((cb) => cb()),
+  withTransaction: jest.fn().mockImplementation(async (cb) => {
+    await Promise.resolve();
+    return cb();
+  }),
 });
 
 const createMockClsService = () => ({

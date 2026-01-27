@@ -1,7 +1,7 @@
 import '../../../domain/models/client_info.dart';
+import '../../../logger/logger_interface.dart';
 import '../../../utils/command.dart';
 import '../../services/local/client_info_service.dart';
-import '../../services/local/logger_service.dart';
 import 'client_info_repository.dart';
 
 class ClientInfoRepositoryImpl implements ClientInfoRepository {
@@ -39,6 +39,7 @@ class ClientInfoRepositoryImpl implements ClientInfoRepository {
           'clientInfoService.init failed',
           error: result.error,
           stackTrace: result.stackTrace,
+          context: 'ClientInfoRepositoryImpl',
         );
         return Result.error(result.error, result.stackTrace);
     }

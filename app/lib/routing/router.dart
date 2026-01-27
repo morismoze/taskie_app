@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/repositories/auth/auth_state_repository.dart';
+import '../data/repositories/user/user_repository.dart';
 import '../data/repositories/workspace/workspace/workspace_repository.dart';
+import '../ui/about/view_models/about_screen_view_model.dart';
+import '../ui/about/widgets/about_screen.dart';
 import '../ui/auth/sign_in/view_models/sign_in_view_model.dart';
 import '../ui/auth/sign_in/widgets/sign_in_screen.dart';
 import '../ui/entry/view_models/entry_screen_view_model.dart';
@@ -213,17 +216,19 @@ GoRouter router({
               // there is not point in displaying role chip on this screen
               // as it's not part of the :workspaceId shell route). Handling
               // of this case is prone to refactor in the future.
-              child: ChangeNotifierProvider(
-                create: (context) => UserProfileViewModel(
-                  workspaceId: null,
-                  userRepository: context.read(),
-                  signOutUseCase: context.read(),
-                ),
-                child: CreateWorkspaceInitialScreen(
-                  viewModel: CreateWorkspaceInitialScreenViewModel(
-                    workspaceRepository: context.read(),
+              child: BackButtonHandler(
+                child: ChangeNotifierProvider(
+                  create: (context) => UserProfileViewModel(
+                    workspaceId: null,
                     userRepository: context.read(),
-                    createWorkspaceUseCase: context.read(),
+                    signOutUseCase: context.read(),
+                  ),
+                  child: CreateWorkspaceInitialScreen(
+                    viewModel: CreateWorkspaceInitialScreenViewModel(
+                      workspaceRepository: context.read(),
+                      userRepository: context.read(),
+                      createWorkspaceUseCase: context.read(),
+                    ),
                   ),
                 ),
               ),
@@ -290,7 +295,6 @@ GoRouter router({
                         workspaceId: workspaceId,
                         workspaceRepository: context.read(),
                         userRepository: context.read(),
-                        clientInfoRepository: context.read(),
                         refreshTokenUseCase: context.read(),
                         activeWorkspaceChangeUseCase: context.read(),
                       ),
@@ -333,6 +337,8 @@ GoRouter router({
                               userRepository: context.read(),
                               workspaceTaskRepository: context.read(),
                               preferencesRepository: context.read(),
+                              clientInfoRepository: context.read(),
+                              remoteConfigRepository: context.read(),
                             ),
                           ),
                         );
@@ -892,20 +898,12 @@ GoRouter router({
                               child: child,
                             );
                           },
-                      child: ChangeNotifierProvider(
-                        create: (context) =>
-                            WorkspaceUserDetailsScreenViewModel(
-                              workspaceId: workspaceId,
-                              workspaceUserId: workspaceUserId,
-                              userRepository: context.read(),
-                              workspaceUserRepository: context.read(),
-                            ),
-                        child: Builder(
-                          builder: (context) {
-                            return WorkspaceUserDetailsScreen(
-                              viewModel: context.read(),
-                            );
-                          },
+                      child: WorkspaceUserDetailsScreen(
+                        viewModel: WorkspaceUserDetailsScreenViewModel(
+                          workspaceId: workspaceId,
+                          workspaceUserId: workspaceUserId,
+                          userRepository: context.read(),
+                          workspaceUserRepository: context.read(),
                         ),
                       ),
                     );
@@ -969,17 +967,10 @@ GoRouter router({
                           child: child,
                         );
                       },
-                  child: ChangeNotifierProvider(
-                    create: (context) => WorkspaceSettingsScreenViewModel(
+                  child: WorkspaceSettingsScreen(
+                    viewModel: WorkspaceSettingsScreenViewModel(
                       workspaceId: workspaceId,
                       workspaceRepository: context.read(),
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        return WorkspaceSettingsScreen(
-                          viewModel: context.read(),
-                        );
-                      },
                     ),
                   ),
                 );
@@ -1017,6 +1008,28 @@ GoRouter router({
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: Routes.about,
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          transitionDuration: const Duration(milliseconds: 250),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.scaled,
+              child: child,
+            );
+          },
+          child: AboutScreen(
+            viewModel: AboutScreenViewModel(
+              clientInfoRepository: context.read(),
+            ),
+          ),
+        );
+      },
     ),
     GoRoute(
       path: Routes.preferences,
@@ -1059,22 +1072,40 @@ String? _redirect(BuildContext context, GoRouterState state) {
       return null;
     }
 
-    final fromParam = state.matchedLocation == '/'
-        ? ''
-        : '?from=${state.matchedLocation}';
-    return '${Routes.login}$fromParam';
+    final qp = <String, String>{};
+
+    if (state.matchedLocation != '/') {
+      qp['from'] = state.uri.toString();
+    }
+
+    final userId = context.read<UserRepository>().user?.id;
+    if (userId != null) {
+      qp['from_uid'] = userId;
+    }
+
+    return Uri(
+      path: Routes.login,
+      queryParameters: qp.isEmpty ? null : qp,
+    ).toString();
   }
 
   // If the user is logged in but still on the login page, send them to the initial route
   if (loggingIn) {
     final from = state.uri.queryParameters['from'];
+    final fromUid = state.uri.queryParameters['from_uid'];
 
     // Entry screen is the main business logic entry point so it
     // always needs to be the first one in line, and then inside
     // it we will decide where to redirect next, while considering
     // "next" param.
     if (from != null && from.isNotEmpty) {
-      return '${Routes.entry}?next=$from';
+      return Uri(
+        path: Routes.entry,
+        queryParameters: {
+          'next': from,
+          if (fromUid != null) 'from_uid': fromUid,
+        },
+      ).toString();
     }
 
     return Routes.entry;

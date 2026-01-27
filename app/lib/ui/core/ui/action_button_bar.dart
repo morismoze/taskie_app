@@ -99,28 +99,22 @@ class ActionButtonBar extends StatelessWidget {
     String? submitButtonText,
     String? cancelButtonText,
   }) {
-    return Row(
-      spacing: Dimens.paddingHorizontal,
+    return Column(
+      spacing: Dimens.paddingVertical / 3,
       children: [
-        if (onCancel != null)
-          Expanded(
-            flex: 2,
-            child: AppOutlinedButton(
-              onPress: onCancel!,
-              label: cancelButtonText ?? context.localization.misc_cancel,
-              color: Theme.of(context).colorScheme.secondary,
-              disabled: isLoading,
-            ),
-          ),
-        Expanded(
-          flex: 4,
-          child: AppFilledButton(
-            onPress: onSubmit,
-            loading: isLoading,
-            label: submitButtonText ?? context.localization.misc_submit,
-            backgroundColor: submitButtonColor,
-          ),
+        AppFilledButton(
+          onPress: onSubmit,
+          loading: isLoading,
+          label: submitButtonText ?? context.localization.misc_submit,
+          backgroundColor: submitButtonColor,
         ),
+        if (onCancel != null)
+          AppOutlinedButton(
+            onPress: onCancel!,
+            label: cancelButtonText ?? context.localization.misc_cancel,
+            color: Theme.of(context).colorScheme.secondary,
+            disabled: isLoading,
+          ),
       ],
     );
   }

@@ -11,29 +11,27 @@ class Rbac extends StatelessWidget {
     required this.permission,
     required this.child,
     this.fallback,
-    this.workspaceId,
   });
 
   final RbacPermission permission;
   final Widget child;
   final Widget? fallback;
 
-  /// This field is used only in the app drawer, where we need to check
-  /// each permission for each separate workspace.
-  final String? workspaceId;
-
   @override
   Widget build(BuildContext context) {
+    final activeWorkspaceId = context
+        .read<WorkspaceRepository>()
+        .activeWorkspaceId;
+
+    if (activeWorkspaceId == null) {
+      return const SizedBox.shrink();
+    }
+
     return Selector<RbacService, bool>(
-      selector: (context, rbacService) {
-        final activeWorkspaceId = context
-            .read<WorkspaceRepository>()
-            .activeWorkspaceId;
-        return rbacService.hasPermission(
-          permission: permission,
-          workspaceId: workspaceId ?? activeWorkspaceId,
-        );
-      },
+      selector: (_, rbacService) => rbacService.hasPermission(
+        permission: permission,
+        workspaceId: activeWorkspaceId,
+      ),
       builder: (context, hasAccess, _) {
         if (hasAccess) {
           return child;

@@ -66,10 +66,20 @@ class TaskDetailsEditScreenViewModel extends ChangeNotifier {
   ) async {
     final (title, description, rewardPoints, dueDate) = details;
 
+    // Diffs are needed to actually see what data has changed
+    // and send only that data
     final hasTitleChanged = title != _details!.title;
     final hasDescriptionChanged = description != _details!.description;
     final hasRewardPointsChanged = rewardPoints != _details!.rewardPoints;
     final hasDueDateChanged = dueDate != _details!.dueDate;
+
+    // If nothing changed, return
+    if (!hasTitleChanged &&
+        !hasDescriptionChanged &&
+        !hasRewardPointsChanged &&
+        !hasDueDateChanged) {
+      return const Result.ok(null);
+    }
 
     final result = await _workspaceTaskRepository.updateTaskDetails(
       _activeWorkspaceId,

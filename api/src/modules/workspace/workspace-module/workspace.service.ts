@@ -1030,7 +1030,7 @@ export class WorkspaceService {
       );
     }
 
-    // User can't edit itself - this is not possible through
+    // User can't edit themself - this is not possible through
     // the app - a security measure
     if (workspaceUserUpdatedBy.id === workspaceUser.id) {
       // Should happen only when there was an attempt to
@@ -1043,29 +1043,34 @@ export class WorkspaceService {
       );
     }
 
-    // Virtual users can get only firstName and lastName changed
-    // as they are always Members. Non-virtual users can get
-    // only the role changed as their firstName and lastName
-    // comes from social login.
-    const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
-    if (isVirtualUser) {
-      await this.userService.update({
-        id: workspaceUser.user.id,
-        data: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-        },
-      });
-    } else {
-      await this.workspaceUserService.update({
-        id: workspaceUserId,
-        data: {
-          workspaceRole: data.role,
-        },
-      });
-    }
+    await this.unitOfWorkService.withTransaction(async () => {
+      // Virtual users can get only firstName and lastName changed
+      // as they are always Members. Non-virtual users can get
+      // only the role changed as their firstName and lastName
+      // comes from social login.
+      const isVirtualUser = checkIsVirtualUser({ user: workspaceUser.user });
+      if (isVirtualUser) {
+        await this.userService.update({
+          id: workspaceUser.user.id,
+          data: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+          },
+        });
+      } else {
+        await this.workspaceUserService.update({
+          id: workspaceUserId,
+          data: {
+            workspaceRole: data.role,
+          },
+        });
+      }
 
-    await this.invalidateUserSession({ workspaceId, workspaceUserId });
+      // Invalidate session only for non-virtual users
+      if (!isVirtualUser && data.role) {
+        await this.invalidateUserSession({ workspaceId, workspaceUserId });
+      }
+    });
 
     // Re-fetch the workspace user
     const updatedWorkspaceUser =
@@ -1129,9 +1134,10 @@ export class WorkspaceService {
       );
     }
 
-    await this.invalidateUserSession({ workspaceId, workspaceUserId });
-
-    await this.workspaceUserService.delete(workspaceUserId);
+    await this.unitOfWorkService.withTransaction(async () => {
+      await this.workspaceUserService.delete(workspaceUserId);
+      await this.invalidateUserSession({ workspaceId, workspaceUserId });
+    });
   }
 
   async leaveWorkspace({

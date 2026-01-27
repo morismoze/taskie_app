@@ -80,7 +80,7 @@ class UnauthorizedInterceptor extends Interceptor {
 
       if (refreshToken == null) {
         _refreshTokenCompleter!.completeError(
-          'Error saving tokens to the storage',
+          'Error reading refresh token from storage',
         );
         handler.reject(originalError);
         return false;

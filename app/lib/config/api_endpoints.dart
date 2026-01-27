@@ -7,6 +7,8 @@ import '../data/services/api/workspace/workspace_task/models/request/workspace_u
 abstract final class ApiEndpoints {
   static const _prefix = '/api/v1';
 
+  static const createMobileLog = '$_prefix/mobile-logs';
+
   // Auth
   static String socialLogin(AuthProvider p) {
     switch (p) {

@@ -1,9 +1,9 @@
 import '../../../domain/models/user.dart';
+import '../../../logger/logger_interface.dart';
 import '../../../utils/command.dart';
 import '../../services/api/user/models/response/user_response.dart';
 import '../../services/api/user/user_api_service.dart';
 import '../../services/local/database_service.dart';
-import '../../services/local/logger_service.dart';
 import 'user_repository.dart';
 
 class UserRepositoryImpl extends UserRepository {
@@ -45,6 +45,7 @@ class UserRepositoryImpl extends UserRepository {
         if (dbUser != null) {
           _cachedUser = dbUser;
           notifyListeners();
+          _loggerService.setUser(dbUser.id);
           yield Result.ok(dbUser);
         }
       }
@@ -54,8 +55,6 @@ class UserRepositoryImpl extends UserRepository {
     final apiResult = await _userApiService.getCurrentUser();
     switch (apiResult) {
       case Ok<UserResponse>():
-        _loggerService.setUser(apiResult.value.id);
-
         final user = User(
           id: apiResult.value.id,
           email: apiResult.value.email,
@@ -72,10 +71,13 @@ class UserRepositoryImpl extends UserRepository {
             LogLevel.warn,
             'databaseService.setUser failed',
             error: dbSaveResult.error,
+            stackTrace: dbSaveResult.stackTrace,
+            context: 'UserRepositoryImpl',
           );
         }
 
         _cachedUser = user;
+        _loggerService.setUser(apiResult.value.id);
         notifyListeners();
 
         yield Result.ok(_cachedUser!);
@@ -85,6 +87,7 @@ class UserRepositoryImpl extends UserRepository {
           'userApiService.getCurrentUser failed',
           error: apiResult.error,
           stackTrace: apiResult.stackTrace,
+          context: 'UserRepositoryImpl',
         );
         yield Result.error(apiResult.error);
     }
@@ -102,6 +105,7 @@ class UserRepositoryImpl extends UserRepository {
           'userApiService.getCurrentUser failed',
           error: apiResult.error,
           stackTrace: apiResult.stackTrace,
+          context: 'UserRepositoryImpl',
         );
         return Result.error(apiResult.error);
     }

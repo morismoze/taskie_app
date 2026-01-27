@@ -14,18 +14,18 @@ import { WorkspaceInviteCore } from './domain/workspace-invite-core.domain';
 import { WorkspaceInviteWithWorkspaceCoreAndCreatedByUserCoreAndUsedByWorkspaceUserCore } from './domain/workspace-invite-with-workspace-core-and-user-core.domain';
 import { WorkspaceInviteWithWorkspaceWithCreatedByUser } from './domain/workspace-invite-with-workspace-with-created-by-user.domain';
 import { WorkspaceInvite } from './domain/workspace-invite.domain';
-import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
+import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 
 @Injectable()
 export class WorkspaceInviteService {
   constructor(
-    private readonly workspaceInviteRepository: TransactionalWorkspaceInviteRepository,
+    private readonly workspaceInviteRepository: WorkspaceInviteRepository,
     private readonly workspaceUserService: WorkspaceUserService,
     private readonly unitOfWorkService: UnitOfWorkService,
   ) {}
 
   /**
-   * Invite links will last up to 1 day and be one-time only
+   * Invite links will last up to 7 days and be one-time only
    */
   async createInviteToken({
     workspaceId,
@@ -36,7 +36,7 @@ export class WorkspaceInviteService {
   }): Promise<WorkspaceInviteCore> {
     const token = generateUniqueToken(WORKSPACE_INVITE_TOKEN_LENGTH);
     const now = DateTime.now().toUTC();
-    const expiresAt = now.plus({ hours: 24 }).toISO();
+    const expiresAt = now.plus({ days: 7 }).toISO();
     const newInvite = await this.workspaceInviteRepository.create({
       data: {
         token,
@@ -165,7 +165,9 @@ export class WorkspaceInviteService {
           id: workspaceInvite.id,
           usedById: newWorkspaceUser.id,
           relations: {
-            workspace: true,
+            workspace: {
+              createdBy: true,
+            },
           },
         });
 

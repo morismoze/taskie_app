@@ -40,12 +40,16 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
   @override
   void didUpdateWidget(covariant JoinWorkspaceScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
-      _onWorkspaceJoinResult,
-    );
-    widget.viewModel.joinWorkspaceViaInviteLink.addListener(
-      _onWorkspaceJoinResult,
-    );
+
+    if (widget.viewModel.joinWorkspaceViaInviteLink !=
+        oldWidget.viewModel.joinWorkspaceViaInviteLink) {
+      oldWidget.viewModel.joinWorkspaceViaInviteLink.removeListener(
+        _onWorkspaceJoinResult,
+      );
+      widget.viewModel.joinWorkspaceViaInviteLink.addListener(
+        _onWorkspaceJoinResult,
+      );
+    }
   }
 
   @override
@@ -235,6 +239,10 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
           (widget.viewModel.joinWorkspaceViaInviteLink.result as Ok<String>)
               .value;
       widget.viewModel.joinWorkspaceViaInviteLink.clearResult();
+      AppToast.showInfo(
+        context: context,
+        title: context.localization.workspaceCreateJoinViaInviteLinkSuccess,
+      );
       context.go(Routes.tasks(workspaceId: newWorkspaceId));
     }
 
@@ -258,7 +266,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteAlreadyUsed:
           AppToast.showInfo(
             context: context,
-            message: context
+            title: context
                 .localization
                 .workspaceCreateJoinViaInviteLinkExpiredOrUsed,
           );
@@ -267,8 +275,7 @@ class _JoinWorkspaceScreenState extends State<JoinWorkspaceScreen> {
             when apiError.code == ApiErrorCode.workspaceInviteExistingUser:
           AppToast.showInfo(
             context: context,
-            message:
-                context.localization.workspaceJoinViaInviteLinkExistingUser,
+            title: context.localization.workspaceJoinViaInviteLinkExistingUser,
           );
           context.go(
             Routes.tasks(workspaceId: widget.viewModel.workspaceInfo!.id),

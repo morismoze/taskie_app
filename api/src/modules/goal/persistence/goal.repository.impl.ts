@@ -4,12 +4,7 @@ import { Nullable } from 'src/common/types/nullable.type';
 import { ProgressStatus } from 'src/modules/task/task-module/domain/progress-status.enum';
 import { SortBy } from 'src/modules/workspace/workspace-module/dto/request/workspace-objective-request-query.dto';
 import { WorkspaceUser } from 'src/modules/workspace/workspace-user-module/domain/workspace-user.domain';
-import {
-  FindManyOptions,
-  FindOptionsRelations,
-  ILike,
-  Repository,
-} from 'typeorm';
+import { FindManyOptions, FindOptionsRelations, Repository } from 'typeorm';
 import { Goal } from '../domain/goal.domain';
 import { GoalEntity } from './goal.entity';
 import { GoalRepository } from './goal.repository';
@@ -88,7 +83,7 @@ export class GoalRepositoryImpl implements GoalRepository {
 
   async findAllByWorkspaceId({
     workspaceId,
-    query: { page, limit, sort, status, search },
+    query: { page, limit, sort, status },
     relations,
   }: {
     workspaceId: Goal['workspace']['id'];
@@ -121,24 +116,25 @@ export class GoalRepositoryImpl implements GoalRepository {
       };
     }
 
-    if (search) {
-      // Escape special characters used in SQL LIKE/ILIKE
-      // 1. Escape backslash first
-      // 2. Escape percent sign
-      // 3. Escape underscore
-      // E.g. ILIKE '%%%' - this would return all the goals
-      // which, if there are many goals, would fill up RAM
-      // and possibly fail the server.
-      const sanitizedSearch = search
-        .replace(/\\/g, '\\\\')
-        .replace(/%/g, '\\%')
-        .replace(/_/g, '\\_');
+    // Not yet fully, secure-wise implemented on the DB
+    // if (search) {
+    //   // Escape special characters used in SQL LIKE/ILIKE
+    //   // 1. Escape backslash first
+    //   // 2. Escape percent sign
+    //   // 3. Escape underscore
+    //   // E.g. ILIKE '%%%' - this would return all the goals
+    //   // which, if there are many goals, would fill up RAM
+    //   // and possibly fail the server.
+    //   const sanitizedSearch = search
+    //     .replace(/\\/g, '\\\\')
+    //     .replace(/%/g, '\\%')
+    //     .replace(/_/g, '\\_');
 
-      findOptions.where = {
-        ...findOptions.where,
-        title: ILike(`%${sanitizedSearch}%`),
-      };
-    }
+    //   findOptions.where = {
+    //     ...findOptions.where,
+    //     title: ILike(`%${sanitizedSearch}%`),
+    //   };
+    // }
 
     switch (sort) {
       case SortBy.NEWEST:

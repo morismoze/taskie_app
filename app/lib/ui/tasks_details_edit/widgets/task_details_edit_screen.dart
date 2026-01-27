@@ -40,12 +40,16 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
   @override
   void didUpdateWidget(covariant TaskDetailsEditScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.editTaskDetails.removeListener(
-      _onTaskDetailsEditResult,
-    );
-    oldWidget.viewModel.closeTask.removeListener(_onTaskCloseResult);
-    widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
-    widget.viewModel.closeTask.addListener(_onTaskCloseResult);
+
+    if (widget.viewModel != oldWidget.viewModel) {
+      oldWidget.viewModel.editTaskDetails.removeListener(
+        _onTaskDetailsEditResult,
+      );
+      oldWidget.viewModel.closeTask.removeListener(_onTaskCloseResult);
+
+      widget.viewModel.editTaskDetails.addListener(_onTaskDetailsEditResult);
+      widget.viewModel.closeTask.addListener(_onTaskCloseResult);
+    }
   }
 
   @override
@@ -147,7 +151,10 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
             actions: AppFilledButton(
               label: context.localization.misc_goToHomepage,
               onPress: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pop(); // Close dialog
                 context.go(
                   Routes.tasks(workspaceId: widget.viewModel.activeWorkspaceId),
                 );
@@ -171,11 +178,8 @@ class _TaskDetailsEditScreenState extends State<TaskDetailsEditScreen> {
         context: context,
         message: context.localization.tasksDetailsCloseSuccess,
       );
-      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context, rootNavigator: true).pop(); // Close dialog
       context.pop(); // Go back to Tasks page
-      Navigator.of(
-        context,
-      ).pop(); // Close task card bottom sheet because task is closed
     }
 
     if (widget.viewModel.closeTask.error) {

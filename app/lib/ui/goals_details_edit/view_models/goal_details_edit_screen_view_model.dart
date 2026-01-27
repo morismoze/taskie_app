@@ -148,6 +148,14 @@ class GoalDetailsEditScreenViewModel extends ChangeNotifier {
     final hasRequiredPointsChanged = requiredPoints != _details!.requiredPoints;
     final hasAssigneeChanged = assigneeId != _details!.assignee.id;
 
+    // If nothing changed, return
+    if (!hasTitleChanged &&
+        !hasDescriptionChanged &&
+        !hasRequiredPointsChanged &&
+        !hasAssigneeChanged) {
+      return const Result.ok(null);
+    }
+
     final result = await _workspaceGoalRepository.updateGoalDetails(
       _activeWorkspaceId,
       _details!.id,

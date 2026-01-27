@@ -47,7 +47,8 @@ class TaskCloseButton extends StatelessWidget {
         ActionButtonBar.withCommand(
           command: viewModel.closeTask,
           onSubmit: () => viewModel.closeTask.execute(),
-          onCancel: () => Navigator.of(context).pop(), // Close dialog,
+          onCancel: () =>
+              Navigator.of(context, rootNavigator: true).pop(), // Close dialog
           submitButtonText: context.localization.tasksDetailsCloseTask,
           submitButtonColor: Theme.of(context).colorScheme.error,
         ),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../data/repositories/client_info/client_info_repository.dart';
 import '../../../data/repositories/preferences/preferences_repository.dart';
+import '../../../data/repositories/remote_config/remote_config_repository.dart';
 import '../../../data/repositories/user/user_repository.dart';
 import '../../../data/repositories/workspace/workspace_task/workspace_task_repository.dart';
 import '../../../domain/models/filter.dart';
 import '../../../domain/models/paginable.dart';
+import '../../../domain/models/remote_config.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/models/workspace_task.dart';
 import '../../../utils/command.dart';
@@ -15,15 +18,20 @@ class TasksScreenViewModel extends ChangeNotifier {
     required UserRepository userRepository,
     required WorkspaceTaskRepository workspaceTaskRepository,
     required PreferencesRepository preferencesRepository,
+    required RemoteConfigRepository remoteConfigRepository,
+    required ClientInfoRepository clientInfoRepository,
   }) : _activeWorkspaceId = workspaceId,
        _userRepository = userRepository,
        _workspaceTaskRepository = workspaceTaskRepository,
-       _preferencesRepository = preferencesRepository {
+       _preferencesRepository = preferencesRepository,
+       _remoteConfigRepository = remoteConfigRepository,
+       _clientInfoRepository = clientInfoRepository {
     _workspaceTaskRepository.addListener(_onTasksChanged);
     _userRepository.addListener(_onUserChanged);
     // Repository defines default values for ObjectiveFilter, so we use null here for it
     loadTasks = Command1(_loadTasks)..execute((null, null));
     refreshUser = Command0(_refreshUser);
+    checkLatestAppUpdate = Command0(_checkLatestAppUpdate)..execute();
     _userNotifier.value = _userRepository.user;
   }
 
@@ -31,9 +39,12 @@ class TasksScreenViewModel extends ChangeNotifier {
   final UserRepository _userRepository;
   final WorkspaceTaskRepository _workspaceTaskRepository;
   final PreferencesRepository _preferencesRepository;
+  final RemoteConfigRepository _remoteConfigRepository;
+  final ClientInfoRepository _clientInfoRepository;
 
   late Command1<void, (ObjectiveFilter? filter, bool? forceFetch)> loadTasks;
   late Command0 refreshUser;
+  late Command0 checkLatestAppUpdate;
 
   String get activeWorkspaceId => _activeWorkspaceId;
 
@@ -51,6 +62,17 @@ class TasksScreenViewModel extends ChangeNotifier {
   bool _isForceFetching = false;
 
   bool get isForceFetching => _isForceFetching;
+
+  String _latestAppVersion = '';
+
+  String get latestVersion => _latestAppVersion;
+
+  bool _shouldShowAppUpdate = false;
+
+  bool get shouldShowAppUpdate => _shouldShowAppUpdate;
+
+  String get playStoreUrl =>
+      'https://play.google.com/store/apps/details?id=${_clientInfoRepository.clientInfo.appId}';
 
   Paginable<WorkspaceTask>? get tasks {
     final tasks = _workspaceTaskRepository.tasks;
@@ -122,6 +144,52 @@ class TasksScreenViewModel extends ChangeNotifier {
       case Error():
         return Result.error(resultLoadUser.error);
     }
+  }
+
+  Future<Result<void>> _checkLatestAppUpdate() async {
+    final resultAppConfig = await _remoteConfigRepository.appConfig;
+
+    switch (resultAppConfig) {
+      case Ok<RemoteConfig>():
+        final vLatest = resultAppConfig.value.appLatestVersion;
+        final vInstalled = _clientInfoRepository.clientInfo.appVersion;
+
+        if (_checkIsLatestNewVersion(vInstalled, vLatest)) {
+          _shouldShowAppUpdate = true;
+          _latestAppVersion = vLatest;
+          notifyListeners();
+        }
+        return const Result.ok(null);
+      case Error<RemoteConfig>():
+        return Result.error(resultAppConfig.error, resultAppConfig.stackTrace);
+    }
+  }
+
+  void setAppUpdateVisibility(bool visible) {
+    if (_shouldShowAppUpdate == visible) {
+      return;
+    }
+
+    _shouldShowAppUpdate = visible;
+    if (_shouldShowAppUpdate) {
+      notifyListeners();
+    }
+  }
+
+  bool _checkIsLatestNewVersion(String installed, String latest) {
+    if (latest.isEmpty) {
+      return false;
+    }
+
+    final v1 = installed.split('.').map(int.parse).toList();
+    final v2 = latest.split('.').map(int.parse).toList();
+
+    for (var i = 0; i < v2.length; i++) {
+      if (i >= v1.length) return true;
+      if (v2[i] > v1[i]) return true;
+      if (v2[i] < v1[i]) return false;
+    }
+    return false;
   }
 
   @override

@@ -11,8 +11,8 @@ import { WorkspaceUserRole } from '../workspace-user-module/domain/workspace-use
 import { WorkspaceUser } from '../workspace-user-module/domain/workspace-user.domain';
 import { WorkspaceUserEntity } from '../workspace-user-module/persistence/workspace-user.entity';
 import { WorkspaceUserService } from '../workspace-user-module/workspace-user.service';
-import { TransactionalWorkspaceInviteRepository } from './persistence/transactional/transactional-workspace-invite.repository';
 import { WorkspaceInviteEntity } from './persistence/workspace-invite.entity';
+import { WorkspaceInviteRepository } from './persistence/workspace-invite.repository';
 import { WorkspaceInviteService } from './workspace-invite.service';
 
 const mockUserFactory = (overrides?: Partial<User>): User =>
@@ -85,6 +85,18 @@ const createMockRepository = () => ({
   markUsedBy: jest.fn(),
 });
 
+const createMockWorkspaceUserService = () => ({
+  create: jest.fn(),
+  findByUserIdAndWorkspaceId: jest.fn(),
+});
+
+const createMockUnitOfWorkService = () => ({
+  withTransaction: jest.fn().mockImplementation(async (cb) => {
+    await Promise.resolve();
+    return cb();
+  }),
+});
+
 describe('WorkspaceInviteService', () => {
   let service: WorkspaceInviteService;
   let workspaceInviteRepository: ReturnType<typeof createMockRepository>;
@@ -98,29 +110,22 @@ describe('WorkspaceInviteService', () => {
       providers: [
         WorkspaceInviteService,
         {
-          provide: TransactionalWorkspaceInviteRepository,
+          provide: WorkspaceInviteRepository,
           useValue: createMockRepository(),
         },
         {
           provide: WorkspaceUserService,
-          useValue: {
-            create: jest.fn(),
-            findByUserIdAndWorkspaceId: jest.fn(),
-          },
+          useValue: createMockWorkspaceUserService(),
         },
         {
           provide: UnitOfWorkService,
-          useValue: {
-            withTransaction: jest.fn(),
-          },
+          useValue: createMockUnitOfWorkService(),
         },
       ],
     }).compile();
 
     service = module.get<WorkspaceInviteService>(WorkspaceInviteService);
-    workspaceInviteRepository = module.get(
-      TransactionalWorkspaceInviteRepository,
-    );
+    workspaceInviteRepository = module.get(WorkspaceInviteRepository);
     workspaceUserService = module.get(
       WorkspaceUserService,
     ) as jest.Mocked<WorkspaceUserService>;
@@ -164,7 +169,7 @@ describe('WorkspaceInviteService', () => {
       expect(callArgs.data.token.length).toBeGreaterThan(0);
     });
 
-    it('sets expiration to 24 hours from now', async () => {
+    it('sets expiration to 7 days from now', async () => {
       const mockInvite = mockWorkspaceInviteEntityFactory();
       workspaceInviteRepository.create.mockResolvedValue(mockInvite);
 
@@ -177,9 +182,8 @@ describe('WorkspaceInviteService', () => {
       const callArgs = workspaceInviteRepository.create.mock.calls[0][0];
       const expiresAt = DateTime.fromISO(callArgs.data.expiresAt);
 
-      const diffInHours = expiresAt.diff(beforeCall, 'hours').toObject().hours;
-      expect(diffInHours).toBeGreaterThanOrEqual(23.9);
-      expect(diffInHours).toBeLessThanOrEqual(24.1);
+      const diffInDays = expiresAt.diff(beforeCall, 'days').toObject().days;
+      expect(Math.floor(diffInDays!)).toEqual(7);
     });
 
     it('throws SERVER_ERROR if invite creation fails', async () => {
@@ -295,7 +299,9 @@ describe('WorkspaceInviteService', () => {
         id: mockInvite.id,
         usedById: mockCreatedUser.id,
         relations: {
-          workspace: true,
+          workspace: {
+            createdBy: true,
+          },
         },
       });
 

@@ -58,6 +58,7 @@ const createMockRepository = () => ({
 });
 
 const createMockWorkspaceUserService = () => ({
+  findAllByUserId: jest.fn(),
   findAllByUserIdWithWorkspace: jest.fn(),
   countByWorkspace: jest.fn(),
 });
@@ -85,11 +86,7 @@ describe('UserService', () => {
         },
         {
           provide: WorkspaceUserService,
-          useValue: {
-            findAllByUserId: jest.fn(),
-            findAllByUserIdWithWorkspace: jest.fn(),
-            countByWorkspace: jest.fn(),
-          },
+          useValue: createMockWorkspaceUserService(),
         },
         {
           provide: WorkspaceService,

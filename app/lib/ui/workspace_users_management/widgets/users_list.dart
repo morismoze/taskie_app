@@ -37,7 +37,7 @@ class UsersList extends StatelessWidget {
     return SliverFillRemaining(
       hasScrollBody: false,
       child: EmptyFilteredObjectives(
-        text: context.localization.taskskNoFilteredTasks,
+        text: context.localization.workspaceUsersManagementLoadUsersEmpty,
       ),
     );
   }

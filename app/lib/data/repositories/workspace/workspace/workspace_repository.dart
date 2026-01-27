@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../domain/models/workspace.dart';
 import '../../../../utils/command.dart';
+import '../../../services/api/value_patch.dart';
 
 abstract class WorkspaceRepository extends ChangeNotifier {
   /// This is a listenable for gorouter redirect function.
@@ -32,8 +33,8 @@ abstract class WorkspaceRepository extends ChangeNotifier {
 
   Future<Result<void>> updateWorkspaceDetails(
     String workspaceId, {
-    String? name,
-    String? description,
+    ValuePatch<String>? name,
+    ValuePatch<String?>? description,
   });
 
   /// This method is used in conjuction with `WorkspaceInviteRepository`'s

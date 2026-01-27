@@ -188,9 +188,8 @@ class _GoalDetailsEditFormState extends State<GoalDetailsEditForm> {
 
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text.trim();
-      final trimmedDescription = _descriptionController.text.trim();
+      final description = _descriptionController.text.trim().nullIfEmpty;
       final requiredPoints = int.parse(_requiredPointsController.text.trim());
-      final description = trimmedDescription.nullIfEmpty;
       final assigneeId = _selectedAssigneeNotifier.value!.value.id;
 
       widget.viewModel.editGoalDetails.execute((

@@ -48,4 +48,4 @@ android/app/release
 *.g.dart
 *.freezed.dart
 *.config.dart
-app_localizations.dart
+app_localizations*.dart

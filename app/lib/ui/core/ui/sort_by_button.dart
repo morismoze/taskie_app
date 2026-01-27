@@ -38,15 +38,25 @@ class _SortByButtonState extends State<SortByButton> {
   void didUpdateWidget(covariant SortByButton oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Only one value can be selected in this button
-    // (this will maybe change in the future).
-    // There is a edge case when user os offline and
-    // tries to change and submit filters. Repository
-    // API request will fail and repository will
-    // revert the filte rback to previous value. This
-    // revert change can be seen on this button label,
-    // but not in the modal bottom sheet, so we have
-    // to update it.
+    if (widget.activeValue != oldWidget.activeValue) {
+      // Only one value can be selected in this button
+      // (this will maybe change in the future).
+      // There is a edge case when user is offline and
+      // tries to change and submit filters. Repository
+      // API request will fail and repository will
+      // revert the filter back to previous value. This
+      // revert change can be seen on this button label,
+      // but not in the modal bottom sheet, so we have
+      // to update it.
+      final currentSelection = _selectedOptions[0];
+      if (widget.activeValue != currentSelection) {
+        setState(() {
+          _selectedOptions.clear();
+          _selectedOptions.add(widget.activeValue);
+        });
+      }
+    }
+
     final selectedValue = _selectedOptions[0];
     if (widget.activeValue != selectedValue) {
       _selectedOptions.clear();

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../data/repositories/workspace/workspace_user/workspace_user_repository.dart';
 import '../../../data/services/api/user/models/response/user_response.dart';
+import '../../../data/services/api/value_patch.dart';
 import '../../../domain/models/workspace_user.dart';
 import '../../../utils/command.dart';
 
@@ -62,7 +63,17 @@ class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
   ) async {
     final (String? firstName, String? lastName, WorkspaceRole? role) = details;
 
-    // Don't invoke API request if the data stayed the same
+    // Diffs are needed to actually see what data has changed
+    // and send only that data
+    final hasFirstNameChanged = firstName != _details!.firstName;
+    final hasLastNameChanged = lastName != _details!.lastName;
+    final hasRoleChanged = role != _details!.role;
+
+    // If nothing changed, return
+    if (!hasFirstNameChanged && !hasLastNameChanged && !hasRoleChanged) {
+      return const Result.ok(null);
+    }
+
     if (firstName == _details!.firstName &&
         lastName == _details!.lastName &&
         role == _details!.role) {
@@ -72,9 +83,9 @@ class WorkspaceUserDetailsEditScreenViewModel extends ChangeNotifier {
     final result = await _workspaceUserRepository.updateWorkspaceUserDetails(
       workspaceId: _activeWorkspaceId,
       workspaceUserId: _workspaceUserId,
-      firstName: firstName,
-      lastName: lastName,
-      role: role,
+      firstName: hasFirstNameChanged ? ValuePatch(firstName!) : null,
+      lastName: hasLastNameChanged ? ValuePatch(lastName!) : null,
+      role: hasRoleChanged ? ValuePatch(role!) : null,
     );
 
     switch (result) {

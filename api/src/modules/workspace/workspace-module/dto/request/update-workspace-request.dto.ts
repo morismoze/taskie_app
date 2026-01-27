@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { IsOptional, ValidateIf } from 'class-validator';
 import {
   IsValidWorkspaceDescription,
   IsValidWorkspaceName,
@@ -15,7 +15,7 @@ export class UpdateWorkspaceRequest {
     minLength: WORKSPACE_NAME_MIN_CHARS,
     maxLength: WORKSPACE_NAME_MAX_CHARS,
   })
-  @IsOptional()
+  @ValidateIf((_, v) => v !== undefined) // Optional, but null is invalid
   @IsValidWorkspaceName()
   name?: string;
 
@@ -25,11 +25,11 @@ export class UpdateWorkspaceRequest {
     description: 'Setting it to null, removes description',
     maxLength: WORKSPACE_DESCRIPTION_MAX_CHARS,
   })
-  @IsOptional()
+  @IsOptional() // Optional, and null is valid
   @IsValidWorkspaceDescription()
   description?: string | null;
 
-  constructor(name?: string, description?: string) {
+  constructor(name?: string, description?: string | null) {
     this.name = name;
     this.description = description;
   }

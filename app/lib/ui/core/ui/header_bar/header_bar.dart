@@ -30,10 +30,13 @@ class HeaderBar extends StatelessWidget {
               onTap: () => context.pop(),
             ),
             const SizedBox(width: 30),
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
-            // Used to push actions to the right
-            const Spacer(),
-            if (actions != null) Row(spacing: 8, children: actions!),
+            Expanded(
+              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+            ),
+            if (actions != null) ...[
+              const SizedBox(width: 15),
+              Row(spacing: 8, children: actions!),
+            ],
           ],
         ),
       ),
