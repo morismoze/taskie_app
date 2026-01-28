@@ -109,8 +109,6 @@ jobs:
           # Forward ENV as a variable so it's not in the logs
           ENV_FILE_CONTENT: ${{ secrets.API_ENV }}
         with:
-          # Dynamic selection of secrets based on input
-          # Note: Currently we only have PROD secrets
           host: ${{ secrets.API_SSH_HOST }}
           username: ${{ secrets.API_SSH_USER }}
           key: ${{ secrets.API_SSH_KEY }}

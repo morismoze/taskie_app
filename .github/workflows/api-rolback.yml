@@ -6,11 +6,11 @@ on:
       target_env:
         description: "Select Target Environment"
         required: true
-        default: "production"
+        default: "Production"
         type: choice
         options:
-          - production
-          # - staging
+          - Production
+          # Staging will be added in the future if needed
       image_tag:
         description: 'Docker Tag to rollback to (e.g., sha-5f2a1b3... or specific version). DO NOT use "latest".'
         required: true
@@ -20,15 +20,28 @@ on:
         required: true
         default: ""
 
+permissions:
+  # Needed for docker pull
+  packages: read
+
 jobs:
   rollback:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
     steps:
       # 1. Safety Checks
       - name: Safety Check - Confirmation
         if: inputs.confirm_rollback != 'rollback'
         run: |
           echo "❌ You must type 'rollback' to confirm."
+          exit 1
+
+      - name: Safety Check - Production Branch Restriction
+        # If target is Production, we MUST be on the 'main' branch
+        if: inputs.target_env == 'Production' && github.ref != 'refs/heads/main'
+        run: |
+          echo "❌ Production deployment is only allowed from the 'main' branch."
+          echo "Current branch: ${{ github.ref }}"
           exit 1
 
       - name: Safety Check - Tag Validation
@@ -40,11 +53,17 @@ jobs:
       # 2. SSH Rollback
       - name: Rollback on Server via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          # Forward GITHUB_TOKEN as a variable so it's not in the logs
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Forward ENV as a variable so it's not in the logs
+          ENV_FILE_CONTENT: ${{ secrets.API_ENV }}
         with:
-          host: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_HOST || secrets.STAGING_SSH_HOST }}
-          username: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_USER || secrets.STAGING_SSH_USER }}
-          key: ${{ inputs.target_env == 'production' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
+          host: ${{ secrets.API_SSH_HOST }}
+          username: ${{ secrets.API_SSH_USER }}
+          key: ${{ secrets.API_SSH_KEY }}
           port: 22
+          envs: GH_TOKEN,ENV_FILE_CONTENT
           script: |
             # Define Variables
             TARGET_TAG="${{ inputs.image_tag }}"
@@ -53,18 +72,16 @@ jobs:
             IMAGE_REPO=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
             IMAGE_URL="ghcr.io/$IMAGE_REPO:$TARGET_TAG"
 
-            if [ "${{ inputs.target_env }}" == "production" ]; then
+            if [ "${{ inputs.target_env }}" == "Production" ]; then
               CONTAINER_NAME="taskie-api"
-              ENV_CONTENT="${{ secrets.ENV_PRODUCTION }}"
               echo "🔙 Rolling back PRODUCTION to tag: $TARGET_TAG"
             else
               CONTAINER_NAME="taskie-api-staging"
-              ENV_CONTENT="${{ secrets.ENV_STAGING }}"
               echo "🔙 Rolling back STAGING to tag: $TARGET_TAG"
             fi
 
             # 1. Login to Registry
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo $GH_TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # 2. Validate Image Exists BEFORE stopping current app
             echo "🔍 Verifying image exists: $IMAGE_URL"
@@ -75,7 +92,7 @@ jobs:
             fi
 
             # 3. Create .env (Just to be sure environment matches expectation)
-            echo "$ENV_CONTENT" > .env
+            printf '%s' "$ENV_FILE_CONTENT" > .env
 
             # 4. Stop and Remove Current Container
             echo "🛑 Stopping current container..."
@@ -96,7 +113,7 @@ jobs:
             echo "If the new version ran migrations that are incompatible with this old code,"
             echo "you must manually revert migrations using 'npm run db:migration:revert' inside the container."
 
-            # Cleanup
+            # Cleanup - cleans up dangling images to save space
             docker image prune -f
 
-            echo "✅ Rollback successful! App is running on version $TARGET_TAG"
+            echo "✅ Rollback successful! App is running on the version $TARGET_TAG"
