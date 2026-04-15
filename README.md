@@ -69,7 +69,7 @@ taskie_app/
 | [`api/`](api/) | RESTful API with JWT auth, PostgreSQL, Docker, Swagger | [API README](api/README.md) |
 | [`app/`](app/) | Cross-platform mobile app with MVVM + Command architecture | [App README](app/README.md) |
 | [`web/`](web/) | Zero-dependency landing page with PWA support | [Web README](web/README.md) |
-| [`.github/`](.github/) | Automated CI/CD pipelines with rollback capabilities | [CI/CD README](.github/README.md) |
+| [`.github/`](.github/) | Automated CI/CD pipelines with rollback capabilities | [CI/CD Docs](.github/WORKFLOWS.md) |
 
 ## Tech Stack Highlights
 
