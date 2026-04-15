@@ -56,6 +56,8 @@ ViewModels extend `ChangeNotifier` and expose `Command` objects. Views observe t
 
 ### Layer Structure
 
+The folder structure follows the [official Flutter architecture case study](https://docs.flutter.dev/app-architecture/case-study), adapted to the project's domain:
+
 ```
 lib/
 ├── config/
