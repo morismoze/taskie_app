@@ -49,6 +49,7 @@ The `Command` implementation (`lib/utils/command.dart`) provides:
 - **`Command1<T, A>`** — single-parameter async action
 - **Sealed `Result<T>`** — type-safe `Ok<T>` / `Error<T>` responses
 - **Built-in debouncing** — prevents duplicate executions while running
+- **Stream helpers** — `firstOkOrLastError` and `lastOkOrLastError` utility functions for handling multi-emit async streams from the 3-layer cache fallback
 - **Observable state** — `.running`, `.error`, `.completed` properties for UI binding
 
 ViewModels extend `ChangeNotifier` and expose `Command` objects. Views observe the ViewModel and react to command state changes — no manual state flags, no boilerplate.
@@ -82,7 +83,7 @@ lib/
 │       └── widgets/         # Feature-specific UI
 ├── routing/                 # GoRouter config, route constants
 ├── logger/                  # Logger interface, hub, console, remote
-└── utils/                   # Command pattern, LRU cache
+└── utils/                   # Command pattern, LRU cache (LinkedHashMap-based with eviction)
 ```
 
 **Each feature module** contains its own ViewModels and widgets, keeping UI concerns isolated. ViewModels receive repositories and use cases via constructor injection from the Provider tree.
@@ -110,9 +111,11 @@ The key insight: when the architecture enforces clean separation (View → ViewM
 
 **Key navigation features:**
 
-- **StatefulShellRoute with IndexedStack** — tab content persists when switching between tabs (no rebuild)
+- **StatefulShellRoute with IndexedStack** — tab content persists when switching between tabs (no rebuild, no transition animation)
 - **Global redirect** — auth state changes trigger navigation via `Listenable.merge` on the auth repository
-- **Custom transitions** — `SharedAxisTransition` animations (250-400ms) for smooth screen changes
+- **Custom transitions** — `SharedAxisTransition` with semantic durations: scaled (250ms) for detail screens, horizontal (400ms) for create/edit flows
+- **Provider memoization** — routes wrapped with `ChangeNotifierProvider` that prevent ViewModel reinstantiation when navigating between routes at the same workspace level
+- **Back button handler** — hierarchical handling: closes drawer if open, navigates to Tasks tab from other tabs, double-tap-to-exit with 2-second debounce on root screens via `SystemNavigator.pop()`
 - **Deep linking** — Android App Links configured via `.well-known/assetlinks.json` for 3 app variants (dev, production with 2 signing configs), enabling direct navigation to workspace join routes from shared invite links
 - **Query parameters** — `from`, `from_uid`, `next` parameters for post-auth redirect flow
 
@@ -206,7 +209,7 @@ The delegate switch is wired via `ProxyProvider2` — in release mode, the `Remo
 
 ## Security
 
-- **Frontend RBAC service** — mirrors the backend's role-based access control with 7 granular permissions (workspace delete, settings manage, users create/edit/remove, objective create/edit), conditionally showing/hiding UI elements based on workspace role (Manager/Member)
+- **Frontend RBAC service** — mirrors the backend's role-based access control with 7 granular permissions (workspace delete, settings manage, users create/edit/remove, objective create/edit), using `Selector<RbacService, bool>` for fine-grained reactivity — UI components rebuild only when their specific permission outcome changes
 - **Google Auth flows** — supports **silent sign-in** (automatic re-authentication on app restart) and **interactive sign-in** (user-initiated), with **external provider state cleanup** — if the backend login fails after Google authentication succeeds, the Google session is explicitly revoked to prevent auth state divergence
 - **Encrypted token storage** — access and refresh tokens stored in platform-specific secure storage (Keychain on iOS, Keystore on Android)
 - **Compile-time environment config** — `Envied` generates environment variables at build time with **XOR obfuscation**, preventing runtime secret exposure and making secrets harder to extract from compiled binaries

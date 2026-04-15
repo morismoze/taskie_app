@@ -28,7 +28,7 @@ The Taskie API is a RESTful backend built with **NestJS** and **TypeScript**, ba
 | **Health Checks** | `@nestjs/terminus` (DB, memory, disk) |
 | **Scheduling** | `@nestjs/schedule` (cron jobs) |
 | **Validation** | `class-validator` + `class-transformer` |
-| **Config** | `@nestjs/config` with typed, validated env |
+| **Config** | `@nestjs/config` with typed, validated env (conditional per environment) |
 | **Context** | `nestjs-cls` (Continuation Local Storage) |
 | **Container** | Docker (multi-stage build, Alpine) |
 | **Runtime** | Node.js 20 |
@@ -140,8 +140,9 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 - **CORS** with configurable origins
 - **Body parser** limited to 10MB
 - **Trust proxy** configured for reverse proxy setups (correct client IP from `X-Forwarded-For`)
-- **Custom validators**: future date validation, numeric step validation, workspace name rules
-- **Validation errors** return HTTP 422 (Unprocessable Entity), not 400
+- **Custom validators**: future date validation (UTC-aware via Luxon), numeric step validation, workspace name rules
+- **Validation errors** return HTTP 422 (Unprocessable Entity), not 400 — with validation failures logged at `warn` level in production for detecting client-backend validation discrepancies
+- **Content-Type enforcement** — only JSON is accepted; other content types return 415 Unsupported Media Type
 
 ## Database
 
@@ -158,7 +159,7 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 
 - **Tasks** — title, optional description, optional due date, reward points (integer) for gamification, creator tracking
 - **Task Assignments** — due date enforcement logic: blocks `COMPLETED` status if past due date, only allowing `COMPLETED_AS_STALE` — ensuring gamification integrity by distinguishing on-time vs. late completions
-- **Goals** — title, required points target, assignee, automatic completion via **PostgreSQL trigger** — when accumulated reward points from completed task assignments reach the goal's target, the goal status transitions to `COMPLETED` automatically at the database level, not in application code
+- **Goals** — title, required points target, assignee, automatic completion via **PostgreSQL trigger** — when accumulated reward points from completed task assignments reach the goal's target, the goal status transitions to `COMPLETED` automatically at the database level, not in application code. The trigger also handles **reversion** — if an assignment is deleted or uncompleted and points drop below the threshold, the goal reverts to `IN_PROGRESS`
 - **Virtual Users** — non-authenticatable workspace members created by managers for team members who don't have an account, allowing task assignment and point tracking before they join the platform
 - **Progress Status** — shared enum across tasks and goals: `IN_PROGRESS`, `COMPLETED`, `COMPLETED_AS_STALE` (completed after due date), `NOT_COMPLETED`, `CLOSED`
 - **Workspace Invites** — 24-character random tokens with 7-day expiry, one-time use, tracking both creator and redeemer for audit trail
@@ -171,8 +172,8 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 
 Pino was chosen for its high performance and structured JSON output. The logger uses **dual transports**:
 
-- **Development**: `pino-pretty` for human-readable console output at `debug` level
-- **Production**: `pino-loki` for batched log shipping to **Grafana Loki** at `warn` level, with labels `{ app: "taskie-api", env: "production" }`
+- **Development**: `pino-pretty` with single-line output at `debug` level
+- **Production**: `pino-loki` for batched log shipping (5-second batching interval) to **Grafana Loki** at `warn` level, with labels `{ app: "taskie-api", env: "production" }`
 
 ### Mobile Log Proxying
 
@@ -238,7 +239,7 @@ A **3-layer exception filter chain** processes all errors:
 - **Health Checks** — liveness endpoint checking database connectivity (1.5s timeout), heap memory (<150MB), RSS memory (<300MB), and disk usage (<80%)
 - **Global Interceptors** — response transformation (wrapping), class serialization (DTO filtering), and user context injection
 - **API Versioning** — URI-based versioning, all endpoints under `/api/v1/`
-- **App Metadata Middleware** — extracts mobile device headers (model, OS, app version, build number) at the middleware level before guards, storing them in CLS context for logging and analytics
+- **App Metadata Middleware** — deliberately implemented as Middleware (not Interceptor) to execute **before guards**, ensuring device metadata is captured in CLS context even when auth fails — available in every log entry throughout the request lifecycle
 - **Graceful Shutdown** — shutdown hooks enabled for clean container termination, with log buffering during startup to prevent lost messages
 
 ## Design Decisions

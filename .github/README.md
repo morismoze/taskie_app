@@ -68,10 +68,11 @@ Every deployment pushes two tags to GitHub Container Registry:
 - **`latest`** — always points to the newest production image
 - **`sha-<commit>`** — immutable tag tied to the specific commit, enabling precise rollback
 
-### Docker Security
+### Docker Build & Security
 
+- **Multi-stage build** — Stage 1 (builder): installs all dependencies, compiles TypeScript to `/dist`, then `npm prune --production` to strip devDependencies. Stage 2 (runner): fresh Alpine image copying only `/dist` and production `node_modules`, minimizing final image size
 - **Non-root execution** — the production image runs as `USER node`, not root, limiting the blast radius of container exploits
-- **`exec` form CMD** — `CMD` uses exec form (`["node", "..."]`) so Node.js receives OS signals directly, enabling graceful shutdown without zombie processes
+- **`exec` form CMD** — migrations run first (`npm run db:migration:run:prod`), then `exec node dist/main.js` replaces the shell process with Node.js for proper signal handling and graceful shutdown
 
 ### SSH Deployment
 
