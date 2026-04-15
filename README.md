@@ -91,14 +91,15 @@ taskie_app/
 
 ## Cloudflare
 
-Cloudflare sits in front of the infrastructure and provides:
+Cloudflare sits in front of the infrastructure, providing multiple layers of security and performance:
 
-- **DNS Management** — domain routing and nameserver configuration
-- **SSL/TLS Encryption** — automatic certificate provisioning and HTTPS enforcement
-- **DDoS Protection** — layer 3/4/7 attack mitigation
-- **Web Application Firewall (WAF)** — rule-based request filtering
-- **Caching** — static asset caching and bandwidth optimization
-- **Bot Protection** — automated traffic detection and challenge mechanisms
+- **DNS Proxying** — domain is proxied through Cloudflare (Orange Cloud) to hide the server's true IP address
+- **SSL/TLS Full (Strict)** — end-to-end encryption with server certificate validation (Let's Encrypt), ensuring no downgrade attacks between Cloudflare and the origin
+- **HTTPS Enforcement** — "Always Use HTTPS" enabled, automatically redirecting all HTTP traffic to HTTPS
+- **DDoS Mitigation** — standard DDoS protection filtering volumetric attacks against the infrastructure
+- **Rate Limiting** — API rate limiter configured on `/api` routes to prevent abuse
+- **Email Address Obfuscation** — prevents bots from harvesting email addresses from web pages
+- **Hotlink Protection** — prevents other websites from embedding images and stealing bandwidth
 
 ## License
 
