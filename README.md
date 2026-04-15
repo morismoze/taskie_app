@@ -88,6 +88,17 @@ taskie_app/
 - **Offline-First Caching** — 3-layer data fallback (in-memory → Hive → API) with automatic corruption recovery
 - **Docker Multi-Stage Builds** — optimized production images pushed to GitHub Container Registry (GHCR) with SHA-based tagging for rollback history
 - **Unit Testing with Quality Gates** — Jest unit tests for all API services, enforced via pre-push hooks and CI pipelines
+- **Shared Error Code Mapping** — 16 custom error codes (e.g., `TASK_CLOSED`, `SOLE_MANAGER_CONFLICT`) defined on the API and mapped on the mobile client for localized, context-aware error messages
+- **Swagger API Documentation** — OpenAPI 3.0 hosted alongside the API at `/api/docs` with bearer auth, mobile metadata headers, and auto-generated response wrappers
+- **Refresh Token Rotation** — hash-based reuse detection prevents stolen refresh tokens from being replayed
+
+## Branch Strategy & Release Discipline
+
+- **Conventional Commits** enforced on feature branch PRs (feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert)
+- **Squash merge** — PR titles become commit messages, keeping history clean
+- **Release flow** — develop → main with strict title "Develop to main"
+- **Pre-commit hooks** — Husky with lint-staged (ESLint + Prettier) on staged files
+- **Pre-push hooks** — unit tests must pass before code reaches the remote
 
 ## Cloudflare
 

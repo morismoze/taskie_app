@@ -110,6 +110,10 @@ Both tokens are validated against a session record in the database on every requ
 
 A version integer on the session entity is incremented whenever a user's permissions change (e.g., role update, workspace removal). The JWT strategy compares the token's embedded version against the database — a mismatch forces the client to re-authenticate, providing **immediate permission revocation** without waiting for token expiry.
 
+### Refresh Token Rotation & Reuse Detection
+
+Each refresh token includes a hash of the session record. When a refresh token is used, the session hash is regenerated — meaning the old token becomes invalid. If a previously-used refresh token is presented again, it's treated as potential token theft: the request is rejected and a security alert is logged with hash prefixes for debugging.
+
 ### Google OAuth
 
 Integrated via `google-auth-library` for social sign-in. Token verification happens server-side, and the user is created or matched to an existing account.
@@ -132,6 +136,7 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 - **Body parser** limited to 10MB
 - **Trust proxy** configured for reverse proxy setups (correct client IP from `X-Forwarded-For`)
 - **Custom validators**: future date validation, numeric step validation, workspace name rules
+- **Validation errors** return HTTP 422 (Unprocessable Entity), not 400
 
 ## Database
 
@@ -142,7 +147,15 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 - **Database triggers** — automated task assignment status updates when parent task state changes
 - **Seeding modules** — structured seed data for development (users, workspaces, tasks, goals)
 - **Connection pooling** — configurable pool size (default: 10 connections)
-- **Base entity** — shared `id` (UUID), `createdAt`, `updatedAt`, `deletedAt` across all entities
+- **Base entity** — shared `id` (UUID), `createdAt`, `updatedAt`, `deletedAt` with timezone-aware timestamps (`timestamptz`) across all entities
+
+### Domain Model Highlights
+
+- **Tasks** — title, optional description, optional due date, reward points (integer) for gamification, creator tracking
+- **Goals** — title, required points target, assignee, progress status
+- **Progress Status** — shared enum across tasks and goals: `IN_PROGRESS`, `COMPLETED`, `COMPLETED_AS_STALE` (completed after due date), `NOT_COMPLETED`, `CLOSED`
+- **Workspace Invites** — 24-character random tokens with 7-day expiry, one-time use, tracking both creator and redeemer for audit trail
+- **Sessions** — track device model, OS version, app version, build number, and login IP address alongside token hashes and access token version
 
 ## Logging & Monitoring
 
@@ -161,7 +174,7 @@ The API acts as a **log proxy** for the Flutter mobile app:
 Flutter App → POST /api/v1/mobile-logs → API → Grafana Loki
 ```
 
-Mobile clients send log events (with level, message, stack trace, device metadata) to a dedicated API endpoint. The API forwards these to Grafana Loki. This architecture ensures **mobile clients never hold Grafana credentials** — all monitoring access is server-side.
+Mobile clients send log events (level, message, stack trace, device metadata) to a dedicated API endpoint. The API forwards these to Grafana Loki with a `source: 'taskie-mobile-app'` label for filtering. The endpoint supports three log levels (`WARN`, `ERROR`, `FATAL`), captures the request IP, and returns `204 No Content`. This architecture ensures **mobile clients never hold Grafana credentials** — all monitoring access is server-side.
 
 ### Async Context Logging
 
@@ -213,7 +226,9 @@ A **3-layer exception filter chain** processes all errors:
 - **Cron Jobs** — weekly cleanup of expired sessions (30-day TTL) and used/expired workspace invite tokens
 - **Health Checks** — liveness endpoint checking database connectivity (1.5s timeout), heap memory (<150MB), RSS memory (<300MB), and disk usage (<80%)
 - **Global Interceptors** — response transformation (wrapping), class serialization (DTO filtering), and user context injection
-- **API Versioning** — all endpoints versioned under `/api/v1/`
+- **API Versioning** — URI-based versioning, all endpoints under `/api/v1/`
+- **App Metadata Middleware** — extracts mobile device headers (model, OS, app version, build number) at the middleware level before guards, storing them in CLS context for logging and analytics
+- **Graceful Shutdown** — shutdown hooks enabled for clean container termination, with log buffering during startup to prevent lost messages
 
 ## Design Decisions
 

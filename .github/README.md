@@ -74,8 +74,8 @@ The workflow SSHs into the Hetzner VPS and:
 
 1. Pulls the new Docker image from GHCR
 2. Stops and removes the current container
-3. Starts the new container with `--restart always` and `--network host`
-4. Updates the `.env` file from GitHub Secrets
+3. Starts the new container with `--restart always`, `--network host` (host networking because PostgreSQL runs on localhost; Nginx handles external routing and UFW blocks direct access to the API port), and `--env-file .env`
+4. Updates the `.env` file from GitHub Secrets (using `printf` to avoid `$` symbol interpretation)
 5. Prunes dangling images
 
 Database migrations run automatically on container startup — if the migration fails, the container exits immediately (fail-fast).
@@ -144,6 +144,17 @@ This formula guarantees globally unique build numbers even on workflow retries (
 ### Concurrency
 
 The app deploy workflow uses **non-cancellable concurrency** (`cancel-in-progress: false`). If two deployments run concurrently, the second waits instead of cancelling the first — this prevents orphaned builds on Google Play where a cancelled workflow could leave an incomplete upload.
+
+### Fastlane Configuration
+
+A single `deploy` lane in the `Fastfile` accepts a `track` option (internal or production). Upload skips metadata, images, and screenshots (`skip_upload_metadata: true`, `skip_upload_images: true`, `skip_upload_screenshots: true`) — these are managed manually via Google Play Console.
+
+### Release Tagging
+
+Both API and app deployments create GitHub Releases on production with auto-generated release notes:
+
+- **API**: `api-v{version}` (version from `package.json`)
+- **App**: `app-v{version}+{buildnumber}` (version from `pubspec.yaml` + computed build number)
 
 ## Web Deployment Pipeline
 

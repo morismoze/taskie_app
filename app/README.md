@@ -140,7 +140,11 @@ The `UnauthorizedInterceptor` implements a **semaphore pattern** for token refre
 
 ### Auth Event Bus
 
-An `AuthEventBus` implements a pub/sub pattern for distributed auth state updates across the app. Events like `AccessTokenRefreshFailed`, `AccessTokenRefreshSucceeded`, and `ForbiddenAccess` are emitted by interceptors and consumed by the `AuthEventListener` widget, which triggers sign-out, workspace changes, or user profile refreshes in response.
+An `AuthEventBus` implements a pub/sub pattern using a broadcast `StreamController` for distributed auth state updates. Three sealed event types — `UserRoleChangedEvent`, `UserRemovedFromWorkspaceEvent`, and `AccessTokenRefreshFailed` — are emitted by interceptors and consumed by the `AuthEventListener` widget, which handles sign-out, workspace switching, or user profile refresh accordingly.
+
+### Permission Change Detection
+
+The `ForbiddenInterceptor` detects workspace access revocation and role changes via API error codes. It uses a **3-second debounce semaphore** to prevent cascading event emissions when multiple 403 responses arrive simultaneously (e.g., parallel requests all failing after a role change).
 
 ### Separate Logging Client
 
@@ -148,12 +152,12 @@ A dedicated Dio instance handles mobile log requests — it includes only the `R
 
 ### Typed API Responses
 
-All API responses are deserialized into `ApiResponse<T>` with typed `data` and `error` fields. **16 `ApiErrorCode` values** enable context-aware error handling and localized user messages.
+All API responses are deserialized into `ApiResponse<T>` with typed `data` and `error` fields. **16 `ApiErrorCode` values** enable context-aware error handling and localized user messages. A `ValuePatch<T>` wrapper distinguishes between "not provided" and "explicitly null" in PATCH requests, enabling precise partial updates.
 
 ## App Lifecycle & Startup
 
 - **`AppStartup`** widget pre-loads critical data (client info, auth state) before rendering the UI, preventing loading screens and data races
-- **`AppLifecycleStateListener`** with `WidgetsBindingObserver` monitors foreground/background transitions — on app resume, it performs runtime checks to detect role changes or workspace access revocation, ensuring the UI always reflects the current server state
+- **`AppLifecycleStateListener`** with `WidgetsBindingObserver` monitors foreground/background transitions — on app resume (with a 2-second debounce), it compares the previous user state against the server to detect silent role changes or workspace access revocation using a sealed `CheckUserResult` type
 - **`LocaleInitializer`** persists and restores the user's locale preference on startup
 
 ## Pagination & Filtering
@@ -171,6 +175,7 @@ A **3-layer data fallback** ensures the app remains functional with intermittent
 1. In-Memory Cache (fastest) → 2. Hive NoSQL Cache (offline) → 3. API Request (network)
 ```
 
+- **Async generators** (`async*`) in repositories yield cached states progressively — in-memory first, then Hive, then API — so the UI updates optimistically before the network response arrives
 - **Hive** persists user profile, workspaces, tasks, goals, leaderboard, and workspace users
 - **Auto-recovery** — corrupted Hive cache is detected, cleared, and logged without crashing
 - **FlutterSecureStorage** — access and refresh tokens stored in platform-specific encrypted storage (Keychain on iOS, Keystore on Android)
@@ -195,11 +200,12 @@ The delegate switch is wired via `ProxyProvider2` — in release mode, the `Remo
 
 ## Security
 
-- **Frontend RBAC service** — mirrors the backend's role-based access control, conditionally showing/hiding UI elements based on workspace role (Manager/Member)
+- **Frontend RBAC service** — mirrors the backend's role-based access control with 7 granular permissions (workspace delete, settings manage, users create/edit/remove, objective create/edit), conditionally showing/hiding UI elements based on workspace role (Manager/Member)
 - **Encrypted token storage** — access and refresh tokens stored in platform-specific secure storage (Keychain on iOS, Keystore on Android)
 - **Compile-time environment config** — `Envied` generates environment variables at build time, preventing runtime secret exposure
 - **ProGuard** — enabled in Android release builds for code minification and obfuscation
 - **Build flavors** — development (`com.taskie.taskie.dev`) and production (`com.taskie.taskie`) with separate signing configurations and app names
+- **Client-side validation rules** — workspace names (3-50 chars), objective titles (3-50 chars), descriptions (max 250 chars), task assignees (1-10), reward points (10-50 in steps of 10), invite token format (24-char hex regex)
 
 ## Localization
 
