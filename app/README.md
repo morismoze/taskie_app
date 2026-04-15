@@ -138,6 +138,10 @@ The `UnauthorizedInterceptor` implements a **semaphore pattern** for token refre
 3. On success: all queued requests retry with the new token
 4. On failure: `AccessTokenRefreshFailed` event emitted, triggering sign-out
 
+### Multi-Stage Atomic Sign-Out
+
+Sign-out follows a deliberate ordering: `isAuthenticated` is set to `false` **first** (triggering route guards immediately), then tokens are cleared, cache is purged, and external auth providers are signed out. This prevents any UI from accessing stale auth state during the teardown sequence.
+
 ### Auth Event Bus
 
 An `AuthEventBus` implements a pub/sub pattern using a broadcast `StreamController` for distributed auth state updates. Three sealed event types — `UserRoleChangedEvent`, `UserRemovedFromWorkspaceEvent`, and `AccessTokenRefreshFailed` — are emitted by interceptors and consumed by the `AuthEventListener` widget, which handles sign-out, workspace switching, or user profile refresh accordingly.
@@ -165,6 +169,7 @@ All API responses are deserialized into `ApiResponse<T>` with typed `data` and `
 - **`Paginable<T>`** generic wrapper for paginated API responses with metadata (total items, page count)
 - **`ObjectiveFilter`** extends `Filter` with status filtering and `SortBy` enum for sorting tasks and goals
 - **`number_paginator`** package provides visible page number controls in the UI
+- **Deterministic sorting** — assignee lists sorted by `firstName → lastName → ID` for consistent ordering across sessions
 - Search, filter, and sort state managed within ViewModels for reactive updates
 
 ## Offline Support & Caching
@@ -178,8 +183,9 @@ A **3-layer data fallback** ensures the app remains functional with intermittent
 - **Async generators** (`async*`) in repositories yield cached states progressively — in-memory first, then Hive, then API — so the UI updates optimistically before the network response arrives
 - **Hive** persists user profile, workspaces, tasks, goals, leaderboard, and workspace users
 - **Auto-recovery** — corrupted Hive cache is detected, cleared, and logged without crashing
-- **FlutterSecureStorage** — access and refresh tokens stored in platform-specific encrypted storage (Keychain on iOS, Keystore on Android)
+- **Two-tier token storage** — tokens are cached in-memory for fast access and persisted to `FlutterSecureStorage` (Keychain on iOS, Keystore on Android) with **rollback on write failure** — if secure storage write fails, the in-memory cache is reverted to prevent state divergence
 - **Paginated data** — `Paginable<T>` wrapper handles pagination metadata for task and goal lists
+- **Repository-level pagination state** — repositories auto-adjust the current page when filters change (reset to page 1) and auto-load the previous page when the current page becomes empty after item deletion
 
 ## Logging
 
@@ -201,8 +207,9 @@ The delegate switch is wired via `ProxyProvider2` — in release mode, the `Remo
 ## Security
 
 - **Frontend RBAC service** — mirrors the backend's role-based access control with 7 granular permissions (workspace delete, settings manage, users create/edit/remove, objective create/edit), conditionally showing/hiding UI elements based on workspace role (Manager/Member)
+- **Google Auth flows** — supports **silent sign-in** (automatic re-authentication on app restart) and **interactive sign-in** (user-initiated), with **external provider state cleanup** — if the backend login fails after Google authentication succeeds, the Google session is explicitly revoked to prevent auth state divergence
 - **Encrypted token storage** — access and refresh tokens stored in platform-specific secure storage (Keychain on iOS, Keystore on Android)
-- **Compile-time environment config** — `Envied` generates environment variables at build time, preventing runtime secret exposure
+- **Compile-time environment config** — `Envied` generates environment variables at build time with **XOR obfuscation**, preventing runtime secret exposure and making secrets harder to extract from compiled binaries
 - **ProGuard** — enabled in Android release builds for code minification and obfuscation
 - **Build flavors** — development (`com.taskie.taskie.dev`) and production (`com.taskie.taskie`) with separate signing configurations and app names
 - **Client-side validation rules** — workspace names (3-50 chars), objective titles (3-50 chars), descriptions (max 250 chars), task assignees (1-10), reward points (10-50 in steps of 10), invite token format (24-char hex regex)

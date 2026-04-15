@@ -128,6 +128,11 @@ JwtAuthGuard → WorkspaceMembershipGuard → WorkspaceRoleGuard
 
 The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required for each endpoint.
 
+**Safety constraints:**
+- **Sole manager conflict** — prevents removing or demoting the last manager in a workspace, avoiding orphaned workspaces with no administrative control
+- **Self-edit prevention** — users cannot change their own role, preventing privilege escalation or accidental self-demotion
+- **Role change session invalidation** — when a user's role changes, all their active sessions across every device are invalidated via ATV version increment, forcing immediate re-authentication
+
 ### Input Validation & Hardening
 
 - **Global ValidationPipe** with `whitelist: true` — automatically strips unknown request properties
@@ -152,10 +157,13 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 ### Domain Model Highlights
 
 - **Tasks** — title, optional description, optional due date, reward points (integer) for gamification, creator tracking
-- **Goals** — title, required points target, assignee, progress status
+- **Task Assignments** — due date enforcement logic: blocks `COMPLETED` status if past due date, only allowing `COMPLETED_AS_STALE` — ensuring gamification integrity by distinguishing on-time vs. late completions
+- **Goals** — title, required points target, assignee, automatic completion via **PostgreSQL trigger** — when accumulated reward points from completed task assignments reach the goal's target, the goal status transitions to `COMPLETED` automatically at the database level, not in application code
+- **Virtual Users** — non-authenticatable workspace members created by managers for team members who don't have an account, allowing task assignment and point tracking before they join the platform
 - **Progress Status** — shared enum across tasks and goals: `IN_PROGRESS`, `COMPLETED`, `COMPLETED_AS_STALE` (completed after due date), `NOT_COMPLETED`, `CLOSED`
 - **Workspace Invites** — 24-character random tokens with 7-day expiry, one-time use, tracking both creator and redeemer for audit trail
 - **Sessions** — track device model, OS version, app version, build number, and login IP address alongside token hashes and access token version
+- **Accumulated Points** — calculated via SQL `SUM` aggregation queries against completed task assignments, never loaded entirely into application memory
 
 ## Logging & Monitoring
 
@@ -222,6 +230,9 @@ A **3-layer exception filter chain** processes all errors:
 ## Notable Patterns
 
 - **Unit of Work** — request-scoped service wrapping multi-repository operations in a single database transaction with automatic rollback on failure
+- **Transactional Repositories** — request-scoped repositories that auto-participate in the parent Unit of Work transaction when one is active, eliminating manual transaction passing
+- **Circular Dependency Resolution** — `forwardRef` resolves the `UserService ↔ WorkspaceService` circular dependency where user deletion requires workspace cleanup and workspace operations require user validation
+- **Composite Validation Decorators** — custom validators built with `applyDecorators` combining multiple constraints (e.g., reward points validated as 10–100 in multiples of 5 in a single decorator)
 - **CLS Context Propagation** — user identity available in any service without explicit parameter passing
 - **Cron Jobs** — weekly cleanup of expired sessions (30-day TTL) and used/expired workspace invite tokens
 - **Health Checks** — liveness endpoint checking database connectivity (1.5s timeout), heap memory (<150MB), RSS memory (<300MB), and disk usage (<80%)

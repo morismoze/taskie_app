@@ -68,6 +68,11 @@ Every deployment pushes two tags to GitHub Container Registry:
 - **`latest`** — always points to the newest production image
 - **`sha-<commit>`** — immutable tag tied to the specific commit, enabling precise rollback
 
+### Docker Security
+
+- **Non-root execution** — the production image runs as `USER node`, not root, limiting the blast radius of container exploits
+- **`exec` form CMD** — `CMD` uses exec form (`["node", "..."]`) so Node.js receives OS signals directly, enabling graceful shutdown without zombie processes
+
 ### SSH Deployment
 
 The workflow SSHs into the Hetzner VPS and:

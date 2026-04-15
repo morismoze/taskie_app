@@ -91,6 +91,8 @@ taskie_app/
 - **Shared Error Code Mapping** — 16 custom error codes (e.g., `TASK_CLOSED`, `SOLE_MANAGER_CONFLICT`) defined on the API and mapped on the mobile client for localized, context-aware error messages
 - **Swagger API Documentation** — OpenAPI 3.0 hosted alongside the API at `/api/docs` with bearer auth, mobile metadata headers, and auto-generated response wrappers
 - **Refresh Token Rotation** — hash-based reuse detection prevents stolen refresh tokens from being replayed
+- **Database-Level Automation** — goal completion triggered by PostgreSQL triggers when accumulated points reach the target, keeping business logic in the database layer
+- **Virtual Users** — non-authenticatable workspace members for team members without accounts, enabling task assignment before they join the platform
 
 ## Branch Strategy & Release Discipline
 
