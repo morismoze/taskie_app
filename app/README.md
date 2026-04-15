@@ -1,16 +1,213 @@
-# taskie
+# Taskie Mobile App
 
-A new Flutter project.
+<p>
+  <img src="https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white" alt="Flutter" />
+  <img src="https://img.shields.io/badge/Dart-0175C2?logo=dart&logoColor=white" alt="Dart" />
+  <img src="https://img.shields.io/badge/Provider-02569B?logo=flutter&logoColor=white" alt="Provider" />
+  <img src="https://img.shields.io/badge/GoRouter-02569B?logo=flutter&logoColor=white" alt="GoRouter" />
+  <img src="https://img.shields.io/badge/Hive-FFC107?logo=hive&logoColor=black" alt="Hive" />
+  <img src="https://img.shields.io/badge/Firebase-DD2C00?logo=firebase&logoColor=white" alt="Firebase" />
+</p>
 
-## Getting Started
+## Overview
 
-This project is a starting point for a Flutter application.
+The Taskie mobile app is a cross-platform application built with **Flutter**, following the **MVVM architecture with the Command pattern** as recommended by the [official Flutter architecture guide](https://docs.flutter.dev/app-architecture/guide). It uses **Provider** for state management — demonstrating that a well-structured architecture eliminates the need for complex state management frameworks. The app communicates with the NestJS backend, supports offline caching, remote logging to Grafana, and is distributed via Google Play.
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+| Category | Technology |
+|----------|-----------|
+| **Framework** | Flutter 3.8+ |
+| **Language** | Dart |
+| **State Management** | Provider 6.1 |
+| **Routing** | GoRouter 15.1 (StatefulShellRoute) |
+| **HTTP Client** | Dio 5.8 |
+| **Local Cache** | Hive 2.2 (NoSQL) |
+| **Secure Storage** | FlutterSecureStorage 9.2 |
+| **Authentication** | Google Sign-In 6.3 |
+| **Logging** | Custom logger → API → Grafana Loki |
+| **Firebase** | Remote Config 6.1, Core 4.4 |
+| **UI** | Material 3, custom theme |
+| **Localization** | Flutter gen-l10n (English, Croatian) |
+| **Build** | Envied, build_runner, json_serializable |
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Architecture
+
+The app follows **MVVM (Model-View-ViewModel)** with the **Command pattern** for action handling, creating a clear unidirectional data flow:
+
+```
+View (observes) → ViewModel (exposes Commands) → Command (executes) → Use Case / Repository
+                                                                              ↓
+View (rebuilds) ← ViewModel (notifies) ← Command (updates result) ← Result<T> (Ok / Error)
+```
+
+### Command Pattern
+
+The `Command` implementation (`lib/utils/command.dart`) provides:
+
+- **`Command0<T>`** — parameterless async action
+- **`Command1<T, A>`** — single-parameter async action
+- **Sealed `Result<T>`** — type-safe `Ok<T>` / `Error<T>` responses
+- **Built-in debouncing** — prevents duplicate executions while running
+- **Observable state** — `.running`, `.error`, `.completed` properties for UI binding
+
+ViewModels extend `ChangeNotifier` and expose `Command` objects. Views observe the ViewModel and react to command state changes — no manual state flags, no boilerplate.
+
+### Layer Structure
+
+```
+lib/
+├── config/
+│   ├── dependencies.dart    # Provider setup (DI container)
+│   ├── environment/         # Compile-time env config (Envied)
+│   └── api_endpoints.dart   # API route constants
+├── data/
+│   ├── repositories/        # 8 domain repositories (ChangeNotifier)
+│   └── services/
+│       ├── api/             # Dio clients, interceptors, response models
+│       ├── external/        # Firebase, Google Sign-In
+│       └── local/           # Hive, SecureStorage, SharedPreferences, EventBus
+├── domain/
+│   ├── models/              # 17+ domain models (json_serializable)
+│   ├── use_cases/           # 8 use cases (multi-repo orchestration)
+│   └── constants/           # RBAC rules, validation, business rules
+├── ui/
+│   ├── core/
+│   │   ├── theme/           # Colors, typography, dimensions
+│   │   ├── ui/              # 44+ reusable custom widgets
+│   │   ├── l10n/            # Localization (EN, HR)
+│   │   └── services/        # RBAC service
+│   └── [feature]/           # 36 feature modules
+│       ├── view_models/     # ChangeNotifier ViewModels
+│       └── widgets/         # Feature-specific UI
+├── routing/                 # GoRouter config, route constants
+├── logger/                  # Logger interface, hub, console, remote
+└── utils/                   # Command pattern, LRU cache
+```
+
+**Each feature module** contains its own ViewModels and widgets, keeping UI concerns isolated. ViewModels receive repositories and use cases via constructor injection from the Provider tree.
+
+## State Management
+
+Provider is used with **ChangeNotifier** — and that's it. No BLoC, no Riverpod, no Redux. The architecture itself handles the complexity:
+
+- **ViewModels** are `ChangeNotifier` instances scoped to their screen — state is local and predictable
+- **Repositories** are `ChangeNotifier` providers that hold domain data and notify dependents when it changes
+- **Use Cases** orchestrate multi-repository operations (8 total: sign-in, sign-out, token refresh, workspace switching, workspace creation, workspace joining, cache purging, invite sharing)
+- **`ProxyProvider2`** resolves a circular dependency in the logging chain (`ClientInfoRepository → RemoteLogger → MobileLoggingApiClient → ClientInfoRepository`) using setter injection
+
+The key insight: when the architecture enforces clean separation (View → ViewModel → Repository → Service), the state management layer only needs to provide reactivity and dependency injection — Provider does both.
+
+## Navigation & Deep Linking
+
+**GoRouter** with **StatefulShellRoute** provides tab-based navigation with persistent state across three main branches:
+
+| Tab | Route | Feature |
+|-----|-------|---------|
+| Tasks | `/workspaces/:id/tasks` | Task management with creation, editing, assignments |
+| Goals | `/workspaces/:id/goals` | Goal tracking with creation and editing |
+| Leaderboard | `/workspaces/:id/leaderboard` | Point-based team rankings |
+
+**Key navigation features:**
+
+- **StatefulShellRoute with IndexedStack** — tab content persists when switching between tabs (no rebuild)
+- **Global redirect** — auth state changes trigger navigation via `Listenable.merge` on the auth repository
+- **Custom transitions** — `SharedAxisTransition` animations (250-400ms) for smooth screen changes
+- **Deep linking** — Android App Links configured via `.well-known/assetlinks.json` for 3 app variants (dev, production with 2 signing configs), enabling direct navigation to workspace join routes from shared invite links
+- **Query parameters** — `from`, `from_uid`, `next` parameters for post-auth redirect flow
+
+## Networking
+
+**Dio** HTTP client with a **5-interceptor chain**:
+
+```
+Request → RequestHeadersAuthInterceptor      (adds Bearer token)
+        → RequestHeadersClientInfoInterceptor (adds device metadata)
+        → PrettyDioLogger                     (debug logging, disabled in prod)
+        → Response
+        → UnauthorizedInterceptor             (handles 401 with token refresh)
+        → ForbiddenInterceptor                (handles 403, emits auth event)
+```
+
+### Token Refresh
+
+The `UnauthorizedInterceptor` implements a **semaphore pattern** for token refresh:
+
+1. First 401 response triggers a refresh request
+2. Concurrent 401s are queued via a `Completer` (no duplicate refresh calls)
+3. On success: all queued requests retry with the new token
+4. On failure: `AccessTokenRefreshFailed` event emitted, triggering sign-out
+
+### Separate Logging Client
+
+A dedicated Dio instance handles mobile log requests — it includes only the `RequestHeadersClientInfoInterceptor` (no auth interceptor) to avoid a circular dependency with the main API client.
+
+### Typed API Responses
+
+All API responses are deserialized into `ApiResponse<T>` with typed `data` and `error` fields. **15+ `ApiErrorCode` values** enable context-aware error handling and localized user messages.
+
+## Offline Support & Caching
+
+A **3-layer data fallback** ensures the app remains functional with intermittent connectivity:
+
+```
+1. In-Memory Cache (fastest) → 2. Hive NoSQL Cache (offline) → 3. API Request (network)
+```
+
+- **Hive** persists user profile, workspaces, tasks, goals, leaderboard, and workspace users
+- **Auto-recovery** — corrupted Hive cache is detected, cleared, and logged without crashing
+- **FlutterSecureStorage** — access and refresh tokens stored in platform-specific encrypted storage (Keychain on iOS, Keystore on Android)
+- **Paginated data** — `Paginable<T>` wrapper handles pagination metadata for task and goal lists
+
+## Logging
+
+The logging system uses a **delegate pattern** to switch implementations at runtime:
+
+```
+LoggerHub (delegate) → ConsoleLogger (development)
+                     → RemoteLogger  (production)
+```
+
+- **ConsoleLogger** — prints to debug console in development
+- **RemoteLogger** — sends `warn`/`error`/`fatal` logs to the API endpoint, which proxies them to Grafana Loki
+- **Smart filtering** — excludes `GeneralApiException` (already logged server-side), timeouts, cancellations, and 4xx responses to avoid noise
+- **Fire-and-forget** — logging operations never block the app; failures are silently absorbed to prevent logging loops
+- **Device metadata** — OS, device model, app version, build number, and architecture are attached to every log and API request
+
+The delegate switch is wired via `ProxyProvider2` — in release mode, the `RemoteLogger` is injected into `LoggerHub`; in debug mode, the `ConsoleLogger` remains active.
+
+## Security
+
+- **Frontend RBAC service** — mirrors the backend's role-based access control, conditionally showing/hiding UI elements based on workspace role (Manager/Member)
+- **Encrypted token storage** — access and refresh tokens stored in platform-specific secure storage (Keychain on iOS, Keystore on Android)
+- **Compile-time environment config** — `Envied` generates environment variables at build time, preventing runtime secret exposure
+- **ProGuard** — enabled in Android release builds for code minification and obfuscation
+
+## Localization
+
+- **English** and **Croatian** translations via ARB files (`app_en.arb`, `app_hr.arb`)
+- **Type-safe** — `flutter gen-l10n` generates a strongly-typed `AppLocalizations` class
+- **User preference** — locale selection persisted via SharedPreferences
+
+## UI/UX
+
+- **Material 3** design system with a custom theme (purple primary `#5F34E2`, orange accent `#FF9142`)
+- **44+ custom reusable widgets** — text fields, date pickers, select fields, sliders, header bars, and more
+- **36 feature modules** — each self-contained with its own ViewModel and widgets
+- **Device Preview** — development tool for testing on custom device definitions (Samsung Z Fold, tablets)
+- **Toast notifications** — `toastification` for consistent success/error feedback
+- **Portrait orientation** enforced across the app
+
+## Design Decisions
+
+**Why MVVM + Command over BLoC** — the Command pattern provides explicit action semantics (each user action maps to a named `Command`), cleaner separation than BLoC's event/state model, and aligns with the [official Flutter architecture recommendation](https://docs.flutter.dev/app-architecture/guide). BLoC introduces significant boilerplate (events, states, blocs) for every feature — Commands keep it simple.
+
+**Why Provider over Riverpod or BLoC** — Provider handles the only two things a state management layer needs to do: reactivity (`ChangeNotifier`) and dependency injection (`ChangeNotifierProvider`, `ProxyProvider`). The MVVM architecture itself handles state scoping, separation of concerns, and testability. Using a more complex state management solution would add abstraction without adding capability — proving that **architecture matters more than tooling**.
+
+**Why Hive over SQLite** — the local cache stores serialized domain objects for offline fallback, not relational data. Hive's NoSQL key-value model is a natural fit — no schema definitions, no migration management, just fast read/write of cached API responses.
+
+**Why a separate Dio instance for logging** — the main API client includes an auth interceptor that depends on the auth repository, which depends on the logger service. A shared Dio instance would create a circular dependency. The logging client strips auth concerns entirely, breaking the cycle.
+
+**Why GoRouter with StatefulShellRoute** — the app has three primary tabs that must preserve their state independently. `StatefulShellRoute` with `IndexedStack` achieves this natively. GoRouter also provides declarative deep link support, which is essential for workspace invite links shared externally.
+
+**Why the delegate pattern for logging** — the logging implementation must change at runtime (console in dev, remote in prod) without affecting any consumer. The `LoggerHub` delegate pattern achieves this with a simple setter — no conditional logic scattered across the codebase.
