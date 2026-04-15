@@ -107,12 +107,15 @@ Runs on PRs and pushes to main when `app/` files change.
 ```
 Checkout → Setup Java 17 + Flutter 3.32.0 (cached)
   → Create google-services.json (from secret)
-  → flutter pub get → Build Runner (codegen) → gen-l10n (localization)
+  → flutter pub get --enforce-lockfile → Build Runner (codegen with .env.test) → gen-l10n (localization)
   → flutter analyze (--fatal-infos --fatal-warnings)
   → dart format (--set-exit-if-changed)
   → flutter test
-  → flutter build apk --debug (dry run)
+  → flutter build apk --debug --flavor production (dry run)
 ```
+
+- **`--enforce-lockfile`** — fails if `pubspec.lock` doesn't match `pubspec.yaml`, ensuring reproducible builds
+- **`.env.test`** — code generation uses a test environment file to avoid leaking real credentials in CI
 
 ## Flutter App Deployment Pipeline
 

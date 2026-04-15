@@ -87,6 +87,7 @@ taskie_app/
 - **Role-Based Access Control (RBAC)** — enforced on both backend (guards) and frontend (RBAC service) for consistent authorization
 - **Offline-First Caching** — 3-layer data fallback (in-memory → Hive → API) with automatic corruption recovery
 - **Docker Multi-Stage Builds** — optimized production images pushed to GitHub Container Registry (GHCR) with SHA-based tagging for rollback history
+- **Unit Testing with Quality Gates** — Jest unit tests for all API services, enforced via pre-push hooks and CI pipelines
 
 ## Cloudflare
 

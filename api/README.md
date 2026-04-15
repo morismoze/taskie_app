@@ -126,7 +126,7 @@ The `@RequireWorkspaceUserRole()` decorator specifies the minimum role required 
 
 ### Input Validation & Hardening
 
-- **Global ValidationPipe** with `forbidNonWhitelisted: true` — rejects unknown request properties
+- **Global ValidationPipe** with `whitelist: true` — automatically strips unknown request properties
 - **Helmet** for security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options)
 - **CORS** with configurable origins
 - **Body parser** limited to 10MB
@@ -187,7 +187,7 @@ A **3-layer exception filter chain** processes all errors:
 2. **BaseHttpExceptionsFilter** — catches standard NestJS `HttpException` (validation, auth errors)
 3. **ApiHttpExceptionsFilter** — catches custom `ApiHttpException` with business-specific error codes
 
-**18 custom error codes** (e.g., `TASK_CLOSED`, `WORKSPACE_INVITE_EXPIRED`, `SOLE_MANAGER_CONFLICT`) enable the mobile client to display localized, context-aware error messages. All responses follow a consistent format:
+**16 custom error codes** (e.g., `TASK_CLOSED`, `WORKSPACE_INVITE_EXPIRED`, `SOLE_MANAGER_CONFLICT`) enable the mobile client to display localized, context-aware error messages. All responses follow a consistent format:
 
 ```json
 // Success (2xx)
@@ -196,6 +196,15 @@ A **3-layer exception filter chain** processes all errors:
 // Error (4xx/5xx)
 { "data": null, "error": { "code": "7", "message": "..." } }
 ```
+
+## Testing
+
+**Jest** with **ts-jest** for unit testing:
+
+- **Unit tests** — colocated with source files (`*.spec.ts`), covering all core services: auth, Google OAuth, workspace, workspace-user, workspace-invite, task, task-assignment, goal, session, user, and unit-of-work
+- **Coverage reporting** — `npm run test:cov` generates reports in lcov, clover, and JSON formats
+- **Pre-push hook** — Husky blocks `git push` if unit tests fail, preventing broken code from reaching the remote
+- **Pre-commit hook** — lint-staged runs ESLint `--fix` and Prettier `--write` on staged `.ts` files
 
 ## Notable Patterns
 

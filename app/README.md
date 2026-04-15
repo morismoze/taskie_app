@@ -62,13 +62,13 @@ lib/
 │   ├── environment/         # Compile-time env config (Envied)
 │   └── api_endpoints.dart   # API route constants
 ├── data/
-│   ├── repositories/        # 8 domain repositories (ChangeNotifier)
+│   ├── repositories/        # 13 domain repositories (ChangeNotifier)
 │   └── services/
 │       ├── api/             # Dio clients, interceptors, response models
 │       ├── external/        # Firebase, Google Sign-In
 │       └── local/           # Hive, SecureStorage, SharedPreferences, EventBus
 ├── domain/
-│   ├── models/              # 17+ domain models (json_serializable)
+│   ├── models/              # 15 domain models (json_serializable)
 │   ├── use_cases/           # 8 use cases (multi-repo orchestration)
 │   └── constants/           # RBAC rules, validation, business rules
 ├── ui/
@@ -77,7 +77,7 @@ lib/
 │   │   ├── ui/              # 44+ reusable custom widgets
 │   │   ├── l10n/            # Localization (EN, HR)
 │   │   └── services/        # RBAC service
-│   └── [feature]/           # 36 feature modules
+│   └── [feature]/           # 34 feature modules
 │       ├── view_models/     # ChangeNotifier ViewModels
 │       └── widgets/         # Feature-specific UI
 ├── routing/                 # GoRouter config, route constants
@@ -138,13 +138,30 @@ The `UnauthorizedInterceptor` implements a **semaphore pattern** for token refre
 3. On success: all queued requests retry with the new token
 4. On failure: `AccessTokenRefreshFailed` event emitted, triggering sign-out
 
+### Auth Event Bus
+
+An `AuthEventBus` implements a pub/sub pattern for distributed auth state updates across the app. Events like `AccessTokenRefreshFailed`, `AccessTokenRefreshSucceeded`, and `ForbiddenAccess` are emitted by interceptors and consumed by the `AuthEventListener` widget, which triggers sign-out, workspace changes, or user profile refreshes in response.
+
 ### Separate Logging Client
 
 A dedicated Dio instance handles mobile log requests — it includes only the `RequestHeadersClientInfoInterceptor` (no auth interceptor) to avoid a circular dependency with the main API client.
 
 ### Typed API Responses
 
-All API responses are deserialized into `ApiResponse<T>` with typed `data` and `error` fields. **15+ `ApiErrorCode` values** enable context-aware error handling and localized user messages.
+All API responses are deserialized into `ApiResponse<T>` with typed `data` and `error` fields. **16 `ApiErrorCode` values** enable context-aware error handling and localized user messages.
+
+## App Lifecycle & Startup
+
+- **`AppStartup`** widget pre-loads critical data (client info, auth state) before rendering the UI, preventing loading screens and data races
+- **`AppLifecycleStateListener`** with `WidgetsBindingObserver` monitors foreground/background transitions — on app resume, it performs runtime checks to detect role changes or workspace access revocation, ensuring the UI always reflects the current server state
+- **`LocaleInitializer`** persists and restores the user's locale preference on startup
+
+## Pagination & Filtering
+
+- **`Paginable<T>`** generic wrapper for paginated API responses with metadata (total items, page count)
+- **`ObjectiveFilter`** extends `Filter` with status filtering and `SortBy` enum for sorting tasks and goals
+- **`number_paginator`** package provides visible page number controls in the UI
+- Search, filter, and sort state managed within ViewModels for reactive updates
 
 ## Offline Support & Caching
 
@@ -182,6 +199,7 @@ The delegate switch is wired via `ProxyProvider2` — in release mode, the `Remo
 - **Encrypted token storage** — access and refresh tokens stored in platform-specific secure storage (Keychain on iOS, Keystore on Android)
 - **Compile-time environment config** — `Envied` generates environment variables at build time, preventing runtime secret exposure
 - **ProGuard** — enabled in Android release builds for code minification and obfuscation
+- **Build flavors** — development (`com.taskie.taskie.dev`) and production (`com.taskie.taskie`) with separate signing configurations and app names
 
 ## Localization
 
@@ -193,10 +211,13 @@ The delegate switch is wired via `ProxyProvider2` — in release mode, the `Remo
 
 - **Material 3** design system with a custom theme (purple primary `#5F34E2`, orange accent `#FF9142`)
 - **44+ custom reusable widgets** — text fields, date pickers, select fields, sliders, header bars, and more
-- **36 feature modules** — each self-contained with its own ViewModel and widgets
+- **34 feature modules** — each self-contained with its own ViewModel and widgets
 - **Device Preview** — development tool for testing on custom device definitions (Samsung Z Fold, tablets)
 - **Toast notifications** — `toastification` for consistent success/error feedback
 - **Portrait orientation** enforced across the app
+- **Cached network images** — workspace images loaded with `cached_network_image` for efficient caching
+- **Native sharing** — workspace invite links shared via `share_plus` using the platform's native share sheet
+- **URL launching** — external links opened via `url_launcher`
 
 ## Design Decisions
 

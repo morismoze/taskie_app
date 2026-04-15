@@ -24,7 +24,7 @@ The Taskie web presence is a static landing page built with **pure HTML5, CSS3, 
 - **Feature showcase** — 4 cards (Workspaces, Tasks & Goals, Leaderboard, Team Collaboration) with scroll-triggered animations
 - **Responsive layout** — CSS Grid with `repeat(auto-fit, minmax(250px, 1fr))` for automatic column adjustment
 - **Legal pages** — Privacy Policy and Terms & Conditions with consistent styling
-- **Google Play link** — CTA button in hero section
+- **Google Play CTA** — coming soon button in hero section (placeholder alert until Play Store listing is live)
 
 ## Design
 
