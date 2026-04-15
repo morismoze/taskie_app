@@ -8,7 +8,7 @@
 
 ## Overview
 
-A static landing page built with **pure HTML5, CSS3, and vanilla JavaScript** — zero external dependencies. It serves two purposes: a public-facing website with a feature showcase and legal documentation, and a **fallback destination** for non-deep-link URLs on the app's domain (when a link that isn't a registered deep link is opened on mobile, the user lands here instead of a blank page). Deployed to a Hetzner VPS behind Nginx.
+A static [landing page](https://taskieapp.xyz) built with **pure HTML5, CSS3, and vanilla JavaScript** — zero external dependencies. It serves two purposes: a public-facing website with a feature showcase and legal documentation, and a **fallback destination** for non-deep-link URLs on the app's domain (when a link that isn't a registered deep link is opened on mobile, the user lands here instead of a blank page). Deployed to a Hetzner VPS behind Nginx.
 
 ## Tech Stack
 

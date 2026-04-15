@@ -195,7 +195,7 @@ Exception filters log with full request context: HTTP method, URL, client IP, us
 
 ## API Documentation
 
-**Swagger / OpenAPI 3.0** is hosted alongside the API at the `{API_PREFIX}/docs` route (e.g., `/api/docs`).
+**Swagger / OpenAPI 3.0** is hosted alongside the API at [`/api/docs`](https://taskieapp.xyz/api/docs).
 
 - **Bearer authentication** configured globally
 - **Mobile app metadata headers** documented (`x-device-model`, `x-os-version`, `x-app-version`, `x-build-number`)

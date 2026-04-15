@@ -7,6 +7,10 @@
 <p align="center">A gamified task management platform for teams</p>
 
 <p align="center">
+  <a href="https://taskieapp.xyz">Landing Page</a> · <a href="https://taskieapp.xyz/api/docs">API Docs (Swagger)</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" />
   <img src="https://img.shields.io/badge/API-NestJS-E0234E?logo=nestjs" alt="API" />
   <img src="https://img.shields.io/badge/App-Flutter-02569B?logo=flutter" alt="App" />
